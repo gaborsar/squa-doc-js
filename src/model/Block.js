@@ -4,6 +4,7 @@ import Schema from "./Schema";
 import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
+import createKey from "./createKey";
 import findNodeAt from "./findNodeAt";
 
 /**
@@ -30,7 +31,7 @@ export default class Block {
   static create(props = {}) {
     const {
       schema = new Schema(),
-      key = "",
+      key = createKey(),
       style = Style.create(),
       children = []
     } = props;
@@ -103,6 +104,15 @@ export default class Block {
   }
 
   /**
+   * Regenerates the key of the node.
+   *
+   * @return {Block}
+   */
+  regenerateKey() {
+    return this.setKey(createKey());
+  }
+
+  /**
    * Sets the style of the node.
    *
    * @param {Style} style
@@ -110,6 +120,15 @@ export default class Block {
    */
   setStyle(style) {
     return new Block(this.schema, this.key, style, this.children);
+  }
+
+  /**
+   * Clears the style of the node.
+   *
+   * @return {Block}
+   */
+  clearStyle() {
+    return this.setStyle(Style.create());
   }
 
   /**
@@ -401,6 +420,29 @@ export default class Block {
 
     if (node.children.length !== children.length) {
       node = node.setChildren(children);
+    }
+
+    return node;
+  }
+
+  /**
+   * Returns a slice of the node.
+   *
+   * @param {number} startOffset
+   * @param {number} endOffset
+   * @return {Block}
+   */
+  slice(startOffset, endOffset) {
+    let node = this;
+
+    node = node.regenerateKey();
+
+    if (endOffset < node.length - 1) {
+      node = node.deleteAt(endOffset, node.length - 1 - endOffset);
+    }
+
+    if (startOffset > 0) {
+      node = node.deleteAt(0, startOffset);
     }
 
     return node;

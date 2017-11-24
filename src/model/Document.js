@@ -1,9 +1,9 @@
 "use strict";
 
 import Schema from "./Schema";
-import Style from "./Style";
 import Embed from "./Embed";
 import Block, { EOL } from "./Block";
+import createKey from "./createKey";
 import findNodeAt from "./findNodeAt";
 
 /**
@@ -19,8 +19,8 @@ export default class Document {
    * @returns {Document}
    */
   static create(props = {}) {
-    const { schema = new Schema(), children = [] } = props;
-    return new Document(schema, "", children);
+    const { schema = new Schema(), key = createKey(), children = [] } = props;
+    return new Document(schema, key, children);
   }
 
   /**
@@ -78,6 +78,15 @@ export default class Document {
    */
   setKey(key) {
     return new Document(this.schema, key, this.children);
+  }
+
+  /**
+   * Regenerates the key of the node.
+   *
+   * @return {Block}
+   */
+  regenerateKey() {
+    return this.setKey(createKey());
   }
 
   /**
@@ -198,13 +207,13 @@ export default class Document {
         offset += line.length;
 
         const leftSlice = child
-          .deleteAt(offset, child.length - 1 - offset)
-          .setStyle(Style.create())
+          .slice(0, offset)
+          .clearStyle()
           .format(attributes);
 
         fragment.push(leftSlice);
 
-        child = child.deleteAt(0, offset);
+        child = child.slice(offset, child.length - 1);
 
         offset = 0;
 

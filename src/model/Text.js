@@ -2,6 +2,7 @@
 
 import Schema from "./Schema";
 import Style from "./Style";
+import createKey from "./createKey";
 
 /**
  * Represents a text node.
@@ -20,7 +21,7 @@ export default class Text {
   static create(props = {}) {
     const {
       schema = new Schema(),
-      key = "",
+      key = createKey(),
       style = Style.create(),
       value = ""
     } = props;
@@ -90,6 +91,15 @@ export default class Text {
   }
 
   /**
+   * Regenerates the key of the node.
+   *
+   * @return {Block}
+   */
+  regenerateKey() {
+    return this.setKey(createKey());
+  }
+
+  /**
    * Sets the style of the node.
    *
    * @param {Style} style
@@ -135,7 +145,13 @@ export default class Text {
    * @returns {Text}
    */
   slice(startOffset = 0, endOffset = Infinity) {
-    return this.setValue(this.value.slice(startOffset, endOffset));
+    let node = this;
+
+    node = node.regenerateKey();
+
+    node = node.setValue(node.value.slice(startOffset, endOffset));
+
+    return node;
   }
 
   /**

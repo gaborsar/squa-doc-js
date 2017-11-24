@@ -2,6 +2,7 @@
 
 import Schema from "./Schema";
 import Style from "./Style";
+import createKey from "./createKey";
 
 /**
  * Represents an embed node.
@@ -21,7 +22,7 @@ export default class Embed {
   static create(props = {}) {
     const {
       schema = new Schema(),
-      key = "",
+      key = createKey(),
       style = Style.create(),
       type = "",
       value = ""
