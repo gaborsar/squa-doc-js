@@ -187,7 +187,6 @@ export default class Document {
       return node;
     }
 
-    // insert text
     if (typeof value === "string") {
       let fragment = [];
 
@@ -235,7 +234,6 @@ export default class Document {
     } else {
       const embedType = Object.keys(value)[0];
 
-      // insert block embed
       if (node.schema.isBlockEmbed(embedType)) {
         if (pos.offset === 0) {
           let newChild = Embed.create({
@@ -253,14 +251,14 @@ export default class Document {
 
           node = node.setChildren(children);
         }
-
-        // insert inline embed
       } else if (node.schema.isInlineEmbed(embedType)) {
-        const child = node.children[pos.index];
+        let child = node.children[pos.index];
+
+        child = child.insertAt(pos.offset, value, attributes).normalize();
 
         const children = node.children
           .slice(0, pos.index)
-          .concat(child.insertAt(pos.offset, value, attributes).normalize())
+          .concat(child)
           .concat(node.children.slice(pos.index + 1));
 
         node = node.setChildren(children);
