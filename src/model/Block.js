@@ -1,25 +1,69 @@
 "use strict";
 
+import Schema from "./Schema";
 import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
 import findNodeAt from "./findNodeAt";
 
+/**
+ * End of line character.
+ *
+ * @type {string}
+ */
 export const EOL = "\n";
 
+/**
+ * Represents a block node.
+ */
 export default class Block {
+  /**
+   * Returns a new block based on the given props object.
+   *
+   * @param {Object} [props]
+   * @param {Schema} [props.schema]
+   * @param {string} [props.key]
+   * @param {Style} [props.style]
+   * @param {(Text|Embed)[]} [props.schema]
+   * @returns {Block}
+   */
   static create(props = {}) {
-    const { schema, key = "", style = Style.create(), children = [] } = props;
+    const {
+      schema = new Schema(),
+      key = "",
+      style = Style.create(),
+      children = []
+    } = props;
     return new Block(schema, key, style, children);
   }
 
+  /**
+   * Constructor.
+   *
+   * @param {Schema} schema
+   * @param {string} key
+   * @param {Style} style
+   * @param {(Text|Embed)[]} children
+   */
   constructor(schema, key, style, children) {
+    /** @type {Schema} */
     this.schema = schema;
+
+    /** @type {string} */
     this.key = key;
+
+    /** @type {Style} */
     this.style = style;
+
+    /** @type {(Text|Embed)[]} */
     this.children = children;
   }
 
+  /**
+   * Returns the length of the node.
+   *
+   * @returns {number}
+   */
   get length() {
     return this.children.reduce(
       (length, child) => length + child.length,
@@ -27,10 +71,20 @@ export default class Block {
     );
   }
 
+  /**
+   * Returns the text of the node.
+   *
+   * @returns {string}
+   */
   get text() {
     return this.children.reduce((text, child) => text + child.text, "") + EOL;
   }
 
+  /**
+   * Returns the JSON representation of the node.
+   *
+   * @returns {Object}
+   */
   toJSON() {
     return {
       style: this.style.toJSON(),
@@ -38,18 +92,42 @@ export default class Block {
     };
   }
 
+  /**
+   * Sets the key of the node.
+   *
+   * @param {string} key
+   * @returns {Block}
+   */
   setKey(key) {
     return new Block(this.schema, key, this.style, this.children);
   }
 
+  /**
+   * Sets the style of the node.
+   *
+   * @param {Style} style
+   * @returns {Block}
+   */
   setStyle(style) {
     return new Block(this.schema, this.key, style, this.children);
   }
 
+  /**
+   * Sets the children of the node.
+   *
+   * @param {(Text|Embed)[]} children
+   * @returns {Block}
+   */
   setChildren(children) {
     return new Block(this.schema, this.key, this.style, children);
   }
 
+  /**
+   * Formats the node.
+   *
+   * @param {Object} attributes
+   * @returns {Block}
+   */
   format(attributes) {
     let node = this;
 
@@ -62,6 +140,14 @@ export default class Block {
     return node;
   }
 
+  /**
+   * Formats a range in the node.
+   *
+   * @param {number} offset
+   * @param {number} length
+   * @param {Object} attributes
+   * @returns {*}
+   */
   formatAt(offset, length, attributes) {
     let node = this;
 
@@ -158,6 +244,14 @@ export default class Block {
     return node;
   }
 
+  /**
+   * Inserts a value into the node.
+   *
+   * @param {number} offset
+   * @param {string|Object} value
+   * @param {Object} attributes
+   * @returns {Block}
+   */
   insertAt(offset, value, attributes) {
     let node = this;
 
@@ -232,6 +326,13 @@ export default class Block {
     return node;
   }
 
+  /**
+   * Deletes a range from the node.
+   *
+   * @param {number} offset
+   * @param {number} length
+   * @returns {Block}
+   */
   deleteAt(offset, length) {
     let node = this;
 
@@ -272,6 +373,11 @@ export default class Block {
     return node;
   }
 
+  /**
+   * Normalizes the node.
+   *
+   * @returns {Block}
+   */
   normalize() {
     let node = this;
 
@@ -300,6 +406,12 @@ export default class Block {
     return node;
   }
 
+  /**
+   * Concatenates the node with the given node.
+   *
+   * @param {Block} other
+   * @returns {Block}
+   */
   concat(other) {
     return other.setChildren(this.children.concat(other.children));
   }

@@ -1,44 +1,103 @@
 "use strict";
 
+import Schema from "./Schema";
 import Style from "./Style";
 import Embed from "./Embed";
 import Block, { EOL } from "./Block";
 import findNodeAt from "./findNodeAt";
 
+/**
+ * Represents a document node.
+ */
 export default class Document {
+  /**
+   * Returns a new node based on the given props object.
+   *
+   * @param {Object} [props]
+   * @param {Schema} [props.schema]
+   * @param {(Block|Embed)[]} [props.children]
+   * @returns {Document}
+   */
   static create(props = {}) {
-    const { schema, children = [] } = props;
+    const { schema = new Schema(), children = [] } = props;
     return new Document(schema, "", children);
   }
 
+  /**
+   * Constructor.
+   *
+   * @param {Schema} schema
+   * @param {string} key
+   * @param {(Block|Embed)[]} children
+   */
   constructor(schema, key, children) {
+    /** @type {Schema} */
     this.schema = schema;
+
+    /** @type {string} */
     this.key = key;
+
+    /** @type {(Block|Embed)[]} */
     this.children = children;
   }
 
+  /**
+   * Returns the length of the node.
+   *
+   * @returns {number}
+   */
   get length() {
     return this.children.reduce((length, child) => length + child.length, 0);
   }
 
+  /**
+   * Returns the text of the node.
+   *
+   * @returns {string}
+   */
   get text() {
     return this.children.reduce((text, child) => text + child.text, "");
   }
 
+  /**
+   * Returns the JSON representation of the node.
+   *
+   * @returns {Object}
+   */
   toJSON() {
     return {
       children: this.children.map(child => child.toJSON())
     };
   }
 
+  /**
+   * Sets the key of the node.
+   *
+   * @param {string} key
+   * @returns {Document}
+   */
   setKey(key) {
     return new Document(this.schema, key, this.children);
   }
 
+  /**
+   * Sets the children of the node.
+   *
+   * @param {(Block|Embed)[]} children
+   * @returns {Document}
+   */
   setChildren(children) {
     return new Document(this.schema, this.key, children);
   }
 
+  /**
+   * Formats a range in the node.
+   *
+   * @param {number} offset
+   * @param {number} length
+   * @param {Object} attributes
+   * @returns {Document}
+   */
   formatAt(offset, length, attributes) {
     let node = this;
 
@@ -104,6 +163,14 @@ export default class Document {
     return node;
   }
 
+  /**
+   * Inserts a value into the node.
+   *
+   * @param {number} offset
+   * @param {string|Object} value
+   * @param {Object} attributes
+   * @returns {Document}
+   */
   insertAt(offset, value, attributes) {
     let node = this;
 
@@ -196,6 +263,13 @@ export default class Document {
     return node;
   }
 
+  /**
+   * Deletes a range from the node.
+   *
+   * @param {number} offset
+   * @param {number} length
+   * @returns {Document}
+   */
   deleteAt(offset, length) {
     let node = this;
 

@@ -8,8 +8,7 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:flowtype/recommended"
+    "plugin:react/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -18,7 +17,7 @@
     },
     "sourceType": "module"
   },
-  "plugins": ["react", "flowtype"],
+  "plugins": ["react"],
   "globals": {
     "jest": true,
     "describe": true,

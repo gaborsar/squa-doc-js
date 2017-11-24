@@ -4,18 +4,15 @@
   "description": "Squa-Doc Editor",
   "main": "dist/SquaDocEditor.js",
   "scripts": {
-    "flow-install": "flow-typed install",
     "lint": "eslint src",
-    "flow": "flow",
     "jest": "jest ./src",
-    "test": "npm run lint && npm run flow && npm run jest",
+    "test": "npm run lint && npm run jest",
     "fmt": "prettier --write \"./src/**/*.js\"",
     "build": "webpack"
   },
   "author": "Gabor Sar <gabor.sar@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "immutable": "^3.8.2",
     "quill-delta": "^3.5.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
@@ -32,10 +29,7 @@
     "css-loader": "^0.28.0",
     "enzyme": "^3.0.0",
     "eslint": "^4.5.0",
-    "eslint-plugin-flowtype": "^2.32.0",
     "eslint-plugin-react": "^7.0.0",
-    "flow-bin": "^0.55.0",
-    "flow-typed": "^2.1.0",
     "jest": "^21.1.0",
     "prettier": "^1.8.2",
     "style-loader": "^0.18.0",

@@ -1,7 +1,6 @@
 .DS_Store
 .idea
 coverage
-flow-typed
 node_modules
 npm-debug.log
 package-lock.json
