@@ -27,5 +27,12 @@
     "afterEach": true,
     "it": true,
     "expect": true
+  },
+  "rules": {
+    "eqeqeq": ["error"],
+    "no-unused-vars": ["error"],
+    "prefer-const": ["error", { "destructuring": "all" }],
+    "prefer-template": ["error"],
+    "radix": "error"
   }
 }
