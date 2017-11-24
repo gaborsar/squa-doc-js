@@ -4,7 +4,7 @@ import Schema from "./Schema";
 import Embed from "./Embed";
 import Block, { EOL } from "./Block";
 import createKey from "./createKey";
-import findNodeAt from "./findNodeAt";
+import findNodePosition from "./findNodePosition";
 
 /**
  * Represents a document node.
@@ -110,13 +110,13 @@ export default class Document {
   formatAt(offset, length, attributes) {
     const node = this;
 
-    const startPos = findNodeAt(node.children, offset, true);
+    const startPos = findNodePosition(node.children, offset, true);
 
     if (!startPos) {
       return node;
     }
 
-    const endPos = findNodeAt(node.children, offset + length, true);
+    const endPos = findNodePosition(node.children, offset + length, true);
 
     if (!endPos) {
       return node;
@@ -181,7 +181,7 @@ export default class Document {
   insertAt(offset, value, attributes) {
     let node = this;
 
-    const pos = findNodeAt(node.children, offset, false);
+    const pos = findNodePosition(node.children, offset, false);
 
     if (!pos) {
       return node;
@@ -278,13 +278,13 @@ export default class Document {
   deleteAt(offset, length) {
     const node = this;
 
-    const startPos = findNodeAt(node.children, offset, false);
+    const startPos = findNodePosition(node.children, offset, false);
 
     if (!startPos) {
       return node;
     }
 
-    const endPos = findNodeAt(node.children, offset + length, false);
+    const endPos = findNodePosition(node.children, offset + length, false);
 
     if (!endPos) {
       return node;

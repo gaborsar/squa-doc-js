@@ -5,7 +5,7 @@ import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
 import createKey from "./createKey";
-import findNodeAt from "./findNodeAt";
+import findNodePosition from "./findNodePosition";
 
 /**
  * End of line character.
@@ -168,13 +168,13 @@ export default class Block {
       return node.format(attributes).formatAt(offset, length - 1, attributes);
     }
 
-    const startPos = findNodeAt(node.children, offset, false);
+    const startPos = findNodePosition(node.children, offset, false);
 
     if (!startPos) {
       return node;
     }
 
-    const endPos = findNodeAt(node.children, offset + length, true);
+    const endPos = findNodePosition(node.children, offset + length, true);
 
     if (!endPos) {
       return node;
@@ -293,7 +293,7 @@ export default class Block {
       return node.setChildren([newChild]);
     }
 
-    const pos = findNodeAt(node.children, offset, true);
+    const pos = findNodePosition(node.children, offset, true);
 
     if (!pos) {
       return node;
@@ -343,13 +343,13 @@ export default class Block {
   deleteAt(offset, length) {
     const node = this;
 
-    const startPos = findNodeAt(node.children, offset, false);
+    const startPos = findNodePosition(node.children, offset, false);
 
     if (!startPos) {
       return node;
     }
 
-    const endPos = findNodeAt(node.children, offset + length, true);
+    const endPos = findNodePosition(node.children, offset + length, true);
 
     if (!endPos) {
       return node;

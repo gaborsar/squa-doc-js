@@ -9,7 +9,7 @@
  * @param {boolean} [inclusive]
  * @returns {Object}
  */
-export default function findNodeAt(nodes, offset, inclusive = false) {
+export default function findNodePosition(nodes, offset, inclusive = false) {
   let index = 0;
 
   while (index < nodes.length) {

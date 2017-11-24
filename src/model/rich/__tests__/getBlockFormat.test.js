@@ -24,6 +24,6 @@ describe("rich", () => {
       ]
     });
     const attributes = getBlockFormat(document, 1);
-    expect(attributes).toEqual({ align: "left" })
+    expect(attributes).toEqual({ align: "left" });
   });
 });

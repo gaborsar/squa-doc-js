@@ -1,6 +1,6 @@
 "use strict";
 
-import findNodeAt from "../findNodeAt";
+import findNodePosition from "../findNodePosition";
 
 /**
  * Returns the format of the given range.
@@ -14,7 +14,7 @@ export default function getBlockFormat(document, offset) {
 
   let attributes = {};
 
-  const pos = findNodeAt(blocks, offset, false);
+  const pos = findNodePosition(blocks, offset, false);
 
   if (pos) {
     attributes = blocks[pos.index].style.toObject();
