@@ -63,6 +63,21 @@ export default class Style {
   }
 
   /**
+   * Returns the object representation of the style.
+   *
+   * @returns {Object}
+   */
+  toObject() {
+    const attributes = {};
+
+    this.marks.forEach(mark => {
+      attributes[mark.type] = mark.value;
+    });
+
+    return attributes;
+  }
+
+  /**
    * Updates the style.
    *
    * @param {Object} attributes
