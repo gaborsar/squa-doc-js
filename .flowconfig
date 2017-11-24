@@ -1,0 +1,10 @@
+[ignore]
+.*/node_modules/enzyme-matchers/.*
+
+[include]
+
+[libs]
+flow-typed-custom
+flow-typed
+
+[options]
