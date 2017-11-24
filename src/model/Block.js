@@ -148,15 +148,9 @@ export default class Block {
    * @returns {Block}
    */
   format(attributes) {
-    let node = this;
-
-    const style = node.style.format(attributes, type =>
-      node.schema.isBlockMark(type)
+    return this.setStyle(
+      this.style.format(attributes, type => this.schema.isBlockMark(type))
     );
-
-    node = node.setStyle(style);
-
-    return node;
   }
 
   /**
@@ -168,7 +162,7 @@ export default class Block {
    * @returns {*}
    */
   formatAt(offset, length, attributes) {
-    let node = this;
+    const node = this;
 
     if (offset + length === node.length) {
       return node.format(attributes).formatAt(offset, length - 1, attributes);
@@ -258,9 +252,7 @@ export default class Block {
       .concat(fragment)
       .concat(node.children.slice(endPos.index + 1));
 
-    node = node.setChildren(children);
-
-    return node;
+    return node.setChildren(children);
   }
 
   /**
@@ -272,7 +264,7 @@ export default class Block {
    * @returns {Block}
    */
   insertAt(offset, value, attributes) {
-    let node = this;
+    const node = this;
 
     let newChild;
 
@@ -298,9 +290,7 @@ export default class Block {
     newChild = newChild.format(attributes);
 
     if (node.children.length === 0) {
-      node = node.setChildren([newChild]);
-
-      return node;
+      return node.setChildren([newChild]);
     }
 
     const pos = findNodeAt(node.children, offset, true);
@@ -340,9 +330,7 @@ export default class Block {
       .concat(fragment)
       .concat(node.children.slice(pos.index + 1));
 
-    node = node.setChildren(children);
-
-    return node;
+    return node.setChildren(children);
   }
 
   /**
@@ -353,7 +341,7 @@ export default class Block {
    * @returns {Block}
    */
   deleteAt(offset, length) {
-    let node = this;
+    const node = this;
 
     const startPos = findNodeAt(node.children, offset, false);
 
@@ -387,9 +375,7 @@ export default class Block {
       .concat(fragment)
       .concat(node.children.slice(endPos.index + 1));
 
-    node = node.setChildren(children);
-
-    return node;
+    return node.setChildren(children);
   }
 
   /**

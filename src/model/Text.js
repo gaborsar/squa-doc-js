@@ -126,15 +126,9 @@ export default class Text {
    * @returns {Text}
    */
   format(attributes) {
-    let node = this;
-
-    const style = node.style.format(attributes, type =>
-      node.schema.isInlineMark(type)
+    return this.setStyle(
+      this.style.format(attributes, type => this.schema.isInlineMark(type))
     );
-
-    node = node.setStyle(style);
-
-    return node;
   }
 
   /**
@@ -145,13 +139,9 @@ export default class Text {
    * @returns {Text}
    */
   slice(startOffset = 0, endOffset = Infinity) {
-    let node = this;
-
-    node = node.regenerateKey();
-
-    node = node.setValue(node.value.slice(startOffset, endOffset));
-
-    return node;
+    return this.regenerateKey().setValue(
+      this.value.slice(startOffset, endOffset)
+    );
   }
 
   /**

@@ -108,7 +108,7 @@ export default class Document {
    * @returns {Document}
    */
   formatAt(offset, length, attributes) {
-    let node = this;
+    const node = this;
 
     const startPos = findNodeAt(node.children, offset, true);
 
@@ -167,9 +167,7 @@ export default class Document {
       .concat(fragment)
       .concat(node.children.slice(endPos.index + 1));
 
-    node = node.setChildren(children);
-
-    return node;
+    return node.setChildren(children);
   }
 
   /**
@@ -280,7 +278,7 @@ export default class Document {
    * @returns {Document}
    */
   deleteAt(offset, length) {
-    let node = this;
+    const node = this;
 
     const startPos = findNodeAt(node.children, offset, false);
 
@@ -349,8 +347,6 @@ export default class Document {
       .concat(fragment)
       .concat(node.children.slice(endPos.index + 1));
 
-    node = node.setChildren(children);
-
-    return node;
+    return node.setChildren(children);
   }
 }

@@ -134,15 +134,11 @@ export default class Embed {
    * @returns {Embed}
    */
   format(attributes) {
-    let node = this;
-
-    const style = node.style.format(attributes, type =>
-      node.schema.isEmbedMark(node.type, type)
+    return this.setStyle(
+      this.style.format(attributes, type =>
+        this.schema.isEmbedMark(this.type, type)
+      )
     );
-
-    node = node.setStyle(style);
-
-    return node;
   }
 
   /**
