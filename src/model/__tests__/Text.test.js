@@ -10,22 +10,6 @@ const schema = new Schema({
 });
 
 describe("Text", () => {
-  test("length", () => {
-    const node = Text.create({
-      value: "aaa"
-    });
-
-    expect(node.length).toBe(3);
-  });
-
-  test("text", () => {
-    const node = Text.create({
-      value: "aaa"
-    });
-
-    expect(node.text).toBe("aaa");
-  });
-
   test("format(attributes)", () => {
     const node = Text.create({ schema });
 

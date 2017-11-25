@@ -10,26 +10,6 @@ const schema = new Schema({
 });
 
 describe("Embed", () => {
-  test("length", () => {
-    const node = Embed.create({
-      value: {
-        image: "foo.png"
-      }
-    });
-
-    expect(node.length).toBe(1);
-  });
-
-  test("text", () => {
-    const node = Embed.create({
-      value: {
-        image: "foo.png"
-      }
-    });
-
-    expect(node.text).toBe("*");
-  });
-
   test("format(attributes)", () => {
     const node = Embed.create({
       schema,

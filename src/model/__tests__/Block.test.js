@@ -1241,56 +1241,6 @@ describe("Block", () => {
     });
   });
 
-  test("concat(other)", () => {
-    const nodeA = Block.create({
-      marks: [
-        Mark.create({
-          type: "align",
-          value: "left"
-        })
-      ],
-      children: [
-        Text.create({
-          value: "aaa"
-        })
-      ]
-    });
-    const nodeB = Block.create({
-      marks: [
-        Mark.create({
-          type: "align",
-          value: "right"
-        })
-      ],
-      children: [
-        Text.create({
-          value: "bbb"
-        })
-      ]
-    });
-
-    const actual = nodeA.concat(nodeB);
-
-    const expected = Block.create({
-      marks: [
-        Mark.create({
-          type: "align",
-          value: "right"
-        })
-      ],
-      children: [
-        Text.create({
-          value: "aaa"
-        }),
-        Text.create({
-          value: "bbb"
-        })
-      ]
-    });
-
-    expect(actual.toJSON()).toEqual(expected.toJSON());
-  });
-
   test("normalize()", () => {
     const node = Block.create({
       children: [
@@ -1350,6 +1300,94 @@ describe("Block", () => {
             ]
           }),
           value: "ccc"
+        })
+      ]
+    });
+
+    expect(actual.toJSON()).toEqual(expected.toJSON());
+  });
+
+  test("slice(startOffset, endOffset)", () => {
+    const node = Block.create({
+      children: [
+        Text.create({
+          value: "aaabbb"
+        }),
+        Embed.create({
+          value: {
+            image: "foo.png"
+          }
+        }),
+        Text.create({
+          value: "cccddd"
+        })
+      ]
+    });
+
+    const actual = node.slice(3, 10);
+
+    const expected = Block.create({
+      children: [
+        Text.create({
+          value: "bbb"
+        }),
+        Embed.create({
+          value: {
+            image: "foo.png"
+          }
+        }),
+        Text.create({
+          value: "ccc"
+        })
+      ]
+    });
+
+    expect(actual.toJSON()).toEqual(expected.toJSON());
+  });
+
+  test("concat(other)", () => {
+    const nodeA = Block.create({
+      marks: [
+        Mark.create({
+          type: "align",
+          value: "left"
+        })
+      ],
+      children: [
+        Text.create({
+          value: "aaa"
+        })
+      ]
+    });
+    const nodeB = Block.create({
+      marks: [
+        Mark.create({
+          type: "align",
+          value: "right"
+        })
+      ],
+      children: [
+        Text.create({
+          value: "bbb"
+        })
+      ]
+    });
+
+    const actual = nodeA.concat(nodeB);
+
+    const expected = Block.create({
+      marks: [
+        Mark.create({
+          type: "align",
+          value: "right"
+        })
+      ],
+      children: [
+        Text.create({
+          value: "aaa"
+        }),
+        Text.create({
+          value: "bbb"
         })
       ]
     });
