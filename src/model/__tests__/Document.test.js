@@ -372,8 +372,9 @@ describe("Document", () => {
           children: [
             Embed.create({
               schema,
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -397,8 +398,9 @@ describe("Document", () => {
                   })
                 ]
               }),
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -501,8 +503,9 @@ describe("Document", () => {
             }),
             Embed.create({
               schema,
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -533,8 +536,9 @@ describe("Document", () => {
                   })
                 ]
               }),
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -623,8 +627,9 @@ describe("Document", () => {
             }),
             Embed.create({
               schema,
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             })
           ]
         });
@@ -648,8 +653,9 @@ describe("Document", () => {
                   })
                 ]
               }),
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             })
           ]
         });
@@ -943,8 +949,9 @@ describe("Document", () => {
                   })
                 ]
               }),
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -993,8 +1000,9 @@ describe("Document", () => {
                       })
                     ]
                   }),
-                  type: "inlineImage",
-                  value: "foo.png"
+                  value: {
+                    inlineImage: "foo.png"
+                  }
                 }),
                 Text.create({
                   value: "aaa"
@@ -1109,8 +1117,9 @@ describe("Document", () => {
                   })
                 ]
               }),
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -1173,8 +1182,9 @@ describe("Document", () => {
                       })
                     ]
                   }),
-                  type: "inlineImage",
-                  value: "foo.png"
+                  value: {
+                    inlineImage: "foo.png"
+                  }
                 }),
                 Text.create({
                   value: "bbb"
@@ -1370,8 +1380,9 @@ describe("Document", () => {
                       })
                     ]
                   }),
-                  type: "inlineImage",
-                  value: "foo.png"
+                  value: {
+                    inlineImage: "foo.png"
+                  }
                 }),
                 Text.create({
                   value: "bbb"
@@ -1587,8 +1598,9 @@ describe("Document", () => {
                       })
                     ]
                   }),
-                  type: "inlineImage",
-                  value: "foo.png"
+                  value: {
+                    inlineImage: "foo.png"
+                  }
                 }),
                 Text.create({
                   value: "ccc"
@@ -1768,8 +1780,9 @@ describe("Document", () => {
                       })
                     ]
                   }),
-                  type: "inlineImage",
-                  value: "foo.png"
+                  value: {
+                    inlineImage: "foo.png"
+                  }
                 }),
                 Text.create({
                   value: "ccc"
@@ -2112,8 +2125,9 @@ describe("Document", () => {
         const node = Document.create({
           children: [
             Embed.create({
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -2206,8 +2220,9 @@ describe("Document", () => {
               ]
             }),
             Embed.create({
-              type: "blockImage",
-              value: "foo.png"
+              value: {
+                blockImage: "foo.png"
+              }
             }),
             Block.create({
               children: [
@@ -2438,8 +2453,9 @@ describe("Document", () => {
             ]
           }),
           Embed.create({
-            type: "blockImage",
-            value: "foo.png"
+            value: {
+              blockImage: "foo.png"
+            }
           })
         ]
       });
@@ -2449,8 +2465,9 @@ describe("Document", () => {
       const expected = Document.create({
         children: [
           Embed.create({
-            type: "blockImage",
-            value: "foo.png"
+            value: {
+              blockImage: "foo.png"
+            }
           })
         ]
       });
@@ -2476,8 +2493,9 @@ describe("Document", () => {
             ]
           }),
           Embed.create({
-            type: "blockImage",
-            value: "foo.png"
+            value: {
+              blockImage: "foo.png"
+            }
           }),
           Block.create({
             children: [

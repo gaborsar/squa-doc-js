@@ -10,17 +10,19 @@ export default class Embed {
       schema = new Schema(),
       key = createKey(),
       style = Style.create(),
-      type = "",
-      value = ""
+      value = {}
     } = props;
-    return new Embed(schema, key, style, type, value);
+    return new Embed(schema, key, style, value);
   }
 
-  constructor(schema, key, style, type, value) {
+  static type(value) {
+    return Object.keys(value)[0];
+  }
+
+  constructor(schema, key, style, value) {
     this.schema = schema;
     this.key = key;
     this.style = style;
-    this.type = type;
     this.value = value;
   }
 
@@ -32,28 +34,27 @@ export default class Embed {
     return "*";
   }
 
+  get type() {
+    return Embed.type(this.value);
+  }
+
   toJSON() {
     return {
       style: this.style.toJSON(),
-      type: this.type,
       value: this.value
     };
   }
 
   setKey(key) {
-    return new Embed(this.schema, key, this.style, this.type, this.value);
+    return new Embed(this.schema, key, this.style, this.value);
   }
 
   setStyle(style) {
-    return new Embed(this.schema, this.key, style, this.type, this.value);
-  }
-
-  setType(type) {
-    return new Embed(this.schema, this.key, this.style, type, this.value);
+    return new Embed(this.schema, this.key, style, this.value);
   }
 
   setValue(value) {
-    return new Embed(this.schema, this.key, this.style, this.type, value);
+    return new Embed(this.schema, this.key, this.style, value);
   }
 
   format(attributes) {

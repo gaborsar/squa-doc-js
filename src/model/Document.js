@@ -157,14 +157,14 @@ export default class Document {
 
       node = node.setChildren(children);
     } else {
-      const embedType = Object.keys(value)[0];
+      const embedType = Embed.type(value);
 
       if (node.schema.isBlockEmbed(embedType)) {
         if (pos.offset === 0) {
           let child = Embed.create({
             schema: node.schema,
             type: embedType,
-            value: value[embedType]
+            value
           });
 
           child = child.format(attributes);

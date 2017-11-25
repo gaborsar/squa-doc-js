@@ -171,13 +171,10 @@ export default class Block {
         value
       });
     } else {
-      const embedType = Object.keys(value)[0];
-
-      if (node.schema.isInlineEmbed(embedType)) {
+      if (node.schema.isInlineEmbed(Embed.type(value))) {
         newChild = Embed.create({
           schema: node.schema,
-          type: embedType,
-          value: value[embedType]
+          value
         });
       }
     }

@@ -25,8 +25,9 @@ describe("Block", () => {
           value: "aaa"
         }),
         Embed.create({
-          type: "image",
-          value: "foo.png"
+          value: {
+            image: "foo.png"
+          }
         }),
         Text.create({
           value: "bbb"
@@ -44,8 +45,9 @@ describe("Block", () => {
           value: "aaa"
         }),
         Embed.create({
-          type: "image",
-          value: "foo.png"
+          value: {
+            image: "foo.png"
+          }
         }),
         Text.create({
           value: "bbb"
@@ -249,8 +251,9 @@ describe("Block", () => {
           children: [
             Embed.create({
               schema,
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "aaa"
@@ -270,8 +273,9 @@ describe("Block", () => {
                   })
                 ]
               }),
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "aaa"
@@ -334,8 +338,9 @@ describe("Block", () => {
             }),
             Embed.create({
               schema,
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "bbb"
@@ -358,8 +363,9 @@ describe("Block", () => {
                   })
                 ]
               }),
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "bbb"
@@ -416,8 +422,9 @@ describe("Block", () => {
             }),
             Embed.create({
               schema,
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             })
           ]
         });
@@ -437,8 +444,9 @@ describe("Block", () => {
                   })
                 ]
               }),
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             })
           ]
         });
@@ -629,8 +637,9 @@ describe("Block", () => {
                   })
                 ]
               }),
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             })
           ]
         });
@@ -1036,8 +1045,9 @@ describe("Block", () => {
         const node = Block.create({
           children: [
             Embed.create({
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "aaa"
@@ -1098,8 +1108,9 @@ describe("Block", () => {
               value: "aaa"
             }),
             Embed.create({
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             }),
             Text.create({
               value: "bbb"
@@ -1157,8 +1168,9 @@ describe("Block", () => {
               value: "aaa"
             }),
             Embed.create({
-              type: "image",
-              value: "foo.png"
+              value: {
+                image: "foo.png"
+              }
             })
           ]
         });

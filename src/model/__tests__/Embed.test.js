@@ -12,8 +12,9 @@ const schema = new Schema({
 describe("Embed", () => {
   test("length", () => {
     const node = Embed.create({
-      type: "image",
-      value: "foo.png"
+      value: {
+        image: "foo.png"
+      }
     });
 
     expect(node.length).toBe(1);
@@ -21,8 +22,9 @@ describe("Embed", () => {
 
   test("text", () => {
     const node = Embed.create({
-      type: "image",
-      value: "foo.png"
+      value: {
+        image: "foo.png"
+      }
     });
 
     expect(node.text).toBe("*");
@@ -31,8 +33,9 @@ describe("Embed", () => {
   test("format(attributes)", () => {
     const node = Embed.create({
       schema,
-      type: "image",
-      value: "foo.png"
+      value: {
+        image: "foo.png"
+      }
     });
 
     const actual = node
@@ -48,8 +51,9 @@ describe("Embed", () => {
     test("offset is not 0", () => {
       const node = Embed.create({
         schema,
-        type: "image",
-        value: "foo.png"
+        value: {
+          image: "foo.png"
+        }
       });
 
       const actual = node
@@ -64,8 +68,9 @@ describe("Embed", () => {
     test("length is not 1", () => {
       const node = Embed.create({
         schema,
-        type: "image",
-        value: "foo.png"
+        value: {
+          image: "foo.png"
+        }
       });
 
       const actual = node
@@ -80,8 +85,9 @@ describe("Embed", () => {
     test("offset is 0 and length is 1", () => {
       const node = Embed.create({
         schema,
-        type: "image",
-        value: "foo.png"
+        value: {
+          image: "foo.png"
+        }
       });
 
       const actual = node
