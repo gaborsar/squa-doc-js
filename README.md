@@ -100,6 +100,28 @@ class Position {
 ```
 
 ```
+class RangeElement {
+  node: Node;
+  offset: number;
+  length: number;
+  
+  isPartial: boolean;
+  
+  constructor(node: Node, offset: number, length: number);
+}
+```
+
+```
+class Range {
+  static create(nodes: Node, offset: number, length: number): Range;
+  
+  elements: RangeElement[];
+  
+  constructor(elements: RangeElement[]);
+}
+```
+
+```
 class Block {
   static create(props: Object): Block;
   
