@@ -49,20 +49,20 @@ export default class Block {
     return new Block(this.schema, key, this.style, this.children);
   }
 
-  regenerateKey() {
-    return this.setKey(createKey());
-  }
-
   setStyle(style) {
     return new Block(this.schema, this.key, style, this.children);
   }
 
-  clearStyle() {
-    return this.setStyle(Style.create());
-  }
-
   setChildren(children) {
     return new Block(this.schema, this.key, this.style, children);
+  }
+
+  regenerateKey() {
+    return this.setKey(createKey());
+  }
+
+  clearStyle() {
+    return this.setStyle(Style.create());
   }
 
   createPosition(offset, inclusive = false) {

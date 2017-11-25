@@ -41,16 +41,16 @@ export default class Text {
     return new Text(this.schema, key, this.style, this.value);
   }
 
-  regenerateKey() {
-    return this.setKey(createKey());
-  }
-
   setStyle(style) {
     return new Text(this.schema, this.key, style, this.value);
   }
 
   setValue(value) {
     return new Text(this.schema, this.key, this.style, value);
+  }
+
+  regenerateKey() {
+    return this.setKey(createKey());
   }
 
   format(attributes) {

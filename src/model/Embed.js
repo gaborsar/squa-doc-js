@@ -57,6 +57,10 @@ export default class Embed {
     return new Embed(this.schema, this.key, this.style, value);
   }
 
+  regenerateKey() {
+    return this.setKey(createKey());
+  }
+
   format(attributes) {
     return this.setStyle(
       this.style.format(attributes, type =>
