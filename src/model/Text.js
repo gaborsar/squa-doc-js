@@ -17,8 +17,8 @@ export default class Text {
 
   constructor(schema, key, style, value) {
     this.schema = schema;
-    this.style = style;
     this.key = key;
+    this.style = style;
     this.value = value;
   }
 

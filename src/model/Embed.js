@@ -26,16 +26,16 @@ export default class Embed {
     this.value = value;
   }
 
+  get type() {
+    return Embed.type(this.value);
+  }
+
   get length() {
     return 1;
   }
 
   get text() {
     return "*";
-  }
-
-  get type() {
-    return Embed.type(this.value);
   }
 
   toJSON() {
@@ -45,20 +45,12 @@ export default class Embed {
     };
   }
 
-  setKey(key) {
-    return new Embed(this.schema, key, this.style, this.value);
-  }
-
   setStyle(style) {
     return new Embed(this.schema, this.key, style, this.value);
   }
 
   setValue(value) {
     return new Embed(this.schema, this.key, this.style, value);
-  }
-
-  regenerateKey() {
-    return this.setKey(createKey());
   }
 
   format(attributes) {

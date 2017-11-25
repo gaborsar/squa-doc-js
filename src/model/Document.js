@@ -32,16 +32,8 @@ export default class Document {
     };
   }
 
-  setKey(key) {
-    return new Document(this.schema, key, this.children);
-  }
-
   setChildren(children) {
     return new Document(this.schema, this.key, children);
-  }
-
-  regenerateKey() {
-    return this.setKey(createKey());
   }
 
   createPosition(offset, inclusive) {
