@@ -1,6 +1,6 @@
 "use strict";
 
-import createKey from "../createKey";
+import createKey from "../utils/createKey";
 
 export default function nodeMixin(Node) {
   if (!Node.prototype.merge) {

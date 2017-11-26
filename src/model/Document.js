@@ -3,7 +3,7 @@
 import Schema from "./Schema";
 import Embed from "./Embed";
 import Block, { EOL } from "./Block";
-import createKey from "./createKey";
+import createKey from "./utils/createKey";
 import nodeMixin from "./mixins/node";
 import parentMixin from "./mixins/parent";
 

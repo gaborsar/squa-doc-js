@@ -2,7 +2,7 @@
 
 import Schema from "./Schema";
 import Style from "./Style";
-import createKey from "./createKey";
+import createKey from "./utils/createKey";
 import nodeMixin from "./mixins/node";
 import leafMixin from "./mixins/leaf";
 import formatMixin from "./mixins/format";

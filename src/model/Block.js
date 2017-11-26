@@ -4,7 +4,7 @@ import Schema from "./Schema";
 import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
-import createKey from "./createKey";
+import createKey from "./utils/createKey";
 import nodeMixin from "./mixins/node";
 import parentMixin from "./mixins/parent";
 import formatMixin from "./mixins/format";
