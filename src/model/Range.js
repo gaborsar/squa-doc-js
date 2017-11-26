@@ -3,8 +3,12 @@
 import RangeElement from "./RangeElement";
 
 export default class Range {
-  static create(nodes, offset, length) {
+  /** @TODO use Iterator */
+  static create(nodes, startOffset, endOffset) {
     const elements = [];
+
+    let offset = startOffset;
+    let length = endOffset - startOffset;
     let index = 0;
 
     while (index < nodes.length) {
@@ -19,7 +23,7 @@ export default class Range {
     while (index < nodes.length) {
       const node = nodes[index];
       const commonLength = Math.min(node.length - offset, length);
-      const element = new RangeElement(node, offset, commonLength);
+      const element = new RangeElement(node, offset, offset + commonLength);
       elements.push(element);
       if (length === commonLength) {
         break;

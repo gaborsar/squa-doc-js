@@ -1,13 +1,13 @@
 "use strict";
 
 export default class RangeElement {
-  constructor(node, offset, length) {
+  constructor(node, startOffset, endOffset) {
     this.node = node;
-    this.offset = offset;
-    this.length = length;
+    this.startOffset = startOffset;
+    this.endOffset = endOffset;
   }
 
   get isPartial() {
-    return this.offset > 0 || this.length < this.node.length;
+    return this.startOffset > 0 || this.endOffset < this.node.length;
   }
 }
