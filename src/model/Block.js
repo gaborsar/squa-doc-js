@@ -5,6 +5,7 @@ import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
 import Position from "./Position";
+import Range from "./Range";
 import createKey from "./createKey";
 
 export const EOL = "\n";
@@ -67,6 +68,10 @@ export default class Block {
 
   createPosition(offset, inclusive = false) {
     return Position.create(this.children, offset, inclusive);
+  }
+
+  createRange(startOffset, endOffset) {
+    return Range.create(this.children, startOffset, endOffset);
   }
 
   format(attributes) {
