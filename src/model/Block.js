@@ -154,10 +154,12 @@ export default class Block {
         if (position.offset === 0) {
           node = node.insertBefore(newChild, child);
         } else {
-          node = node
-            .insertBefore(child.slice(0, position.offset), child)
-            .insertBefore(newChild, child)
-            .replaceChild(child.slice(position.offset, child.length), child);
+          if (child instanceof Text) {
+            node = node
+              .insertBefore(child.slice(0, position.offset), child)
+              .insertBefore(newChild, child)
+              .replaceChild(child.slice(position.offset, child.length), child);
+          }
         }
       } else {
         node = node.appendChild(newChild);
@@ -178,16 +180,20 @@ export default class Block {
     range.elements.forEach(element => {
       const child = element.node;
 
-      if (child instanceof Text) {
-        if (element.startOffset > 0) {
-          node = node.insertBefore(child.slice(0, element.startOffset), child);
-        }
-
-        if (element.endOffset < child.length) {
-          node = node.insertBefore(
-            child.slice(element.endOffset, child.length),
-            child
-          );
+      if (element.isPartial) {
+        if (child instanceof Text) {
+          if (element.startOffset > 0) {
+            node = node.insertBefore(
+              child.slice(0, element.startOffset),
+              child
+            );
+          }
+          if (element.endOffset < child.length) {
+            node = node.insertBefore(
+              child.slice(element.endOffset, child.length),
+              child
+            );
+          }
         }
       }
 
