@@ -47,58 +47,20 @@ export default class Document {
   }
 
   formatAt(offset, length, attributes) {
-    const node = this;
+    let node = this;
 
-    let fragment = [];
+    const range = node.createRange(offset, offset + length);
 
-    const startPos = node.createPosition(offset);
+    range.elements.forEach(element => {
+      const child = element.node;
 
-    if (!startPos) {
-      return node;
-    }
-
-    const endPos = node.createPosition(offset + length, true);
-
-    if (!endPos) {
-      return node;
-    }
-
-    if (startPos.index === endPos.index) {
-      fragment.push(
-        startPos.node.formatAt(
-          startPos.offset,
-          endPos.offset - startPos.offset,
-          attributes
-        )
+      node = node.replaceChild(
+        child.formatAt(element.startOffset, element.length, attributes),
+        child
       );
-    } else {
-      if (startPos.offset < startPos.node.length) {
-        fragment.push(
-          startPos.node.formatAt(
-            startPos.offset,
-            startPos.node.length - startPos.offset,
-            attributes
-          )
-        );
-      } else {
-        fragment.push(startPos.node);
-      }
+    });
 
-      node.children.slice(startPos.index + 1, endPos.index).forEach(child => {
-        fragment.push(child.formatAt(0, child.length, attributes));
-      });
-
-      fragment.push(endPos.node.formatAt(0, endPos.offset, attributes));
-    }
-
-    fragment = fragment.map(child => child.normalize());
-
-    const children = node.children
-      .slice(0, startPos.index)
-      .concat(fragment)
-      .concat(node.children.slice(endPos.index + 1));
-
-    return node.setChildren(children);
+    return node;
   }
 
   insertAt(offset, value, attributes) {
