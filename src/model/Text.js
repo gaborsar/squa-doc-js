@@ -25,7 +25,7 @@ export default class Text {
     this.value = value;
   }
 
-  merge(props = {}) {
+  merge(props) {
     return Text.create(
       Object.assign(
         {
@@ -60,7 +60,7 @@ export default class Text {
     );
   }
 
-  slice(startOffset = 0, endOffset = Infinity) {
+  slice(startOffset, endOffset) {
     return this.regenerateKey().setValue(
       this.value.slice(startOffset, endOffset)
     );

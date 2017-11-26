@@ -19,7 +19,7 @@ export default class Document {
     this.children = children;
   }
 
-  merge(props = {}) {
+  merge(props) {
     return Document.create(
       Object.assign(
         {
@@ -53,13 +53,13 @@ export default class Document {
 
     const startPos = node.createPosition(offset);
 
-    if (!startPos.node) {
+    if (!startPos) {
       return node;
     }
 
     const endPos = node.createPosition(offset + length, true);
 
-    if (!endPos.node) {
+    if (!endPos) {
       return node;
     }
 
@@ -106,7 +106,7 @@ export default class Document {
 
     const pos = node.createPosition(offset);
 
-    if (!pos.node) {
+    if (!pos) {
       return node;
     }
 
@@ -196,13 +196,13 @@ export default class Document {
 
     const startPos = node.createPosition(offset);
 
-    if (!startPos.node) {
+    if (!startPos) {
       return node;
     }
 
     const endPos = node.createPosition(offset + length);
 
-    if (!endPos.node) {
+    if (!endPos) {
       return node;
     }
 

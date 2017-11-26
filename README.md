@@ -2,9 +2,6 @@
 
 ## TODO
 
- * `Iterator`
- * Use `Iterator` in `Position`.
- * Use `Iterator` in `Range`.
  * Use `Range` in `Document`.
  * `getFormat(document, offset, length)`
  * `getBlockFormat(document, offset, length)`

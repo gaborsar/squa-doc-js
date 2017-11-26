@@ -23,7 +23,7 @@ export default class Style {
     return style;
   }
 
-  constructor(marks = []) {
+  constructor(marks) {
     this.marks = marks;
   }
 

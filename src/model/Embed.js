@@ -29,7 +29,7 @@ export default class Embed {
     this.value = value;
   }
 
-  merge(props = {}) {
+  merge(props) {
     return Embed.create(
       Object.assign(
         {

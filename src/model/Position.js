@@ -2,17 +2,17 @@
 
 export default class Position {
   static create(nodes, offset, inclusive = false) {
-    for (let i = 0, l = nodes.length; i < l; i++) {
-      const node = nodes[i];
+    for (let index = 0, l = nodes.length; index < l; index++) {
+      const node = nodes[index];
 
       if (offset < node.length || (inclusive && offset === node.length)) {
-        return new Position(node, i, offset);
+        return new Position(node, index, offset);
       }
 
       offset -= node.length;
     }
 
-    return new Position(null, nodes.length, 0);
+    return null;
   }
 
   constructor(node, index, offset) {

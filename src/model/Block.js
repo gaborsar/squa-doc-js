@@ -29,7 +29,7 @@ export default class Block {
     this.children = children;
   }
 
-  merge(props = {}) {
+  merge(props) {
     return Block.create(
       Object.assign(
         {
@@ -146,9 +146,9 @@ export default class Block {
     if (newChild) {
       newChild = newChild.format(attributes);
 
-      const position = node.createPosition(offset, false);
+      const position = node.createPosition(offset);
 
-      if (position.node) {
+      if (position) {
         const child = position.node;
 
         if (position.offset === 0) {
