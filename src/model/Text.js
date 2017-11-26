@@ -3,6 +3,9 @@
 import Schema from "./Schema";
 import Style from "./Style";
 import createKey from "./createKey";
+import nodeMixin from "./mixins/node";
+import leafMixin from "./mixins/leaf";
+import formatMixin from "./mixins/format";
 
 export default class Text {
   static create(props = {}) {
@@ -22,6 +25,20 @@ export default class Text {
     this.value = value;
   }
 
+  merge(props = {}) {
+    return Text.create(
+      Object.assign(
+        {
+          schema: this.schema,
+          key: this.key,
+          style: this.style,
+          value: this.value
+        },
+        props
+      )
+    );
+  }
+
   get length() {
     return this.value.length;
   }
@@ -35,22 +52,6 @@ export default class Text {
       style: this.style.toJSON(),
       value: this.value
     };
-  }
-
-  setKey(key) {
-    return new Text(this.schema, key, this.style, this.value);
-  }
-
-  setStyle(style) {
-    return new Text(this.schema, this.key, style, this.value);
-  }
-
-  setValue(value) {
-    return new Text(this.schema, this.key, this.style, value);
-  }
-
-  regenerateKey() {
-    return this.setKey(createKey());
   }
 
   format(attributes) {
@@ -69,3 +70,7 @@ export default class Text {
     return other.setValue(this.value + other.value);
   }
 }
+
+nodeMixin(Text);
+leafMixin(Text);
+formatMixin(Text);

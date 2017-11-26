@@ -4,7 +4,8 @@ import Schema from "./Schema";
 import Embed from "./Embed";
 import Block, { EOL } from "./Block";
 import createKey from "./createKey";
-import Position from "./Position";
+import nodeMixin from "./mixins/node";
+import parentMixin from "./mixins/parent";
 
 export default class Document {
   static create(props = {}) {
@@ -16,6 +17,19 @@ export default class Document {
     this.schema = schema;
     this.key = key;
     this.children = children;
+  }
+
+  merge(props = {}) {
+    return Document.create(
+      Object.assign(
+        {
+          schema: this.schema,
+          key: this.key,
+          children: this.children
+        },
+        props
+      )
+    );
   }
 
   get length() {
@@ -30,14 +44,6 @@ export default class Document {
     return {
       children: this.children.map(child => child.toJSON())
     };
-  }
-
-  setChildren(children) {
-    return new Document(this.schema, this.key, children);
-  }
-
-  createPosition(offset, inclusive) {
-    return Position.create(this.children, offset, inclusive);
   }
 
   formatAt(offset, length, attributes) {
@@ -244,3 +250,6 @@ export default class Document {
     return node.setChildren(children);
   }
 }
+
+nodeMixin(Document);
+parentMixin(Document);

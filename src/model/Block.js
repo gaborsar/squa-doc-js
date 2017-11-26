@@ -4,9 +4,10 @@ import Schema from "./Schema";
 import Style from "./Style";
 import Text from "./Text";
 import Embed from "./Embed";
-import Position from "./Position";
-import Range from "./Range";
 import createKey from "./createKey";
+import nodeMixin from "./mixins/node";
+import parentMixin from "./mixins/parent";
+import formatMixin from "./mixins/format";
 
 export const EOL = "\n";
 
@@ -28,6 +29,20 @@ export default class Block {
     this.children = children;
   }
 
+  merge(props = {}) {
+    return Block.create(
+      Object.assign(
+        {
+          schema: this.schema,
+          key: this.key,
+          style: this.style,
+          children: this.children
+        },
+        props
+      )
+    );
+  }
+
   get length() {
     return this.children.reduce(
       (length, child) => length + child.length,
@@ -44,34 +59,6 @@ export default class Block {
       style: this.style.toJSON(),
       children: this.children.map(child => child.toJSON())
     };
-  }
-
-  setKey(key) {
-    return new Block(this.schema, key, this.style, this.children);
-  }
-
-  setStyle(style) {
-    return new Block(this.schema, this.key, style, this.children);
-  }
-
-  setChildren(children) {
-    return new Block(this.schema, this.key, this.style, children);
-  }
-
-  regenerateKey() {
-    return this.setKey(createKey());
-  }
-
-  clearStyle() {
-    return this.setStyle(Style.create());
-  }
-
-  createPosition(offset, inclusive = false) {
-    return Position.create(this.children, offset, inclusive);
-  }
-
-  createRange(startOffset, endOffset) {
-    return Range.create(this.children, startOffset, endOffset);
   }
 
   format(attributes) {
@@ -221,36 +208,32 @@ export default class Block {
   }
 
   deleteAt(offset, length) {
-    const node = this;
+    const startOffset = offset;
+    const endOffset = offset + length;
 
-    const fragment = [];
+    let node = this;
 
-    const startPos = node.createPosition(offset);
+    const range = node.createRange(startOffset, endOffset);
 
-    if (!startPos.node) {
-      return node;
-    }
+    range.elements.forEach(element => {
+      const child = element.node;
 
-    const endPos = node.createPosition(offset + length, true);
+      if (child instanceof Text) {
+        if (element.startOffset > 0) {
+          node = node.insertBefore(child.slice(0, element.startOffset), child);
+        }
+        if (element.endOffset < child.length) {
+          node = node.insertBefore(
+            child.slice(element.endOffset, child.length),
+            child
+          );
+        }
+      }
 
-    if (!endPos.node) {
-      return node;
-    }
+      node = node.removeChild(child);
+    });
 
-    if (startPos.offset > 0) {
-      fragment.push(startPos.node.slice(0, startPos.offset));
-    }
-
-    if (endPos.offset < endPos.node.length) {
-      fragment.push(endPos.node.slice(endPos.offset, Infinity));
-    }
-
-    const children = node.children
-      .slice(0, startPos.index)
-      .concat(fragment)
-      .concat(node.children.slice(endPos.index + 1));
-
-    return node.setChildren(children);
+    return node;
   }
 
   normalize() {
@@ -301,3 +284,7 @@ export default class Block {
     return other.setChildren(this.children.concat(other.children));
   }
 }
+
+nodeMixin(Block);
+parentMixin(Block);
+formatMixin(Block);

@@ -3,6 +3,9 @@
 import Schema from "./Schema";
 import Style from "./Style";
 import createKey from "./createKey";
+import nodeMixin from "./mixins/node";
+import leafMixin from "./mixins/leaf";
+import formatMixin from "./mixins/format";
 
 export default class Embed {
   static create(props = {}) {
@@ -26,6 +29,20 @@ export default class Embed {
     this.value = value;
   }
 
+  merge(props = {}) {
+    return Embed.create(
+      Object.assign(
+        {
+          schema: this.schema,
+          key: this.key,
+          style: this.style,
+          value: this.value
+        },
+        props
+      )
+    );
+  }
+
   get type() {
     return Embed.type(this.value);
   }
@@ -43,14 +60,6 @@ export default class Embed {
       style: this.style.toJSON(),
       value: this.value
     };
-  }
-
-  setStyle(style) {
-    return new Embed(this.schema, this.key, style, this.value);
-  }
-
-  setValue(value) {
-    return new Embed(this.schema, this.key, this.style, value);
   }
 
   format(attributes) {
@@ -75,3 +84,7 @@ export default class Embed {
     return this;
   }
 }
+
+nodeMixin(Embed);
+leafMixin(Embed);
+formatMixin(Embed);
