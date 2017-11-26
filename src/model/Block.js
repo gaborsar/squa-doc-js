@@ -127,7 +127,7 @@ export default class Block {
   }
 
   insertAt(offset, value, attributes) {
-    const node = this;
+    let node = this;
 
     let newChild;
 
@@ -136,49 +136,35 @@ export default class Block {
         schema: node.schema,
         value
       });
-    } else {
-      if (node.schema.isInlineEmbed(Embed.type(value))) {
-        newChild = Embed.create({
-          schema: node.schema,
-          value
-        });
-      }
+    } else if (node.schema.isInlineEmbed(Embed.type(value))) {
+      newChild = Embed.create({
+        schema: node.schema,
+        value
+      });
     }
 
-    if (!newChild) {
-      return node;
-    }
+    if (newChild) {
+      newChild = newChild.format(attributes);
 
-    newChild = newChild.format(attributes);
+      const position = node.createPosition(offset, false);
 
-    const fragment = [];
+      if (position.node) {
+        const child = position.node;
 
-    const pos = node.createPosition(offset);
-
-    if (pos.node && pos.offset > 0) {
-      if (pos.offset === pos.node.length) {
-        fragment.push(pos.node);
+        if (position.offset === 0) {
+          node = node.insertBefore(newChild, child);
+        } else {
+          node = node
+            .insertBefore(child.slice(0, position.offset), child)
+            .insertBefore(newChild, child)
+            .replaceChild(child.slice(position.offset, child.length), child);
+        }
       } else {
-        fragment.push(pos.node.slice(0, pos.offset));
+        node = node.appendChild(newChild);
       }
     }
 
-    fragment.push(newChild);
-
-    if (pos.node && pos.offset < pos.node.length) {
-      if (pos.offset === 0) {
-        fragment.push(pos.node);
-      } else {
-        fragment.push(pos.node.slice(pos.offset));
-      }
-    }
-
-    const children = node.children
-      .slice(0, pos.index)
-      .concat(fragment)
-      .concat(node.children.slice(pos.index + 1));
-
-    return node.setChildren(children);
+    return node;
   }
 
   deleteAt(offset, length) {
