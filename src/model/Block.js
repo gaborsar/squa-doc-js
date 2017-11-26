@@ -68,88 +68,62 @@ export default class Block {
   }
 
   formatAt(offset, length, attributes) {
-    const node = this;
+    const startOffset = offset;
+    const endOffset = offset + length;
 
-    if (offset + length === node.length) {
-      return node
-        .format(attributes)
-        .formatAt(offset, length - EOL.length, attributes);
+    let node = this;
+
+    if (endOffset === node.length) {
+      node = node.format(attributes);
     }
 
-    const fragment = [];
+    const range = node.createRange(startOffset, endOffset);
 
-    const startPos = node.createPosition(offset);
+    range.elements.forEach(element => {
+      const child = element.node;
 
-    if (!startPos.node) {
-      return node;
-    }
-
-    const endPos = node.createPosition(offset + length, true);
-
-    if (!endPos.node) {
-      return node;
-    }
-
-    if (startPos.index === endPos.index) {
-      if (startPos.offset === 0) {
-        if (endPos.offset < startPos.node.length) {
-          fragment.push(
-            startPos.node.slice(0, endPos.offset).format(attributes),
-            startPos.node.slice(endPos.offset)
-          );
-        } else {
-          fragment.push(startPos.node.format(attributes));
+      if (element.isPartial) {
+        if (child instanceof Text) {
+          if (element.startOffset === 0) {
+            node = node
+              .insertBefore(
+                child.slice(0, element.endOffset).format(attributes),
+                child
+              )
+              .replaceChild(
+                child.slice(element.endOffset, child.length),
+                child
+              );
+          } else if (element.endOffset === child.length) {
+            node = node
+              .insertBefore(child.slice(0, element.startOffset), child)
+              .replaceChild(
+                child
+                  .slice(element.startOffset, child.length)
+                  .format(attributes),
+                child
+              );
+          } else {
+            node = node
+              .insertBefore(child.slice(0, element.startOffset), child)
+              .insertBefore(
+                child
+                  .slice(element.startOffset, element.endOffset)
+                  .format(attributes),
+                child
+              )
+              .replaceChild(
+                child.slice(element.endOffset, child.length),
+                child
+              );
+          }
         }
       } else {
-        if (endPos.offset < startPos.node.length) {
-          fragment.push(
-            startPos.node.slice(0, startPos.offset),
-            startPos.node
-              .slice(startPos.offset, endPos.offset)
-              .format(attributes),
-            startPos.node.slice(endPos.offset)
-          );
-        } else {
-          fragment.push(
-            startPos.node.slice(0, startPos.offset),
-            startPos.node.slice(startPos.offset).format(attributes)
-          );
-        }
+        node = node.replaceChild(child.format(attributes), child);
       }
-    } else {
-      if (startPos.offset === 0) {
-        fragment.push(startPos.node.format(attributes));
-      } else if (startPos.offset < startPos.node.length) {
-        fragment.push(
-          startPos.node.slice(0, startPos.offset),
-          startPos.node.slice(startPos.offset).format(attributes)
-        );
-      } else {
-        fragment.push(startPos.node);
-      }
+    });
 
-      node.children.slice(startPos.index + 1, endPos.index).forEach(child => {
-        fragment.push(child.format(attributes));
-      });
-
-      if (endPos.offset === 0) {
-        fragment.push(endPos.node);
-      } else if (endPos.offset < endPos.node.length) {
-        fragment.push(
-          endPos.node.slice(0, endPos.offset).format(attributes),
-          endPos.node.slice(endPos.offset)
-        );
-      } else {
-        fragment.push(endPos.node.format(attributes));
-      }
-    }
-
-    const children = node.children
-      .slice(0, startPos.index)
-      .concat(fragment)
-      .concat(node.children.slice(endPos.index + 1));
-
-    return node.setChildren(children);
+    return node;
   }
 
   insertAt(offset, value, attributes) {
@@ -222,6 +196,7 @@ export default class Block {
         if (element.startOffset > 0) {
           node = node.insertBefore(child.slice(0, element.startOffset), child);
         }
+
         if (element.endOffset < child.length) {
           node = node.insertBefore(
             child.slice(element.endOffset, child.length),
