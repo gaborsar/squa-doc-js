@@ -68,16 +68,13 @@ export default class Block {
   }
 
   formatAt(offset, length, attributes) {
-    const startOffset = offset;
-    const endOffset = offset + length;
-
     let node = this;
 
-    if (endOffset === node.length) {
+    if (offset + length === node.length) {
       node = node.format(attributes);
     }
 
-    const range = node.createRange(startOffset, endOffset);
+    const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(element => {
       const child = element.node;
@@ -170,12 +167,9 @@ export default class Block {
   }
 
   deleteAt(offset, length) {
-    const startOffset = offset;
-    const endOffset = offset + length;
-
     let node = this;
 
-    const range = node.createRange(startOffset, endOffset);
+    const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(element => {
       const child = element.node;
