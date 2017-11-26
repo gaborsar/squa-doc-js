@@ -1,7 +1,7 @@
 "use strict";
 
 import Position from "../Position";
-import Range from "../Range";
+import RangeBuilder from "../RangeBuilder";
 
 export default function parentMixin(Node) {
   Node.prototype.createPosition = function(offset, inclusive = false) {
@@ -9,7 +9,10 @@ export default function parentMixin(Node) {
   };
 
   Node.prototype.createRange = function(startOffset, endOffset) {
-    return Range.create(this.children, startOffset, endOffset);
+    return new RangeBuilder(this.children)
+      .skip(startOffset)
+      .keep(endOffset - startOffset)
+      .build();
   };
 
   Node.prototype.setChildren = function(children) {

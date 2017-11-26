@@ -7,7 +7,11 @@ export default class RangeElement {
     this.endOffset = endOffset;
   }
 
+  get length() {
+    return this.endOffset - this.startOffset;
+  }
+
   get isPartial() {
-    return this.startOffset > 0 || this.endOffset < this.node.length;
+    return this.length !== this.node.length;
   }
 }
