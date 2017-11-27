@@ -14,4 +14,12 @@ export default function formatMixin(Node) {
   Node.prototype.clearStyle = function() {
     return this.setStyle(Style.create());
   };
+
+  Node.prototype.hasMark = function(type) {
+    return this.style.hasMark(type);
+  };
+
+  Node.prototype.getMark = function(type) {
+    return this.style.getMark(type);
+  };
 }

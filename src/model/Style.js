@@ -30,6 +30,18 @@ export default class Style {
     };
   }
 
+  equals(other) {
+    if (this.marks.length !== other.marks.length) {
+      return false;
+    }
+    for (let i = 0, l = this.marks.length; i < l; i++) {
+      if (this.marks[i] !== other.marks[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   update(attributes, predicate) {
     let marks = this.marks;
     for (const [type, value] of Object.entries(attributes)) {
@@ -44,15 +56,12 @@ export default class Style {
     return Style.create({ marks });
   }
 
-  equals(other) {
-    if (this.marks.length !== other.marks.length) {
-      return false;
-    }
-    for (let i = 0, l = this.marks.length; i < l; i++) {
-      if (this.marks[i] !== other.marks[i]) {
-        return false;
-      }
-    }
-    return true;
+  hasMark(type) {
+    return this.marks.some(mark => mark.type === type);
+  }
+
+  getMark(type) {
+    const mark = this.marks.find(mark => mark.type === type);
+    return mark ? mark.value : null;
   }
 }
