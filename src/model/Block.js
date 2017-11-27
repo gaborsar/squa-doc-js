@@ -2,16 +2,16 @@
 
 import Schema from "./Schema";
 import Style from "./Style";
+import Node from "./Node";
 import Text from "./Text";
 import Embed from "./Embed";
 import createKey from "./utils/createKey";
-import nodeMixin from "./mixins/node";
-import parentMixin from "./mixins/parent";
-import formatMixin from "./mixins/format";
+import ParentMixin from "./mixins/Parent";
+import FormatMixin from "./mixins/Format";
 
 export const EOL = "\n";
 
-export default class Block {
+export default class Block extends FormatMixin(ParentMixin(Node)) {
   static create(props = {}) {
     const {
       schema = new Schema(),
@@ -23,8 +23,7 @@ export default class Block {
   }
 
   constructor(schema, key, style, children) {
-    this.schema = schema;
-    this.key = key;
+    super(schema, key);
     this.style = style;
     this.children = children;
   }
@@ -215,7 +214,3 @@ export default class Block {
     return other.setChildren(this.children.concat(other.children));
   }
 }
-
-nodeMixin(Block);
-parentMixin(Block);
-formatMixin(Block);

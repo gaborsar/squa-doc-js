@@ -2,20 +2,19 @@
 
 import Schema from "./Schema";
 import Embed from "./Embed";
+import Node from "./Node";
 import Block, { EOL } from "./Block";
 import createKey from "./utils/createKey";
-import nodeMixin from "./mixins/node";
-import parentMixin from "./mixins/parent";
+import ParentMixin from "./mixins/Parent";
 
-export default class Document {
+export default class Document extends ParentMixin(Node) {
   static create(props = {}) {
     const { schema = new Schema(), key = createKey(), children = [] } = props;
     return new Document(schema, key, children);
   }
 
   constructor(schema, key, children) {
-    this.schema = schema;
-    this.key = key;
+    super(schema, key);
     this.children = children;
   }
 
@@ -210,6 +209,3 @@ export default class Document {
     return node.setChildren(children);
   }
 }
-
-nodeMixin(Document);
-parentMixin(Document);
