@@ -192,22 +192,17 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     return node;
   }
 
-  // @todo (gabor) rewrite without deleteAt
-
   slice(startOffset, endOffset) {
-    let node = this;
+    const range = this.createRange(startOffset, endOffset);
 
-    node = node.regenerateKey();
+    const children = range.elements.map(
+      el =>
+        el.isPartial && el.node instanceof Text
+          ? el.node.slice(el.startOffset, el.endOffset)
+          : el.node
+    );
 
-    if (endOffset < node.length - EOL.length) {
-      node = node.deleteAt(endOffset, node.length - EOL.length);
-    }
-
-    if (startOffset > 0) {
-      node = node.deleteAt(0, startOffset);
-    }
-
-    return node;
+    return this.regenerateKey().setChildren(children);
   }
 
   concat(other) {
