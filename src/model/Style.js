@@ -10,7 +10,7 @@ export default class Style {
 
     const style = new Style(marks);
 
-    for (let i = 0, l = styles.length; i < l; i++) {
+    for (let i = 0; i < styles.length; i++) {
       const pooledStyle = styles[i];
 
       if (pooledStyle.equals(style)) {
