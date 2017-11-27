@@ -1,5 +1,3 @@
-"use strict";
-
 import Style from "../Style";
 
 const FormatMixin = superclass =>

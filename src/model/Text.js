@@ -1,5 +1,3 @@
-"use strict";
-
 import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";

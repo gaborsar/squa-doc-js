@@ -1,5 +1,3 @@
-"use strict";
-
 import Mark from "./Mark";
 
 const pool = [];

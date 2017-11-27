@@ -1,5 +1,3 @@
-"use strict";
-
 import Schema from "../Schema";
 import Text from "../Text";
 

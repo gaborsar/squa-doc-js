@@ -1,5 +1,3 @@
-"use strict";
-
 import Text from "../Text";
 import RangeElement from "../RangeElement";
 import Range from "../Range";

@@ -1,5 +1,3 @@
-"use strict";
-
 import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
@@ -10,8 +8,6 @@ import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
 
 export const EOL = "\n";
-
-const normalize = Symbol("normalize");
 
 export default class Block extends FormatMixin(ParentMixin(Node)) {
   static create(props = {}) {
@@ -98,7 +94,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       }
     });
 
-    return node[normalize]();
+    return node._normalize();
   }
 
   // @todo (gabor) clean
@@ -141,7 +137,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       node = node.appendChild(child);
     }
 
-    return node[normalize]();
+    return node._normalize();
   }
 
   deleteAt(startOffset, endOffset) {
@@ -162,7 +158,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       node = node.removeChild(el.node);
     });
 
-    return node[normalize]();
+    return node._normalize();
   }
 
   slice(startOffset, endOffset) {
@@ -179,10 +175,10 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
   }
 
   concat(other) {
-    return other.setChildren(this.children.concat(other.children))[normalize]();
+    return other.setChildren(this.children.concat(other.children))._normalize();
   }
 
-  [normalize]() {
+  _normalize() {
     let node = this;
 
     const children = [];

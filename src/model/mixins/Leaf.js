@@ -1,5 +1,3 @@
-"use strict";
-
 const LeafMixin = superclass =>
   class extends superclass {
     setValue(value) {

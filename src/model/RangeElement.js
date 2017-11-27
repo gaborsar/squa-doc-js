@@ -1,5 +1,3 @@
-"use strict";
-
 export default class RangeElement {
   constructor(node, startOffset, endOffset) {
     this.node = node;

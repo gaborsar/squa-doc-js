@@ -1,5 +1,3 @@
-"use strict";
-
 import Position from "../Position";
 import RangeBuilder from "../RangeBuilder";
 
