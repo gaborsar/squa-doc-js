@@ -52,11 +52,9 @@ export default class Document {
     const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(element => {
-      const child = element.node;
-
       node = node.replaceChild(
-        child.formatAt(element.startOffset, element.length, attributes),
-        child
+        element.node.formatAt(element.startOffset, element.length, attributes),
+        element.node
       );
     });
 
