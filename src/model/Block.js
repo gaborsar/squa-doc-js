@@ -78,51 +78,29 @@ export default class Block {
 
     const range = node.createRange(offset, offset + length);
 
-    range.elements.forEach(element => {
-      if (element.isPartial) {
-        if (element.node instanceof Text) {
-          if (element.startOffset === 0) {
-            node = node
-              .insertBefore(
-                element.node.slice(0, element.endOffset).format(attributes),
-                element.node
-              )
-              .replaceChild(
-                element.node.slice(element.endOffset, element.node.length),
-                element.node
-              );
-          } else if (element.endOffset === element.node.length) {
-            node = node
-              .insertBefore(
-                element.node.slice(0, element.startOffset),
-                element.node
-              )
-              .replaceChild(
-                element.node
-                  .slice(element.startOffset, element.node.length)
-                  .format(attributes),
-                element.node
-              );
-          } else {
-            node = node
-              .insertBefore(
-                element.node.slice(0, element.startOffset),
-                element.node
-              )
-              .insertBefore(
-                element.node
-                  .slice(element.startOffset, element.endOffset)
-                  .format(attributes),
-                element.node
-              )
-              .replaceChild(
-                element.node.slice(element.endOffset, element.node.length),
-                element.node
-              );
+    range.elements.forEach(el => {
+      if (el.isPartial) {
+        if (el.node instanceof Text) {
+          if (el.startOffset > 0) {
+            node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
           }
+
+          node = node.insertBefore(
+            el.node.slice(el.startOffset, el.endOffset).format(attributes),
+            el.node
+          );
+
+          if (el.endOffset < el.node.length) {
+            node = node.insertBefore(
+              el.node.slice(el.endOffset, el.node.length),
+              el.node
+            );
+          }
+
+          node = node.removeChild(el.node);
         }
       } else {
-        node = node.replaceChild(element.node.format(attributes), element.node);
+        node = node.replaceChild(el.node.format(attributes), el.node);
       }
     });
 
