@@ -55,11 +55,9 @@ export default class Text {
   }
 
   format(attributes) {
-    const style = this.style.format(attributes, type =>
-      this.schema.isInlineMark(type)
+    return this.setStyle(
+      this.style.update(attributes, type => this.schema.isInlineMark(type))
     );
-
-    return this.setStyle(style);
   }
 
   slice(startOffset, endOffset) {

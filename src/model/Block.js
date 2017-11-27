@@ -62,11 +62,9 @@ export default class Block {
   }
 
   format(attributes) {
-    const style = this.style.format(attributes, type =>
-      this.schema.isBlockMark(type)
+    return this.setStyle(
+      this.style.update(attributes, type => this.schema.isBlockMark(type))
     );
-
-    return this.setStyle(style);
   }
 
   formatAt(offset, length, attributes) {

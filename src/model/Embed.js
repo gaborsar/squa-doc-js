@@ -63,21 +63,18 @@ export default class Embed {
   }
 
   format(attributes) {
-    const style = this.style.format(attributes, type =>
-      this.schema.isEmbedMark(this.type, type)
+    return this.setStyle(
+      this.style.update(attributes, type =>
+        this.schema.isEmbedMark(this.type, type)
+      )
     );
-
-    return this.setStyle(style);
   }
 
   formatAt(offset, length, attributes) {
-    let node = this;
-
     if (offset === 0 && length === 1) {
-      node = node.format(attributes);
+      return this.format(attributes);
     }
-
-    return node;
+    return this;
   }
 
   normalize() {

@@ -58,7 +58,7 @@ describe("Block", () => {
     expect(node.text).toBe("aaa*bbb\n");
   });
 
-  test("format(attributes)", () => {
+  test("update(attributes)", () => {
     const node = Block.create({ schema });
 
     const actual = node
@@ -71,7 +71,7 @@ describe("Block", () => {
   });
 
   describe("formatAt(offset, length, attributes)", () => {
-    test("format the left slice of a child", () => {
+    test("update the left slice of a child", () => {
       const node = Block.create({
         children: [
           Text.create({
@@ -116,7 +116,7 @@ describe("Block", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format a middle slice of a child", () => {
+    test("update a middle slice of a child", () => {
       const node = Block.create({
         children: [
           Text.create({
@@ -164,7 +164,7 @@ describe("Block", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format the right slice of a child", () => {
+    test("update the right slice of a child", () => {
       const node = Block.create({
         children: [
           Text.create({
@@ -209,7 +209,7 @@ describe("Block", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    describe("format the first child", () => {
+    describe("update the first child", () => {
       test("the first child is a text node", () => {
         const node = Block.create({
           children: [
@@ -287,7 +287,7 @@ describe("Block", () => {
       });
     });
 
-    describe("format a child", () => {
+    describe("update a child", () => {
       test("the child is a text node", () => {
         const node = Block.create({
           children: [
@@ -377,7 +377,7 @@ describe("Block", () => {
       });
     });
 
-    describe("format the last child", () => {
+    describe("update the last child", () => {
       test("the child is a text node", () => {
         const node = Block.create({
           children: [
@@ -455,7 +455,7 @@ describe("Block", () => {
       });
     });
 
-    test("format the right slice of the first child, a child, and the left slice of the last child", () => {
+    test("update the right slice of the first child, a child, and the left slice of the last child", () => {
       const node = Block.create({
         children: [
           Text.create({
@@ -519,7 +519,7 @@ describe("Block", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format every children", () => {
+    test("update every children", () => {
       const node = Block.create({
         children: [
           Text.create({
@@ -577,7 +577,7 @@ describe("Block", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format the EOL", () => {
+    test("update the EOL", () => {
       const node = Block.create({ schema });
 
       const actual = node.formatAt(0, 1, { align: "left" });

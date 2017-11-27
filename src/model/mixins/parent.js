@@ -24,74 +24,54 @@ export default function parentMixin(Node) {
   };
 
   Node.prototype.insertBefore = function(newChild, referenceChild) {
-    let node = this;
-
-    const index = node.children.indexOf(referenceChild);
-
-    if (index !== -1) {
-      const children = node.children
+    const index = this.children.indexOf(referenceChild);
+    if (index === -1) {
+      return this;
+    }
+    return this.setChildren(
+      this.children
         .slice(0, index)
         .concat(newChild)
-        .concat(node.children.slice(index));
-
-      node = node.setChildren(children);
-    } else {
-      node = node.appendChild(newChild);
-    }
-
-    return node;
+        .concat(this.children.slice(index))
+    );
   };
 
   Node.prototype.removeChild = function(child) {
-    let node = this;
-
-    const index = node.children.indexOf(child);
-
-    if (index !== -1) {
-      const children = node.children
-        .slice(0, index)
-        .concat(node.children.slice(index + 1));
-
-      node = node.setChildren(children);
+    const index = this.children.indexOf(child);
+    if (index === -1) {
+      return this;
     }
-
-    return node;
+    return this.setChildren(
+      this.children.slice(0, index).concat(this.children.slice(index + 1))
+    );
   };
 
   Node.prototype.replaceChild = function(newChild, referenceChild) {
-    let node = this;
-
-    const index = node.children.indexOf(referenceChild);
-
-    if (index !== -1) {
-      const children = node.children
+    const index = this.children.indexOf(referenceChild);
+    if (index === -1) {
+      return this;
+    }
+    return this.setChildren(
+      this.children
         .slice(0, index)
         .concat(newChild)
-        .concat(node.children.slice(index + 1));
-
-      node = node.setChildren(children);
-    }
-
-    return node;
+        .concat(this.children.slice(index + 1))
+    );
   };
 
   Node.prototype.getPreviousSibling = function(child) {
     const index = this.children.indexOf(child);
-
-    if (index !== -1 && index > 0) {
+    if (index !== -1) {
       return this.children[index - 1];
     }
-
     return null;
   };
 
   Node.prototype.getNextSibling = function(child) {
     const index = this.children.indexOf(child);
-
-    if (index !== -1 && index < this.children.length - 1) {
+    if (index !== -1) {
       return this.children[index + 1];
     }
-
     return null;
   };
 }

@@ -87,7 +87,7 @@ describe("Document", () => {
   });
 
   describe("formatAt(offset, length, attributes)", () => {
-    test("format the left slice of a child", () => {
+    test("update the left slice of a child", () => {
       const node = Document.create({
         children: [
           Block.create({
@@ -157,7 +157,7 @@ describe("Document", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format a middle slice of a child", () => {
+    test("update a middle slice of a child", () => {
       const node = Document.create({
         children: [
           Block.create({
@@ -229,7 +229,7 @@ describe("Document", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format the right slice of a child", () => {
+    test("update the right slice of a child", () => {
       const node = Document.create({
         children: [
           Block.create({
@@ -306,7 +306,7 @@ describe("Document", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    describe("format the first child", () => {
+    describe("update the first child", () => {
       test("the child is a block node", () => {
         const node = Document.create({
           children: [
@@ -416,7 +416,7 @@ describe("Document", () => {
       });
     });
 
-    describe("format a child", () => {
+    describe("update a child", () => {
       test("the child is a block node", () => {
         const node = Document.create({
           children: [
@@ -554,7 +554,7 @@ describe("Document", () => {
       });
     });
 
-    describe("format the last child", () => {
+    describe("update the last child", () => {
       test("the child is a block node", () => {
         const node = Document.create({
           children: [
@@ -664,7 +664,7 @@ describe("Document", () => {
       });
     });
 
-    test("format the right slice of the first child, a child, and the left slice of the last child", () => {
+    test("update the right slice of the first child, a child, and the left slice of the last child", () => {
       const node = Document.create({
         children: [
           Block.create({
@@ -768,7 +768,7 @@ describe("Document", () => {
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("format every children", () => {
+    test("update every children", () => {
       const node = Document.create({
         children: [
           Block.create({

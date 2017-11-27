@@ -4,7 +4,7 @@ import Style from "../Style";
 
 export default function formatMixin(Node) {
   if (!Node.prototype.format) {
-    throw new Error("missing method: format");
+    throw new Error("missing method: update");
   }
 
   Node.prototype.setStyle = function(style) {

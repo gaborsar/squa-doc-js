@@ -2,25 +2,22 @@
 
 import Mark from "./Mark";
 
-const styles = [];
+const pool = [];
+
+function recycle(style) {
+  for (const pooled of pool) {
+    if (pooled.equals(style)) {
+      return pooled;
+    }
+  }
+  pool.push(style);
+  return style;
+}
 
 export default class Style {
   static create(props = {}) {
     const { marks = [] } = props;
-
-    const style = new Style(marks);
-
-    for (let i = 0; i < styles.length; i++) {
-      const pooledStyle = styles[i];
-
-      if (pooledStyle.equals(style)) {
-        return pooledStyle;
-      }
-    }
-
-    styles.push(style);
-
-    return style;
+    return recycle(new Style(marks));
   }
 
   constructor(marks) {
@@ -33,23 +30,17 @@ export default class Style {
     };
   }
 
-  format(attributes, predicate) {
+  update(attributes, predicate) {
     let marks = this.marks;
-
-    const types = Object.keys(attributes).filter(predicate);
-
-    types.forEach(type => {
-      marks = marks.filter(mark => mark.type !== type);
-
-      const value = attributes[type];
-
-      if (value !== null) {
-        marks = marks.concat(Mark.create({ type, value }));
+    for (const [type, value] of Object.entries(attributes)) {
+      if (predicate(type)) {
+        marks = marks.filter(mark => mark.type !== type);
+        if (value !== null) {
+          marks = marks.concat(Mark.create({ type, value }));
+        }
       }
-    });
-
+    }
     marks.sort(Mark.compare);
-
     return Style.create({ marks });
   }
 
@@ -57,13 +48,11 @@ export default class Style {
     if (this.marks.length !== other.marks.length) {
       return false;
     }
-
     for (let i = 0, l = this.marks.length; i < l; i++) {
       if (this.marks[i] !== other.marks[i]) {
         return false;
       }
     }
-
     return true;
   }
 }

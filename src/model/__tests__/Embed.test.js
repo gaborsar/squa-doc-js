@@ -10,7 +10,7 @@ const schema = new Schema({
 });
 
 describe("Embed", () => {
-  test("format(attributes)", () => {
+  test("update(attributes)", () => {
     const node = Embed.create({
       schema,
       value: {

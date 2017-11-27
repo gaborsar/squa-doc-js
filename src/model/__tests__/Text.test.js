@@ -10,7 +10,7 @@ const schema = new Schema({
 });
 
 describe("Text", () => {
-  test("format(attributes)", () => {
+  test("update(attributes)", () => {
     const node = Text.create({ schema });
 
     const actual = node
