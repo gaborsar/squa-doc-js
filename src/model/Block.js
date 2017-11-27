@@ -77,46 +77,50 @@ export default class Block {
     const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(element => {
-      const child = element.node;
-
       if (element.isPartial) {
-        if (child instanceof Text) {
+        if (element.node instanceof Text) {
           if (element.startOffset === 0) {
             node = node
               .insertBefore(
-                child.slice(0, element.endOffset).format(attributes),
-                child
+                element.node.slice(0, element.endOffset).format(attributes),
+                element.node
               )
               .replaceChild(
-                child.slice(element.endOffset, child.length),
-                child
+                element.node.slice(element.endOffset, element.node.length),
+                element.node
               );
-          } else if (element.endOffset === child.length) {
+          } else if (element.endOffset === element.node.length) {
             node = node
-              .insertBefore(child.slice(0, element.startOffset), child)
+              .insertBefore(
+                element.node.slice(0, element.startOffset),
+                element.node
+              )
               .replaceChild(
-                child
-                  .slice(element.startOffset, child.length)
+                element.node
+                  .slice(element.startOffset, element.node.length)
                   .format(attributes),
-                child
+                element.node
               );
           } else {
             node = node
-              .insertBefore(child.slice(0, element.startOffset), child)
               .insertBefore(
-                child
+                element.node.slice(0, element.startOffset),
+                element.node
+              )
+              .insertBefore(
+                element.node
                   .slice(element.startOffset, element.endOffset)
                   .format(attributes),
-                child
+                element.node
               )
               .replaceChild(
-                child.slice(element.endOffset, child.length),
-                child
+                element.node.slice(element.endOffset, element.node.length),
+                element.node
               );
           }
         }
       } else {
-        node = node.replaceChild(child.format(attributes), child);
+        node = node.replaceChild(element.node.format(attributes), element.node);
       }
     });
 
@@ -126,40 +130,44 @@ export default class Block {
   insertAt(offset, value, attributes) {
     let node = this;
 
-    let newChild;
+    let child;
 
     if (typeof value === "string") {
-      newChild = Text.create({
+      child = Text.create({
         schema: node.schema,
         value
       });
     } else if (node.schema.isInlineEmbed(Embed.type(value))) {
-      newChild = Embed.create({
+      child = Embed.create({
         schema: node.schema,
         value
       });
     }
 
-    if (newChild) {
-      newChild = newChild.format(attributes);
+    if (child) {
+      child = child.format(attributes);
 
       const position = node.createPosition(offset);
 
       if (position) {
-        const child = position.node;
-
         if (position.offset === 0) {
-          node = node.insertBefore(newChild, child);
+          node = node.insertBefore(child, position.node);
         } else {
-          if (child instanceof Text) {
+          if (position.node instanceof Text) {
             node = node
-              .insertBefore(child.slice(0, position.offset), child)
-              .insertBefore(newChild, child)
-              .replaceChild(child.slice(position.offset, child.length), child);
+              .insertBefore(
+                position.node.slice(0, position.offset),
+                position.node
+              )
+              .insertBefore(child, position.node)
+              .replaceChild(
+                position.node.slice(position.offset, position.node.length),
+                position.node
+              );
           }
         }
       } else {
-        node = node.appendChild(newChild);
+        node = node.appendChild(child);
       }
     }
 
@@ -172,26 +180,24 @@ export default class Block {
     const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(element => {
-      const child = element.node;
-
       if (element.isPartial) {
-        if (child instanceof Text) {
+        if (element.node instanceof Text) {
           if (element.startOffset > 0) {
             node = node.insertBefore(
-              child.slice(0, element.startOffset),
-              child
+              element.node.slice(0, element.startOffset),
+              element.node
             );
           }
-          if (element.endOffset < child.length) {
+          if (element.endOffset < element.node.length) {
             node = node.insertBefore(
-              child.slice(element.endOffset, child.length),
-              child
+              element.node.slice(element.endOffset, element.node.length),
+              element.node
             );
           }
         }
       }
 
-      node = node.removeChild(child);
+      node = node.removeChild(element.node);
     });
 
     return node;
