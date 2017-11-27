@@ -5,9 +5,9 @@ import Style from "./Style";
 import Node from "./Node";
 import Text from "./Text";
 import Embed from "./Embed";
-import createKey from "./utils/createKey";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
+import createKey from "./utils/createKey";
 
 export const EOL = "\n";
 

@@ -3,9 +3,9 @@
 import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
-import createKey from "./utils/createKey";
 import LeafMixin from "./mixins/Leaf";
 import FormatMixin from "./mixins/Format";
+import createKey from "./utils/createKey";
 
 export default class Embed extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {

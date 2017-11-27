@@ -4,8 +4,8 @@ import Schema from "./Schema";
 import Embed from "./Embed";
 import Node from "./Node";
 import Block, { EOL } from "./Block";
-import createKey from "./utils/createKey";
 import ParentMixin from "./mixins/Parent";
+import createKey from "./utils/createKey";
 
 export default class Document extends ParentMixin(Node) {
   static create(props = {}) {
