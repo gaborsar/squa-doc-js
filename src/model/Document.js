@@ -46,16 +46,14 @@ export default class Document {
     };
   }
 
-  // @todo (gabor) update to use startOffset and endOffsets
-
-  formatAt(offset, length, attributes) {
+  formatAt(startOffset, endOffset, attributes) {
     let node = this;
 
-    const range = node.createRange(offset, offset + length);
+    const range = node.createRange(startOffset, endOffset);
 
     range.elements.forEach(el => {
       node = node.replaceChild(
-        el.node.formatAt(el.startOffset, el.length, attributes),
+        el.node.formatAt(el.startOffset, el.endOffset, attributes),
         el.node
       );
     });
@@ -156,19 +154,18 @@ export default class Document {
     return node;
   }
 
-  // @todo (gabor) update to use startOffset and endOffset
   // @todo (gabor) update to use Range
 
-  deleteAt(offset, length) {
+  deleteAt(startOffset, endOffset) {
     const node = this;
 
-    const startPos = node.createPosition(offset);
+    const startPos = node.createPosition(startOffset);
 
     if (!startPos) {
       return node;
     }
 
-    const endPos = node.createPosition(offset + length);
+    const endPos = node.createPosition(endOffset);
 
     if (!endPos) {
       return node;
@@ -177,25 +174,20 @@ export default class Document {
     let fragment = [];
 
     if (startPos.index === endPos.index) {
-      fragment.push(
-        startPos.node.deleteAt(startPos.offset, endPos.offset - startPos.offset)
-      );
+      fragment.push(startPos.node.deleteAt(startPos.offset, endPos.offset));
     } else {
       if (startPos.offset > 0) {
         if (endPos.node instanceof Block) {
           fragment.push(
             startPos.node
-              .deleteAt(
-                startPos.offset,
-                startPos.node.length - startPos.offset - 1
-              )
+              .deleteAt(startPos.offset, startPos.node.length - EOL.length)
               .concat(endPos.node.deleteAt(0, endPos.offset))
           );
         } else {
           fragment.push(
             startPos.node.deleteAt(
               startPos.offset,
-              startPos.node.length - startPos.offset - 1
+              startPos.node.length - EOL.length
             )
           );
         }

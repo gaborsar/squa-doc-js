@@ -87,7 +87,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.formatAt(3, 3, { bold: true });
+      const actual = node.formatAt(3, 6, { bold: true });
 
       const expected = Block.create({
         children: [
@@ -132,7 +132,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.formatAt(6, 3, { bold: true });
+      const actual = node.formatAt(6, 9, { bold: true });
 
       const expected = Block.create({
         children: [
@@ -180,7 +180,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.formatAt(6, 3, { bold: true });
+      const actual = node.formatAt(6, 9, { bold: true });
 
       const expected = Block.create({
         children: [
@@ -304,7 +304,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.formatAt(3, 3, { bold: true });
+        const actual = node.formatAt(3, 6, { bold: true });
 
         const expected = Block.create({
           children: [
@@ -348,7 +348,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.formatAt(3, 1, { bold: true });
+        const actual = node.formatAt(3, 4, { bold: true });
 
         const expected = Block.create({
           children: [
@@ -391,7 +391,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.formatAt(3, 3, { bold: true });
+        const actual = node.formatAt(3, 6, { bold: true });
 
         const expected = Block.create({
           children: [
@@ -429,7 +429,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.formatAt(3, 1, { bold: true });
+        const actual = node.formatAt(3, 4, { bold: true });
 
         const expected = Block.create({
           children: [
@@ -473,7 +473,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.formatAt(3, 9, { bold: true });
+      const actual = node.formatAt(3, 12, { bold: true });
 
       const expected = Block.create({
         children: [
@@ -925,7 +925,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.deleteAt(3, 3);
+      const actual = node.deleteAt(3, 6);
 
       const expected = Block.create({
         children: [
@@ -959,7 +959,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.deleteAt(6, 3);
+      const actual = node.deleteAt(6, 9);
 
       const expected = Block.create({
         children: [
@@ -996,7 +996,7 @@ describe("Block", () => {
         ]
       });
 
-      const actual = node.deleteAt(6, 3);
+      const actual = node.deleteAt(6, 9);
 
       const expected = Block.create({
         children: [
@@ -1085,7 +1085,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.deleteAt(3, 3);
+        const actual = node.deleteAt(3, 6);
 
         const expected = Block.create({
           children: [
@@ -1118,7 +1118,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.deleteAt(3, 1);
+        const actual = node.deleteAt(3, 4);
 
         const expected = Block.create({
           children: [
@@ -1148,7 +1148,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.deleteAt(3, 3);
+        const actual = node.deleteAt(3, 6);
 
         const expected = Block.create({
           children: [
@@ -1175,7 +1175,7 @@ describe("Block", () => {
           ]
         });
 
-        const actual = node.deleteAt(3, 1);
+        const actual = node.deleteAt(3, 4);
 
         const expected = Block.create({
           children: [
@@ -1202,7 +1202,7 @@ describe("Block", () => {
             value: "dddeee"
           })
         ]
-      }).deleteAt(3, 9);
+      }).deleteAt(3, 12);
 
       const expected = Block.create({
         children: [

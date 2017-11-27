@@ -68,17 +68,16 @@ export default class Block {
     return this.setStyle(style);
   }
 
-  // @todo (gabor) update to use startOffset and endOffset
   // @todo (gabor) clean
 
-  formatAt(offset, length, attributes) {
+  formatAt(startOffset, endOffset, attributes) {
     let node = this;
 
-    if (offset + length === node.length) {
+    if (endOffset === node.length) {
       node = node.format(attributes);
     }
 
-    const range = node.createRange(offset, offset + length);
+    const range = node.createRange(startOffset, endOffset);
 
     range.elements.forEach(el => {
       if (el.isPartial && el.node instanceof Text) {
@@ -144,12 +143,10 @@ export default class Block {
     return node;
   }
 
-  // @todo (gabor) update to use startOffset and endOffset
-
-  deleteAt(offset, length) {
+  deleteAt(startOffset, endOffset) {
     let node = this;
 
-    const range = node.createRange(offset, offset + length);
+    const range = node.createRange(startOffset, endOffset);
 
     range.elements.forEach(el => {
       if (el.isPartial && el.node instanceof Text) {
@@ -203,7 +200,7 @@ export default class Block {
     node = node.regenerateKey();
 
     if (endOffset < node.length - EOL.length) {
-      node = node.deleteAt(endOffset, node.length - EOL.length - endOffset);
+      node = node.deleteAt(endOffset, node.length - EOL.length);
     }
 
     if (startOffset > 0) {

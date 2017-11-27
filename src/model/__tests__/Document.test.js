@@ -116,7 +116,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.formatAt(4, 3, { bold: true });
+      const actual = node.formatAt(4, 7, { bold: true });
 
       const expected = Document.create({
         children: [
@@ -185,7 +185,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.formatAt(7, 3, { bold: true });
+      const actual = node.formatAt(7, 10, { bold: true });
 
       const expected = Document.create({
         children: [
@@ -258,7 +258,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.formatAt(7, 4, { bold: true });
+      const actual = node.formatAt(7, 11, { bold: true });
 
       const expected = Document.create({
         children: [
@@ -446,7 +446,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.formatAt(4, 4, { bold: true });
+        const actual = node.formatAt(4, 8, { bold: true });
 
         const expected = Document.create({
           children: [
@@ -517,7 +517,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.formatAt(4, 1, { bold: true });
+        const actual = node.formatAt(4, 5, { bold: true });
 
         const expected = Document.create({
           children: [
@@ -577,7 +577,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.formatAt(4, 4, { bold: true });
+        const actual = node.formatAt(4, 8, { bold: true });
 
         const expected = Document.create({
           children: [
@@ -634,7 +634,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.formatAt(4, 1, { bold: true });
+        const actual = node.formatAt(4, 5, { bold: true });
 
         const expected = Document.create({
           children: [
@@ -696,7 +696,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.formatAt(3, 11, { bold: true });
+      const actual = node.formatAt(3, 14, { bold: true });
 
       const expected = Document.create({
         children: [
@@ -1936,7 +1936,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(4, 3);
+      const actual = node.deleteAt(4, 7);
 
       const expected = Document.create({
         children: [
@@ -1994,7 +1994,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(7, 3);
+      const actual = node.deleteAt(7, 10);
 
       const expected = Document.create({
         children: [
@@ -2052,7 +2052,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(7, 3);
+      const actual = node.deleteAt(7, 10);
 
       const expected = Document.create({
         children: [
@@ -2185,7 +2185,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.deleteAt(4, 4);
+        const actual = node.deleteAt(4, 8);
 
         const expected = Document.create({
           children: [
@@ -2234,7 +2234,7 @@ describe("Document", () => {
           ]
         });
 
-        const actual = node.deleteAt(4, 1);
+        const actual = node.deleteAt(4, 5);
 
         const expected = Document.create({
           children: [
@@ -2279,7 +2279,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(4, 4);
+      const actual = node.deleteAt(4, 8);
 
       const expected = Document.create({
         children: [
@@ -2330,7 +2330,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(3, 11);
+      const actual = node.deleteAt(3, 14);
 
       const expected = Document.create({
         children: [
@@ -2507,7 +2507,7 @@ describe("Document", () => {
         ]
       });
 
-      const actual = node.deleteAt(3, 8);
+      const actual = node.deleteAt(3, 11);
 
       const expected = Document.create({
         children: [
