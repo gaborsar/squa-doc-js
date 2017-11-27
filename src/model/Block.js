@@ -176,11 +176,12 @@ export default class Block {
 
         if (prevChild instanceof Text && prevChild.style === child.style) {
           children[children.length - 1] = prevChild.concat(child);
-          return;
+        } else {
+          children.push(child);
         }
+      } else {
+        children.push(child);
       }
-
-      children.push(child);
     });
 
     if (node.children.length !== children.length) {
