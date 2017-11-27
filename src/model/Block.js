@@ -79,23 +79,21 @@ export default class Block {
     const range = node.createRange(offset, offset + length);
 
     range.elements.forEach(el => {
-      if (el.isPartial) {
-        if (el.node instanceof Text) {
-          if (el.startOffset > 0) {
-            node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
-          }
-
-          node = node.insertBefore(
-            el.node.slice(el.startOffset, el.endOffset).format(attributes),
-            el.node
-          );
-
-          if (el.endOffset < el.node.length) {
-            node = node.insertBefore(el.node.slice(el.endOffset), el.node);
-          }
-
-          node = node.removeChild(el.node);
+      if (el.isPartial && el.node instanceof Text) {
+        if (el.startOffset > 0) {
+          node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
         }
+
+        node = node.insertBefore(
+          el.node.slice(el.startOffset, el.endOffset).format(attributes),
+          el.node
+        );
+
+        if (el.endOffset < el.node.length) {
+          node = node.insertBefore(el.node.slice(el.endOffset), el.node);
+        }
+
+        node = node.removeChild(el.node);
       } else {
         node = node.replaceChild(el.node.format(attributes), el.node);
       }
@@ -132,13 +130,11 @@ export default class Block {
     if (pos) {
       if (pos.offset === 0) {
         node = node.insertBefore(child, pos.node);
-      } else {
-        if (pos.node instanceof Text) {
-          node = node
-            .insertBefore(pos.node.slice(0, pos.offset), pos.node)
-            .insertBefore(child, pos.node)
-            .replaceChild(pos.node.slice(pos.offset), pos.node);
-        }
+      } else if (pos.node instanceof Text) {
+        node = node
+          .insertBefore(pos.node.slice(0, pos.offset), pos.node)
+          .insertBefore(child, pos.node)
+          .replaceChild(pos.node.slice(pos.offset), pos.node);
       }
     } else {
       node = node.appendChild(child);
@@ -152,25 +148,18 @@ export default class Block {
 
     const range = node.createRange(offset, offset + length);
 
-    range.elements.forEach(element => {
-      if (element.isPartial) {
-        if (element.node instanceof Text) {
-          if (element.startOffset > 0) {
-            node = node.insertBefore(
-              element.node.slice(0, element.startOffset),
-              element.node
-            );
-          }
-          if (element.endOffset < element.node.length) {
-            node = node.insertBefore(
-              element.node.slice(element.endOffset, element.node.length),
-              element.node
-            );
-          }
+    range.elements.forEach(el => {
+      if (el.isPartial && el.node instanceof Text) {
+        if (el.startOffset > 0) {
+          node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
+        }
+
+        if (el.endOffset < el.node.length) {
+          node = node.insertBefore(el.node.slice(el.endOffset), el.node);
         }
       }
 
-      node = node.removeChild(element.node);
+      node = node.removeChild(el.node);
     });
 
     return node;
@@ -183,13 +172,10 @@ export default class Block {
 
     node.children.forEach(child => {
       if (child instanceof Text && children.length) {
-        const previousChild = children[children.length - 1];
+        const prevChild = children[children.length - 1];
 
-        if (
-          previousChild instanceof Text &&
-          previousChild.style === child.style
-        ) {
-          children[children.length - 1] = previousChild.concat(child);
+        if (prevChild instanceof Text && prevChild.style === child.style) {
+          children[children.length - 1] = prevChild.concat(child);
           return;
         }
       }
