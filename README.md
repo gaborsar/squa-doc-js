@@ -1,30 +1,24 @@
 # SquaDoc Editor
 
-## TODO
+## Rich Functions
 
- * Use `Range` in `Document`.
- * `getFormat(document, offset, length)`
- * `getBlockFormat(document, offset, length)`
+ * `getFormat(document, startOffset, endOffset)`
+ * `getBlockFormat(document, startOffset, endOffset)`
  * `getBlockFormatByKey(document, blockKey)`
- * `getInlineFormat(document, offset, length)`
+ * `getInlineFormat(document, startOffset, endOffset)`
  * `getInlineFormatByKey(document, blockKey, inlineKey)`
- * `format(document, offset, length, attributes)`
- * `formatBlock(document, offset, length, attributes)`
+ * `format(document, startOffset, endOffset, attributes)`
+ * `formatBlock(document, startOffset, endOffset, attributes)`
  * `formatBlockBykey(document, blockKey, attributes)`
- * `formatInline(document, offset, length, attributes)`
+ * `formatInline(document, startOffset, endOffset, attributes)`
  * `formatInlineByKey(document, blockKey, inlineKey, attributes)`
- * `formatIndent(document, offset, length)`
- * `formatOutdent(document, offset, length)`
- * `formatBold(document, offset, length)`
- * `formatItalic(document, offset, length)`
+ * `formatIndent(document, startOffset, endOffset)`
+ * `formatOutdent(document, startOffset, endOffset)`
+ * `formatBold(document, startOffset, endOffset)`
+ * `formatItalic(document, startOffset, endOffset)`
  * `insertText(document, offset, value, attributes)`
  * `insertEmbed(document, offset, value, attributes)`
  * `insertFragment(document, offset, fragment)`
- * `deleteCharacterBackward(document, offset)`
- * `deleteCharacterForward(document, offset)`
- * `deleteWordBackward(document, offset)`
- * `deleteWordForward(document, offset)`
- * `deleteBlockBackward(document, offset)`
- * `deleteBlockForward(document, offset)`
+ * `deleteContent(document, startOffset, endOffset)`
  * `deleteBlockByKey(document, offset)`
  * `deleteInlineByKey(document, offset)`
