@@ -105,10 +105,7 @@ describe("Block", () => {
             value: "bbb"
           }),
           Text.create({
-            value: "ccc"
-          }),
-          Text.create({
-            value: "ddd"
+            value: "cccddd"
           })
         ]
       });
@@ -137,10 +134,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
+            value: "aaabbb"
           }),
           Text.create({
             style: Style.create({
@@ -153,10 +147,7 @@ describe("Block", () => {
             value: "ccc"
           }),
           Text.create({
-            value: "ddd"
-          }),
-          Text.create({
-            value: "eee"
+            value: "dddeee"
           })
         ]
       });
@@ -185,10 +176,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
+            value: "aaabbb"
           }),
           Text.create({
             style: Style.create({
@@ -488,27 +476,7 @@ describe("Block", () => {
                 })
               ]
             }),
-            value: "bbb"
-          }),
-          Text.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            value: "ccc"
-          }),
-          Text.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            value: "ddd"
+            value: "bbbcccddd"
           }),
           Text.create({
             value: "eee"
@@ -549,27 +517,7 @@ describe("Block", () => {
                 })
               ]
             }),
-            value: "aaa"
-          }),
-          Text.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            value: "bbb"
-          }),
-          Text.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            value: "ccc"
+            value: "aaabbbccc"
           })
         ]
       });
@@ -784,10 +732,7 @@ describe("Block", () => {
             value: "ddd"
           }),
           Text.create({
-            value: "bbb"
-          }),
-          Text.create({
-            value: "ccc"
+            value: "bbbccc"
           })
         ]
       });
@@ -816,10 +761,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
+            value: "aaabbb"
           }),
           Text.create({
             style: Style.create({
@@ -832,10 +774,7 @@ describe("Block", () => {
             value: "eee"
           }),
           Text.create({
-            value: "ccc"
-          }),
-          Text.create({
-            value: "ddd"
+            value: "cccddd"
           })
         ]
       });
@@ -861,10 +800,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
+            value: "aaabbb"
           }),
           Text.create({
             style: Style.create({
@@ -930,13 +866,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "ccc"
-          }),
-          Text.create({
-            value: "ddd"
+            value: "aaacccddd"
           })
         ]
       });
@@ -964,16 +894,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
-          }),
-          Text.create({
-            value: "ddd"
-          }),
-          Text.create({
-            value: "eee"
+            value: "aaabbbdddeee"
           })
         ]
       });
@@ -1001,13 +922,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "bbb"
-          }),
-          Text.create({
-            value: "ddd"
+            value: "aaabbbddd"
           })
         ]
       });
@@ -1090,10 +1005,7 @@ describe("Block", () => {
         const expected = Block.create({
           children: [
             Text.create({
-              value: "aaa"
-            }),
-            Text.create({
-              value: "ccc"
+              value: "aaaccc"
             })
           ]
         });
@@ -1123,10 +1035,7 @@ describe("Block", () => {
         const expected = Block.create({
           children: [
             Text.create({
-              value: "aaa"
-            }),
-            Text.create({
-              value: "bbb"
+              value: "aaabbb"
             })
           ]
         });
@@ -1207,10 +1116,7 @@ describe("Block", () => {
       const expected = Block.create({
         children: [
           Text.create({
-            value: "aaa"
-          }),
-          Text.create({
-            value: "eee"
+            value: "aaaeee"
           })
         ]
       });
@@ -1239,72 +1145,6 @@ describe("Block", () => {
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
-  });
-
-  test("normalize()", () => {
-    const node = Block.create({
-      children: [
-        Text.create({
-          style: Style.create({
-            marks: [
-              Mark.create({
-                type: "bold"
-              })
-            ]
-          }),
-          value: "aaa"
-        }),
-        Text.create({
-          style: Style.create({
-            marks: [
-              Mark.create({
-                type: "bold"
-              })
-            ]
-          }),
-          value: "bbb"
-        }),
-        Text.create({
-          style: Style.create({
-            marks: [
-              Mark.create({
-                type: "italic"
-              })
-            ]
-          }),
-          value: "ccc"
-        })
-      ]
-    });
-
-    const actual = node.normalize();
-
-    const expected = Block.create({
-      children: [
-        Text.create({
-          style: Style.create({
-            marks: [
-              Mark.create({
-                type: "bold"
-              })
-            ]
-          }),
-          value: "aaabbb"
-        }),
-        Text.create({
-          style: Style.create({
-            marks: [
-              Mark.create({
-                type: "italic"
-              })
-            ]
-          }),
-          value: "ccc"
-        })
-      ]
-    });
-
-    expect(actual.toJSON()).toEqual(expected.toJSON());
   });
 
   test("slice(startOffset, endOffset)", () => {
@@ -1384,10 +1224,7 @@ describe("Block", () => {
       ],
       children: [
         Text.create({
-          value: "aaa"
-        }),
-        Text.create({
-          value: "bbb"
+          value: "aaabbb"
         })
       ]
     });

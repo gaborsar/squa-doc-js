@@ -74,11 +74,4 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
     }
     return this;
   }
-
-  /**
-   * @deprecated
-   */
-  normalize() {
-    return this;
-  }
 }

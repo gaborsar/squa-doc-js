@@ -73,7 +73,7 @@ export default class Document extends ParentMixin(Node) {
     }
 
     if (typeof value === "string") {
-      let fragment = [];
+      const fragment = [];
 
       let { offset } = pos;
       let child = pos.node;
@@ -108,8 +108,6 @@ export default class Document extends ParentMixin(Node) {
 
       fragment.push(child);
 
-      fragment = fragment.map(child => child.normalize());
-
       const children = node.children
         .slice(0, pos.index)
         .concat(fragment)
@@ -137,9 +135,7 @@ export default class Document extends ParentMixin(Node) {
           node = node.setChildren(children);
         }
       } else if (node.schema.isInlineEmbed(embedType)) {
-        const child = pos.node
-          .insertAt(pos.offset, value, attributes)
-          .normalize();
+        const child = pos.node.insertAt(pos.offset, value, attributes);
 
         const children = node.children
           .slice(0, pos.index)
@@ -170,7 +166,7 @@ export default class Document extends ParentMixin(Node) {
       return node;
     }
 
-    let fragment = [];
+    const fragment = [];
 
     if (startPos.index === endPos.index) {
       fragment.push(startPos.node.deleteAt(startPos.offset, endPos.offset));
@@ -198,8 +194,6 @@ export default class Document extends ParentMixin(Node) {
         }
       }
     }
-
-    fragment = fragment.map(child => child.normalize());
 
     const children = node.children
       .slice(0, startPos.index)

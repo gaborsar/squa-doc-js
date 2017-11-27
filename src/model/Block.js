@@ -11,6 +11,8 @@ import createKey from "./utils/createKey";
 
 export const EOL = "\n";
 
+const normalize = Symbol("normalize");
+
 export default class Block extends FormatMixin(ParentMixin(Node)) {
   static create(props = {}) {
     const {
@@ -96,7 +98,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       }
     });
 
-    return node;
+    return node[normalize]();
   }
 
   // @todo (gabor) clean
@@ -139,7 +141,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       node = node.appendChild(child);
     }
 
-    return node;
+    return node[normalize]();
   }
 
   deleteAt(startOffset, endOffset) {
@@ -160,13 +162,27 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       node = node.removeChild(el.node);
     });
 
-    return node;
+    return node[normalize]();
   }
 
-  /**
-   * @deprecated
-   */
-  normalize() {
+  slice(startOffset, endOffset) {
+    const range = this.createRange(startOffset, endOffset);
+
+    const children = range.elements.map(
+      el =>
+        el.isPartial && el.node instanceof Text
+          ? el.node.slice(el.startOffset, el.endOffset)
+          : el.node
+    );
+
+    return this.regenerateKey().setChildren(children);
+  }
+
+  concat(other) {
+    return other.setChildren(this.children.concat(other.children))[normalize]();
+  }
+
+  [normalize]() {
     let node = this;
 
     const children = [];
@@ -190,22 +206,5 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     }
 
     return node;
-  }
-
-  slice(startOffset, endOffset) {
-    const range = this.createRange(startOffset, endOffset);
-
-    const children = range.elements.map(
-      el =>
-        el.isPartial && el.node instanceof Text
-          ? el.node.slice(el.startOffset, el.endOffset)
-          : el.node
-    );
-
-    return this.regenerateKey().setChildren(children);
-  }
-
-  concat(other) {
-    return other.setChildren(this.children.concat(other.children));
   }
 }
