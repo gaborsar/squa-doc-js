@@ -8,7 +8,7 @@ export default class Mark {
 
     const mark = new Mark(type, value);
 
-    for (let i = 0; i < mark; i++) {
+    for (let i = 0; i < marks.length; i++) {
       const pooledMark = marks[i];
 
       if (pooledMark.equals(mark)) {
