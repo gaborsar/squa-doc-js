@@ -51,10 +51,10 @@ export default class Document {
 
     const range = node.createRange(offset, offset + length);
 
-    range.elements.forEach(element => {
+    range.elements.forEach(el => {
       node = node.replaceChild(
-        element.node.formatAt(element.startOffset, element.length, attributes),
-        element.node
+        el.node.formatAt(el.startOffset, el.length, attributes),
+        el.node
       );
     });
 
