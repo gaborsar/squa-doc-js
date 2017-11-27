@@ -76,6 +76,9 @@ export default class Embed {
     return this;
   }
 
+  /**
+   * @deprecated
+   */
   normalize() {
     return this;
   }

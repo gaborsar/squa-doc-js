@@ -164,8 +164,9 @@ export default class Block {
     return node;
   }
 
-  // @todo (gabor) replace with in place normalization
-
+  /**
+   * @deprecated
+   */
   normalize() {
     let node = this;
 

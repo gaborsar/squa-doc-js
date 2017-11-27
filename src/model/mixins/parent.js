@@ -52,8 +52,8 @@ export default function parentMixin(Node) {
     return this.setChildren(children);
   };
 
-  Node.prototype.replaceChild = function(newChild, referenceChild) {
-    const index = this.children.indexOf(referenceChild);
+  Node.prototype.replaceChild = function(newChild, oldChild) {
+    const index = this.children.indexOf(oldChild);
 
     if (index === -1) {
       return this;
@@ -67,13 +67,13 @@ export default function parentMixin(Node) {
     return this.setChildren(children);
   };
 
-  Node.prototype.getPreviousSibling = function(child) {
-    const index = this.children.indexOf(child);
+  Node.prototype.getPreviousSibling = function(referenceChild) {
+    const index = this.children.indexOf(referenceChild);
     return index !== -1 ? this.children[index - 1] : null;
   };
 
-  Node.prototype.getNextSibling = function(child) {
-    const index = this.children.indexOf(child);
+  Node.prototype.getNextSibling = function(referenceChild) {
+    const index = this.children.indexOf(referenceChild);
     return index !== -1 ? this.children[index + 1] : null;
   };
 }
