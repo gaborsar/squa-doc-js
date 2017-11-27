@@ -69,21 +69,11 @@ export default function parentMixin(Node) {
 
   Node.prototype.getPreviousSibling = function(child) {
     const index = this.children.indexOf(child);
-
-    if (index !== -1) {
-      return this.children[index - 1];
-    }
-
-    return null;
+    return index !== -1 ? this.children[index - 1] : null;
   };
 
   Node.prototype.getNextSibling = function(child) {
     const index = this.children.indexOf(child);
-
-    if (index !== -1) {
-      return this.children[index + 1];
-    }
-
-    return null;
+    return index !== -1 ? this.children[index + 1] : null;
   };
 }
