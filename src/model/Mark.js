@@ -22,14 +22,14 @@ export default class Mark {
     if (markA.type < markB.type) {
       return -1;
     }
-    if (markB.type > markA.type) {
+    if (markA.type > markB.type) {
       return 1;
     }
     if (markA.value < markB.value) {
       return -1;
     }
     if (markA.value > markB.value) {
-      return -1;
+      return 1;
     }
     return 0;
   }
