@@ -97,8 +97,6 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     return node._normalize();
   }
 
-  // @todo (gabor) clean
-
   insertAt(offset, value, attributes) {
     let node = this;
 
