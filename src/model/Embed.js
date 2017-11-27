@@ -63,11 +63,10 @@ export default class Embed {
   }
 
   format(attributes) {
-    return this.setStyle(
-      this.style.update(attributes, type =>
-        this.schema.isEmbedMark(this.type, type)
-      )
+    const style = this.style.update(attributes, type =>
+      this.schema.isEmbedMark(this.type, type)
     );
+    return this.setStyle(style);
   }
 
   formatAt(offset, length, attributes) {

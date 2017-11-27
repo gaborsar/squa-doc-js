@@ -14,16 +14,21 @@ export default class RangeBuilder {
   next(length, callback) {
     while (this.index < this.nodes.length && length) {
       const node = this.nodes[this.index];
+
       const sliceLength = Math.min(node.length - this.offset, length);
       const nextOffset = this.offset + sliceLength;
+
       if (callback) {
         callback(new RangeElement(node, this.offset, nextOffset));
       }
-      this.offset = nextOffset;
-      if (this.offset === node.length) {
+
+      if (nextOffset < node.length) {
+        this.offset = nextOffset;
+      } else {
         this.index += 1;
         this.offset = 0;
       }
+
       length -= sliceLength;
     }
     return this;

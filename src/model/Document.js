@@ -46,6 +46,8 @@ export default class Document {
     };
   }
 
+  // @todo (gabor) update to use startOffset and endOffsets
+
   formatAt(offset, length, attributes) {
     let node = this;
 
@@ -60,6 +62,9 @@ export default class Document {
 
     return node;
   }
+
+  // @todo (gabor) clean
+  // @todo (gabor) update to use parent methods
 
   insertAt(offset, value, attributes) {
     let node = this;
@@ -150,6 +155,9 @@ export default class Document {
 
     return node;
   }
+
+  // @todo (gabor) update to use startOffset and endOffset
+  // @todo (gabor) update to use Range
 
   deleteAt(offset, length) {
     const node = this;

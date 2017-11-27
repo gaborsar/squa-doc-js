@@ -55,19 +55,20 @@ export default class Text {
   }
 
   format(attributes) {
-    return this.setStyle(
-      this.style.update(attributes, type => this.schema.isInlineMark(type))
+    const style = this.style.update(attributes, type =>
+      this.schema.isInlineMark(type)
     );
+    return this.setStyle(style);
   }
 
   slice(startOffset, endOffset) {
-    return this.regenerateKey().setValue(
-      this.value.slice(startOffset, endOffset)
-    );
+    const value = this.value.slice(startOffset, endOffset);
+    return this.regenerateKey().setValue(value);
   }
 
   concat(other) {
-    return other.setValue(this.value + other.value);
+    const value = this.value + other.value;
+    return other.setValue(value);
   }
 }
 

@@ -62,10 +62,14 @@ export default class Block {
   }
 
   format(attributes) {
-    return this.setStyle(
-      this.style.update(attributes, type => this.schema.isBlockMark(type))
+    const style = this.style.update(attributes, type =>
+      this.schema.isBlockMark(type)
     );
+    return this.setStyle(style);
   }
+
+  // @todo (gabor) update to use startOffset and endOffset
+  // @todo (gabor) clean
 
   formatAt(offset, length, attributes) {
     let node = this;
@@ -81,16 +85,13 @@ export default class Block {
         if (el.startOffset > 0) {
           node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
         }
-
         node = node.insertBefore(
           el.node.slice(el.startOffset, el.endOffset).format(attributes),
           el.node
         );
-
         if (el.endOffset < el.node.length) {
           node = node.insertBefore(el.node.slice(el.endOffset), el.node);
         }
-
         node = node.removeChild(el.node);
       } else {
         node = node.replaceChild(el.node.format(attributes), el.node);
@@ -99,6 +100,8 @@ export default class Block {
 
     return node;
   }
+
+  // @todo (gabor) clean
 
   insertAt(offset, value, attributes) {
     let node = this;
@@ -141,6 +144,8 @@ export default class Block {
     return node;
   }
 
+  // @todo (gabor) update to use startOffset and endOffset
+
   deleteAt(offset, length) {
     let node = this;
 
@@ -151,7 +156,6 @@ export default class Block {
         if (el.startOffset > 0) {
           node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
         }
-
         if (el.endOffset < el.node.length) {
           node = node.insertBefore(el.node.slice(el.endOffset), el.node);
         }
@@ -162,6 +166,8 @@ export default class Block {
 
     return node;
   }
+
+  // @todo (gabor) replace with in place normalization
 
   normalize() {
     let node = this;
@@ -188,6 +194,8 @@ export default class Block {
 
     return node;
   }
+
+  // @todo (gabor) rewrite without deleteAt
 
   slice(startOffset, endOffset) {
     let node = this;

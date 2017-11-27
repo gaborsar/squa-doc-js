@@ -25,53 +25,65 @@ export default function parentMixin(Node) {
 
   Node.prototype.insertBefore = function(newChild, referenceChild) {
     const index = this.children.indexOf(referenceChild);
+
     if (index === -1) {
       return this;
     }
-    return this.setChildren(
-      this.children
-        .slice(0, index)
-        .concat(newChild)
-        .concat(this.children.slice(index))
-    );
+
+    const children = this.children
+      .slice(0, index)
+      .concat(newChild)
+      .concat(this.children.slice(index));
+
+    return this.setChildren(children);
   };
 
   Node.prototype.removeChild = function(child) {
     const index = this.children.indexOf(child);
+
     if (index === -1) {
       return this;
     }
-    return this.setChildren(
-      this.children.slice(0, index).concat(this.children.slice(index + 1))
-    );
+
+    const children = this.children
+      .slice(0, index)
+      .concat(this.children.slice(index + 1));
+
+    return this.setChildren(children);
   };
 
   Node.prototype.replaceChild = function(newChild, referenceChild) {
     const index = this.children.indexOf(referenceChild);
+
     if (index === -1) {
       return this;
     }
-    return this.setChildren(
-      this.children
-        .slice(0, index)
-        .concat(newChild)
-        .concat(this.children.slice(index + 1))
-    );
+
+    const children = this.children
+      .slice(0, index)
+      .concat(newChild)
+      .concat(this.children.slice(index + 1));
+
+    return this.setChildren(children);
   };
 
   Node.prototype.getPreviousSibling = function(child) {
     const index = this.children.indexOf(child);
+
     if (index !== -1) {
       return this.children[index - 1];
     }
+
     return null;
   };
 
   Node.prototype.getNextSibling = function(child) {
     const index = this.children.indexOf(child);
+
     if (index !== -1) {
       return this.children[index + 1];
     }
+
     return null;
   };
 }
