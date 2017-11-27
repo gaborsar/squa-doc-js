@@ -91,10 +91,7 @@ export default class Block {
           );
 
           if (el.endOffset < el.node.length) {
-            node = node.insertBefore(
-              el.node.slice(el.endOffset, el.node.length),
-              el.node
-            );
+            node = node.insertBefore(el.node.slice(el.endOffset), el.node);
           }
 
           node = node.removeChild(el.node);
@@ -124,31 +121,27 @@ export default class Block {
       });
     }
 
-    if (child) {
-      child = child.format(attributes);
+    if (!child) {
+      return node;
+    }
 
-      const position = node.createPosition(offset);
+    child = child.format(attributes);
 
-      if (position) {
-        if (position.offset === 0) {
-          node = node.insertBefore(child, position.node);
-        } else {
-          if (position.node instanceof Text) {
-            node = node
-              .insertBefore(
-                position.node.slice(0, position.offset),
-                position.node
-              )
-              .insertBefore(child, position.node)
-              .replaceChild(
-                position.node.slice(position.offset, position.node.length),
-                position.node
-              );
-          }
-        }
+    const pos = node.createPosition(offset);
+
+    if (pos) {
+      if (pos.offset === 0) {
+        node = node.insertBefore(child, pos.node);
       } else {
-        node = node.appendChild(child);
+        if (pos.node instanceof Text) {
+          node = node
+            .insertBefore(pos.node.slice(0, pos.offset), pos.node)
+            .insertBefore(child, pos.node)
+            .replaceChild(pos.node.slice(pos.offset), pos.node);
+        }
       }
+    } else {
+      node = node.appendChild(child);
     }
 
     return node;
