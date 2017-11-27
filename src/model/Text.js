@@ -66,7 +66,6 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
   }
 
   concat(other) {
-    const value = this.value + other.value;
-    return other.setValue(value);
+    return other.setValue(this.value + other.value);
   }
 }
