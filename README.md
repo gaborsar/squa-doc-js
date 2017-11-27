@@ -100,6 +100,8 @@
  * `replaceChild(newChild, oldChild)`
  * `getPreviousSibling(referenceChild)`
  * `getNextSibling(referenceChild)`
+ * `findPreviousSibling(referenceChild, predicate)` - **TODO**
+ * `findNextSibling(referenceChild, predicate)` - **TODO**
  * `setStyle(style)`
  * `clearStyle()`
  * `hasMark(type)`
@@ -127,6 +129,8 @@
  * `replaceChild(newChild, oldChild)`
  * `getPreviousSibling(referenceChild)`
  * `getNextSibling(referenceChild)`
+ * `findPreviousSibling(referenceChild, predicate)` - **TODO**
+ * `findNextSibling(referenceChild, predicate)` - **TODO**
  * `formatAt(startOffset, endOffset, attributes)`
  * `insertAt(offset, value, attributes)`
  * `deleteAt(startOffset, endOffset)`
