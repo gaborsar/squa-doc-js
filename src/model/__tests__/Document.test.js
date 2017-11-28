@@ -1,873 +1,232 @@
 import Schema from "../Schema";
-import Mark from "../Mark";
-import Style from "../Style";
-import Text from "../Text";
-import Embed from "../Embed";
-import Block from "../Block";
-import Document from "../Document";
+import DocumentBuilder from "../DocumentBuilder";
 
 const schema = new Schema({
   block: {
-    embeds: ["blockImage"],
-    marks: ["align", "bold"]
+    embeds: ["block-image"],
+    marks: ["common"]
   },
   inline: {
-    embeds: ["inlineImage"],
-    marks: ["bold"]
+    embeds: ["inline-image"],
+    marks: ["common"]
   },
-  blockImage: {
-    marks: ["width"]
+  "block-image": {
+    marks: ["alt"]
   },
-  inlineImage: {
-    marks: ["width"]
+  "inline-image": {
+    marks: ["alt"]
   }
 });
 
 describe("Document", () => {
   test("length", () => {
-    const node = Document.create({
-      children: [
-        Block.create({
-          children: [
-            Text.create({
-              value: "aaa"
-            })
-          ]
-        }),
-        Block.create({
-          children: [
-            Text.create({
-              value: "bbb"
-            })
-          ]
-        }),
-        Block.create({
-          children: [
-            Text.create({
-              value: "ccc"
-            })
-          ]
-        })
-      ]
-    });
+    const node = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("bbb\n")
+      .insert("ccc\n")
+      .build();
 
     expect(node.length).toBe(12);
   });
 
   test("text", () => {
-    const node = Document.create({
-      children: [
-        Block.create({
-          children: [
-            Text.create({
-              value: "aaa"
-            })
-          ]
-        }),
-        Block.create({
-          children: [
-            Text.create({
-              value: "bbb"
-            })
-          ]
-        }),
-        Block.create({
-          children: [
-            Text.create({
-              value: "ccc"
-            })
-          ]
-        })
-      ]
-    });
+    const node = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("bbb\n")
+      .insert("ccc\n")
+      .build();
 
     expect(node.text).toBe("aaa\nbbb\nccc\n");
   });
 
   describe("formatAt(offset, length, attributes)", () => {
-    test("update the left slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                schema,
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                schema,
-                value: "bbbccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+    test("format the left slice of a child", () => {
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbccc\n")
+        .insert("ddd\n")
+        .build()
+        .formatAt(4, 7, { common: "foo" });
 
-      const actual = node.formatAt(4, 7, { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "bbb"
-              }),
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb", { common: "foo" })
+        .insert("ccc\n")
+        .insert("ddd\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("update a middle slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                schema,
-                value: "bbbcccddd"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "eee"
-              })
-            ]
-          })
-        ]
-      });
+    test("format a middle slice of a child", () => {
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbcccddd\n")
+        .insert("eee\n")
+        .build()
+        .formatAt(7, 10, { common: "foo" });
 
-      const actual = node.formatAt(7, 10, { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              }),
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "ccc"
-              }),
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "eee"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb")
+        .insert("ccc", { common: "foo" })
+        .insert("ddd\n")
+        .insert("eee\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("update the right slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "bbbccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+    test("format the right slice of a child", () => {
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbccc\n")
+        .insert("ddd\n")
+        .build()
+        .formatAt(7, 11, { common: "foo" });
 
-      const actual = node.formatAt(7, 11, { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "bbb"
-              }),
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb")
+        .insert("ccc\n", { common: "foo" })
+        .insert("ddd\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    describe("update the first child", () => {
+    describe("format the first child", () => {
       test("the child is a block node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  schema,
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .formatAt(0, 4, { common: "foo" });
 
-        const actual = node.formatAt(0, 4, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              children: [
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n", { common: "foo" })
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the child is an embed node", () => {
-        const node = Document.create({
-          children: [
-            Embed.create({
-              schema,
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+          .build()
+          .formatAt(0, 1, { common: "foo" });
 
-        const actual = node.formatAt(0, 1, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Embed.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert({ "block-image": "foo" }, { common: "foo" })
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
-    describe("update a child", () => {
+    describe("format a child", () => {
       test("the child is a block node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  schema,
-                  value: "bbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .insert("ccc\n")
+          .build()
+          .formatAt(4, 8, { common: "foo" });
 
-        const actual = node.formatAt(4, 8, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              children: [
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "bbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n", { common: "foo" })
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the child is an embed node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              schema,
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("ccc\n")
+          .build()
+          .formatAt(4, 5, { common: "foo" });
 
-        const actual = node.formatAt(4, 5, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" }, { common: "foo" })
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
-    describe("update the last child", () => {
+    describe("format the last child", () => {
       test("the child is a block node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  schema,
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .formatAt(4, 8, { common: "foo" });
 
-        const actual = node.formatAt(4, 8, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              children: [
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n", { common: "foo" })
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the child is an embed node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              schema,
-              value: {
-                blockImage: "foo.png"
-              }
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .build()
+          .formatAt(4, 5, { common: "foo" });
 
-        const actual = node.formatAt(4, 5, { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "bold"
-                  })
-                ]
-              }),
-              value: {
-                blockImage: "foo.png"
-              }
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" }, { common: "foo" })
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
-    test("update the right slice of the first child, a child, and the left slice of the last child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "aaabbb"
-              })
-            ]
-          }),
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                schema,
-                value: "dddeee"
-              })
-            ]
-          })
-        ]
-      });
+    test("format the right slice of the first child, a child, and the left slice of the last child", () => {
+      const actual = new DocumentBuilder(schema)
+        .insert("aaabbb\n")
+        .insert("ccc\n")
+        .insert("dddeee\n")
+        .build()
+        .formatAt(3, 14, { common: "foo" });
 
-      const actual = node.formatAt(3, 14, { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "aaa"
-              }),
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "ddd"
-              }),
-              Text.create({
-                value: "eee"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa")
+        .insert("bbb\n", { common: "foo" })
+        .insert("ccc\n", { common: "foo" })
+        .insert("ddd", { common: "foo" })
+        .insert("eee\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
-    test("update every children", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            schema,
-            children: [
-              Text.create({
-                schema,
-                value: "ccc"
-              })
-            ]
-          })
-        ]
-      });
+    test("format every children", () => {
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+        .formatAt(0, 12, { common: "foo" });
 
-      const actual = node.formatAt(0, 12, { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "bold"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                style: Style.create({
-                  marks: [
-                    Mark.create({
-                      type: "bold"
-                    })
-                  ]
-                }),
-                value: "ccc"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n", { common: "foo" })
+        .insert("bbb\n", { common: "foo" })
+        .insert("ccc\n", { common: "foo" })
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
@@ -876,139 +235,43 @@ describe("Document", () => {
   describe("insertAt(offset, value, attributes)", () => {
     describe("insert a child before the first child", () => {
       test("the new child is a text node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .build()
+          .insertAt(0, "bbb", { common: "foo" });
 
-        const actual = node.insertAt(0, "bbb", { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "bbb"
-                }),
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("bbb", { common: "foo" })
+          .insert("aaa\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is a block embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .build()
+          .insertAt(0, { "block-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          0,
-          { blockImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Embed.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "width",
-                    value: 100
-                  })
-                ]
-              }),
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert({ "block-image": "foo" }, { alt: "foo" })
+          .insert("aaa\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is an inline embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .build()
+          .insertAt(0, { "inline-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          0,
-          { inlineImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Embed.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "width",
-                        value: 100
-                      })
-                    ]
-                  }),
-                  value: {
-                    inlineImage: "foo.png"
-                  }
-                }),
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert({ "inline-image": "foo" }, { alt: "foo" })
+          .insert("aaa\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
@@ -1016,386 +279,111 @@ describe("Document", () => {
 
     describe("insert between two children", () => {
       test("the new child is a text node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .insertAt(4, "ccc", { common: "foo" });
 
-        const actual = node.insertAt(4, "ccc", { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "ccc"
-                }),
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("ccc", { common: "foo" })
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is a block embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .insertAt(4, { "block-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          4,
-          { blockImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              style: Style.create({
-                marks: [
-                  Mark.create({
-                    type: "width",
-                    value: 100
-                  })
-                ]
-              }),
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" }, { alt: "foo" })
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is an inline embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .insertAt(4, { "inline-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          4,
-          { inlineImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Embed.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "width",
-                        value: 100
-                      })
-                    ]
-                  }),
-                  value: {
-                    inlineImage: "foo.png"
-                  }
-                }),
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "inline-image": "foo" }, { alt: "foo" })
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
     test("insert after the last child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .build()
+        .insertAt(4, "aaa", { common: "foo" });
 
-      const actual = node.insertAt(4, "aaa", { bold: true });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema).insert("aaa\n").build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     describe("insert into the first child", () => {
       test("the new child is a text node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "aaabbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaabbb\n")
+          .insert("ccc\n")
+          .build()
+          .insertAt(3, "ddd", { common: "foo" });
 
-        const actual = node.insertAt(3, "ddd", { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                }),
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "ddd"
-                }),
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa")
+          .insert("ddd", { common: "foo" })
+          .insert("bbb\n")
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is a block embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaabbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaabbb\n")
+          .insert("ccc\n")
+          .build()
+          .insertAt(3, { "block-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          3,
-          { blockImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaabbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaabbb\n")
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is an inline embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "aaabbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaabbb\n")
+          .insert("ccc\n")
+          .build()
+          .insertAt(3, { "inline-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          3,
-          { inlineImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                }),
-                Embed.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "width",
-                        value: 100
-                      })
-                    ]
-                  }),
-                  value: {
-                    inlineImage: "foo.png"
-                  }
-                }),
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa")
+          .insert({ "inline-image": "foo" }, { alt: "foo" })
+          .insert("bbb\n")
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
@@ -1403,217 +391,56 @@ describe("Document", () => {
 
     describe("insert into a child", () => {
       test("the new child is a text node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .insert("ddd\n")
+          .build()
+          .insertAt(7, "eee", { common: "foo" });
 
-        const actual = node.insertAt(7, "eee", { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                }),
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "eee"
-                }),
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb")
+          .insert("eee", { common: "foo" })
+          .insert("ccc\n")
+          .insert("ddd\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is a block embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .insert("ddd\n")
+          .build()
+          .insertAt(7, { "block-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          7,
-          { blockImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .insert("ddd\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is an inline embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .insert("ddd\n")
+          .build()
+          .insertAt(7, { "inline-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          7,
-          { inlineImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                }),
-                Embed.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "width",
-                        value: 100
-                      })
-                    ]
-                  }),
-                  value: {
-                    inlineImage: "foo.png"
-                  }
-                }),
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ddd"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb")
+          .insert({ "inline-image": "foo" }, { alt: "foo" })
+          .insert("ccc\n")
+          .insert("ddd\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
@@ -1621,286 +448,79 @@ describe("Document", () => {
 
     describe("insert into the last child", () => {
       test("the new child is a text node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .build()
+          .insertAt(7, "ddd", { common: "foo" });
 
-        const actual = node.insertAt(7, "ddd", { bold: true });
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                }),
-                Text.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "bold"
-                      })
-                    ]
-                  }),
-                  value: "ddd"
-                }),
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb")
+          .insert("ddd", { common: "foo" })
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is a block embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .build()
+          .insertAt(7, { "block-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          7,
-          { blockImage: "foo.png" },
-          { bold: true }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the new child is an inline embed node", () => {
-        const node = Document.create({
-          schema,
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              schema,
-              children: [
-                Text.create({
-                  value: "bbbccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbbccc\n")
+          .build()
+          .insertAt(7, { "inline-image": "foo" }, { alt: "foo" });
 
-        const actual = node.insertAt(
-          7,
-          { inlineImage: "foo.png" },
-          { width: 100 }
-        );
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                }),
-                Embed.create({
-                  style: Style.create({
-                    marks: [
-                      Mark.create({
-                        type: "width",
-                        value: 100
-                      })
-                    ]
-                  }),
-                  value: {
-                    inlineImage: "foo.png"
-                  }
-                }),
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb")
+          .insert({ "inline-image": "foo" }, { alt: "foo" })
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
     test("insert an unknown embed", () => {
-      const node = Document.create({
-        schema,
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .build()
+        .insertAt(0, { unknown: "foo" });
 
-      const actual = node.insertAt(0, { unknown: "foo" }, {});
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema).insert("aaa\n").build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("insert multiple lines", () => {
-      const node = Document.create({
-        schema,
-        children: [
-          Block.create({
-            schema,
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "align",
-                  value: "left"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "aaabbb"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaabbb\n")
+        .build()
+        .insertAt(3, "ccc\nddd\neee", { common: "foo" });
 
-      const actual = node.insertAt(3, "cccccc\nddd\neeeeee", {
-        align: "right"
-      });
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "align",
-                  value: "right"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "aaacccccc"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "align",
-                  value: "right"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          }),
-          Block.create({
-            style: Style.create({
-              marks: [
-                Mark.create({
-                  type: "align",
-                  value: "left"
-                })
-              ]
-            }),
-            children: [
-              Text.create({
-                value: "eeeeeebbb"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa")
+        .insert("ccc\n", { common: "foo" })
+        .insert("ddd\n", { common: "foo" })
+        .insert("eee", { common: "foo" })
+        .insert("bbb\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
@@ -1908,248 +528,77 @@ describe("Document", () => {
 
   describe("deleteAt(offset, length", () => {
     test("delete the left slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbbccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbccc\n")
+        .insert("ddd\n")
+        .build()
+        .deleteAt(4, 7);
 
-      const actual = node.deleteAt(4, 7);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("ccc\n")
+        .insert("ddd\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete the middle slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbbcccddd"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "eee"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbcccddd\n")
+        .insert("eee\n")
+        .build()
+        .deleteAt(7, 10);
 
-      const actual = node.deleteAt(7, 10);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbbddd"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "eee"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbddd\n")
+        .insert("eee\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete the right slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbbccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbccc\n")
+        .insert("ddd\n")
+        .build()
+        .deleteAt(7, 10);
 
-      const actual = node.deleteAt(7, 10);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ddd\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     describe("delete the first child", () => {
       test("the child is a block node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build()
+          .deleteAt(0, 4);
 
-        const actual = node.deleteAt(0, 4);
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema).insert("bbb\n").build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the child is an embed node", () => {
-        const node = Document.create({
-          children: [
-            Embed.create({
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert({ "block-image": "foo" })
+          .insert("aaa\n")
+          .build()
+          .deleteAt(0, 1);
 
-        const actual = node.deleteAt(0, 1);
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema).insert("aaa\n").build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
@@ -2157,374 +606,122 @@ describe("Document", () => {
 
     describe("delete a child", () => {
       test("the child is a block node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .insert("ccc\n")
+          .build()
+          .deleteAt(4, 8);
 
-        const actual = node.deleteAt(4, 8);
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "ccc"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("ccc\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
 
       test("the child is an embed node", () => {
-        const node = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Embed.create({
-              value: {
-                blockImage: "foo.png"
-              }
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const actual = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+          .build()
+          .deleteAt(4, 5);
 
-        const actual = node.deleteAt(4, 5);
-
-        const expected = Document.create({
-          children: [
-            Block.create({
-              children: [
-                Text.create({
-                  value: "aaa"
-                })
-              ]
-            }),
-            Block.create({
-              children: [
-                Text.create({
-                  value: "bbb"
-                })
-              ]
-            })
-          ]
-        });
+        const expected = new DocumentBuilder(schema)
+          .insert("aaa\n")
+          .insert("bbb\n")
+          .build();
 
         expect(actual.toJSON()).toEqual(expected.toJSON());
       });
     });
 
     test("delete the last child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .build()
+        .deleteAt(4, 8);
 
-      const actual = node.deleteAt(4, 8);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete the right slice of the first child, a child, and the right slice of the last child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaabbb"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "dddeee"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaabbb\n")
+        .insert("ccc\n")
+        .insert("dddeee\n")
+        .build()
+        .deleteAt(3, 14);
 
-      const actual = node.deleteAt(3, 14);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaaeee"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema).insert("aaaeee\n").build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete a child and the left slice of a child", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbbccc"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbbccc\n")
+        .build()
+        .deleteAt(0, 7);
 
-      const actual = node.deleteAt(0, 7);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema).insert("ccc\n").build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete every children", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+        .deleteAt(0, 12);
 
-      const actual = node.deleteAt(0, 12);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "bbb"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete a block node before an embed node", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Embed.create({
-            value: {
-              blockImage: "foo.png"
-            }
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert({ "block-image": "foo" })
+        .build()
+        .deleteAt(0, 4);
 
-      const actual = node.deleteAt(0, 4);
-
-      const expected = Document.create({
-        children: [
-          Embed.create({
-            value: {
-              blockImage: "foo.png"
-            }
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert({ "block-image": "foo" })
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
 
     test("delete a slice of a block node before an embed node", () => {
-      const node = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaabbb"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ccc"
-              })
-            ]
-          }),
-          Embed.create({
-            value: {
-              blockImage: "foo.png"
-            }
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const actual = new DocumentBuilder(schema)
+        .insert("aaabbb\n")
+        .insert("ccc\n")
+        .insert({ "block-image": "foo" })
+        .insert("ddd\n")
+        .build()
+        .deleteAt(3, 11);
 
-      const actual = node.deleteAt(3, 11);
-
-      const expected = Document.create({
-        children: [
-          Block.create({
-            children: [
-              Text.create({
-                value: "aaa"
-              })
-            ]
-          }),
-          Block.create({
-            children: [
-              Text.create({
-                value: "ddd"
-              })
-            ]
-          })
-        ]
-      });
+      const expected = new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("ddd\n")
+        .build();
 
       expect(actual.toJSON()).toEqual(expected.toJSON());
     });
