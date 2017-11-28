@@ -12,12 +12,12 @@ export default class DocumentBuilder {
 
   _insertText(value, attributes) {
     const lines = value.split(EOL);
-    let line = lines.pop();
+    let line = lines.shift();
 
     if (line.length) {
       let node = Text.create({
         schema: this._schema,
-        value
+        value: line
       });
 
       node = node.format(attributes);
@@ -36,12 +36,12 @@ export default class DocumentBuilder {
       this._blocks.push(node);
       this._inlines = [];
 
-      line = lines.pop();
+      line = lines.shift();
 
       if (line.length) {
         let node = Text.create({
           schema: this._schema,
-          value
+          value: line
         });
 
         node = node.format(attributes);
@@ -89,6 +89,7 @@ export default class DocumentBuilder {
 
   build() {
     return Document.create({
+      schema: this._schema,
       children: this._blocks
     });
   }

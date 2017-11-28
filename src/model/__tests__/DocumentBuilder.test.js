@@ -26,14 +26,13 @@ const schema = new Schema({
 
 test("DocumentBuilder", () => {
   const actual = new DocumentBuilder(schema)
-    .insert("foobar", { bold: true })
-    .insert({ image: "foobar" }, { alt: "foobar" })
-    .insert({ video: "foobar" })
-    .insert({ unknown: "foobar" })
+    .insert("foo", { bold: true })
+    .insert({ image: "foo" }, { alt: "foo" })
+    .insert({ video: "foo" })
+    .insert({ unknown: "foo" })
     .insert("\n", { align: "left" })
-    .insert({ video: "foobar" }, { quality: "high" })
-    .insert("foobar")
-    .insert("\n")
+    .insert({ video: "foo" }, { quality: "high" })
+    .insert("foo\nfoo\n")
     .build();
 
   const expected = Document.create({
@@ -57,19 +56,19 @@ test("DocumentBuilder", () => {
                 })
               ]
             }),
-            value: "foobar"
+            value: "foo"
           }),
           Embed.create({
             style: Style.create({
               marks: [
                 Mark.create({
                   type: "alt",
-                  value: "foobar"
+                  value: "foo"
                 })
               ]
             }),
             value: {
-              image: "foobar"
+              image: "foo"
             }
           })
         ]
@@ -84,13 +83,20 @@ test("DocumentBuilder", () => {
           ]
         }),
         value: {
-          video: "foobar"
+          video: "foo"
         }
       }),
       Block.create({
         children: [
           Text.create({
-            value: "foobar"
+            value: "foo"
+          })
+        ]
+      }),
+      Block.create({
+        children: [
+          Text.create({
+            value: "foo"
           })
         ]
       })

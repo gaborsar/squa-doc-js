@@ -46,6 +46,7 @@ export default class BlockBuilder {
 
   build() {
     return Block.create({
+      schema: this._schema,
       children: this._nodes
     });
   }

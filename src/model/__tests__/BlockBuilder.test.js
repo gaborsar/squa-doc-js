@@ -18,9 +18,9 @@ const schema = new Schema({
 
 test("BlockBuilder", () => {
   const actual = new BlockBuilder(schema)
-    .insert("foobar", { bold: true })
-    .insert({ image: "foobar" }, { alt: "foobar" })
-    .insert({ unknown: "foobar" })
+    .insert("foo", { bold: true })
+    .insert({ image: "foo" }, { alt: "foo" })
+    .insert({ unknown: "foo" })
     .build();
 
   const expected = Block.create({
@@ -34,19 +34,19 @@ test("BlockBuilder", () => {
             })
           ]
         }),
-        value: "foobar"
+        value: "foo"
       }),
       Embed.create({
         style: Style.create({
           marks: [
             Mark.create({
               type: "alt",
-              value: "foobar"
+              value: "foo"
             })
           ]
         }),
         value: {
-          image: "foobar"
+          image: "foo"
         }
       })
     ]
