@@ -1,19 +1,11 @@
-const pool = [];
+import Pool from "./Pool";
 
-function recycle(mark) {
-  for (const pooled of pool) {
-    if (pooled.equals(mark)) {
-      return pooled;
-    }
-  }
-  pool.push(mark);
-  return mark;
-}
+const pool = new Pool();
 
 export default class Mark {
   static create(props = {}) {
     const { type = "", value = true } = props;
-    return recycle(new Mark(type, value));
+    return pool.recycle(new Mark(type, value));
   }
 
   static compare(markA, markB) {
