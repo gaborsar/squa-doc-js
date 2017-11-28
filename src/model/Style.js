@@ -1,21 +1,12 @@
+import Pool from "./Pool";
 import Mark from "./Mark";
 
-const pool = [];
-
-function recycle(style) {
-  for (const pooled of pool) {
-    if (pooled.equals(style)) {
-      return pooled;
-    }
-  }
-  pool.push(style);
-  return style;
-}
+const pool = new Pool();
 
 export default class Style {
   static create(props = {}) {
     const { marks = [] } = props;
-    return recycle(new Style(marks));
+    return pool.recycle(new Style(marks));
   }
 
   constructor(marks) {
