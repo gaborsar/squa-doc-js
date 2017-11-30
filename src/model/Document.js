@@ -29,6 +29,10 @@ export default class Document extends ParentMixin(Node) {
     );
   }
 
+  get kind() {
+    return "document";
+  }
+
   get length() {
     return this.children.reduce((length, child) => length + child.length, 0);
   }

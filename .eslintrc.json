@@ -6,10 +6,7 @@
     "es6": true,
     "jest": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
@@ -29,10 +26,12 @@
     "expect": true
   },
   "rules": {
-    "eqeqeq": ["error"],
-    "no-unused-vars": ["error"],
+    "eqeqeq": "error",
+    "no-console": ["error", { "allow": ["wran", "error"] }],
+    "no-unused-vars": "error",
     "prefer-const": ["error", { "destructuring": "all" }],
-    "prefer-template": ["error"],
-    "radix": "error"
+    "prefer-template": "error",
+    "radix": "error",
+    "react/prop-types": "off"
   }
 }

@@ -40,6 +40,14 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     );
   }
 
+  get kind() {
+    return "block";
+  }
+
+  get type() {
+    return this.getMark("type");
+  }
+
   get length() {
     return this.children.reduce(
       (length, child) => length + child.length,

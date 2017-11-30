@@ -1,6 +1,8 @@
 .DS_Store
 .idea
 coverage
+dist
+example/public/app.js
 node_modules
 npm-debug.log
 package-lock.json
