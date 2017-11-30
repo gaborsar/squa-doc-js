@@ -40,6 +40,10 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
     );
   }
 
+  get kind() {
+    return "embed";
+  }
+
   get type() {
     return Embed.type(this.value);
   }
@@ -50,6 +54,14 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
 
   get text() {
     return "*";
+  }
+
+  get isBlockEmbed() {
+    return this.schema.isBlockEmbed(this.type);
+  }
+
+  get isInlineEmbed() {
+    return this.schema.isInlineEmbed(this.type);
   }
 
   toJSON() {

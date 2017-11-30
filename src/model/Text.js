@@ -36,6 +36,10 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
     );
   }
 
+  get kind() {
+    return "text";
+  }
+
   get length() {
     return this.value.length;
   }
