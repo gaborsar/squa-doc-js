@@ -9,3 +9,12 @@
   padding: 10px 30px;
   box-shadow: 0 1px 3px #aaa;
 }
+
+.ed-editable {
+  outline: none;
+}
+
+.ed-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

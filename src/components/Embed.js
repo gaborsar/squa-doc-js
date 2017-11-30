@@ -42,6 +42,8 @@ export default class Embed extends PureComponent {
         contentEditable={false}
         className={classNames.join(" ")}
         style={style}
+        data-embed
+        data-key={node.key}
       >
         {content}
       </Container>
