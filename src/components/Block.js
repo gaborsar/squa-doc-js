@@ -6,34 +6,13 @@ export default class Block extends PureComponent {
   render() {
     const { node, renderBlock, renderEmbed, renderMark } = this.props;
 
-    let content = node.children.map(
-      child =>
-        child.kind === "text" ? (
-          <Text key={child.key} node={child} renderMark={renderMark} />
-        ) : (
-          <Embed
-            key={child.key}
-            node={child}
-            renderEmbed={renderEmbed}
-            renderMark={renderMark}
-          />
-        )
-    );
-
     const classNames = ["ed-block"];
     let style = {};
 
     node.style.marks.forEach(mark => {
-      const {
-        component: MarkComponent = "",
-        props: markProps = {},
-        className: markClassName = "",
-        style: markStyle
-      } = renderMark(mark);
-
-      if (MarkComponent) {
-        content = <MarkComponent {...markProps}>{content}</MarkComponent>;
-      }
+      const { className: markClassName = "", style: markStyle } = renderMark(
+        mark
+      );
 
       if (markClassName) {
         classNames.push(markClassName);
@@ -43,6 +22,24 @@ export default class Block extends PureComponent {
         style = { ...style, ...markStyle };
       }
     });
+
+    const content = node.children.length ? (
+      node.children.map(
+        child =>
+          child.kind === "text" ? (
+            <Text key={child.key} node={child} renderMark={renderMark} />
+          ) : (
+            <Embed
+              key={child.key}
+              node={child}
+              renderEmbed={renderEmbed}
+              renderMark={renderMark}
+            />
+          )
+      )
+    ) : (
+      <br data-ignore />
+    );
 
     const {
       component: BlockComponent = "div",

@@ -1,3 +1,5 @@
+import isIgnoredNode from "./isIgnoredNode";
+import isEmbedNode from "./isEmbedNode";
 import getNodeLength from "./getNodeLength";
 
 export default function getNodeOffset(parentNode, node) {
@@ -8,7 +10,7 @@ export default function getNodeOffset(parentNode, node) {
       offset += getNodeLength(node);
     } else {
       node = node.parentNode;
-      if (node.hasAttribute("data-ignore") || node.hasAttribute("data-embed")) {
+      if (isIgnoredNode(node) || isEmbedNode(node)) {
         offset = 0;
       }
     }

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { isEqual } from "lodash/fp";
-import Block from "./Block";
 import Embed from "./Embed";
+import Block from "./Block";
 
 export default class Document extends PureComponent {
   render() {

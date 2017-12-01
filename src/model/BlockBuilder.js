@@ -1,5 +1,5 @@
-import Embed from "./Embed";
 import Text from "./Text";
+import Embed from "./Embed";
 import Block from "./Block";
 
 export default class BlockBuilder {
@@ -9,12 +9,9 @@ export default class BlockBuilder {
   }
 
   _insertText(value, attributes) {
-    let node = Text.create({
-      schema: this._schema,
-      value
-    });
+    const { _schema: schema } = this;
 
-    node = node.format(attributes);
+    const node = Text.create({ schema, value }).format(attributes);
 
     this._nodes.push(node);
 
@@ -22,26 +19,31 @@ export default class BlockBuilder {
   }
 
   _insertEmbed(value, attributes) {
+    const { _schema: schema } = this;
+
     const type = Embed.type(value);
 
-    if (this._schema.isInlineEmbed(type)) {
-      let node = Embed.create({
-        schema: this._schema,
-        value
-      });
-
-      node = node.format(attributes);
-
-      this._nodes.push(node);
+    if (!schema.isInlineEmbed(type)) {
+      throw new Error(`Invalid inline embed type: ${type}`);
     }
+
+    const node = Embed.create({ schema, value }).format(attributes);
+
+    this._nodes.push(node);
 
     return this;
   }
 
   insert(value, attributes = {}) {
-    return typeof value === "string"
-      ? this._insertText(value, attributes)
-      : this._insertEmbed(value, attributes);
+    if (typeof value === "string") {
+      return this._insertText(value, attributes);
+    }
+
+    if (typeof value === "object") {
+      return this._insertEmbed(value, attributes);
+    }
+
+    throw new Error(`Invalid value: ${value}`);
   }
 
   build() {

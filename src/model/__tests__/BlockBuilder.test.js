@@ -1,10 +1,10 @@
 import Schema from "../Schema";
-import BlockBuilder from "../BlockBuilder";
 import Mark from "../Mark";
 import Style from "../Style";
-import Embed from "../Embed";
 import Text from "../Text";
+import Embed from "../Embed";
 import Block from "../Block";
+import BlockBuilder from "../BlockBuilder";
 
 const schema = new Schema({
   inline: {
@@ -20,7 +20,6 @@ test("BlockBuilder", () => {
   const actual = new BlockBuilder(schema)
     .insert("foo", { bold: true })
     .insert({ image: "foo" }, { alt: "foo" })
-    .insert({ unknown: "foo" })
     .build();
 
   const expected = Block.create({
@@ -52,5 +51,5 @@ test("BlockBuilder", () => {
     ]
   });
 
-  expect(actual.toJSON()).toEqual(expected.toJSON());
+  expect(actual.delta).toEqual(expected.delta);
 });

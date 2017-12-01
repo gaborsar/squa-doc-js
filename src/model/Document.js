@@ -1,4 +1,6 @@
+import Delta from "quill-delta";
 import Schema from "./Schema";
+import Text from "./Text";
 import Embed from "./Embed";
 import Node from "./Node";
 import Block, { EOL } from "./Block";
@@ -7,26 +9,23 @@ import createKey from "./utils/createKey";
 
 export default class Document extends ParentMixin(Node) {
   static create(props = {}) {
-    const { schema = new Schema(), key = createKey(), children = [] } = props;
-    return new Document(schema, key, children);
+    return new Document(props);
   }
 
-  constructor(schema, key, children) {
+  constructor(props = {}) {
+    const {
+      schema = new Schema(),
+      key = createKey(),
+      children = [Block.create()]
+    } = props;
+
     super(schema, key);
+
     this.children = children;
   }
 
   merge(props) {
-    return Document.create(
-      Object.assign(
-        {
-          schema: this.schema,
-          key: this.key,
-          children: this.children
-        },
-        props
-      )
-    );
+    return Document.create({ ...this, ...props });
   }
 
   get kind() {
@@ -41,167 +40,310 @@ export default class Document extends ParentMixin(Node) {
     return this.children.reduce((text, child) => text + child.text, "");
   }
 
-  toJSON() {
-    return {
-      children: this.children.map(child => child.toJSON())
-    };
+  get delta() {
+    let delta = new Delta();
+
+    this.children.forEach(child => {
+      delta = delta.concat(child.delta);
+    });
+
+    return delta;
   }
 
   formatAt(startOffset, endOffset, attributes) {
     let node = this;
 
-    const range = node.createRange(startOffset, endOffset);
+    node.createRange(startOffset, endOffset).forEach(el => {
+      const { node: child, startOffset, endOffset } = el;
 
-    range.elements.forEach(el => {
       node = node.replaceChild(
-        el.node.formatAt(el.startOffset, el.endOffset, attributes),
-        el.node
+        child.formatAt(startOffset, endOffset, attributes),
+        child
       );
     });
 
     return node;
   }
 
-  // @todo (gabor) clean
-  // @todo (gabor) update to use parent methods
-
-  insertAt(offset, value, attributes) {
+  insertInlineAt(offset, child) {
     let node = this;
 
     const pos = node.createPosition(offset);
 
     if (!pos) {
-      return node;
+      throw new Error(`Invalid offset: ${offset}`);
     }
 
-    if (typeof value === "string") {
-      const fragment = [];
+    const { node: referenceChild, offset: childOffset } = pos;
 
-      let { offset } = pos;
-      let child = pos.node;
-
-      const lines = value.split(EOL);
-      let line = lines.shift();
-
-      if (line.length) {
-        child = child.insertAt(offset, line, attributes);
-      }
-
-      while (lines.length) {
-        offset += line.length;
-
-        const leftSlice = child
-          .slice(0, offset)
-          .clearStyle()
-          .format(attributes);
-
-        fragment.push(leftSlice);
-
-        child = child.slice(offset, child.length - 1);
-
-        offset = 0;
-
-        line = lines.shift();
-
-        if (line.length) {
-          child = child.insertAt(offset, line, attributes);
-        }
-      }
-
-      fragment.push(child);
-
-      const children = node.children
-        .slice(0, pos.index)
-        .concat(fragment)
-        .concat(node.children.slice(pos.index + 1));
-
-      node = node.setChildren(children);
-    } else {
-      const embedType = Embed.type(value);
-
-      if (node.schema.isBlockEmbed(embedType)) {
-        if (pos.offset === 0) {
-          let child = Embed.create({
-            schema: node.schema,
-            type: embedType,
-            value
-          });
-
-          child = child.format(attributes);
-
-          const children = node.children
-            .slice(0, pos.index)
-            .concat(child)
-            .concat(node.children.slice(pos.index));
-
-          node = node.setChildren(children);
-        }
-      } else if (node.schema.isInlineEmbed(embedType)) {
-        const child = pos.node.insertAt(pos.offset, value, attributes);
-
-        const children = node.children
-          .slice(0, pos.index)
-          .concat(child)
-          .concat(node.children.slice(pos.index + 1));
-
-        node = node.setChildren(children);
-      }
-    }
+    node = node.replaceChild(
+      referenceChild.insertInlineAt(childOffset, child),
+      referenceChild
+    );
 
     return node;
   }
 
-  // @todo (gabor) update to use Range
+  insertTextAt(offset, value, attributes = {}) {
+    let node = this;
+
+    const { schema } = node;
+
+    const child = Text.create({ schema, value }).format(attributes);
+
+    node = node.insertInlineAt(offset, child);
+
+    return node;
+  }
+
+  insertInlineEmbedAt(offset, value, attributes = {}) {
+    let node = this;
+
+    const { schema } = node;
+
+    const type = Embed.type(value);
+
+    if (!schema.isInlineEmbed(type)) {
+      throw new Error(`Invalid inline embed type: ${type}`);
+    }
+
+    const child = Embed.create({ schema, value }).format(attributes);
+
+    node = node.insertInlineAt(offset, child);
+
+    return node;
+  }
+
+  splitBlockAt(offset, attributes = {}) {
+    let node = this;
+
+    const pos = node.createPosition(offset);
+
+    if (!pos) {
+      throw new Error(`Invalid offset: ${offset}`);
+    }
+
+    const { node: child, offset: childOffset } = pos;
+
+    if (child instanceof Embed) {
+      throw new Error(`Invalid offset: ${offset}`);
+    }
+
+    node = node
+      .insertBefore(
+        child
+          .slice(0, childOffset)
+          .clearStyle()
+          .format(attributes),
+        child
+      )
+      .replaceChild(child.slice(childOffset), child);
+
+    return node;
+  }
+
+  insertBlockAt(offset, child) {
+    let node = this;
+
+    const pos = node.createPosition(offset);
+
+    if (!pos) {
+      throw new Error(`Invalid offset: ${offset}`);
+    }
+
+    const { node: referenceChild, offset: childOffset } = pos;
+
+    if (childOffset !== 0) {
+      throw new Error(`Invalid offset: ${offset}`);
+    }
+
+    node = node.insertBefore(child, referenceChild);
+
+    return node;
+  }
+
+  insertBlockEmbedAt(offset, value, attributes = {}) {
+    let node = this;
+
+    const { schema } = node;
+
+    const type = Embed.type(value);
+
+    if (!schema.isBlockEmbed(type)) {
+      throw new Error(`Invalid block embed type: ${type}`);
+    }
+
+    const child = Embed.create({ schema, value }).format(attributes);
+
+    node = node.insertBlockAt(offset, child);
+
+    return node;
+  }
+
+  insertAt(offset, value, attributes = {}) {
+    let node = this;
+
+    if (typeof value === "string") {
+      const lines = value.split(EOL);
+
+      let line = lines.pop();
+
+      if (line.length) {
+        node = node.insertTextAt(offset, line, attributes);
+      }
+
+      while (lines.length) {
+        node = node.splitBlockAt(offset, attributes);
+
+        line = lines.pop();
+
+        if (line.length) {
+          node = node.insertTextAt(offset, line, attributes);
+        }
+      }
+
+      return node;
+    }
+
+    if (typeof value === "object") {
+      const { schema } = node;
+
+      const type = Embed.type(value);
+
+      if (schema.isInlineEmbed(type)) {
+        return node.insertInlineEmbedAt(offset, value, attributes);
+      }
+
+      if (schema.isBlockEmbed(type)) {
+        return node.insertBlockEmbedAt(offset, value, attributes);
+      }
+
+      throw new Error(`Invalid embed type: ${type}`);
+    }
+
+    throw new Error(`Invalid value: ${value}`);
+  }
 
   deleteAt(startOffset, endOffset) {
-    const node = this;
+    let node = this;
 
     const startPos = node.createPosition(startOffset);
 
     if (!startPos) {
-      return node;
+      throw new Error(`Invalid offset: ${startOffset}`);
     }
 
     const endPos = node.createPosition(endOffset);
 
     if (!endPos) {
-      return node;
+      throw new Error(`Invald offset: ${endOffset}`);
     }
 
-    const fragment = [];
+    const { node: startChild, offset: startChildOffset } = startPos;
+    const { node: endChild, offset: endChildOffset } = endPos;
 
-    if (startPos.index === endPos.index) {
-      fragment.push(startPos.node.deleteAt(startPos.offset, endPos.offset));
-    } else {
-      if (startPos.offset > 0) {
-        if (endPos.node instanceof Block) {
-          fragment.push(
-            startPos.node
-              .deleteAt(startPos.offset, startPos.node.length - EOL.length)
-              .concat(endPos.node.deleteAt(0, endPos.offset))
-          );
-        } else {
-          fragment.push(
-            startPos.node.deleteAt(
-              startPos.offset,
-              startPos.node.length - EOL.length
-            )
-          );
-        }
-      } else {
-        if (endPos.offset === 0) {
-          fragment.push(endPos.node);
-        } else if (endPos.offset < endPos.node.length) {
-          fragment.push(endPos.node.deleteAt(0, endPos.offset));
-        }
+    if (startChildOffset === 0 && endChildOffset === 0) {
+      let currentChild = startChild;
+
+      while (currentChild !== endChild) {
+        const nextChild = node.getNextSibling(currentChild);
+
+        node = node.removeChild(currentChild);
+
+        currentChild = nextChild;
       }
+    } else if (startChildOffset === 0) {
+      let currentChild = startChild;
+
+      while (currentChild !== endChild) {
+        const nextChild = node.getNextSibling(currentChild);
+
+        node = node.removeChild(currentChild);
+
+        currentChild = nextChild;
+      }
+
+      const newEndChild = endChild.slice(endChildOffset);
+
+      node = node.replaceChild(newEndChild, endChild);
+    } else if (endChildOffset === 0) {
+      let currentChild = startChild;
+
+      while (currentChild !== endChild) {
+        const nextChild = node.getNextSibling(currentChild);
+
+        node = node.removeChild(currentChild);
+
+        currentChild = nextChild;
+      }
+
+      const newStartChild = startChild.slice(0, startChildOffset);
+
+      if (endChild instanceof Block) {
+        node = node.removeChild(startChild);
+
+        const newEndChild = newStartChild.concat(endChild);
+
+        node = node.replaceChild(newEndChild, endChild);
+      } else {
+        node = node.insertBefore(newStartChild, endChild);
+      }
+    } else {
+      let currentChild = startChild;
+
+      while (currentChild !== endChild) {
+        const nextChild = node.getNextSibling(currentChild);
+
+        node = node.removeChild(currentChild);
+
+        currentChild = nextChild;
+      }
+
+      const newStartChild = startChild.slice(0, startChildOffset);
+
+      let newEndChild = endChild.slice(endChildOffset);
+
+      newEndChild = newStartChild.concat(newEndChild);
+
+      node = node.replaceChild(newEndChild, endChild);
     }
 
-    const children = node.children
-      .slice(0, startPos.index)
-      .concat(fragment)
-      .concat(node.children.slice(endPos.index + 1));
+    return node;
+  }
 
-    return node.setChildren(children);
+  apply(delta) {
+    let offset = 0;
+
+    let node = this;
+
+    delta.forEach(op => {
+      if (typeof op.retain === "number") {
+        const { retain: length, attributes } = op;
+
+        if (attributes) {
+          node = node.formatAt(offset, offset + length, attributes);
+        }
+
+        offset += length;
+      } else if (typeof op.insert === "string") {
+        const { insert: value, attributes = {} } = op;
+
+        node = node.insertAt(offset, value, attributes);
+
+        offset += value.length;
+      } else if (typeof op.insert === "object") {
+        const { insert: value, attributes = {} } = op;
+
+        node = node.insertAt(offset, value, attributes);
+
+        offset += 1;
+      } else if (typeof op.delete === "number") {
+        const { delete: length } = op;
+
+        node = node.deleteAt(offset, offset + length);
+      }
+    });
+
+    return node;
   }
 }

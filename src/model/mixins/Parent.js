@@ -1,10 +1,15 @@
 import Position from "../Position";
+import RangeIterator from "../RangeIterator";
 import RangeBuilder from "../RangeBuilder";
 
 const ParentMixin = superclass =>
   class extends superclass {
     createPosition(offset, inclusive = false) {
       return Position.create(this.children, offset, inclusive);
+    }
+
+    createIterator() {
+      return new RangeIterator(this.children);
     }
 
     createRange(startOffset, endOffset) {
@@ -14,8 +19,12 @@ const ParentMixin = superclass =>
         .build();
     }
 
-    setChildren(children) {
+    setChildren(children = []) {
       return this.merge({ children });
+    }
+
+    empty() {
+      return this.setChildren();
     }
 
     appendChild(child) {
@@ -68,12 +77,36 @@ const ParentMixin = superclass =>
 
     getPreviousSibling(referenceChild) {
       const index = this.children.indexOf(referenceChild);
-      return index !== -1 ? this.children[index - 1] : null;
+
+      if (index !== -1) {
+        return this.children[index - 1];
+      }
     }
 
     getNextSibling(referenceChild) {
       const index = this.children.indexOf(referenceChild);
-      return index !== -1 ? this.children[index + 1] : null;
+
+      if (index !== -1) {
+        return this.children[index + 1];
+      }
+    }
+
+    getOffset(child) {
+      let offset = 0;
+
+      for (const currentChild of this.children) {
+        if (currentChild === child) {
+          break;
+        }
+
+        offset += child.length;
+      }
+
+      return offset;
+    }
+
+    findChildByKey(key) {
+      return this.children.find(child => child.key === key);
     }
   };
 

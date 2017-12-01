@@ -10,11 +10,11 @@ export default class Node {
     throw new Error("missing method");
   }
 
-  setKey(key) {
+  setKey(key = createKey()) {
     return this.merge({ key });
   }
 
   regenerateKey() {
-    return this.setKey(createKey());
+    return this.setKey();
   }
 }

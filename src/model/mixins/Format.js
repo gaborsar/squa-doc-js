@@ -2,12 +2,12 @@ import Style from "../Style";
 
 const FormatMixin = superclass =>
   class extends superclass {
-    setStyle(style) {
+    setStyle(style = Style.create()) {
       return this.merge({ style });
     }
 
     clearStyle() {
-      return this.setStyle(Style.create());
+      return this.setStyle();
     }
 
     hasMark(type) {

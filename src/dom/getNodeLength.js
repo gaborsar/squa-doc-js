@@ -1,23 +1,24 @@
+import isTextNode from "./isTextNode";
+import isElementNode from "./isElementNode";
+import isIgnoredNode from "./isIgnoredNode";
+import isBlockNode from "./isBlockNode";
+import isEmbedNode from "./isEmbedNode";
+import isLineBreakNode from "./isLineBreakNode";
+import isImageNode from "./isImageNode";
+
 export default function getNodeLength(node) {
-  if (node.nodeType === Node.TEXT_NODE) {
+  if (isTextNode(node)) {
     return node.nodeValue.length;
   }
 
-  if (
-    node.nodeType === Node.ELEMENT_NODE &&
-    !node.hasAttribute("data-ignore")
-  ) {
-    if (
-      node.hasAttribute("data-embed") ||
-      node.nodeName === "BR" ||
-      node.nodeName === "IMG"
-    ) {
+  if (isElementNode(node) && !isIgnoredNode(node)) {
+    if (isEmbedNode(node) || isLineBreakNode(node) || isImageNode(node)) {
       return 1;
     }
 
     let length = 0;
 
-    if (node.hasAttribute("data-block")) {
+    if (isBlockNode(node)) {
       length += 1;
     }
 

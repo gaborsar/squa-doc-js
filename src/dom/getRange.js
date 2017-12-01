@@ -8,7 +8,7 @@ export default function getRange(
   focusOffset
 ) {
   return {
-    startOffset: getPosition(rootNode, anchorNode, anchorOffset),
-    endOffset: getPosition(rootNode, focusNode, focusOffset)
+    anchorOffset: getPosition(rootNode, anchorNode, anchorOffset),
+    focusOffset: getPosition(rootNode, focusNode, focusOffset)
   };
 }

@@ -1,11 +1,11 @@
 import Schema from "../Schema";
-import DocumentBuilder from "../DocumentBuilder";
 import Mark from "../Mark";
 import Style from "../Style";
-import Embed from "../Embed";
 import Text from "../Text";
+import Embed from "../Embed";
 import Block from "../Block";
 import Document from "../Document";
+import DocumentBuilder from "../DocumentBuilder";
 
 const schema = new Schema({
   block: {
@@ -28,8 +28,6 @@ test("DocumentBuilder", () => {
   const actual = new DocumentBuilder(schema)
     .insert("foo", { bold: true })
     .insert({ image: "foo" }, { alt: "foo" })
-    .insert({ video: "foo" })
-    .insert({ unknown: "foo" })
     .insert("\n", { align: "left" })
     .insert({ video: "foo" }, { quality: "high" })
     .insert("foo\nfoo\n")
@@ -103,5 +101,5 @@ test("DocumentBuilder", () => {
     ]
   });
 
-  expect(actual.toJSON()).toEqual(expected.toJSON());
+  expect(actual.delta).toEqual(expected.delta);
 });
