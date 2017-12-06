@@ -33,7 +33,12 @@ export default class Document extends PureComponent {
           } = buffer;
 
           blocks.push(
-            <WrapperComponent {...wrapperProps} key={wrapperKey}>
+            <WrapperComponent
+              {...wrapperProps}
+              key={wrapperKey}
+              data-wrapper
+              data-key={wrapperKey}
+            >
               {wrappedBlocks}
             </WrapperComponent>
           );
@@ -83,6 +88,10 @@ export default class Document extends PureComponent {
 
     flush();
 
-    return <div className="ed-document">{blocks}</div>;
+    return (
+      <div className="ed-document" data-document data-key={node.key}>
+        {blocks}
+      </div>
+    );
   }
 }

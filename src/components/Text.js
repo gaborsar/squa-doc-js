@@ -30,7 +30,12 @@ export default class Text extends PureComponent {
     });
 
     return (
-      <span className={classNames.join(" ")} style={style}>
+      <span
+        className={classNames.join(" ")}
+        style={style}
+        data-text
+        data-key={node.key}
+      >
         {content}
       </span>
     );

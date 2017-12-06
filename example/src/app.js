@@ -117,7 +117,7 @@ const doc = new DocumentBuilder(schema)
   .insert("Mauris enim quam, semper eu ex id, consectetur vulputate elit. ")
   .insert("Suspendisse molestie vel arcu et euismod. ")
   .insert(
-    "Sed tincidunt, erat vel convallis finibus, ante purus tempus purus, at suscipit nisl ex vel magna. "
+    "Sed tincidunt, erat vel convallis finibus, ante purus tempus purus, at suscipit nisl ex vel magna."
   )
   .insert("\n", { type: "paragraph" })
   .insert("Unordered list item 1")

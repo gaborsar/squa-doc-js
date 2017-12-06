@@ -54,6 +54,8 @@ export default class Block extends PureComponent {
         {...blockProps}
         className={classNames.join(" ")}
         style={style}
+        data-block
+        data-key={node.key}
       >
         {content}
       </BlockComponent>
