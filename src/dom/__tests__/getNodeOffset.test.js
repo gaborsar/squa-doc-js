@@ -1,6 +1,6 @@
 import getNodeOffset from "../getNodeOffset";
 
-describe("getNodeOffset", () => {
+describe("getNodeOffset()", () => {
   test("within a text node", () => {
     const root = document.createElement("div");
     root.setAttribute("data-document", "true");

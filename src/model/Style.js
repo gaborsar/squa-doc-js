@@ -3,6 +3,8 @@ import Mark from "./Mark";
 
 const pool = new Pool();
 
+const pass = () => true;
+
 export default class Style {
   static create(props = {}) {
     return pool.recycle(new Style(props));
@@ -11,6 +13,26 @@ export default class Style {
   constructor(props = {}) {
     const { marks = [] } = props;
     this.marks = marks;
+  }
+
+  merge(props) {
+    return Style.create({ ...this, ...props });
+  }
+
+  setMarks(marks) {
+    return this.merge({ marks });
+  }
+
+  hasMark(type) {
+    return this.marks.some(mark => mark.type === type);
+  }
+
+  getMark(type) {
+    const mark = this.marks.find(mark => mark.type === type);
+
+    if (mark) {
+      return mark.value;
+    }
   }
 
   toObject() {
@@ -37,7 +59,7 @@ export default class Style {
     return true;
   }
 
-  update(attributes, predicate) {
+  update(attributes, predicate = pass) {
     let marks = this.marks;
 
     for (const [type, value] of Object.entries(attributes)) {
@@ -55,15 +77,10 @@ export default class Style {
     return Style.create({ marks });
   }
 
-  hasMark(type) {
-    return this.marks.some(mark => mark.type === type);
-  }
-
-  getMark(type) {
-    const mark = this.marks.find(mark => mark.type === type);
-
-    if (mark) {
-      return mark.value;
-    }
+  intersect(other) {
+    const marks = this.marks.filter(
+      mark => mark.value === other.getMark(mark.type)
+    );
+    return this.setMarks(marks);
   }
 }

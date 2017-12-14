@@ -50,11 +50,11 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
   slice(startOffset = 0, endOffset = Infinity) {
     let node = this;
 
-    node = node.setValue(node.value.slice(startOffset, endOffset));
-
     if (endOffset < node.length) {
       node = node.regenerateKey();
     }
+
+    node = node.setValue(node.value.slice(startOffset, endOffset));
 
     return node;
   }
