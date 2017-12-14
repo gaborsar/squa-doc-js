@@ -182,6 +182,21 @@ export default class Change {
     return this;
   }
 
+  format(attributes) {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { startOffset, endOffset } = selection;
+
+    document = document.formatAt(startOffset, endOffset, attributes);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
   insert(text, attributes = {}) {
     let { value } = this;
     let { document, selection } = value;

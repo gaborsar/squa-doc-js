@@ -120,6 +120,28 @@ describe("Change", () => {
     expect(actualValue.selection.focusOffset).toBe(3);
   });
 
+  test("format()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 10)
+      .format({ bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa")
+      .insert("bbb", { bold: true })
+      .insert("\n")
+      .insert("ccc", { bold: true })
+      .insert("ddd")
+      .insert("\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
   test("insert()", () => {
     const value = Value.create({
       document: new DocumentBuilder(schema).insert("aaabbb\n").build()
