@@ -1,6 +1,6 @@
 import Delta from "quill-delta";
 import parseHTML from "../parseHTML";
-import tokenizeNode from "../tokenizeNode";
+import { tokenizeNode } from "../../plugins/parser";
 
 describe("parseHTML", () => {
   test("unordered-list", () => {
