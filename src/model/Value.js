@@ -146,4 +146,11 @@ export default class Value {
 
     return style.toObject();
   }
+
+  getFormat() {
+    return {
+      ...this.getBlockFormat(),
+      ...this.getInlineFormat()
+    };
+  }
 }
