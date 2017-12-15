@@ -145,10 +145,22 @@ export default class Editor extends PureComponent {
     event.preventDefault();
 
     if (isCollapsed) {
-      change
-        .selectCharacterBackward()
-        .delete()
-        .save("delete_character_backward");
+      if (event.metaKey) {
+        change
+          .selectBlockBackward()
+          .delete()
+          .save();
+      } else if (event.altKey) {
+        change
+          .selectWordBackward()
+          .delete()
+          .save();
+      } else {
+        change
+          .selectCharacterBackward()
+          .delete()
+          .save("delete_character_backward");
+      }
     } else {
       change.delete().save();
     }
@@ -163,10 +175,22 @@ export default class Editor extends PureComponent {
     event.preventDefault();
 
     if (isCollapsed) {
-      change
-        .selectCharacterForward()
-        .delete()
-        .save("delete_character_forward");
+      if (event.metaKey) {
+        change
+          .selectBlockForward()
+          .delete()
+          .save();
+      } else if (event.altKey) {
+        change
+          .selectWordForward()
+          .delete()
+          .save();
+      } else {
+        change
+          .selectCharacterForward()
+          .delete()
+          .save("delete_character_forward");
+      }
     } else {
       change.delete().save();
     }
