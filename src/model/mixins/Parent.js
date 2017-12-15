@@ -91,20 +91,6 @@ const ParentMixin = superclass =>
       }
     }
 
-    getOffset(child) {
-      let offset = 0;
-
-      for (const currentChild of this.children) {
-        if (currentChild === child) {
-          break;
-        }
-
-        offset += child.length;
-      }
-
-      return offset;
-    }
-
     findChildByKey(key) {
       return this.children.find(child => child.key === key);
     }

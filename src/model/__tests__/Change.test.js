@@ -1,6 +1,8 @@
 import Schema from "../Schema";
-import Value, { MODE_COMPOSITION } from "../Value";
+import Value from "../Value";
 import DocumentBuilder from "../DocumentBuilder";
+
+import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
 const schema = new Schema({
   block: {
@@ -65,8 +67,8 @@ describe("Change", () => {
   test("setMode()", () => {
     const { value } = Value.create()
       .change()
-      .setMode(MODE_COMPOSITION);
-    expect(value.mode).toBe(MODE_COMPOSITION);
+      .setMode(EDITOR_MODE_COMPOSITION);
+    expect(value.mode).toBe(EDITOR_MODE_COMPOSITION);
   });
 
   test("select()", () => {

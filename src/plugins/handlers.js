@@ -1,3 +1,5 @@
+import { KEY_BACKSPACE, KEY_ENTER } from "../constants";
+
 function removeListItem(change, event) {
   const { value } = change;
   const { document, selection } = value;
@@ -37,11 +39,11 @@ function removeListItem(change, event) {
 }
 
 export function onKeyDown(change, event) {
-  if (event.keyCode === 8) {
+  if (event.keyCode === KEY_BACKSPACE) {
     return removeListItem(change, event);
   }
 
-  if (event.keyCode === 13) {
+  if (event.keyCode === KEY_ENTER) {
     return removeListItem(change, event);
   }
 

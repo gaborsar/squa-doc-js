@@ -2,8 +2,7 @@ import Document from "./Document";
 import Selection from "./Selection";
 import Change from "./Change";
 
-export const MODE_EDIT = "edit";
-export const MODE_COMPOSITION = "composition";
+import { EDITOR_MODE_EDIT } from "../constants";
 
 export default class Value {
   static create(props = {}) {
@@ -12,7 +11,7 @@ export default class Value {
 
   constructor(props = {}) {
     const {
-      mode = MODE_EDIT,
+      mode = EDITOR_MODE_EDIT,
       document = Document.create(),
       selection = Selection.create(),
       undoStack = [],
@@ -46,7 +45,7 @@ export default class Value {
     return this.merge({ selection });
   }
 
-  setMode(mode = MODE_EDIT) {
+  setMode(mode = EDITOR_MODE_EDIT) {
     return this.merge({ mode });
   }
 
