@@ -185,7 +185,29 @@ export default class Change {
 
     const { startOffset, endOffset } = selection;
 
+    const posBefore = document.createPosition(startOffset);
+
+    if (!posBefore) {
+      return this;
+    }
+
+    const { node: { style: styleBefore } } = posBefore;
+
     document = document.deleteAt(startOffset, endOffset);
+
+    const posAfter = document.createPosition(startOffset);
+
+    if (!posAfter) {
+      return this;
+    }
+
+    const { node: blockBefore } = posAfter;
+
+    if (blockBefore.style !== styleBefore) {
+      const blockAfter = blockBefore.setStyle(styleBefore);
+
+      document = document.replaceChild(blockAfter, blockBefore);
+    }
 
     selection = selection.setAnchorOffset(startOffset).collapse();
 

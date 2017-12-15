@@ -102,16 +102,21 @@ describe("Change", () => {
 
   test("delete()", () => {
     const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbbccc\n").build()
+      document: new DocumentBuilder(schema)
+        .insert("aaabbb")
+        .insert("\n", { type: "heading-one" })
+        .insert("cccddd\n")
+        .build()
     });
 
     const { value: actualValue } = value
       .change()
-      .select(3, 6)
+      .select(3, 10)
       .delete();
 
     const expectedDocument = new DocumentBuilder(schema)
-      .insert("aaaccc\n")
+      .insert("aaaddd")
+      .insert("\n", { type: "heading-one" })
       .build();
 
     expect(actualValue.document.delta).toEqual(expectedDocument.delta);
