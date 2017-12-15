@@ -1,4 +1,11 @@
-import { KEY_BACKSPACE, KEY_ENTER, KEY_B, KEY_I } from "../constants";
+import {
+  KEY_BACKSPACE,
+  KEY_ENTER,
+  KEY_TAB,
+  KEY_B,
+  KEY_I,
+  INDENT_MAX
+} from "../constants";
 
 function removeListItem(change, event) {
   const { value } = change;
@@ -38,7 +45,135 @@ function removeListItem(change, event) {
   return true;
 }
 
-export function toggleBold(change, event) {
+function indentBlock(change, block) {
+  if (
+    block.type === "unordered-list-item" ||
+    block.type === "ordered-list-item"
+  ) {
+    const { attributes } = block;
+
+    if (attributes.indent) {
+      if (attributes.indent < INDENT_MAX) {
+        change.replaceBlock(
+          block.format({
+            indent: attributes.indent + 1
+          }),
+          block
+        );
+      }
+    } else {
+      change.replaceBlock(
+        block.format({
+          indent: 1
+        }),
+        block
+      );
+    }
+  }
+}
+
+function indent(change, event) {
+  const { value } = change;
+  const { document, selection } = value;
+
+  event.preventDefault();
+
+  const { isCollapsed } = selection;
+
+  if (isCollapsed) {
+    const { offset } = selection;
+
+    const pos = document.createPosition(offset);
+
+    if (!pos) {
+      return false;
+    }
+
+    const { node: block } = pos;
+
+    indentBlock(change, block);
+  } else {
+    const { startOffset, endOffset } = selection;
+
+    document.createRange(startOffset, endOffset).forEach(el => {
+      const { node: block } = el;
+
+      indentBlock(change, block);
+    });
+  }
+
+  if (change.value !== value) {
+    change.save();
+  }
+
+  return true;
+}
+
+function outdentBlock(change, block) {
+  if (
+    block.type === "unordered-list-item" ||
+    block.type === "ordered-list-item"
+  ) {
+    const { attributes } = block;
+
+    if (attributes.indent) {
+      if (attributes.indent > 1) {
+        change.replaceBlock(
+          block.format({
+            indent: Math.max(attributes.indent - 1, 0)
+          }),
+          block
+        );
+      } else {
+        change.replaceBlock(
+          block.format({
+            indent: null
+          }),
+          block
+        );
+      }
+    }
+  }
+}
+
+function outdent(change, event) {
+  const { value } = change;
+  const { document, selection } = value;
+
+  event.preventDefault();
+
+  const { isCollapsed } = selection;
+
+  if (isCollapsed) {
+    const { offset } = selection;
+
+    const pos = document.createPosition(offset);
+
+    if (!pos) {
+      return false;
+    }
+
+    const { node: block } = pos;
+
+    outdentBlock(change, block);
+  } else {
+    const { startOffset, endOffset } = selection;
+
+    document.createRange(startOffset, endOffset).forEach(el => {
+      const { node: block } = el;
+
+      outdentBlock(change, block);
+    });
+  }
+
+  if (change.value !== value) {
+    change.save();
+  }
+
+  return true;
+}
+
+function toggleBold(change, event) {
   const { value } = change;
 
   event.preventDefault();
@@ -50,7 +185,7 @@ export function toggleBold(change, event) {
   return true;
 }
 
-export function toggleItalic(change, event) {
+function toggleItalic(change, event) {
   const { value } = change;
 
   event.preventDefault();
@@ -69,6 +204,14 @@ export function onKeyDown(change, event) {
 
   if (event.keyCode === KEY_ENTER) {
     return removeListItem(change, event);
+  }
+
+  if (event.keyCode === KEY_TAB) {
+    if (event.shiftKey) {
+      return outdent(change, event);
+    } else {
+      return indent(change, event);
+    }
   }
 
   if (event.keyCode === KEY_B && event.metaKey) {
