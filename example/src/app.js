@@ -2,104 +2,10 @@ import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import {
   Editor,
-  Schema,
   DocumentBuilder,
   Value,
-  tokenizeNode
+  schema
 } from "../../src/SquaDocEditor";
-
-function BlockImage(props) {
-  const { node } = props;
-  return (
-    <figure>
-      <img src={node.value["block-image"]} alt={node.getMark("alt")} />
-      <figcaption>{node.getMark("caption")}</figcaption>
-    </figure>
-  );
-}
-
-function InlineImage(props) {
-  const { node } = props;
-  return <img src={node.value["inline-image"]} alt={node.getMark("alt")} />;
-}
-
-const schema = new Schema({
-  block: {
-    marks: ["type"],
-    embeds: ["block-image"]
-  },
-  inline: {
-    marks: ["bold", "italic"],
-    embeds: ["inline-image"]
-  },
-  "block-image": {
-    marks: ["alt", "caption"]
-  },
-  "inline-image": {
-    marks: ["alt"]
-  }
-});
-
-function renderWrapper(node) {
-  switch (node.type) {
-    case "unordered-list-item":
-      return { component: "ul" };
-
-    case "ordered-list-item":
-      return { component: "ol" };
-
-    default:
-      return {};
-  }
-}
-
-function renderBlock(node) {
-  switch (node.type) {
-    case "heading-one":
-      return { component: "h1" };
-
-    case "heading-two":
-      return { component: "h2" };
-
-    case "paragraph":
-      return { component: "p" };
-
-    case "unordered-list-item":
-      return { component: "li" };
-
-    case "ordered-list-item":
-      return { component: "li" };
-
-    default:
-      return {};
-  }
-}
-
-function renderEmbed(node) {
-  switch (node.type) {
-    case "block-image":
-      return { component: BlockImage, props: { node } };
-
-    case "inline-image":
-      return { component: InlineImage, props: { node } };
-
-    default:
-      return {};
-  }
-}
-
-function renderMark(mark) {
-  switch (mark.type) {
-    case "bold":
-      return { component: "b" };
-
-    case "italic":
-      return { component: "i" };
-
-    default:
-      return {};
-  }
-}
 
 const doc = new DocumentBuilder(schema)
   .insert("Heading level one")
@@ -176,17 +82,7 @@ class App extends PureComponent {
 
   render() {
     const { value } = this.state;
-    return (
-      <Editor
-        value={value}
-        renderWrapper={renderWrapper}
-        renderBlock={renderBlock}
-        renderEmbed={renderEmbed}
-        renderMark={renderMark}
-        tokenizeNode={tokenizeNode}
-        onChange={this.onChange}
-      />
-    );
+    return <Editor value={value} onChange={this.onChange} />;
   }
 }
 

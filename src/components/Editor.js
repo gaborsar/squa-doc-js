@@ -8,6 +8,15 @@ import parseNode from "../parser/parseNode";
 import { EOL } from "../model/Block";
 import { MODE_EDIT, MODE_COMPOSITION } from "../model/Value";
 
+import {
+  renderWrapper as defaultRenderWrapper,
+  renderBlock as defaultRenderBlock,
+  renderEmbed as defaultRenderEmbed,
+  renderMark as defaultRenderMark
+} from "../plugins/renderer";
+
+import { tokenizeNode as defaultTokenizeNode } from "../plugins/parser";
+
 const sink = () => {};
 
 const preventDefault = event => event.preventDefault();
@@ -214,7 +223,7 @@ export default class Editor extends PureComponent {
   }
 
   handleInput(change) {
-    const { tokenizeNode } = this.props;
+    const { tokenizeNode = defaultTokenizeNode } = this.props;
     const { value } = change;
     const { document } = value;
 
@@ -375,10 +384,10 @@ export default class Editor extends PureComponent {
   render() {
     const {
       value,
-      renderWrapper,
-      renderBlock,
-      renderEmbed,
-      renderMark
+      renderWrapper = defaultRenderWrapper,
+      renderBlock = defaultRenderBlock,
+      renderEmbed = defaultRenderEmbed,
+      renderMark = defaultRenderMark
     } = this.props;
     const { document } = value;
 
