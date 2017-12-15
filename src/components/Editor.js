@@ -9,6 +9,15 @@ import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
 
 import {
+  renderWrapper as defaultRenderWrapper,
+  renderBlock as defaultRenderBlock,
+  renderEmbed as defaultRenderEmbed,
+  renderMark as defaultRenderMark
+} from "../plugins/renderer";
+import { tokenizeNode as defaultTokenizeNode } from "../plugins/parser";
+import { onKeyDown as defaultOnKeyDown } from "../plugins/handlers";
+
+import {
   EOL,
   KEY_BACKSPACE,
   KEY_DELETE,
@@ -17,15 +26,6 @@ import {
   EDITOR_MODE_EDIT,
   EDITOR_MODE_COMPOSITION
 } from "../constants";
-
-import {
-  renderWrapper as defaultRenderWrapper,
-  renderBlock as defaultRenderBlock,
-  renderEmbed as defaultRenderEmbed,
-  renderMark as defaultRenderMark
-} from "../plugins/renderer";
-import { tokenizeNode as defaultTokenizeNode } from "../plugins/parser";
-import { onKeyDown as defaultOnKeyDown } from "../plugins/handlers";
 
 const sink = () => {};
 
