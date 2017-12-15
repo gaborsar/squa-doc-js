@@ -235,11 +235,11 @@ export default class Change {
 
     let length = 0;
 
-    while (/\w/.test(text[offset + length]) && offset + length < text.length) {
+    while (/\W/.test(text[offset + length]) && offset + length < text.length) {
       length += 1;
     }
 
-    while (/\W/.test(text[offset + length]) && offset + length < text.length) {
+    while (/\w/.test(text[offset + length]) && offset + length < text.length) {
       length += 1;
     }
 

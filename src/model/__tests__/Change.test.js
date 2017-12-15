@@ -102,32 +102,64 @@ describe("Change", () => {
     expect(actualValue.selection.focusOffset).toBe(4);
   });
 
-  test("selectWordBackward()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaa bbb ccc\n").build()
+  describe("selectWordBackward()", () => {
+    test("select a word", () => {
+      const value = Value.create({
+        document: new DocumentBuilder(schema).insert("aaa bbb \n").build()
+      });
+
+      const { value: actualValue } = value
+        .change()
+        .select(8, 8)
+        .selectWordBackward();
+
+      expect(actualValue.selection.anchorOffset).toBe(4);
+      expect(actualValue.selection.focusOffset).toBe(8);
     });
 
-    const { value: actualValue } = value
-      .change()
-      .select(8, 8)
-      .selectWordBackward();
+    test("select the first word", () => {
+      const value = Value.create({
+        document: new DocumentBuilder(schema).insert("aaa bbb\n").build()
+      });
 
-    expect(actualValue.selection.anchorOffset).toBe(4);
-    expect(actualValue.selection.focusOffset).toBe(8);
+      const { value: actualValue } = value
+        .change()
+        .select(4, 4)
+        .selectWordBackward();
+
+      expect(actualValue.selection.anchorOffset).toBe(0);
+      expect(actualValue.selection.focusOffset).toBe(4);
+    });
   });
 
-  test("selectWordForward()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaa bbb ccc\n").build()
+  describe("selectWordForward()", () => {
+    test("select a word", () => {
+      const value = Value.create({
+        document: new DocumentBuilder(schema).insert("aaa bbb ccc\n").build()
+      });
+
+      const { value: actualValue } = value
+        .change()
+        .select(3, 3)
+        .selectWordForward();
+
+      expect(actualValue.selection.anchorOffset).toBe(3);
+      expect(actualValue.selection.focusOffset).toBe(7);
     });
 
-    const { value: actualValue } = value
-      .change()
-      .select(4, 4)
-      .selectWordForward();
+    test("select the last word", () => {
+      const value = Value.create({
+        document: new DocumentBuilder(schema).insert("aaa bbb\n").build()
+      });
 
-    expect(actualValue.selection.anchorOffset).toBe(4);
-    expect(actualValue.selection.focusOffset).toBe(8);
+      const { value: actualValue } = value
+        .change()
+        .select(3, 3)
+        .selectWordForward();
+
+      expect(actualValue.selection.anchorOffset).toBe(3);
+      expect(actualValue.selection.focusOffset).toBe(7);
+    });
   });
 
   test("selectBlockBackward()", () => {
