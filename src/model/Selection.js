@@ -52,12 +52,14 @@ export default class Selection {
   insertAt(offset, length) {
     let selection = this;
 
-    if (offset <= selection.anchorOffset) {
-      selection = selection.setAnchorOffset(selection.anchorOffset + length);
+    const { anchorOffset, focusOffset } = selection;
+
+    if (offset <= anchorOffset) {
+      selection = selection.setAnchorOffset(anchorOffset + length);
     }
 
-    if (offset <= selection.focusOffset) {
-      selection = selection.setFocusOffset(selection.focusOffset + length);
+    if (offset <= focusOffset) {
+      selection = selection.setFocusOffset(focusOffset + length);
     }
 
     return selection;
@@ -66,17 +68,19 @@ export default class Selection {
   deleteAt(offset, length) {
     let selection = this;
 
-    if (offset < selection.anchorOffset) {
-      if (offset + length <= selection.anchorOffset) {
-        selection = selection.setAnchorOffset(selection.anchorOffset - length);
+    const { anchorOffset, focusOffset } = selection;
+
+    if (offset < anchorOffset) {
+      if (offset + length <= anchorOffset) {
+        selection = selection.setAnchorOffset(anchorOffset - length);
       } else {
         selection = selection.setAnchorOffset(offset);
       }
     }
 
-    if (offset < selection.focusOffset) {
-      if (offset + length <= selection.focusOffset) {
-        selection = selection.setFocusOffset(selection.focusOffset - length);
+    if (offset < focusOffset) {
+      if (offset + length <= focusOffset) {
+        selection = selection.setFocusOffset(focusOffset - length);
       } else {
         selection = selection.setFocusOffset(offset);
       }

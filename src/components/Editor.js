@@ -138,11 +138,11 @@ export default class Editor extends PureComponent {
 
   onKeyDownBackspace(change, event) {
     const { value, onChange = sink } = this.props;
-    const { selection } = value;
+    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (selection.isCollapsed) {
+    if (isCollapsed) {
       change
         .selectCharacterBackward()
         .delete()
@@ -156,11 +156,11 @@ export default class Editor extends PureComponent {
 
   onKeyDownDelete(change, event) {
     const { value, onChange = sink } = this.props;
-    const { selection } = value;
+    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (selection.isCollapsed) {
+    if (isCollapsed) {
       change
         .selectCharacterForward()
         .delete()
@@ -174,11 +174,11 @@ export default class Editor extends PureComponent {
 
   onKeyDownEnter(change, event) {
     const { value, onChange = sink } = this.props;
-    const { selection } = value;
+    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (!selection.isCollapsed) {
+    if (!isCollapsed) {
       change.delete();
     }
 
@@ -317,13 +317,14 @@ export default class Editor extends PureComponent {
 
   onBeforeInput(event) {
     const { value, onChange = sink } = this.props;
-    const { selection } = value;
+    const { hasInlineStyleOverride } = value;
+    const { selection: { isCollapsed } } = value;
 
     if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
 
-    if (selection.isCollapsed && !value.hasInlineStyleOverride) {
+    if (isCollapsed && !hasInlineStyleOverride) {
       return;
     }
 
@@ -386,7 +387,7 @@ export default class Editor extends PureComponent {
       tokenizeNode = defaultTokenizeNode,
       onChange = sink
     } = this.props;
-    const { selection } = value;
+    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
@@ -408,7 +409,7 @@ export default class Editor extends PureComponent {
       }
     }
 
-    if (!selection.isCollapsed) {
+    if (!isCollapsed) {
       change.delete();
     }
 
@@ -419,13 +420,13 @@ export default class Editor extends PureComponent {
 
   onPasteText(change, event) {
     const { value, onChange = sink } = this.props;
-    const { selection } = value;
+    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
     const data = event.clipboardData.getData("text/plain");
 
-    if (!selection.isCollapsed) {
+    if (!isCollapsed) {
       change.delete();
     }
 
