@@ -13,8 +13,3 @@
 .ed-editable {
   outline: none;
 }
-
-.ed-text {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}

@@ -1,0 +1,154 @@
+/* EDITOR */
+
+.ed-editor {
+  position: relative;
+}
+
+/* ERROR BOUNDARY */
+
+.ed-error {
+  font-size: 24px;
+  padding: 10px;
+  color: red;
+}
+
+/* DOCUMENT */
+
+.ed-document {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* UNORDERED LISTS */
+
+.ed-document ul > li {
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.ed-document ul > li.ed-indent-1 {
+  padding-left: 40px;
+}
+
+.ed-document ul > li.ed-indent-2 {
+  padding-left: 60px;
+}
+
+.ed-document ul > li.ed-indent-3 {
+  padding-left: 80px;
+}
+
+.ed-document ul > li.ed-indent-4 {
+  padding-left: 100px;
+}
+
+.ed-document ul > li.ed-indent-5 {
+  padding-left: 120px;
+}
+
+.ed-document ul > li:before {
+  content: "\25CF";
+  margin-right: 10px;
+}
+
+.ed-document ul > li.ed-indent-1:before {
+  content: "\25CB";
+}
+
+.ed-document ul > li.ed-indent-2:before {
+  content: "\25A0";
+}
+
+.ed-document ul > li.ed-indent-3:before {
+  content: "\25C6";
+}
+
+.ed-document ul > li.ed-indent-4:before {
+  content: "\25C6";
+}
+
+.ed-document ul > li.ed-indent-5:before {
+  content: "\25C6";
+}
+
+/* ORDERED LISTS */
+
+.ed-document ol > li {
+  counter-reset: list-1 list-2 list-3 list-4 list-5;
+  counter-increment: list-0;
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.ed-document ol > li.ed-indent-1 {
+  counter-reset: list-2 list-3 list-4 list-5;
+  counter-increment: list-1;
+  padding-left: 40px;
+}
+
+.ed-document ol > li.ed-indent-2 {
+  counter-reset: list-1 list-3 list-4 list-5;
+  counter-increment: list-2;
+  padding-left: 60px;
+}
+
+.ed-document ol > li.ed-indent-3 {
+  counter-reset: list-1 list-2 list-4 list-5;
+  counter-increment: list-3;
+  padding-left: 80px;
+}
+
+.ed-document ol > li.ed-indent-4 {
+  counter-reset: list-1 list-2 list-3 list-5;
+  counter-increment: list-4;
+  padding-left: 100px;
+}
+
+.ed-document ol > li.ed-indent-5 {
+  counter-reset: list-1 list-2 list-3 list-4;
+  counter-increment: list-5;
+  padding-left: 120px;
+}
+
+.ed-document ol > li:before {
+  margin-right: 4px;
+  content: counter(list-0, decimal) ". ";
+}
+
+.ed-document ol > li.ed-indent-1:before {
+  content: counter(list-1, decimal) ". ";
+}
+
+.ed-document ol > li.ed-indent-2:before {
+  content: counter(list-2, decimal) ". ";
+}
+
+.ed-document ol > li.ed-indent-3:before {
+  content: counter(list-3, decimal) ". ";
+}
+
+.ed-document ol > li.ed-indent-4:before {
+  content: counter(list-4, decimal) ". ";
+}
+
+.ed-document ol > li.ed-indent-5:before {
+  content: counter(list-5, decimal) ". ";
+}
+
+/* ALIGN */
+
+.ed-document .ed-align-left {
+  text-align: left;
+}
+
+.ed-document .ed-align-right {
+  text-align: right;
+}
+
+.ed-document .ed-align-center {
+  text-align: center;
+}
+
+.ed-document .ed-align-justify {
+  text-align: justify;
+}

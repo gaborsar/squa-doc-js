@@ -27,6 +27,8 @@ import {
   EDITOR_MODE_COMPOSITION
 } from "../constants";
 
+import "./Editor.css";
+
 const sink = () => {};
 
 const preventDefault = event => event.preventDefault();
