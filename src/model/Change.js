@@ -330,47 +330,6 @@ export default class Change {
     return this;
   }
 
-  delete() {
-    let { value } = this;
-    let { document, selection } = value;
-
-    const { startOffset, endOffset } = selection;
-
-    const posBefore = document.createPosition(startOffset);
-
-    if (!posBefore) {
-      return this;
-    }
-
-    document = document.deleteAt(startOffset, endOffset);
-
-    if (posBefore.offset > 0) {
-      const { node: { style: styleBefore } } = posBefore;
-
-      const posAfter = document.createPosition(startOffset);
-
-      if (!posAfter) {
-        return this;
-      }
-
-      const { node: blockBefore } = posAfter;
-
-      if (blockBefore.style !== styleBefore) {
-        const blockAfter = blockBefore.setStyle(styleBefore);
-
-        document = document.replaceChild(blockAfter, blockBefore);
-      }
-    }
-
-    selection = selection.setAnchorOffset(startOffset).collapse();
-
-    value = value.setDocument(document).setSelection(selection);
-
-    this.value = value;
-
-    return this;
-  }
-
   format(attributes) {
     let { value } = this;
     let { document, selection } = value;
@@ -416,7 +375,20 @@ export default class Change {
     } else {
       const { startOffset, endOffset } = selection;
 
-      document = document.formatAt(startOffset, endOffset, attributes);
+      document.createRange(startOffset, endOffset).forEach(el => {
+        const { node: block, startOffset, endOffset } = el;
+
+        if (block.kind === "block") {
+          document = document.replaceChild(
+            block.formatAt(
+              startOffset,
+              Math.min(endOffset, block.length),
+              attributes
+            ),
+            block
+          );
+        }
+      });
 
       value = value.setDocument(document).setSelection(selection);
     }
@@ -426,7 +398,7 @@ export default class Change {
     return this;
   }
 
-  insert(text, attributes = {}) {
+  insertText(text, attributes = {}) {
     let { value } = this;
     let { document, selection } = value;
 
@@ -437,6 +409,23 @@ export default class Change {
     selection = selection
       .setAnchorOffset(anchorOffset + text.length)
       .collapse();
+
+    value = value.setDocument(document).setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  insertEmbed(data, attributes = {}) {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { anchorOffset } = selection;
+
+    document = document.insertAt(anchorOffset, data, attributes);
+
+    selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
 
     value = value.setDocument(document).setSelection(selection);
 
@@ -456,6 +445,47 @@ export default class Change {
     document = document.apply(delta);
 
     selection = selection.collapse().apply(delta);
+
+    value = value.setDocument(document).setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  delete() {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { startOffset, endOffset } = selection;
+
+    const posBefore = document.createPosition(startOffset);
+
+    if (!posBefore) {
+      return this;
+    }
+
+    document = document.deleteAt(startOffset, endOffset);
+
+    if (posBefore.offset > 0) {
+      const { node: { style: styleBefore } } = posBefore;
+
+      const posAfter = document.createPosition(startOffset);
+
+      if (!posAfter) {
+        return this;
+      }
+
+      const { node: blockBefore } = posAfter;
+
+      if (blockBefore.style !== styleBefore) {
+        const blockAfter = blockBefore.setStyle(styleBefore);
+
+        document = document.replaceChild(blockAfter, blockBefore);
+      }
+    }
+
+    selection = selection.setAnchorOffset(startOffset).collapse();
 
     value = value.setDocument(document).setSelection(selection);
 

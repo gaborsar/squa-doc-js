@@ -31,12 +31,12 @@ describe("Change", () => {
       .change()
 
       // first change
-      .insert("aaa", { bold: true })
+      .insertText("aaa", { bold: true })
       .save("insert")
-      .insert("bbb", { italic: true })
+      .insertText("bbb", { italic: true })
       .save("insert")
       .select(0, 0)
-      .insert("ccc")
+      .insertText("ccc")
       .save("insert")
 
       // second change
@@ -212,6 +212,114 @@ describe("Change", () => {
     expect(actualValue.document.delta).toEqual(expectedDocument.delta);
   });
 
+  test("format()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 10)
+      .format({ bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa")
+      .insert("bbb", { bold: true })
+      .insert("\n")
+      .insert("ccc", { bold: true })
+      .insert("ddd")
+      .insert("\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("formatBlock()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 10)
+      .formatBlock({ align: "left" });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaabbb")
+      .insert("\n", { align: "left" })
+      .insert("cccddd")
+      .insert("\n", { align: "left" })
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("formatInline()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 10)
+      .formatInline({ bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa")
+      .insert("bbb", { bold: true })
+      .insert("\n")
+      .insert("ccc", { bold: true })
+      .insert("ddd")
+      .insert("\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("insertText()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 3)
+      .insertText("ccc", { bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa")
+      .insert("ccc", { bold: true })
+      .insert("bbb\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+
+    expect(actualValue.selection.anchorOffset).toBe(6);
+    expect(actualValue.selection.focusOffset).toBe(6);
+  });
+
+  test("insertEmbed()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 3)
+      .insertEmbed({ image: "foo" }, { bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa")
+      .insert({ image: "foo" }, { bold: true })
+      .insert("bbb\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+
+    expect(actualValue.selection.anchorOffset).toBe(4);
+    expect(actualValue.selection.focusOffset).toBe(4);
+  });
+
   test("delete()", () => {
     const value = Value.create({
       document: new DocumentBuilder(schema)
@@ -235,49 +343,5 @@ describe("Change", () => {
 
     expect(actualValue.selection.anchorOffset).toBe(3);
     expect(actualValue.selection.focusOffset).toBe(3);
-  });
-
-  test("format()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
-    });
-
-    const { value: actualValue } = value
-      .change()
-      .select(3, 10)
-      .format({ bold: true });
-
-    const expectedDocument = new DocumentBuilder(schema)
-      .insert("aaa")
-      .insert("bbb", { bold: true })
-      .insert("\n")
-      .insert("ccc", { bold: true })
-      .insert("ddd")
-      .insert("\n")
-      .build();
-
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
-  });
-
-  test("insert()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
-    });
-
-    const { value: actualValue } = value
-      .change()
-      .select(3, 3)
-      .insert("ccc", { bold: true });
-
-    const expectedDocument = new DocumentBuilder(schema)
-      .insert("aaa")
-      .insert("ccc", { bold: true })
-      .insert("bbb\n")
-      .build();
-
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
-
-    expect(actualValue.selection.anchorOffset).toBe(6);
-    expect(actualValue.selection.focusOffset).toBe(6);
   });
 });

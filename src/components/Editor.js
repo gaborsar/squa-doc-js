@@ -208,7 +208,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insert(EOL, value.getFormat()).save();
+    change.insertText(EOL, value.getFormat()).save();
 
     onChange(change);
   }
@@ -364,7 +364,7 @@ export default class Editor extends PureComponent {
       .save();
 
     if (event.data) {
-      change.insert(event.data, attributes).save("input");
+      change.insertText(event.data, attributes).save("input");
     }
 
     onChange(change);
@@ -456,7 +456,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insert(data, value.getFormat()).save();
+    change.insertText(data, value.getFormat()).save();
 
     change.save();
 
