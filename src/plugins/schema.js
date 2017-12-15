@@ -2,11 +2,11 @@ import Schema from "../model/Schema";
 
 export const rules = {
   block: {
-    marks: ["type"],
+    marks: ["type", "align", "indent"],
     embeds: ["block-image"]
   },
   inline: {
-    marks: ["bold", "italic"],
+    marks: ["link", "anchor", "bold", "italic", "underline", "code"],
     embeds: ["inline-image"]
   },
   "block-image": {
