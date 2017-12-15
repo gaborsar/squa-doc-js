@@ -125,7 +125,7 @@ export default class Document extends ParentMixin(Node) {
 
     const { node: child, offset: childOffset } = pos;
 
-    if (child instanceof Embed) {
+    if (child.kind === "embed") {
       throw new Error(`Invalid offset: ${offset}`);
     }
 
@@ -279,7 +279,7 @@ export default class Document extends ParentMixin(Node) {
 
       const newStartChild = startChild.slice(0, startChildOffset);
 
-      if (endChild instanceof Block) {
+      if (endChild.kind === "block") {
         node = node.removeChild(startChild);
 
         const newEndChild = newStartChild.concat(endChild);

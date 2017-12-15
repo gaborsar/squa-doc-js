@@ -48,6 +48,10 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     );
   }
 
+  get isEmpty() {
+    return this.length === EOL.length;
+  }
+
   get text() {
     return this.children.reduce((text, child) => text + child.text, "") + EOL;
   }
@@ -77,10 +81,10 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     const children = [];
 
     node.children.forEach(child => {
-      if (child instanceof Text && children.length) {
+      if (child.kind === "text" && children.length) {
         const prevChild = children[children.length - 1];
 
-        if (prevChild instanceof Text && prevChild.style === child.style) {
+        if (prevChild.kind === "text" && prevChild.style === child.style) {
           children[children.length - 1] = prevChild.concat(child);
         } else {
           children.push(child);

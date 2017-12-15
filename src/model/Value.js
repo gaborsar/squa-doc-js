@@ -1,4 +1,3 @@
-import Block from "./Block";
 import Document from "./Document";
 import Selection from "./Selection";
 import Change from "./Change";
@@ -29,6 +28,10 @@ export default class Value {
 
   merge(props) {
     return Value.create({ ...this, ...props });
+  }
+
+  get kind() {
+    return "value";
   }
 
   change() {
@@ -125,7 +128,7 @@ export default class Value {
     document.createRange(startOffset, endOffset).forEach(el => {
       const { node: block } = el;
 
-      if (block instanceof Block) {
+      if (block.kind === "block") {
         const { startOffset, endOffset } = el;
 
         block.createRange(startOffset, endOffset).forEach(el => {

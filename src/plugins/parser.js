@@ -1,6 +1,6 @@
 import combineTokenizers from "../parser/combineTokenizers";
 
-export function tokenizeWrapperNode(node) {
+function tokenizeWrapperNode(node) {
   const tokens = [];
 
   switch (node.nodeName) {
@@ -32,7 +32,7 @@ export function tokenizeWrapperNode(node) {
   return tokens;
 }
 
-export function tokenizeWrappedBlockNode(node, context) {
+function tokenizeWrappedBlockNode(node, context) {
   const tokens = [];
 
   switch (node.nodeName) {
@@ -67,7 +67,7 @@ export function tokenizeWrappedBlockNode(node, context) {
   return tokens;
 }
 
-export function tokenizeBlockNode(node) {
+function tokenizeBlockNode(node) {
   const tokens = [];
 
   switch (node.nodeName) {
@@ -139,7 +139,7 @@ export function tokenizeBlockNode(node) {
   return tokens;
 }
 
-export function tokenzieInlineNode(node) {
+function tokenzieInlineNode(node) {
   const tokens = [];
 
   switch (node.nodeName) {
@@ -189,7 +189,7 @@ export function tokenzieInlineNode(node) {
   return tokens;
 }
 
-export function tokenizeClassList(node) {
+function tokenizeClassList(node) {
   const tokens = [];
 
   for (let i = 0; i < node.classList.length; i++) {
@@ -219,7 +219,7 @@ export function tokenizeClassList(node) {
   return tokens;
 }
 
-export function tokenizeFigure(node, context) {
+function tokenizeFigure(node, context) {
   const tokens = [];
 
   if (node.nodeName === "FIGURE") {
@@ -265,7 +265,7 @@ export function tokenizeFigure(node, context) {
   return tokens;
 }
 
-export function tokenizeInlineImage(node, context) {
+function tokenizeInlineImage(node, context) {
   const tokens = [];
 
   if (node.nodeName === "IMG") {
