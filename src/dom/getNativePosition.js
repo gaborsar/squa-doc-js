@@ -1,3 +1,11 @@
+import isTextNode from "./isTextNode";
+import isElementNode from "./isElementNode";
+import isIgnoredNode from "./isIgnoredNode";
+import isWrapperNode from "./isWrapperNode";
+import isBlockNode from "./isBlockNode";
+import isEmbedNode from "./isEmbedNode";
+import isLineBreakNode from "./isLineBreakNode";
+import isImageNode from "./isImageNode";
 import getNodeLength from "./getNodeLength";
 
 export default function getNativePosition(node, offset) {
@@ -5,27 +13,24 @@ export default function getNativePosition(node, offset) {
     const child = node.childNodes[i];
     const childLength = getNodeLength(child);
 
-    if (child.nodeType === Node.TEXT_NODE) {
+    if (isTextNode(child)) {
       if (offset <= childLength) {
         return { node: child, offset };
       }
-    } else if (child.nodeType === Node.ELEMENT_NODE) {
-      if (child.hasAttribute("data-ignore")) {
+    } else if (isElementNode(child)) {
+      if (isIgnoredNode(child)) {
         if (offset === 0) {
           return { node, offset: i };
         }
       } else if (
-        child.hasAttribute("data-embed") ||
-        child.nodeName === "BR" ||
-        child.nodeName === "IMG"
+        isEmbedNode(child) ||
+        isLineBreakNode(child) ||
+        isImageNode(child)
       ) {
         if (offset === 0) {
           return { node, offset: i };
         }
-      } else if (
-        child.hasAttribute("data-wrapper") ||
-        child.hasAttribute("data-block")
-      ) {
+      } else if (isWrapperNode(child) || isBlockNode(child)) {
         if (offset < childLength) {
           return getNativePosition(child, offset);
         }

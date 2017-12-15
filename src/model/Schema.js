@@ -1,22 +1,3 @@
-// Example schema rules:
-//
-// {
-//   block: {
-//     marks: ["type", "align", "indent"],
-//     embeds: ["block-image"]
-//   },
-//   inline: {
-//     marks: ["bold", "italic", "underline"],
-//     embeds: ["inline-image"]
-//   },
-//   "block-image": {
-//     marks: ["alt", "width"]
-//   },
-//   "inline-image": {
-//     marks: ["alt"]
-//   }
-// }
-
 export default class Schema {
   constructor(rules = {}) {
     this.rules = rules;

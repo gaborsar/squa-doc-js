@@ -1,3 +1,4 @@
+import Delta from "quill-delta";
 import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
@@ -7,37 +8,29 @@ import createKey from "./utils/createKey";
 
 export default class Embed extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
-    const {
-      schema = new Schema(),
-      key = createKey(),
-      style = Style.create(),
-      value = {}
-    } = props;
-    return new Embed(schema, key, style, value);
+    return new Embed(props);
   }
 
   static type(value) {
     return Object.keys(value)[0];
   }
 
-  constructor(schema, key, style, value) {
+  constructor(props = {}) {
+    const {
+      schema = new Schema(),
+      key = createKey(),
+      style = Style.create(),
+      value = {}
+    } = props;
+
     super(schema, key);
+
     this.style = style;
     this.value = value;
   }
 
   merge(props) {
-    return Embed.create(
-      Object.assign(
-        {
-          schema: this.schema,
-          key: this.key,
-          style: this.style,
-          value: this.value
-        },
-        props
-      )
-    );
+    return Embed.create({ ...this, ...props });
   }
 
   get kind() {
@@ -56,19 +49,16 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
     return "*";
   }
 
+  get delta() {
+    return new Delta().insert(this.value, this.style.toObject());
+  }
+
   get isBlockEmbed() {
     return this.schema.isBlockEmbed(this.type);
   }
 
   get isInlineEmbed() {
     return this.schema.isInlineEmbed(this.type);
-  }
-
-  toJSON() {
-    return {
-      style: this.style.toJSON(),
-      value: this.value
-    };
   }
 
   format(attributes) {
@@ -79,9 +69,6 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
   }
 
   formatAt(offset, length, attributes) {
-    if (offset === 0 && length === 1) {
-      return this.format(attributes);
-    }
-    return this;
+    return offset === 0 && length === 1 ? this.format(attributes) : this;
   }
 }

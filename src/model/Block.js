@@ -1,3 +1,4 @@
+import Delta from "quill-delta";
 import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
@@ -11,33 +12,25 @@ export const EOL = "\n";
 
 export default class Block extends FormatMixin(ParentMixin(Node)) {
   static create(props = {}) {
+    return new Block(props);
+  }
+
+  constructor(props = {}) {
     const {
       schema = new Schema(),
       key = createKey(),
       style = Style.create(),
       children = []
     } = props;
-    return new Block(schema, key, style, children);
-  }
 
-  constructor(schema, key, style, children) {
     super(schema, key);
+
     this.style = style;
     this.children = children;
   }
 
   merge(props) {
-    return Block.create(
-      Object.assign(
-        {
-          schema: this.schema,
-          key: this.key,
-          style: this.style,
-          children: this.children
-        },
-        props
-      )
-    );
+    return Block.create({ ...this, ...props });
   }
 
   get kind() {
@@ -59,11 +52,16 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     return this.children.reduce((text, child) => text + child.text, "") + EOL;
   }
 
-  toJSON() {
-    return {
-      style: this.style.toJSON(),
-      children: this.children.map(child => child.toJSON())
-    };
+  get delta() {
+    const delta = new Delta();
+
+    this.children.forEach(child => {
+      delta.insert(child.value, child.style.toObject());
+    });
+
+    delta.insert(EOL, this.style.toObject());
+
+    return delta;
   }
 
   format(attributes) {
@@ -73,118 +71,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     return this.setStyle(style);
   }
 
-  // @todo (gabor) clean
-
-  formatAt(startOffset, endOffset, attributes) {
-    let node = this;
-
-    if (endOffset === node.length) {
-      node = node.format(attributes);
-    }
-
-    const range = node.createRange(startOffset, endOffset);
-
-    range.elements.forEach(el => {
-      if (el.isPartial && el.node instanceof Text) {
-        if (el.startOffset > 0) {
-          node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
-        }
-        node = node.insertBefore(
-          el.node.slice(el.startOffset, el.endOffset).format(attributes),
-          el.node
-        );
-        if (el.endOffset < el.node.length) {
-          node = node.insertBefore(el.node.slice(el.endOffset), el.node);
-        }
-        node = node.removeChild(el.node);
-      } else {
-        node = node.replaceChild(el.node.format(attributes), el.node);
-      }
-    });
-
-    return node._normalize();
-  }
-
-  insertAt(offset, value, attributes) {
-    let node = this;
-
-    let child;
-
-    if (typeof value === "string") {
-      child = Text.create({
-        schema: node.schema,
-        value
-      });
-    } else if (node.schema.isInlineEmbed(Embed.type(value))) {
-      child = Embed.create({
-        schema: node.schema,
-        value
-      });
-    }
-
-    if (!child) {
-      return node;
-    }
-
-    child = child.format(attributes);
-
-    const pos = node.createPosition(offset);
-
-    if (pos) {
-      if (pos.offset === 0) {
-        node = node.insertBefore(child, pos.node);
-      } else if (pos.node instanceof Text) {
-        node = node
-          .insertBefore(pos.node.slice(0, pos.offset), pos.node)
-          .insertBefore(child, pos.node)
-          .replaceChild(pos.node.slice(pos.offset), pos.node);
-      }
-    } else {
-      node = node.appendChild(child);
-    }
-
-    return node._normalize();
-  }
-
-  deleteAt(startOffset, endOffset) {
-    let node = this;
-
-    const range = node.createRange(startOffset, endOffset);
-
-    range.elements.forEach(el => {
-      if (el.isPartial && el.node instanceof Text) {
-        if (el.startOffset > 0) {
-          node = node.insertBefore(el.node.slice(0, el.startOffset), el.node);
-        }
-        if (el.endOffset < el.node.length) {
-          node = node.insertBefore(el.node.slice(el.endOffset), el.node);
-        }
-      }
-
-      node = node.removeChild(el.node);
-    });
-
-    return node._normalize();
-  }
-
-  slice(startOffset, endOffset) {
-    const range = this.createRange(startOffset, endOffset);
-
-    const children = range.elements.map(
-      el =>
-        el.isPartial && el.node instanceof Text
-          ? el.node.slice(el.startOffset, el.endOffset)
-          : el.node
-    );
-
-    return this.regenerateKey().setChildren(children);
-  }
-
-  concat(other) {
-    return other.setChildren(this.children.concat(other.children))._normalize();
-  }
-
-  _normalize() {
+  normalize() {
     let node = this;
 
     const children = [];
@@ -208,5 +95,194 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     }
 
     return node;
+  }
+
+  formatAt(startOffset, endOffset, attributes) {
+    let node = this;
+
+    if (endOffset === node.length) {
+      node = node.format(attributes);
+    }
+
+    node.createRange(startOffset, endOffset).forEach(el => {
+      const { isPartial, node: child } = el;
+
+      if (isPartial) {
+        const { startOffset, endOffset } = el;
+
+        if (el.startOffset > 0) {
+          node = node.insertBefore(child.slice(0, startOffset), child);
+        }
+
+        node = node.insertBefore(
+          child.slice(startOffset, endOffset).format(attributes),
+          child
+        );
+
+        if (endOffset < child.length) {
+          node = node.insertBefore(child.slice(endOffset), child);
+        }
+
+        node = node.removeChild(child);
+      } else {
+        node = node.replaceChild(child.format(attributes), child);
+      }
+    });
+
+    node = node.normalize();
+
+    return node;
+  }
+
+  insertInlineAt(offset, child) {
+    let node = this;
+
+    const pos = node.createPosition(offset);
+
+    if (pos) {
+      const { node: referenceChild, offset: childOffset } = pos;
+
+      if (childOffset === 0) {
+        node = node.insertBefore(child, referenceChild);
+      } else {
+        node = node
+          .insertBefore(referenceChild.slice(0, childOffset), referenceChild)
+          .insertBefore(child, referenceChild)
+          .replaceChild(referenceChild.slice(childOffset), referenceChild);
+      }
+    } else {
+      node = node.appendChild(child);
+    }
+
+    node = node.normalize();
+
+    return node;
+  }
+
+  insertTextAt(offset, value, attributes = {}) {
+    let node = this;
+
+    const { schema } = node;
+
+    const child = Text.create({ schema, value }).format(attributes);
+
+    node = node.insertInlineAt(offset, child);
+
+    return node;
+  }
+
+  insertInlineEmbed(offset, value, attributes = {}) {
+    let node = this;
+
+    const { schema } = node;
+
+    const type = Embed.type(value);
+
+    if (!schema.isInlineEmbed(type)) {
+      throw new Error(`Invalid inline embed type: ${type}`);
+    }
+
+    const child = Embed.create({ schema, value }).format(attributes);
+
+    node = node.insertInlineAt(offset, child);
+
+    return node;
+  }
+
+  insertAt(offset, value, attributes = {}) {
+    if (typeof value === "string") {
+      return this.insertTextAt(offset, value, attributes);
+    }
+
+    if (typeof value === "object") {
+      return this.insertInlineEmbed(offset, value, attributes);
+    }
+
+    throw new Error(`Invalid value: ${value}`);
+  }
+
+  deleteAt(startOffset, endOffset) {
+    let node = this;
+
+    node.createRange(startOffset, endOffset).forEach(el => {
+      const { isPartial, node: child } = el;
+
+      if (isPartial) {
+        const { startOffset, endOffset } = el;
+
+        if (startOffset > 0) {
+          node = node.insertBefore(child.slice(0, startOffset), child);
+        }
+
+        if (endOffset < child.length) {
+          node = node.insertBefore(child.slice(endOffset), child);
+        }
+      }
+
+      node = node.removeChild(child);
+    });
+
+    node = node.normalize();
+
+    return node;
+  }
+
+  apply(delta) {
+    let offset = 0;
+
+    let node = this;
+
+    delta.forEach(op => {
+      if (typeof op.retain === "number") {
+        const { retain: length, attributes } = op;
+
+        if (attributes) {
+          node = node.formatAt(offset, offset + length, attributes);
+        }
+
+        offset += length;
+      } else if (typeof op.insert === "string") {
+        const { insert: value, attributes = {} } = op;
+
+        node = node.insertAt(offset, value, attributes);
+
+        offset += value.length;
+      } else if (typeof op.insert === "object") {
+        const { insert: value, attributes = {} } = op;
+
+        node = node.insertAt(offset, value, attributes);
+
+        offset += 1;
+      } else if (typeof op.delete === "number") {
+        const { delete: length } = op;
+
+        node = node.deleteAt(offset, offset + length);
+      }
+    });
+
+    return node;
+  }
+
+  slice(startOffset = 0, endOffset = Infinity) {
+    let node = this;
+
+    const children = node
+      .createRange(startOffset, endOffset)
+      .map(
+        el =>
+          el.isPartial ? el.node.slice(el.startOffset, el.endOffset) : el.node
+      );
+
+    node = node.setChildren(children);
+
+    if (endOffset < node.length) {
+      node = node.regenerateKey();
+    }
+
+    return node;
+  }
+
+  concat(other) {
+    return other.setChildren(this.children.concat(other.children)).normalize();
   }
 }

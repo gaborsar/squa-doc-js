@@ -1,54 +1,21 @@
+import Delta from "quill-delta";
+import { EOL } from "../model/Block";
+
 const defaultContext = {
   wrapper: {},
   block: {},
   inline: {}
 };
 
-// Accepted tokens:
-//
-// Update wrapper context:
-// {
-//   wrapper: {
-//     ...
-//   }
-// }
-//
-// Update block context:
-// {
-//   block: {
-//     ...
-//   }
-// }
-//
-// Update inline context:
-// {
-//   inline: {
-//     ...
-//   }
-// }
-//
-// Insert embed:
-// {
-//   insert: {
-//     ...
-//   },
-//   attributes: {
-//     ...
-//   }
-// }
-
 export default function parseNode(
   node,
   tokenizeNode,
   context = defaultContext
 ) {
-  const ops = [];
+  let delta = new Delta();
 
   if (node.nodeType === Node.TEXT_NODE) {
-    ops.push({
-      insert: node.nodeValue,
-      attributes: context.inline
-    });
+    delta.insert(node.nodeValue, context.inline);
   } else if (
     node.nodeType === Node.ELEMENT_NODE &&
     !node.hasOwnProperty("data-ignore")
@@ -88,20 +55,20 @@ export default function parseNode(
         };
       } else if (token.insert) {
         isEmbed = true;
-        ops.push(token);
+        delta.insert(token.insert, token.attributes);
       }
     }
 
     if (!isEmbed) {
       for (const child of node.childNodes) {
-        ops.push(...parseNode(child, tokenizeNode, context));
+        delta = delta.concat(parseNode(child, tokenizeNode, context));
       }
 
       if (isBlock) {
-        ops.push({ insert: "\n", attributes: context.block });
+        delta.insert(EOL, context.block);
       }
     }
   }
 
-  return ops;
+  return delta;
 }

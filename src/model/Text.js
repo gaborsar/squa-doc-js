@@ -7,33 +7,25 @@ import createKey from "./utils/createKey";
 
 export default class Text extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
+    return new Text(props);
+  }
+
+  constructor(props = {}) {
     const {
       schema = new Schema(),
       key = createKey(),
       style = Style.create(),
       value = ""
     } = props;
-    return new Text(schema, key, style, value);
-  }
 
-  constructor(schema, key, style, value) {
     super(schema, key);
+
     this.style = style;
     this.value = value;
   }
 
   merge(props) {
-    return Text.create(
-      Object.assign(
-        {
-          schema: this.schema,
-          key: this.key,
-          style: this.style,
-          value: this.value
-        },
-        props
-      )
-    );
+    return Text.create({ ...this, ...props });
   }
 
   get kind() {
@@ -48,13 +40,6 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
     return this.value;
   }
 
-  toJSON() {
-    return {
-      style: this.style.toJSON(),
-      value: this.value
-    };
-  }
-
   format(attributes) {
     const style = this.style.update(attributes, type =>
       this.schema.isInlineMark(type)
@@ -62,12 +47,19 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
     return this.setStyle(style);
   }
 
-  slice(startOffset, endOffset) {
-    const value = this.value.slice(startOffset, endOffset);
-    return this.regenerateKey().setValue(value);
+  slice(startOffset = 0, endOffset = Infinity) {
+    let node = this;
+
+    node = node.setValue(node.value.slice(startOffset, endOffset));
+
+    if (endOffset < node.length) {
+      node = node.regenerateKey();
+    }
+
+    return node;
   }
 
   concat(other) {
-    return other.setValue(this.value + other.value);
+    return this.setValue(this.value + other.value);
   }
 }

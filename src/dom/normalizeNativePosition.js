@@ -1,12 +1,17 @@
+import isElementNode from "./isElementNode";
+import isIgnoredNode from "./isIgnoredNode";
+import isEmbedNode from "./isEmbedNode";
+import isLineBreakNode from "./isLineBreakNode";
+import isImageNode from "./isImageNode";
 import getNodeLength from "./getNodeLength";
 
 export default function normalizeNativePosition(node, offset) {
-  if (node.nodeType === Node.ELEMENT_NODE) {
+  if (isElementNode(node)) {
     if (
-      node.hasAttribute("data-ignore") ||
-      node.hasAttribute("data-embed") ||
-      node.nodeName === "BR" ||
-      node.nodeName === "IMG"
+      isIgnoredNode(node) ||
+      isEmbedNode(node) ||
+      isLineBreakNode(node) ||
+      isImageNode(node)
     ) {
       return { node, offset: 0 };
     }

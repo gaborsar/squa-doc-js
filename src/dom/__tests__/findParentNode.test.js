@@ -5,7 +5,7 @@ describe("findParentNode", () => {
     const text = document.createTextNode("aaa");
 
     const parent = findParentNode(text, () => false);
-    expect(parent).toBe(text);
+    expect(parent).toBe(null);
   });
 
   test("the predicate is never fulfilled", () => {
@@ -18,7 +18,7 @@ describe("findParentNode", () => {
     span.appendChild(text);
 
     const parent = findParentNode(text, () => false);
-    expect(parent).toBe(div);
+    expect(parent).toBe(null);
   });
 
   test("the predicate is fulfilled by a parent node", () => {

@@ -4,8 +4,7 @@ const pool = new Pool();
 
 export default class Mark {
   static create(props = {}) {
-    const { type = "", value = true } = props;
-    return pool.recycle(new Mark(type, value));
+    return pool.recycle(new Mark(props));
   }
 
   static compare(markA, markB) {
@@ -24,16 +23,10 @@ export default class Mark {
     return 0;
   }
 
-  constructor(type, value) {
+  constructor(props = {}) {
+    const { type = "", value = true } = props;
     this.type = type;
     this.value = value;
-  }
-
-  toJSON() {
-    return {
-      type: this.type,
-      value: this.value
-    };
   }
 
   equals(other) {

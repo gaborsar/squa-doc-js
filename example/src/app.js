@@ -1,6 +1,12 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
-import { Editor, Schema, DocumentBuilder } from "../../src/SquaDocEditor";
+import {
+  Editor,
+  Schema,
+  DocumentBuilder,
+  Value,
+  tokenizeNode
+} from "../../src/SquaDocEditor";
 
 function BlockImage(props) {
   const { node } = props;
@@ -149,15 +155,36 @@ const doc = new DocumentBuilder(schema)
   .insert("\n", { type: "paragraph" })
   .build();
 
+const value = Value.create({
+  document: doc
+});
+
 class App extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.onChange = this.onChange.bind(this);
+    this.state = { value };
+  }
+
+  onChange(change) {
+    // eslint-disable-next-line no-console
+    console.log(change);
+
+    const { value } = change;
+    this.setState({ value });
+  }
+
   render() {
+    const { value } = this.state;
     return (
       <Editor
-        document={doc}
+        value={value}
         renderWrapper={renderWrapper}
         renderBlock={renderBlock}
         renderEmbed={renderEmbed}
         renderMark={renderMark}
+        tokenizeNode={tokenizeNode}
+        onChange={this.onChange}
       />
     );
   }

@@ -1,5 +1,5 @@
 export default function findParentNode(node, predicate) {
-  while (!predicate(node) && node.parentNode) {
+  while (node && !predicate(node)) {
     node = node.parentNode;
   }
   return node;
