@@ -317,6 +317,19 @@ export default class Change {
     return this;
   }
 
+  replaceBlock(newBlock, referenceBlock) {
+    let { value } = this;
+    let { document } = value;
+
+    document = document.replaceChild(newBlock, referenceBlock);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
   delete() {
     let { value } = this;
     let { document, selection } = value;
@@ -445,19 +458,6 @@ export default class Change {
     selection = selection.collapse().apply(delta);
 
     value = value.setDocument(document).setSelection(selection);
-
-    this.value = value;
-
-    return this;
-  }
-
-  replaceBlock(newBlock, referenceBlock) {
-    let { value } = this;
-    let { document } = value;
-
-    document = document.replaceChild(newBlock, referenceBlock);
-
-    value = value.setDocument(document);
 
     this.value = value;
 

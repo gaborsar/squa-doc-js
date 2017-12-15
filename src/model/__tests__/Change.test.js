@@ -193,6 +193,25 @@ describe("Change", () => {
     expect(actualValue.selection.focusOffset).toBe(6);
   });
 
+  test("replaceBlock()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaa\n").build()
+    });
+
+    const blockBefore = value.document.children[0];
+    const blockAfter = blockBefore.deleteAt(0, 3).insertAt(0, "bbb");
+
+    const { value: actualValue } = value
+      .change()
+      .replaceBlock(blockAfter, blockBefore);
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("bbb\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
   test("delete()", () => {
     const value = Value.create({
       document: new DocumentBuilder(schema)
@@ -260,24 +279,5 @@ describe("Change", () => {
 
     expect(actualValue.selection.anchorOffset).toBe(6);
     expect(actualValue.selection.focusOffset).toBe(6);
-  });
-
-  test("replaceBlock()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaa\n").build()
-    });
-
-    const blockBefore = value.document.children[0];
-    const blockAfter = blockBefore.deleteAt(0, 3).insertAt(0, "bbb");
-
-    const { value: actualValue } = value
-      .change()
-      .replaceBlock(blockAfter, blockBefore);
-
-    const expectedDocument = new DocumentBuilder(schema)
-      .insert("bbb\n")
-      .build();
-
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
   });
 });
