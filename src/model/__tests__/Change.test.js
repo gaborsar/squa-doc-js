@@ -119,6 +119,20 @@ describe("Change", () => {
     expect(actualValue.selection.focusOffset).toBe(10);
   });
 
+  test("selectBlockForward()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(3, 3)
+      .selectBlockForward();
+
+    expect(actualValue.selection.anchorOffset).toBe(3);
+    expect(actualValue.selection.focusOffset).toBe(6);
+  });
+
   test("delete()", () => {
     const value = Value.create({
       document: new DocumentBuilder(schema)
