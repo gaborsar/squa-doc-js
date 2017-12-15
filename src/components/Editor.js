@@ -182,7 +182,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insert(EOL, value.getBlockFormat()).save();
+    change.insert(EOL, value.getFormat()).save();
 
     onChange(change);
   }
@@ -323,11 +323,13 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    if (selection.isCollapsed) {
+    if (selection.isCollapsed && !value.hasInlineStyleOverride) {
       return;
     }
 
     event.preventDefault();
+
+    const attributes = value.getFormat();
 
     const change = value
       .change()
@@ -335,7 +337,7 @@ export default class Editor extends PureComponent {
       .save();
 
     if (event.data) {
-      change.insert(event.data, value.getInlineFormat()).save("input");
+      change.insert(event.data, attributes).save("input");
     }
 
     onChange(change);

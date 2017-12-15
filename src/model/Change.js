@@ -245,6 +245,46 @@ export default class Change {
     return this;
   }
 
+  formatBlock(attributes) {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { startOffset, endOffset } = selection;
+
+    document.createRange(startOffset, endOffset).forEach(el => {
+      const { node: block } = el;
+
+      document = document.replaceChild(block.format(attributes), block);
+    });
+
+    value = value.setDocument(document).setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  formatInline(attributes) {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { isCollapsed } = selection;
+
+    if (isCollapsed) {
+      value = value.setInlineStyleOverride(attributes);
+    } else {
+      const { startOffset, endOffset } = selection;
+
+      document = document.formatAt(startOffset, endOffset, attributes);
+
+      value = value.setDocument(document).setSelection(selection);
+    }
+
+    this.value = value;
+
+    return this;
+  }
+
   insert(text, attributes = {}) {
     let { value } = this;
     let { document, selection } = value;

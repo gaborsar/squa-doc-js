@@ -15,7 +15,8 @@ export default class Value {
       document = Document.create(),
       selection = Selection.create(),
       undoStack = [],
-      redoStack = []
+      redoStack = [],
+      inlineStyleOverride = null
     } = props;
 
     this.mode = mode;
@@ -23,6 +24,7 @@ export default class Value {
     this.selection = selection;
     this.undoStack = undoStack;
     this.redoStack = redoStack;
+    this.inlineStyleOverride = inlineStyleOverride;
   }
 
   merge(props) {
@@ -33,16 +35,20 @@ export default class Value {
     return "value";
   }
 
+  get hasInlineStyleOverride() {
+    return !!this.inlineStyleOverride;
+  }
+
   change() {
     return new Change(this);
   }
 
   setDocument(document = Document.create()) {
-    return this.merge({ document });
+    return this.merge({ document, inlineStyleOverride: null });
   }
 
   setSelection(selection = Selection.create()) {
-    return this.merge({ selection });
+    return this.merge({ selection, inlineStyleOverride: null });
   }
 
   setMode(mode = EDITOR_MODE_EDIT) {
@@ -57,102 +63,82 @@ export default class Value {
     return this.merge({ redoStack });
   }
 
-  getBlockFormat() {
-    const { document, selection } = this;
-    const { isCollapsed } = selection;
-
-    if (isCollapsed) {
-      const { offset } = selection;
-
-      const pos = document.createPosition(offset);
-
-      if (!pos) {
-        return {};
-      }
-
-      const { node: { style } } = pos;
-
-      return style.toObject();
-    }
-
-    const { startOffset, endOffset } = selection;
-
-    const styles = document
-      .createRange(startOffset, endOffset)
-      .map(el => el.node.style);
-
-    if (!styles.length) {
-      return {};
-    }
-
-    let style = styles.shift();
-
-    styles.forEach(currentStyle => {
-      style = style.intersect(currentStyle);
-    });
-
-    return style.toObject();
+  setInlineStyleOverride(inlineStyleOverride) {
+    return this.merge({ inlineStyleOverride });
   }
 
-  getInlineFormat() {
-    const { document, selection } = this;
+  getFormat() {
+    const { document, selection, inlineStyleOverride } = this;
     const { isCollapsed } = selection;
+
+    let attributes = {};
 
     if (isCollapsed) {
       const { offset } = selection;
 
       const blockPos = document.createPosition(offset);
 
-      if (!blockPos) {
-        return {};
+      if (blockPos) {
+        const { node: block, offset: blockOffset } = blockPos;
+
+        attributes = { ...attributes, ...block.style.toObject() };
+
+        if (block.kind === "block") {
+          const inlinePos = block.createPosition(blockOffset, true);
+
+          if (inlinePos) {
+            const { node: inline } = inlinePos;
+
+            attributes = { ...attributes, ...inline.style.toObject() };
+          }
+        }
       }
+    } else {
+      const { startOffset, endOffset } = selection;
 
-      const { node: block, offset: blockOffset } = blockPos;
+      const blockStyles = [];
 
-      const inlinePos = block.createPosition(blockOffset, true);
+      const inlineStyles = [];
 
-      if (!inlinePos) {
-        return {};
-      }
+      document.createRange(startOffset, endOffset).forEach(el => {
+        const { node: block } = el;
 
-      const { node: { style } } = inlinePos;
+        blockStyles.push(block.style);
 
-      return style.toObject();
-    }
+        if (block.kind === "block") {
+          const { startOffset, endOffset } = el;
 
-    const { startOffset, endOffset } = selection;
+          block.createRange(startOffset, endOffset).forEach(el => {
+            const { node: inline } = el;
 
-    const styles = [];
+            inlineStyles.push(inline.style);
+          });
+        }
+      });
 
-    document.createRange(startOffset, endOffset).forEach(el => {
-      const { node: block } = el;
+      if (blockStyles.length) {
+        let blockStyle = blockStyles.shift();
 
-      if (block.kind === "block") {
-        const { startOffset, endOffset } = el;
-
-        block.createRange(startOffset, endOffset).forEach(el => {
-          styles.push(el.node.style);
+        blockStyles.forEach(currentStyle => {
+          blockStyle = blockStyle.intersect(currentStyle);
         });
-      }
-    });
 
-    if (!styles.length) {
-      return {};
+        attributes = { ...attributes, ...blockStyle.toObject() };
+      }
+
+      if (inlineStyles.length) {
+        let inlineStyle = inlineStyles.shift();
+
+        inlineStyles.forEach(currentStyle => {
+          inlineStyle = inlineStyle.intersect(currentStyle);
+        });
+
+        attributes = { ...attributes, ...inlineStyle.toObject() };
+      }
     }
 
-    let style = styles.shift();
+    attributes = { ...attributes, ...inlineStyleOverride };
 
-    styles.forEach(currentStyle => {
-      style = style.intersect(currentStyle);
-    });
-
-    return style.toObject();
-  }
-
-  getFormat() {
-    return {
-      ...this.getBlockFormat(),
-      ...this.getInlineFormat()
-    };
+    return attributes;
   }
 }

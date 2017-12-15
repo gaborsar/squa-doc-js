@@ -9,48 +9,12 @@ const schema = new Schema({
 });
 
 describe("Value", () => {
-  describe("getBlockFormat()", () => {
-    test("at offset", () => {
-      const document = new DocumentBuilder(schema)
-        .insert("aaabbb")
-        .insert("\n", { align: "left" })
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 3,
-        focusOffset: 3
-      });
-
-      const value = Value.create({ document, selection });
-
-      expect(value.getBlockFormat()).toEqual({ align: "left" });
-    });
-
-    test("at range", () => {
-      const document = new DocumentBuilder(schema)
-        .insert("aaabbb")
-        .insert("\n", { align: "left", indent: 1 })
-        .insert("cccddd")
-        .insert("\n", { align: "left" })
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 3,
-        focusOffset: 10
-      });
-
-      const value = Value.create({ document, selection });
-
-      expect(value.getBlockFormat()).toEqual({ align: "left" });
-    });
-  });
-
-  describe("getInlineFormat()", () => {
+  describe("getFormat()", () => {
     test("at offset", () => {
       const document = new DocumentBuilder(schema)
         .insert("aaa", { bold: true })
         .insert("bbb", { italic: true })
-        .insert("\n")
+        .insert("\n", { align: "left" })
         .build();
 
       const selection = Selection.create({
@@ -60,15 +24,15 @@ describe("Value", () => {
 
       const value = Value.create({ document, selection });
 
-      expect(value.getInlineFormat()).toEqual({ bold: true });
+      expect(value.getFormat()).toEqual({ align: "left", bold: true });
     });
 
     test("at range", () => {
       const document = new DocumentBuilder(schema)
         .insert("aaabbb", { bold: true, italic: true })
-        .insert("\n")
+        .insert("\n", { align: "left", indent: 1 })
         .insert("cccddd", { bold: true })
-        .insert("\n")
+        .insert("\n", { align: "left" })
         .build();
 
       const selection = Selection.create({
@@ -78,7 +42,7 @@ describe("Value", () => {
 
       const value = Value.create({ document, selection });
 
-      expect(value.getInlineFormat()).toEqual({ bold: true });
+      expect(value.getFormat()).toEqual({ align: "left", bold: true });
     });
   });
 });
