@@ -1,5 +1,6 @@
 import Delta from "quill-delta";
-import { EOL } from "../model/Block";
+
+import { EOL } from "../constants";
 
 const defaultContext = {
   wrapper: {},

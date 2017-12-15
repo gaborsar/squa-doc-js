@@ -1,7 +1,7 @@
 import Delta from "quill-delta";
 import Snapshot from "./Snapshot";
 
-const MAX_UNDO_DELAY = 1000;
+import { HISTORY_STACK_SIZE, HISTORY_UNDO_DELAY } from "../constants";
 
 export default class Change {
   constructor(value) {
@@ -26,7 +26,7 @@ export default class Change {
 
       if (
         lastSnapshot.type === type &&
-        snapshot.timestamp - lastSnapshot.timestamp < MAX_UNDO_DELAY
+        snapshot.timestamp - lastSnapshot.timestamp < HISTORY_UNDO_DELAY
       ) {
         snapshot = lastSnapshot.concat(snapshot);
         undoStack = undoStack.slice(0, -1);
@@ -34,6 +34,10 @@ export default class Change {
     }
 
     undoStack = undoStack.concat(snapshot);
+
+    if (undoStack.length > HISTORY_STACK_SIZE) {
+      undoStack = undoStack.slice(1);
+    }
 
     value = value.setUndoStack(undoStack).setRedoStack();
 
@@ -60,6 +64,10 @@ export default class Change {
 
     snapshot = snapshot.setSelection(selection);
     redoStack = redoStack.concat(snapshot);
+
+    if (redoStack.length > HISTORY_STACK_SIZE) {
+      redoStack = redoStack.slice(1);
+    }
 
     value = value
       .setDocument(nextDocument)
@@ -88,6 +96,10 @@ export default class Change {
 
     snapshot = snapshot.setSelection(selection);
     undoStack = undoStack.concat(snapshot);
+
+    if (undoStack.length > HISTORY_STACK_SIZE) {
+      undoStack = undoStack.slice(1);
+    }
 
     redoStack = redoStack.slice(0, -1);
 

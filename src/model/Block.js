@@ -8,7 +8,7 @@ import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
 
-export const EOL = "\n";
+import { EOL } from "../constants";
 
 export default class Block extends FormatMixin(ParentMixin(Node)) {
   static create(props = {}) {

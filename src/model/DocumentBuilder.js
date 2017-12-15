@@ -1,7 +1,9 @@
 import Text from "./Text";
 import Embed from "./Embed";
-import Block, { EOL } from "./Block";
+import Block from "./Block";
 import Document from "./Document";
+
+import { EOL } from "../constants";
 
 export default class DocumentBuilder {
   constructor(schema) {

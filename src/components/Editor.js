@@ -7,8 +7,16 @@ import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
-import { EOL } from "../model/Block";
-import { MODE_EDIT, MODE_COMPOSITION } from "../model/Value";
+
+import {
+  EOL,
+  KEY_BACKSPACE,
+  KEY_DELETE,
+  KEY_ENTER,
+  KEY_Z,
+  EDITOR_MODE_EDIT,
+  EDITOR_MODE_COMPOSITION
+} from "../constants";
 
 import {
   renderWrapper as defaultRenderWrapper,
@@ -54,7 +62,7 @@ export default class Editor extends PureComponent {
     const { value, onSelect = sink, onChange = sink } = this.props;
     const { selection: editorSelection } = value;
 
-    if (value.mode === MODE_COMPOSITION) {
+    if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
 
@@ -208,19 +216,19 @@ export default class Editor extends PureComponent {
       return onChange(change);
     }
 
-    if (event.keyCode === 8) {
+    if (event.keyCode === KEY_BACKSPACE) {
       return this.onKeyDownBackspace(change, event);
     }
 
-    if (event.keyCode === 46) {
+    if (event.keyCode === KEY_DELETE) {
       return this.onKeyDownDelete(change, event);
     }
 
-    if (event.keyCode === 13) {
+    if (event.keyCode === KEY_ENTER) {
       return this.onKeyDownEnter(change, event);
     }
 
-    if (event.keyCode === 90 && event.metaKey) {
+    if (event.keyCode === KEY_Z && event.metaKey) {
       if (event.shiftKey) {
         return this.onKeyDownRedo(change, event);
       } else {
@@ -292,7 +300,7 @@ export default class Editor extends PureComponent {
   onCompositionStart() {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(MODE_COMPOSITION);
+    const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
 
     onChange(change);
   }
@@ -300,7 +308,7 @@ export default class Editor extends PureComponent {
   onCompositionEnd() {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(MODE_EDIT);
+    const change = value.change().setMode(EDITOR_MODE_EDIT);
 
     this.handleInput(change);
 
@@ -311,7 +319,7 @@ export default class Editor extends PureComponent {
     const { value, onChange = sink } = this.props;
     const { selection } = value;
 
-    if (value.mode === MODE_COMPOSITION) {
+    if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
 
@@ -336,7 +344,7 @@ export default class Editor extends PureComponent {
   onInput() {
     const { value, onChange = sink } = this.props;
 
-    if (value.mode === MODE_COMPOSITION) {
+    if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
 
@@ -352,7 +360,7 @@ export default class Editor extends PureComponent {
 
     const change = value
       .change()
-      .setMode(MODE_EDIT)
+      .setMode(EDITOR_MODE_EDIT)
       .regenerateKey()
       .delete()
       .save();
@@ -363,7 +371,7 @@ export default class Editor extends PureComponent {
   onCut() {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(MODE_COMPOSITION);
+    const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
 
     onChange(change);
 

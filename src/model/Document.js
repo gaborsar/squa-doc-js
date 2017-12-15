@@ -3,9 +3,11 @@ import Schema from "./Schema";
 import Text from "./Text";
 import Embed from "./Embed";
 import Node from "./Node";
-import Block, { EOL } from "./Block";
+import Block from "./Block";
 import ParentMixin from "./mixins/Parent";
 import createKey from "./utils/createKey";
+
+import { EOL } from "../constants";
 
 export default class Document extends ParentMixin(Node) {
   static create(props = {}) {
