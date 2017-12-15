@@ -178,6 +178,29 @@ export default class Change {
     return this;
   }
 
+  selectBlockBackward() {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { anchorOffset } = selection;
+
+    const pos = document.createPosition(anchorOffset);
+
+    if (!pos) {
+      return this;
+    }
+
+    const { offset } = pos;
+
+    selection = selection.setAnchorOffset(anchorOffset - offset);
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
   regenerateKey() {
     let { value } = this;
     let { document } = value;
