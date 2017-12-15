@@ -1,10 +1,12 @@
 import React, { PureComponent } from "react";
+import Delta from "quill-delta";
 import ErrorBoundary from "./ErrorBoundary";
 import Document from "./Document";
 import getRange from "../dom/getRange";
 import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
+import parseHTML from "../parser/parseHTML";
 import { EOL } from "../model/Block";
 import { MODE_EDIT, MODE_COMPOSITION } from "../model/Value";
 
@@ -39,6 +41,9 @@ export default class Editor extends PureComponent {
     this.onCompositionEnd = this.onCompositionEnd.bind(this);
     this.onBeforeInput = this.onBeforeInput.bind(this);
     this.onInput = this.onInput.bind(this);
+    this.afterCut = this.afterCut.bind(this);
+    this.onCut = this.onCut.bind(this);
+    this.onPaste = this.onPaste.bind(this);
   }
 
   setRootNode(rootNode) {
@@ -48,6 +53,10 @@ export default class Editor extends PureComponent {
   onSelect(event) {
     const { value, onSelect = sink, onChange = sink } = this.props;
     const { selection: editorSelection } = value;
+
+    if (value.mode === MODE_COMPOSITION) {
+      return;
+    }
 
     const nativeSelection = window.getSelection();
 
@@ -286,30 +295,26 @@ export default class Editor extends PureComponent {
       .save("input");
   }
 
-  onCompositionStart(event) {
-    const { value, onCompositionStart = sink, onChange = sink } = this.props;
+  onCompositionStart() {
+    const { value, onChange = sink } = this.props;
 
     const change = value.change().setMode(MODE_COMPOSITION);
-
-    onCompositionStart(change, event, this);
 
     onChange(change);
   }
 
-  onCompositionEnd(event) {
-    const { value, onCompositionEnd = sink, onChange = sink } = this.props;
+  onCompositionEnd() {
+    const { value, onChange = sink } = this.props;
 
     const change = value.change().setMode(MODE_EDIT);
 
     this.handleInput(change);
 
-    onCompositionEnd(change, event, this);
-
     onChange(change);
   }
 
   onBeforeInput(event) {
-    const { value, onBeforeInput = sink, onChange = sink } = this.props;
+    const { value, onChange = sink } = this.props;
     const { selection } = value;
 
     if (value.mode === MODE_COMPOSITION) {
@@ -331,13 +336,11 @@ export default class Editor extends PureComponent {
       change.insert(event.data, value.getInlineFormat()).save("input");
     }
 
-    onBeforeInput(change, event, this);
-
     onChange(change);
   }
 
-  onInput(event) {
-    const { value, onInput = sink, onChange = sink } = this.props;
+  onInput() {
+    const { value, onChange = sink } = this.props;
 
     if (value.mode === MODE_COMPOSITION) {
       return;
@@ -347,9 +350,108 @@ export default class Editor extends PureComponent {
 
     this.handleInput(change);
 
-    onInput(change, event, this);
+    onChange(change);
+  }
+
+  afterCut() {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .setMode(MODE_EDIT)
+      .regenerateKey()
+      .delete()
+      .save();
 
     onChange(change);
+  }
+
+  onCut() {
+    const { value, onChange = sink } = this.props;
+
+    const change = value.change().setMode(MODE_COMPOSITION);
+
+    onChange(change);
+
+    window.requestAnimationFrame(this.afterCut);
+  }
+
+  onPasteHTML(event) {
+    const {
+      value,
+      tokenizeNode = defaultTokenizeNode,
+      onChange = sink
+    } = this.props;
+    const { selection } = value;
+
+    event.preventDefault();
+
+    const data = event.clipboardData.getData("text/html");
+
+    let fragment = parseHTML(data, tokenizeNode);
+
+    if (fragment.ops.length) {
+      const op = fragment.ops[fragment.ops.length - 1];
+
+      if (typeof op.insert === "string") {
+        const { insert: text } = op;
+
+        if (text[text.length - 1] === EOL) {
+          fragment = fragment.compose(
+            new Delta().retain(fragment.length() - 1).delete(1)
+          );
+        }
+      }
+    }
+
+    const change = value.change();
+
+    if (!selection.isCollapsed) {
+      change.delete();
+    }
+
+    change.insertFragment(fragment).save();
+
+    onChange(change);
+  }
+
+  onPasteText(event) {
+    const { value, onChange = sink } = this.props;
+    const { selection } = value;
+
+    event.preventDefault();
+
+    const data = event.clipboardData.getData("text/plain");
+
+    const change = value.change();
+
+    if (!selection.isCollapsed) {
+      change.delete();
+    }
+
+    change.insert(data, value.getFormat()).save();
+
+    change.save();
+
+    onChange(change);
+  }
+
+  onPaste(event) {
+    const { value, onPaste = sink, onChange = sink } = this.props;
+
+    if (event.clipboardData.types.indexOf("text/html") !== -1) {
+      return this.onPasteHTML(event);
+    }
+
+    if (event.clipboardData.types.indexOf("text/plain") !== -1) {
+      return this.onPasteText(event);
+    }
+
+    const change = value.change();
+
+    if (onPaste(change, event, this)) {
+      onChange(change);
+    }
   }
 
   updateSelection() {
@@ -411,12 +513,14 @@ export default class Editor extends PureComponent {
             onCompositionEnd={this.onCompositionEnd}
             onBeforeInput={this.onBeforeInput}
             onInput={this.onInput}
+            onCut={this.onCut}
+            onPaste={this.onPaste}
             onDragStart={preventDefault}
             onDrop={preventDefault}
           >
             <Document
-              node={document}
               key={document.key}
+              node={document}
               renderWrapper={renderWrapper}
               renderBlock={renderBlock}
               renderEmbed={renderEmbed}

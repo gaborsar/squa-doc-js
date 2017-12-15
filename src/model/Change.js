@@ -1,3 +1,4 @@
+import Delta from "quill-delta";
 import Snapshot from "./Snapshot";
 
 const MAX_UNDO_DELAY = 1000;
@@ -165,6 +166,19 @@ export default class Change {
     return this;
   }
 
+  regenerateKey() {
+    let { value } = this;
+    let { document } = value;
+
+    document = document.regenerateKey();
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
   delete() {
     let { value } = this;
     let { document, selection } = value;
@@ -208,6 +222,25 @@ export default class Change {
     selection = selection
       .setAnchorOffset(anchorOffset + text.length)
       .collapse();
+
+    value = value.setDocument(document).setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  insertFragment(fragment) {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { anchorOffset } = selection;
+
+    const delta = new Delta().retain(anchorOffset).concat(fragment);
+
+    document = document.apply(delta);
+
+    selection = selection.collapse().apply(delta);
 
     value = value.setDocument(document).setSelection(selection);
 
