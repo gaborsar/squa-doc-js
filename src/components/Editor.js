@@ -161,13 +161,17 @@ export default class Editor extends PureComponent {
 
   onKeyDownEnter(event) {
     const { value, onChange = sink } = this.props;
+    const { selection } = value;
 
     event.preventDefault();
 
-    const change = value
-      .change()
-      .insert(EOL)
-      .save("input");
+    const change = value.change();
+
+    if (!selection.isCollapsed) {
+      change.delete();
+    }
+
+    change.insert(EOL, value.getBlockFormat()).save();
 
     onChange(change);
   }
@@ -324,7 +328,7 @@ export default class Editor extends PureComponent {
       .save();
 
     if (event.data) {
-      change.insert(event.data).save("input");
+      change.insert(event.data, value.getInlineFormat()).save("input");
     }
 
     onBeforeInput(change, event, this);

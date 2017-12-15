@@ -1,6 +1,6 @@
 import getPosition from "../getPosition";
 
-test("getPosition", () => {
+test("getPosition()", () => {
   const root = document.createElement("div");
   root.setAttribute("data-document", "true");
 

@@ -1,6 +1,6 @@
 import getNodeLength from "../getNodeLength";
 
-describe("getNodeLength(node)", () => {
+describe("getNodeLength()", () => {
   test("text node", () => {
     const text = document.createTextNode("aaa");
 

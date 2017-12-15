@@ -1,6 +1,6 @@
 import normalizeNativePosition from "../normalizeNativePosition";
 
-describe("normalizeNativePosition", () => {
+describe("normalizeNativePosition()", () => {
   test("text node", () => {
     const text = document.createTextNode("aaa");
 

@@ -1,6 +1,6 @@
 import getNativePosition from "../getNativePosition";
 
-describe("getNativePosition", () => {
+describe("getNativePosition()", () => {
   test("within a text node", () => {
     const root = document.createElement("div");
     root.setAttribute("data-document", "true");

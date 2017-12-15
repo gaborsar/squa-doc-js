@@ -11,8 +11,11 @@ export default class Range {
     return this.elements.reduce(callback, value);
   }
 
+  filter(predicate) {
+    return this.elements.filter(predicate);
+  }
+
   forEach(callback) {
-    this.elements.forEach(callback);
-    return this;
+    return this.elements.forEach(callback);
   }
 }

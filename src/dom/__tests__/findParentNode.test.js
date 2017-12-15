@@ -1,6 +1,6 @@
 import findParentNode from "../findParentNode";
 
-describe("findParentNode", () => {
+describe("findParentNode()", () => {
   test("the given node does note have a parent node", () => {
     const text = document.createTextNode("aaa");
 

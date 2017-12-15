@@ -2,7 +2,7 @@ import Delta from "quill-delta";
 import parseHTML from "../parseHTML";
 import { tokenizeNode } from "../../plugins/parser";
 
-describe("parseHTML", () => {
+describe("parseHTML()", () => {
   test("unordered-list", () => {
     const actual = parseHTML(
       "<ul>" +

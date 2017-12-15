@@ -266,6 +266,10 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
   slice(startOffset = 0, endOffset = Infinity) {
     let node = this;
 
+    if (endOffset < node.length) {
+      node = node.regenerateKey();
+    }
+
     const children = node
       .createRange(startOffset, endOffset)
       .map(
@@ -274,10 +278,6 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       );
 
     node = node.setChildren(children);
-
-    if (endOffset < node.length) {
-      node = node.regenerateKey();
-    }
 
     return node;
   }
