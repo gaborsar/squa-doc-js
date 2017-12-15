@@ -203,22 +203,24 @@ export default class Change {
       return this;
     }
 
-    const { node: { style: styleBefore } } = posBefore;
-
     document = document.deleteAt(startOffset, endOffset);
 
-    const posAfter = document.createPosition(startOffset);
+    if (posBefore.offset > 0) {
+      const { node: { style: styleBefore } } = posBefore;
 
-    if (!posAfter) {
-      return this;
-    }
+      const posAfter = document.createPosition(startOffset);
 
-    const { node: blockBefore } = posAfter;
+      if (!posAfter) {
+        return this;
+      }
 
-    if (blockBefore.style !== styleBefore) {
-      const blockAfter = blockBefore.setStyle(styleBefore);
+      const { node: blockBefore } = posAfter;
 
-      document = document.replaceChild(blockAfter, blockBefore);
+      if (blockBefore.style !== styleBefore) {
+        const blockAfter = blockBefore.setStyle(styleBefore);
+
+        document = document.replaceChild(blockAfter, blockBefore);
+      }
     }
 
     selection = selection.setAnchorOffset(startOffset).collapse();
