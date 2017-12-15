@@ -208,7 +208,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insert(EOL, value.getFormat()).save();
+    change.insertTextText(EOL, value.getFormat()).save();
 
     onChange(change);
   }
@@ -364,7 +364,7 @@ export default class Editor extends PureComponent {
       .save();
 
     if (event.data) {
-      change.insert(event.data, attributes).save("input");
+      change.insertText(event.data, attributes).save("input");
     }
 
     onChange(change);
@@ -424,7 +424,7 @@ export default class Editor extends PureComponent {
     if (fragment.ops.length) {
       const op = fragment.ops[fragment.ops.length - 1];
 
-      if (typeof op.insert === "string") {
+      if (typeof op.insertText === "string") {
         const { insert: text } = op;
 
         if (text[text.length - 1] === EOL) {
@@ -439,7 +439,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insertFragment(fragment).save();
+    change.insertTextFragment(fragment).save();
 
     onChange(change);
   }
@@ -456,7 +456,7 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insert(data, value.getFormat()).save();
+    change.insertText(data, value.getFormat()).save();
 
     change.save();
 
