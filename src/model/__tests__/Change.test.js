@@ -102,6 +102,20 @@ describe("Change", () => {
     expect(actualValue.selection.focusOffset).toBe(4);
   });
 
+  test("selectWordBackward()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema).insert("aaa bbb ccc\n").build()
+    });
+
+    const { value: actualValue } = value
+      .change()
+      .select(8, 8)
+      .selectWordBackward();
+
+    expect(actualValue.selection.anchorOffset).toBe(4);
+    expect(actualValue.selection.focusOffset).toBe(8);
+  });
+
   test("selectBlockBackward()", () => {
     const value = Value.create({
       document: new DocumentBuilder(schema)

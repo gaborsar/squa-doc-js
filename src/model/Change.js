@@ -178,6 +178,43 @@ export default class Change {
     return this;
   }
 
+  selectWordBackward() {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { anchorOffset } = selection;
+
+    const pos = document.createPosition(anchorOffset);
+
+    if (!pos) {
+      return this;
+    }
+
+    const { node: { text }, offset } = pos;
+
+    if (offset === 0) {
+      return this;
+    }
+
+    let length = 0;
+
+    while (/\W/.test(text[offset - length - 1]) && offset - length > 0) {
+      length += 1;
+    }
+
+    while (/\w/.test(text[offset - length - 1]) && offset - length > 0) {
+      length += 1;
+    }
+
+    selection = selection.setAnchorOffset(anchorOffset - length);
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
   selectBlockBackward() {
     let { value } = this;
     let { document, selection } = value;
@@ -191,6 +228,10 @@ export default class Change {
     }
 
     const { offset } = pos;
+
+    if (offset === 0) {
+      return this;
+    }
 
     selection = selection.setAnchorOffset(anchorOffset - offset);
 
