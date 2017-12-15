@@ -1,7 +1,7 @@
 import Delta from "quill-delta";
 import Snapshot from "./Snapshot";
 
-import { HISTORY_STACK_SIZE, HISTORY_UNDO_DELAY } from "../constants";
+import { EOL, HISTORY_STACK_SIZE, HISTORY_UNDO_DELAY } from "../constants";
 
 export default class Change {
   constructor(value) {
@@ -193,6 +193,31 @@ export default class Change {
     const { offset } = pos;
 
     selection = selection.setAnchorOffset(anchorOffset - offset);
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  selectBlockForward() {
+    let { value } = this;
+    let { document, selection } = value;
+
+    const { focusOffset } = selection;
+
+    const pos = document.createPosition(focusOffset);
+
+    if (!pos) {
+      return this;
+    }
+
+    const { node: { length }, offset } = pos;
+
+    selection = selection.setFocusOffset(
+      focusOffset + length - offset - EOL.length
+    );
 
     value = value.setSelection(selection);
 
