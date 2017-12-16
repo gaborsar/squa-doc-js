@@ -1,4 +1,71 @@
+import findChildNode from "../dom/findChildNode";
+import isImageNode from "../dom/isImageNode";
+import isFigcaptionNode from "../dom/isFigcaptionNode";
 import combineTokenizers from "../parser/combineTokenizers";
+
+function tokenizeFigure(node, context) {
+  if (node.nodeName === "FIGURE") {
+    let type;
+    let value;
+    let alt;
+    let caption;
+
+    const img = findChildNode(node, isImageNode);
+
+    if (img) {
+      type = "block-image";
+      value = img.getAttribute("src");
+      alt = img.getAttribute("alt");
+    }
+
+    const figcaption = findChildNode(node, isFigcaptionNode);
+
+    if (figcaption) {
+      caption = figcaption.textContent;
+    }
+
+    if (type && value) {
+      let attributes = context.block;
+
+      if (alt) {
+        attributes = { ...attributes, alt };
+      }
+
+      if (caption) {
+        attributes = { ...attributes, caption };
+      }
+
+      return {
+        insert: {
+          [type]: value
+        },
+        attributes
+      };
+    }
+  }
+}
+
+function tokenizeInlineImage(node, context) {
+  if (node.nodeName === "IMG") {
+    const value = node.getAttribute("src");
+    const alt = node.getAttribute("alt");
+
+    if (value) {
+      let attributes = context.inline;
+
+      if (alt) {
+        attributes = { ...attributes, alt };
+      }
+
+      return {
+        insert: {
+          "inline-image": value
+        },
+        attributes
+      };
+    }
+  }
+}
 
 function tokenizeWrapperNode(node) {
   const tokens = [];
@@ -219,84 +286,12 @@ function tokenizeClassList(node) {
   return tokens;
 }
 
-function tokenizeFigure(node, context) {
-  const tokens = [];
-
-  if (node.nodeName === "FIGURE") {
-    let type;
-    let value;
-    let alt;
-    let caption;
-
-    for (const child of node.childNodes) {
-      switch (child.nodeName) {
-        case "IMG":
-          type = "block-image";
-          value = child.getAttribute("src");
-          alt = child.getAttribute("alt");
-          break;
-
-        case "FIGCAPTION":
-          caption = child.textContent;
-          break;
-      }
-    }
-
-    if (type && value) {
-      let attributes = context.block;
-
-      if (alt) {
-        attributes = { ...attributes, alt };
-      }
-
-      if (caption) {
-        attributes = { ...attributes, caption };
-      }
-
-      tokens.push({
-        insert: {
-          [type]: value
-        },
-        attributes
-      });
-    }
-  }
-
-  return tokens;
-}
-
-function tokenizeInlineImage(node, context) {
-  const tokens = [];
-
-  if (node.nodeName === "IMG") {
-    const value = node.getAttribute("src");
-    const alt = node.getAttribute("alt");
-
-    if (value) {
-      let attributes = context.inline;
-
-      if (alt) {
-        attributes = { ...attributes, alt };
-      }
-
-      tokens.push({
-        insert: {
-          "inline-image": value
-        },
-        attributes
-      });
-    }
-  }
-
-  return tokens;
-}
-
 export const tokenizeNode = combineTokenizers(
+  tokenizeFigure,
+  tokenizeInlineImage,
   tokenizeWrapperNode,
   tokenizeWrappedBlockNode,
   tokenizeBlockNode,
   tokenzieInlineNode,
-  tokenizeClassList,
-  tokenizeFigure,
-  tokenizeInlineImage
+  tokenizeClassList
 );
