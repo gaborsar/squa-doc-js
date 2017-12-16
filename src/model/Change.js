@@ -382,7 +382,7 @@ export default class Change {
           document = document.replaceChild(
             block.formatAt(
               startOffset,
-              Math.min(endOffset, block.length),
+              Math.min(endOffset, block.length - EOL.length),
               attributes
             ),
             block
