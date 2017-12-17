@@ -20,15 +20,5 @@ export {
   tokenizeInlineImage,
   tokenizeNode
 } from "./plugins/parser";
-
-export {
-  EOL,
-  KEY_BACKSPACE,
-  KEY_DELETE,
-  KEY_ENTER,
-  KEY_Z,
-  EDITOR_MODE_EDIT,
-  EDITOR_MODE_COMPOSITION,
-  HISTORY_STACK_SIZE,
-  HISTORY_UNDO_DELAY
-} from "./constants";
+export { indent, outdent, toggleBold, toggleItalic } from "./plugins/changes";
+export { onKeyDown } from "./plugins/handlers";
