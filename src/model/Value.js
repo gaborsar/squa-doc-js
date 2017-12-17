@@ -1,4 +1,5 @@
 import Document from "./Document";
+import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
 
@@ -7,6 +8,20 @@ import { EDITOR_MODE_EDIT } from "../constants";
 export default class Value {
   static create(props = {}) {
     return new Value(props);
+  }
+
+  static fromDelta(schema, delta) {
+    const builder = new DocumentBuilder(schema);
+
+    delta.forEach(op => {
+      const { insert: value, attributes = {} } = op;
+
+      builder.insert(value, attributes);
+    });
+
+    const document = builder.build();
+
+    return Value.create({ document });
   }
 
   constructor(props = {}) {
@@ -25,6 +40,12 @@ export default class Value {
     this.undoStack = undoStack;
     this.redoStack = redoStack;
     this.inlineStyleOverride = inlineStyleOverride;
+  }
+
+  toDelta() {
+    const { document: { delta } } = this;
+
+    return delta;
   }
 
   merge(props) {

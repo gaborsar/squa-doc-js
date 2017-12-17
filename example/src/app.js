@@ -1,9 +1,9 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import classNames from "classnames";
+import Delta from "quill-delta";
 import {
   Editor,
-  DocumentBuilder,
   Value,
   schema,
   indent,
@@ -369,7 +369,7 @@ class App extends PureComponent {
   }
 }
 
-const doc = new DocumentBuilder(schema)
+const delta = new Delta()
   .insert("Heading level one")
   .insert("\n", { type: "heading-one", align: "center" })
   .insert("Heading level two")
@@ -420,11 +420,8 @@ const doc = new DocumentBuilder(schema)
   .insert("Nunc nec ultrices risus. ")
   .insert("Fusce eu nulla ante. ")
   .insert("Vivamus in faucibus felis.")
-  .insert("\n", { type: "paragraph" })
-  .build();
+  .insert("\n", { type: "paragraph" });
 
-const value = Value.create({
-  document: doc
-});
+const value = Value.fromDelta(schema, delta);
 
 ReactDOM.render(<App value={value} />, document.getElementById("app"));
