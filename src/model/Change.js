@@ -9,9 +9,18 @@ export default class Change {
     this.value = value;
   }
 
+  call(fn) {
+    fn(this);
+    return this;
+  }
+
   save(type = "") {
     let { prevValue: { document: prevDocument, selection }, value } = this;
     let { document, undoStack } = value;
+
+    if (prevDocument === document) {
+      return this;
+    }
 
     const { delta: prevDelta } = prevDocument;
     const { delta } = document;
@@ -349,15 +358,33 @@ export default class Change {
     let { value } = this;
     let { document, selection } = value;
 
-    const { startOffset, endOffset } = selection;
+    const { isCollapsed } = selection;
 
-    document.createRange(startOffset, endOffset).forEach(el => {
-      const { node: block } = el;
+    if (isCollapsed) {
+      const { offset } = selection;
+
+      const pos = document.createPosition(offset);
+
+      if (!pos) {
+        return this;
+      }
+
+      const { node: block } = pos;
 
       const newBlock = block.format(attributes);
 
       document = document.replaceChild(newBlock, block);
-    });
+    } else {
+      const { startOffset, endOffset } = selection;
+
+      document.createRange(startOffset, endOffset).forEach(el => {
+        const { node: block } = el;
+
+        const newBlock = block.format(attributes);
+
+        document = document.replaceChild(newBlock, block);
+      });
+    }
 
     value = value.setDocument(document).setSelection(selection);
 

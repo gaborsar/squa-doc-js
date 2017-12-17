@@ -35,6 +35,14 @@ export default class Value {
     return "value";
   }
 
+  get canUndo() {
+    return !!this.undoStack.length;
+  }
+
+  get canRedo() {
+    return !!this.redoStack.length;
+  }
+
   get hasInlineStyleOverride() {
     return !!this.inlineStyleOverride;
   }
