@@ -354,7 +354,9 @@ export default class Change {
     document.createRange(startOffset, endOffset).forEach(el => {
       const { node: block } = el;
 
-      document = document.replaceChild(block.format(attributes), block);
+      const newBlock = block.format(attributes);
+
+      document = document.replaceChild(newBlock, block);
     });
 
     value = value.setDocument(document).setSelection(selection);
@@ -379,14 +381,13 @@ export default class Change {
         const { node: block, startOffset, endOffset } = el;
 
         if (block.kind === "block") {
-          document = document.replaceChild(
-            block.formatAt(
-              startOffset,
-              Math.min(endOffset, block.length - EOL.length),
-              attributes
-            ),
-            block
+          const newBlock = block.formatAt(
+            startOffset,
+            Math.min(endOffset, block.length - EOL.length),
+            attributes
           );
+
+          document = document.replaceChild(newBlock, block);
         }
       });
 
@@ -476,18 +477,160 @@ export default class Change {
         return this;
       }
 
-      const { node: blockBefore } = posAfter;
+      const { node: block } = posAfter;
 
-      if (blockBefore.style !== styleBefore) {
-        const blockAfter = blockBefore.setStyle(styleBefore);
+      if (block.style !== styleBefore) {
+        const newBlock = block.setStyle(styleBefore);
 
-        document = document.replaceChild(blockAfter, blockBefore);
+        document = document.replaceChild(newBlock, block);
       }
     }
 
     selection = selection.setAnchorOffset(startOffset).collapse();
 
     value = value.setDocument(document).setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  replaceBlockByKey(key, newBlock) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(key);
+
+    if (!block) {
+      return this;
+    }
+
+    document = document.replaceChild(newBlock, block);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
+  replaceInlineByKey(blockKey, inlineKey, newInline) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(blockKey);
+
+    if (!block || block.kind !== "block") {
+      return this;
+    }
+
+    const inline = block.getChildByKey(inlineKey);
+
+    if (!inline) {
+      return this;
+    }
+
+    const newBlock = block.replaceChild(newInline, inline);
+
+    document = document.replaceChild(newBlock, block);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
+  formatBlockByKey(key, attributes) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(key);
+
+    if (!block) {
+      return this;
+    }
+
+    const newBlock = block.format(attributes);
+
+    document = document.replaceChild(newBlock, block);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
+  formatInlineByKey(blockKey, inlineKey, attributes) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(blockKey);
+
+    if (!block) {
+      return this;
+    }
+
+    const inline = block.getChildByKey(inlineKey);
+
+    if (!inline) {
+      return this;
+    }
+
+    const newInline = inline.format(attributes);
+
+    const newBlock = block.replaceChild(newInline, inline);
+
+    document = document.replaceChild(newBlock, block);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
+  deleteBlockByKey(key) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(key);
+
+    if (!block) {
+      return this;
+    }
+
+    document = document.removeChild(block);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
+  deleteInlineByKey(blockKey, inlineKey) {
+    let { value } = this;
+    let { document } = value;
+
+    const block = document.getChildByKey(blockKey);
+
+    if (!block) {
+      return this;
+    }
+
+    const inline = block.getChildByKey(inlineKey);
+
+    if (!inline) {
+      return this;
+    }
+
+    const newBlock = block.removeChild(inline);
+
+    document = document.replaceChild(newBlock, block);
+
+    value = value.setDocument(document);
 
     this.value = value;
 

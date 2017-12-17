@@ -198,12 +198,10 @@ describe("Change", () => {
       document: new DocumentBuilder(schema).insert("aaa\n").build()
     });
 
-    const blockBefore = value.document.children[0];
-    const blockAfter = blockBefore.deleteAt(0, 3).insertAt(0, "bbb");
+    const block = value.document.children[0];
+    const newBlock = block.deleteAt(0, 3).insertAt(0, "bbb");
 
-    const { value: actualValue } = value
-      .change()
-      .replaceBlock(blockAfter, blockBefore);
+    const { value: actualValue } = value.change().replaceBlock(newBlock, block);
 
     const expectedDocument = new DocumentBuilder(schema)
       .insert("bbb\n")
@@ -343,5 +341,154 @@ describe("Change", () => {
 
     expect(actualValue.selection.anchorOffset).toBe(3);
     expect(actualValue.selection.focusOffset).toBe(3);
+  });
+
+  test("replaceBlockByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+    const newBlock = block.deleteAt(0, 3).insertAt(0, "ddd");
+
+    const { value: actualValue } = value
+      .change()
+      .replaceBlockByKey(block.key, newBlock);
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("ddd\n")
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("replaceInlineByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+    const inline = block.children[0];
+
+    const newInline = inline.setValue("ddd");
+
+    const { value: actualValue } = value
+      .change()
+      .replaceInlineByKey(block.key, inline.key, newInline);
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("ddd\n")
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("formatBlockByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+
+    const { value: actualValue } = value
+      .change()
+      .formatBlockByKey(block.key, { align: "left" });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("bbb")
+      .insert("\n", { align: "left" })
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("formatInlineByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+    const inline = block.children[0];
+
+    const { value: actualValue } = value
+      .change()
+      .formatInlineByKey(block.key, inline.key, { bold: true });
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("bbb", { bold: true })
+      .insert("\n")
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("deleteBlockByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+
+    const { value: actualValue } = value.change().deleteBlockByKey(block.key);
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+  });
+
+  test("deleteInlineByKey()", () => {
+    const value = Value.create({
+      document: new DocumentBuilder(schema)
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build()
+    });
+
+    const block = value.document.children[1];
+    const inline = block.children[0];
+
+    const { value: actualValue } = value
+      .change()
+      .deleteInlineByKey(block.key, inline.key);
+
+    const expectedDocument = new DocumentBuilder(schema)
+      .insert("aaa\n")
+      .insert("\n")
+      .insert("ccc\n")
+      .build();
+
+    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
   });
 });

@@ -291,7 +291,7 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    const blockBefore = document.findChildByKey(
+    const blockBefore = document.getChildByKey(
       blockNode.getAttribute("data-key")
     );
 
