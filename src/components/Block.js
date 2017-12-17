@@ -42,7 +42,7 @@ export default class Block extends PureComponent {
     );
 
     const {
-      component: BlockComponent = "div",
+      component: BlockComponent = "p",
       props: blockProps = {}
     } = renderBlock(node);
 
