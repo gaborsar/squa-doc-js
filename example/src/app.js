@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import classNames from "classnames";
 import Delta from "quill-delta";
 import {
-  Editor,
   Value,
+  Editor,
   schema,
   indent,
   outdent
