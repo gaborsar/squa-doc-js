@@ -1,0 +1,66 @@
+#app {
+  display: flex;
+  justify-content: center;
+}
+
+.editor {
+  width: 700px;
+  margin: 10px;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 3px #aaa;
+}
+
+.menu {
+  padding: 5px;
+  border-bottom: 1px solid #aaa;
+}
+
+.button {
+  margin: 0;
+  background: white;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+}
+
+.button:hover {
+  color: black;
+}
+
+.button:disabled {
+  color: #eee;
+}
+
+.button--active {
+  color: blue;
+}
+
+.separator {
+  width: 0;
+  height: 10px;
+  border-right: 1px solid #aaa;
+  margin: 0 3px;
+}
+
+.ed-editor {
+  padding: 10px 30px;
+}
+
+.ed-editable {
+  outline: none;
+}
+
+.ed-document blockquote {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 3px solid cyan;
+}
+
+.ed-document pre {
+  line-height: 20px;
+  padding: 10px 20px;
+  background: #eee;
+  border: 1px solid #aaa;
+}
