@@ -15,6 +15,16 @@ export default class Style {
     this.marks = marks;
   }
 
+  toObject() {
+    const attributes = {};
+
+    this.marks.forEach(mark => {
+      attributes[mark.type] = mark.value;
+    });
+
+    return attributes;
+  }
+
   merge(props) {
     return Style.create({ ...this, ...props });
   }
@@ -33,16 +43,6 @@ export default class Style {
     if (mark) {
       return mark.value;
     }
-  }
-
-  toObject() {
-    const attributes = {};
-
-    this.marks.forEach(mark => {
-      attributes[mark.type] = mark.value;
-    });
-
-    return attributes;
   }
 
   equals(other) {
