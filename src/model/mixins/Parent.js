@@ -91,7 +91,7 @@ const ParentMixin = superclass =>
       }
     }
 
-    findChildByKey(key) {
+    getChildByKey(key) {
       return this.children.find(child => child.key === key);
     }
   };
