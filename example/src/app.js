@@ -74,6 +74,44 @@ class ToggleButton extends PureComponent {
   }
 }
 
+class LinkButton extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.onMouseDownCallback = this.onMouseDownCallback.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+  }
+
+  onMouseDownCallback() {
+    const { onClick, format, type } = this.props;
+
+    onClick(format[type] ? null : prompt("Enter link."));
+  }
+
+  onMouseDown(event) {
+    event.preventDefault();
+
+    window.requestAnimationFrame(this.onMouseDownCallback);
+  }
+
+  render() {
+    const { format, type, disabled, children } = this.props;
+
+    return (
+      <button
+        type="button"
+        className={classNames("button", {
+          "button--active": format[type]
+        })}
+        onMouseDown={this.onMouseDown}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+    );
+  }
+}
+
 class Menu extends PureComponent {
   constructor(props) {
     super(props);
@@ -88,6 +126,7 @@ class Menu extends PureComponent {
     this.toggleItalic = this.toggleItalic.bind(this);
     this.toggleUnderline = this.toggleUnderline.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
+    this.toggleLink = this.toggleLink.bind(this);
   }
 
   undo() {
@@ -189,6 +228,17 @@ class Menu extends PureComponent {
     const change = value
       .change()
       .formatInline({ code })
+      .save();
+
+    onChange(change);
+  }
+
+  toggleLink(link) {
+    const { value, onChange } = this.props;
+
+    const change = value
+      .change()
+      .formatInline({ link })
       .save();
 
     onChange(change);
@@ -331,6 +381,10 @@ class Menu extends PureComponent {
         >
           <i className="fas fa-code" />
         </ToggleButton>
+        <span className="separator" />
+        <LinkButton format={format} type="link" onClick={this.toggleLink}>
+          <i className="fas fa-link" />
+        </LinkButton>
       </div>
     );
   }
