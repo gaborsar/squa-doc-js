@@ -215,7 +215,7 @@ class Menu extends PureComponent {
           value="heading-one"
           onClick={this.toggleBlockType}
         >
-          H1
+          <i className="fas fa-heading" />1
         </ToggleButton>
         <ToggleButton
           format={format}
@@ -223,7 +223,7 @@ class Menu extends PureComponent {
           value="heading-two"
           onClick={this.toggleBlockType}
         >
-          H2
+          <i className="fas fa-heading" />2
         </ToggleButton>
         <ToggleButton
           format={format}
@@ -231,7 +231,7 @@ class Menu extends PureComponent {
           value="blockquote"
           onClick={this.toggleBlockType}
         >
-          Blockquote
+          <i className="fas fa-quote-right" />
         </ToggleButton>
         <ToggleButton
           format={format}
@@ -239,7 +239,7 @@ class Menu extends PureComponent {
           value="code"
           onClick={this.toggleBlockType}
         >
-          Code
+          <i className="fas fa-code" />
         </ToggleButton>
         <span className="separator" />
         <ToggleButton
