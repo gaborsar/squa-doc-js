@@ -1,11 +1,11 @@
 import React from "react";
+import Figure from "./Figure";
 
 export default function BlockImage(props) {
-  const { node } = props;
+  const { node, deleteBlockByKey } = props;
   return (
-    <figure>
+    <Figure node={node} deleteBlockByKey={deleteBlockByKey}>
       <img src={node.value["block-image"]} alt={node.getMark("alt")} />
-      <figcaption>{node.getMark("caption")}</figcaption>
-    </figure>
+    </Figure>
   );
 }

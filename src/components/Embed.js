@@ -2,14 +2,16 @@ import React, { PureComponent } from "react";
 
 export default class Embed extends PureComponent {
   render() {
-    const { node, renderEmbed, renderMark } = this.props;
+    const { node, renderEmbed, renderMark, deleteBlockByKey } = this.props;
 
     const {
       component: EmbedComponent = "",
       props: embedProps = {}
     } = renderEmbed(node);
 
-    let content = <EmbedComponent {...embedProps} />;
+    let content = (
+      <EmbedComponent {...embedProps} deleteBlockByKey={deleteBlockByKey} />
+    );
 
     const classNames = ["ed-embed"];
     let style = {};
