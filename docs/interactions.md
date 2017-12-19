@@ -2,6 +2,9 @@
 
 * Change selection
 * Insert text
+* Cut
+* Copy
+* Paste
 * Delete text using `Backspace`
 * Delete text using `Alt` + `Backspace`
 * Delete text using `Command` + `Backspace`
