@@ -10,7 +10,8 @@ export default class Document extends PureComponent {
       renderWrapper,
       renderBlock,
       renderEmbed,
-      renderMark
+      renderMark,
+      deleteBlockByKey
     } = this.props;
 
     const blocks = [];
@@ -81,6 +82,7 @@ export default class Document extends PureComponent {
             node={child}
             renderEmbed={renderEmbed}
             renderMark={renderMark}
+            deleteBlockByKey={deleteBlockByKey}
           />
         );
       }

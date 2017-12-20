@@ -54,6 +54,7 @@ export default class Editor extends PureComponent {
     this.afterCut = this.afterCut.bind(this);
     this.onCut = this.onCut.bind(this);
     this.onPaste = this.onPaste.bind(this);
+    this.deleteBlockByKey = this.deleteBlockByKey.bind(this);
   }
 
   setRootNode(rootNode) {
@@ -481,6 +482,17 @@ export default class Editor extends PureComponent {
     }
   }
 
+  deleteBlockByKey(key) {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .deleteBlockByKey(key)
+      .save();
+
+    onChange(change);
+  }
+
   updateSelection() {
     if (!this.rootNode) {
       return;
@@ -552,6 +564,7 @@ export default class Editor extends PureComponent {
               renderBlock={renderBlock}
               renderEmbed={renderEmbed}
               renderMark={renderMark}
+              deleteBlockByKey={this.deleteBlockByKey}
             />
           </div>
         </ErrorBoundary>
