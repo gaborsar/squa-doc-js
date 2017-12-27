@@ -39,30 +39,14 @@ export default class Editor extends PureComponent {
 
     this.rootNode = null;
     this.isMouseDown = false;
-
-    this.setRootNode = this.setRootNode.bind(this);
-
-    this.onSelect = this.onSelect.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onCompositionStart = this.onCompositionStart.bind(this);
-    this.onCompositionEnd = this.onCompositionEnd.bind(this);
-    this.onBeforeInput = this.onBeforeInput.bind(this);
-    this.onInput = this.onInput.bind(this);
-    this.afterCut = this.afterCut.bind(this);
-    this.onCut = this.onCut.bind(this);
-    this.onPaste = this.onPaste.bind(this);
-    this.deleteBlockByKey = this.deleteBlockByKey.bind(this);
   }
 
-  setRootNode(rootNode) {
+  setRootNode = rootNode => {
     this.rootNode = rootNode;
-  }
+  };
 
-  onSelect(event) {
-    const { value, onSelect = sink, onChange = sink } = this.props;
+  onSelect = () => {
+    const { value, onChange = sink } = this.props;
     const { selection: editorSelection } = value;
 
     if (value.mode === EDITOR_MODE_COMPOSITION) {
@@ -102,20 +86,18 @@ export default class Editor extends PureComponent {
 
     change.select(editorRange.anchorOffset, editorRange.focusOffset);
 
-    onSelect(event, change, this);
-
     onChange(change);
-  }
+  };
 
-  onMouseMove(event) {
+  onMouseMove = event => {
     if (!this.isMouseDown) {
       return;
     }
 
     requestAnimationFrame(() => this.onSelect(event));
-  }
+  };
 
-  onMouseUp() {
+  onMouseUp = () => {
     if (!this.isMouseDown) {
       return;
     }
@@ -124,9 +106,9 @@ export default class Editor extends PureComponent {
 
     document.removeEventListener("mousemove", this.onMouseMove);
     document.removeEventListener("mouseup", this.onMouseUp);
-  }
+  };
 
-  onMouseDown(event) {
+  onMouseDown = event => {
     if (this.isMouseDown) {
       return;
     }
@@ -137,9 +119,9 @@ export default class Editor extends PureComponent {
 
     document.addEventListener("mousemove", this.onMouseMove);
     document.addEventListener("mouseup", this.onMouseUp);
-  }
+  };
 
-  onKeyDownBackspace(change, event) {
+  onKeyDownBackspace = (change, event) => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -167,9 +149,9 @@ export default class Editor extends PureComponent {
     }
 
     onChange(change);
-  }
+  };
 
-  onKeyDownDelete(change, event) {
+  onKeyDownDelete = (change, event) => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -197,9 +179,9 @@ export default class Editor extends PureComponent {
     }
 
     onChange(change);
-  }
+  };
 
-  onKeyDownEnter(change, event) {
+  onKeyDownEnter = (change, event) => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -212,9 +194,9 @@ export default class Editor extends PureComponent {
     change.insertText(EOL, value.getFormat()).save();
 
     onChange(change);
-  }
+  };
 
-  onKeyDownUndo(change, event) {
+  onKeyDownUndo = (change, event) => {
     const { onChange = sink } = this.props;
 
     event.preventDefault();
@@ -222,9 +204,9 @@ export default class Editor extends PureComponent {
     change.undo();
 
     onChange(change);
-  }
+  };
 
-  onKeyDownRedo(change, event) {
+  onKeyDownRedo = (change, event) => {
     const { onChange = sink } = this.props;
 
     event.preventDefault();
@@ -232,9 +214,9 @@ export default class Editor extends PureComponent {
     change.redo();
 
     onChange(change);
-  }
+  };
 
-  onKeyDown(event) {
+  onKeyDown = event => {
     const { value, onKeyDown = defaultOnKeyDown, onChange = sink } = this.props;
 
     const change = value.change();
@@ -262,9 +244,9 @@ export default class Editor extends PureComponent {
         return this.onKeyDownUndo(change, event);
       }
     }
-  }
+  };
 
-  handleInput(change) {
+  handleInput = change => {
     const { tokenizeNode = defaultTokenizeNode } = this.props;
     const { value } = change;
     const { document } = value;
@@ -322,17 +304,17 @@ export default class Editor extends PureComponent {
       .replaceBlock(blockAfter, blockBefore)
       .select(editorRange.anchorOffset, editorRange.focusOffset)
       .save("input");
-  }
+  };
 
-  onCompositionStart() {
+  onCompositionStart = () => {
     const { value, onChange = sink } = this.props;
 
     const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
 
     onChange(change);
-  }
+  };
 
-  onCompositionEnd() {
+  onCompositionEnd = () => {
     const { value, onChange = sink } = this.props;
 
     const change = value.change().setMode(EDITOR_MODE_EDIT);
@@ -340,9 +322,9 @@ export default class Editor extends PureComponent {
     this.handleInput(change);
 
     onChange(change);
-  }
+  };
 
-  onBeforeInput(event) {
+  onBeforeInput = event => {
     const { value, onChange = sink } = this.props;
     const { hasInlineStyleOverride } = value;
     const { selection: { isCollapsed } } = value;
@@ -369,9 +351,9 @@ export default class Editor extends PureComponent {
     }
 
     onChange(change);
-  }
+  };
 
-  onInput() {
+  onInput = () => {
     const { value, onChange = sink } = this.props;
 
     if (value.mode === EDITOR_MODE_COMPOSITION) {
@@ -383,9 +365,9 @@ export default class Editor extends PureComponent {
     this.handleInput(change);
 
     onChange(change);
-  }
+  };
 
-  afterCut() {
+  afterCut = () => {
     const { value, onChange = sink } = this.props;
 
     const change = value
@@ -396,9 +378,9 @@ export default class Editor extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  onCut() {
+  onCut = () => {
     const { value, onChange = sink } = this.props;
 
     const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
@@ -406,9 +388,9 @@ export default class Editor extends PureComponent {
     onChange(change);
 
     window.requestAnimationFrame(this.afterCut);
-  }
+  };
 
-  onPasteHTML(change, event) {
+  onPasteHTML = (change, event) => {
     const {
       value,
       tokenizeNode = defaultTokenizeNode,
@@ -443,9 +425,9 @@ export default class Editor extends PureComponent {
     change.insertFragment(fragment).save();
 
     onChange(change);
-  }
+  };
 
-  onPasteText(change, event) {
+  onPasteText = (change, event) => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -462,9 +444,9 @@ export default class Editor extends PureComponent {
     change.save();
 
     onChange(change);
-  }
+  };
 
-  onPaste(event) {
+  onPaste = event => {
     const { value, onPaste = sink, onChange = sink } = this.props;
 
     const change = value.change();
@@ -480,9 +462,9 @@ export default class Editor extends PureComponent {
     if (event.clipboardData.types.indexOf("text/plain") !== -1) {
       return this.onPasteText(change, event);
     }
-  }
+  };
 
-  deleteBlockByKey(key) {
+  deleteBlockByKey = key => {
     const { value, onChange = sink } = this.props;
 
     const change = value
@@ -491,7 +473,7 @@ export default class Editor extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
   updateSelection() {
     if (!this.rootNode) {

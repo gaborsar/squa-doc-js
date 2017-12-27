@@ -1,3 +1,5 @@
+export { default as Delta } from "quill-delta";
+
 export { default as Schema } from "./model/Schema";
 export { default as Value } from "./model/Value";
 export { default as Editor } from "./components/Editor";
@@ -9,15 +11,5 @@ export {
   renderEmbed,
   renderMark
 } from "./plugins/renderer";
-export {
-  tokenizeWrapperNode,
-  tokenizeWrappedBlockNode,
-  tokenizeBlockNode,
-  tokenzieInlineNode,
-  tokenizeClassList,
-  tokenizeFigure,
-  tokenizeInlineImage,
-  tokenizeNode
-} from "./plugins/parser";
-export { indent, outdent, toggleBold, toggleItalic } from "./plugins/changes";
+export { tokenizeNode } from "./plugins/parser";
 export { onKeyDown } from "./plugins/handlers";

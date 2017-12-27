@@ -11,9 +11,6 @@ export function renderWrapper(node) {
 
     case "code":
       return { component: "pre" };
-
-    default:
-      return {};
   }
 }
 
@@ -51,9 +48,6 @@ export function renderBlock(node) {
 
     case "blockquote":
       return { component: "blockquote" };
-
-    default:
-      return {};
   }
 }
 
@@ -64,9 +58,6 @@ export function renderEmbed(node) {
 
     case "inline-image":
       return { component: InlineImage, props: { node } };
-
-    default:
-      return {};
   }
 }
 
@@ -95,8 +86,5 @@ export function renderMark(mark) {
 
     case "code":
       return { component: "code" };
-
-    default:
-      return {};
   }
 }

@@ -1,8 +1,8 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import classNames from "classnames";
-import Delta from "quill-delta";
 import {
+  Delta,
   Value,
   Editor,
   schema,
@@ -13,17 +13,15 @@ import {
 class SimpleButton extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.onMouseDown = this.onMouseDown.bind(this);
   }
 
-  onMouseDown(event) {
+  onMouseDown = event => {
     const { onClick } = this.props;
 
     event.preventDefault();
 
     onClick();
-  }
+  };
 
   render() {
     const { disabled, children } = this.props;
@@ -44,17 +42,15 @@ class SimpleButton extends PureComponent {
 class ToggleButton extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.onMouseDown = this.onMouseDown.bind(this);
   }
 
-  onMouseDown(event) {
+  onMouseDown = event => {
     const { onClick, format, type, value } = this.props;
 
     event.preventDefault();
 
     onClick(format[type] === value ? null : value);
-  }
+  };
 
   render() {
     const { format, type, value, disabled, children } = this.props;
@@ -77,22 +73,19 @@ class ToggleButton extends PureComponent {
 class LinkButton extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.onMouseDownCallback = this.onMouseDownCallback.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
   }
 
-  onMouseDownCallback() {
+  onMouseDownCallback = () => {
     const { onClick, format, type } = this.props;
 
     onClick(format[type] ? null : prompt("Enter link."));
-  }
+  };
 
-  onMouseDown(event) {
+  onMouseDown = event => {
     event.preventDefault();
 
     window.requestAnimationFrame(this.onMouseDownCallback);
-  }
+  };
 
   render() {
     const { format, type, disabled, children } = this.props;
@@ -115,37 +108,25 @@ class LinkButton extends PureComponent {
 class Menu extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.undo = this.undo.bind(this);
-    this.redo = this.redo.bind(this);
-    this.toggleBlockType = this.toggleBlockType.bind(this);
-    this.toggleAlign = this.toggleAlign.bind(this);
-    this.indent = this.indent.bind(this);
-    this.outdent = this.outdent.bind(this);
-    this.toggleBold = this.toggleBold.bind(this);
-    this.toggleItalic = this.toggleItalic.bind(this);
-    this.toggleUnderline = this.toggleUnderline.bind(this);
-    this.toggleCode = this.toggleCode.bind(this);
-    this.toggleLink = this.toggleLink.bind(this);
   }
 
-  undo() {
+  undo = () => {
     const { value, onChange } = this.props;
 
     const change = value.change().undo();
 
     onChange(change);
-  }
+  };
 
-  redo() {
+  redo = () => {
     const { value, onChange } = this.props;
 
     const change = value.change().redo();
 
     onChange(change);
-  }
+  };
 
-  toggleBlockType(type) {
+  toggleBlockType = type => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -154,9 +135,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleAlign(align) {
+  toggleAlign = align => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -165,9 +146,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  indent() {
+  indent = () => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -176,9 +157,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  outdent() {
+  outdent = () => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -187,9 +168,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleBold(bold) {
+  toggleBold = bold => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -198,9 +179,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleItalic(italic) {
+  toggleItalic = italic => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -209,9 +190,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleUnderline(underline) {
+  toggleUnderline = underline => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -220,9 +201,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleCode(code) {
+  toggleCode = code => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -231,9 +212,9 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
-  toggleLink(link) {
+  toggleLink = link => {
     const { value, onChange } = this.props;
 
     const change = value
@@ -242,7 +223,7 @@ class Menu extends PureComponent {
       .save();
 
     onChange(change);
-  }
+  };
 
   render() {
     const { value } = this.props;
@@ -394,20 +375,18 @@ class App extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.onChange = this.onChange.bind(this);
-
     const { value } = props;
     this.state = { value };
   }
 
-  onChange(change) {
+  onChange = change => {
     // eslint-disable-next-line no-console
     console.log(change);
 
     const { value } = change;
 
     this.setState({ value });
-  }
+  };
 
   render() {
     const { value } = this.state;
