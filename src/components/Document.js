@@ -58,7 +58,7 @@ export default class Document extends PureComponent {
 
     node.children.forEach(child => {
       if (child.kind === "block") {
-        const { component = "", props = {} } = renderWrapper(child);
+        const { component = "", props = {} } = renderWrapper(child) || {};
 
         if (buffer.component !== component || !isEqual(buffer.props, props)) {
           flush(child.key, component, props);

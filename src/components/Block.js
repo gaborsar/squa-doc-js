@@ -10,9 +10,8 @@ export default class Block extends PureComponent {
     let style = {};
 
     node.style.marks.forEach(mark => {
-      const { className: markClassName = "", style: markStyle } = renderMark(
-        mark
-      );
+      const { className: markClassName = "", style: markStyle } =
+        renderMark(mark) || {};
 
       if (markClassName) {
         classNames.push(markClassName);
@@ -41,10 +40,8 @@ export default class Block extends PureComponent {
       <br data-ignore />
     );
 
-    const {
-      component: BlockComponent = "p",
-      props: blockProps = {}
-    } = renderBlock(node);
+    const { component: BlockComponent = "p", props: blockProps = {} } =
+      renderBlock(node) || {};
 
     return (
       <BlockComponent

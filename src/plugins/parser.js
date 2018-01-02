@@ -4,6 +4,8 @@ import isFigcaptionNode from "../dom/isFigcaptionNode";
 import combineTokenizers from "../parser/combineTokenizers";
 
 function tokenizeFigure(node, context) {
+  const tokens = [];
+
   if (node.nodeName === "FIGURE") {
     let type;
     let value;
@@ -35,17 +37,21 @@ function tokenizeFigure(node, context) {
         attributes = { ...attributes, caption };
       }
 
-      return {
+      tokens.push({
         insert: {
           [type]: value
         },
         attributes
-      };
+      });
     }
   }
+
+  return tokens;
 }
 
 function tokenizeInlineImage(node, context) {
+  const tokens = [];
+
   if (node.nodeName === "IMG") {
     const value = node.getAttribute("src");
     const alt = node.getAttribute("alt");
@@ -57,14 +63,16 @@ function tokenizeInlineImage(node, context) {
         attributes = { ...attributes, alt };
       }
 
-      return {
+      tokens.push({
         insert: {
           "inline-image": value
         },
         attributes
-      };
+      });
     }
   }
+
+  return tokens;
 }
 
 function tokenizeWrapperNode(node) {

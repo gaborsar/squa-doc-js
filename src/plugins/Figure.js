@@ -5,13 +5,12 @@ import "./Figure.css";
 export default class Figure extends PureComponent {
   constructor(props) {
     super(props);
-    this.onClickDelete = this.onClickDelete.bind(this);
   }
 
-  onClickDelete() {
+  onClickDelete = () => {
     const { node: { key }, deleteBlockByKey } = this.props;
     deleteBlockByKey(key);
-  }
+  };
 
   render() {
     const { node, children } = this.props;

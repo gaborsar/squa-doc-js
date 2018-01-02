@@ -38,7 +38,8 @@ export default class Text extends Component {
         props: markProps = {},
         className: markClassName = "",
         style: markStyle
-      } = renderMark(mark);
+      } =
+        renderMark(mark) || {};
 
       if (MarkComponent) {
         content = <MarkComponent {...markProps}>{content}</MarkComponent>;

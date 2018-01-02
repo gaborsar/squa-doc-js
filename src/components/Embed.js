@@ -4,10 +4,8 @@ export default class Embed extends PureComponent {
   render() {
     const { node, renderEmbed, renderMark, deleteBlockByKey } = this.props;
 
-    const {
-      component: EmbedComponent = "",
-      props: embedProps = {}
-    } = renderEmbed(node);
+    const { component: EmbedComponent = "", props: embedProps = {} } =
+      renderEmbed(node) || {};
 
     let content = (
       <EmbedComponent {...embedProps} deleteBlockByKey={deleteBlockByKey} />
@@ -22,7 +20,8 @@ export default class Embed extends PureComponent {
         props: markProps = {},
         className: markClassName = "",
         style: markStyle
-      } = renderMark(mark);
+      } =
+        renderMark(mark) || {};
 
       if (MarkComponent) {
         content = <MarkComponent {...markProps}>{content}</MarkComponent>;

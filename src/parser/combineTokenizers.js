@@ -3,15 +3,7 @@ export default function combineTokenizers(...tokenizers) {
     const tokens = [];
 
     for (const tokenizer of tokenizers) {
-      const out = tokenizer(node, context);
-
-      if (typeof out === "object") {
-        if (Array.isArray(out)) {
-          tokens.push(...out);
-        } else {
-          return [out];
-        }
-      }
+      tokens.push(...tokenizer(node, context));
     }
 
     return tokens;
