@@ -1,6 +1,6 @@
 import findChildNode from "../findChildNode";
 
-describe("findParentNode()", () => {
+describe("findChildNode()", () => {
   test("the predicate is never fulfilled", () => {
     const div = document.createElement("div");
 

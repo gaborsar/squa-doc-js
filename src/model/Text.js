@@ -1,9 +1,9 @@
-import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
 import LeafMixin from "./mixins/Leaf";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
+import defaultSchema from "../plugins/schema";
 
 export default class Text extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
@@ -12,7 +12,7 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
 
   constructor(props = {}) {
     const {
-      schema = new Schema(),
+      schema = defaultSchema,
       key = createKey(),
       style = Style.create(),
       value = ""

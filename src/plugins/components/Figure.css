@@ -8,6 +8,10 @@
   outline: 2px solid cyan;
 }
 
+.ed-figure__content {
+  text-align: center;
+}
+
 .ed-figure__controls {
   position: absolute;
   top: 0;

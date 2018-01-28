@@ -1,4 +1,3 @@
-import Schema from "../Schema";
 import Mark from "../Mark";
 import Style from "../Style";
 import Text from "../Text";
@@ -6,20 +5,10 @@ import Embed from "../Embed";
 import Block from "../Block";
 import BlockBuilder from "../BlockBuilder";
 
-const schema = new Schema({
-  inline: {
-    marks: ["bold"],
-    embeds: ["image"]
-  },
-  image: {
-    marks: ["alt"]
-  }
-});
-
 test("BlockBuilder", () => {
-  const actual = new BlockBuilder(schema)
+  const actual = new BlockBuilder()
     .insert("foo", { bold: true })
-    .insert({ image: "foo" }, { alt: "foo" })
+    .insert({ "inline-image": "foo" }, { alt: "foo" })
     .build();
 
   const expected = Block.create({
@@ -45,7 +34,7 @@ test("BlockBuilder", () => {
           ]
         }),
         value: {
-          image: "foo"
+          "inline-image": "foo"
         }
       })
     ]

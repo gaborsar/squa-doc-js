@@ -1,57 +1,95 @@
 import React, { PureComponent } from "react";
 import Text from "./Text";
 import Embed from "./Embed";
+import defaultRenderEmbed from "../plugins/renderers/renderEmbed";
+import defaultRenderMark from "../plugins/renderers/renderMark";
+
+const emptyProps = {};
 
 export default class Block extends PureComponent {
   render() {
-    const { node, renderBlock, renderEmbed, renderMark } = this.props;
+    const {
+      node,
+      renderEmbed: customRenderEmbed,
+      renderMark: customRenderMark,
+      deleteInlineByKey,
+      BlockComponent,
+      blockProps
+    } = this.props;
 
     const classNames = ["ed-block"];
-    let style = {};
 
     node.style.marks.forEach(mark => {
-      const { className: markClassName = "", style: markStyle } =
-        renderMark(mark) || {};
+      let markObj;
 
-      if (markClassName) {
-        classNames.push(markClassName);
+      if (customRenderMark) {
+        markObj = customRenderMark(mark);
       }
 
-      if (markStyle) {
-        style = { ...style, ...markStyle };
+      if (markObj === undefined) {
+        markObj = defaultRenderMark(mark);
+      }
+
+      if (markObj) {
+        const { className: markClassName } = markObj;
+
+        if (markClassName) {
+          classNames.push(markClassName);
+        }
       }
     });
 
-    const content = node.children.length ? (
-      node.children.map(
-        child =>
-          child.kind === "text" ? (
-            <Text key={child.key} node={child} renderMark={renderMark} />
-          ) : (
-            <Embed
-              key={child.key}
-              node={child}
-              renderEmbed={renderEmbed}
-              renderMark={renderMark}
-            />
-          )
-      )
-    ) : (
-      <br data-ignore />
-    );
+    let children;
 
-    const { component: BlockComponent = "p", props: blockProps = {} } =
-      renderBlock(node) || {};
+    if (node.children.length) {
+      children = [];
+
+      node.children.forEach(child => {
+        if (child.kind === "text") {
+          children.push(
+            <Text key={child.key} node={child} renderMark={customRenderMark} />
+          );
+        } else {
+          let embedObj;
+
+          if (customRenderEmbed) {
+            embedObj = customRenderEmbed(child);
+          }
+
+          if (embedObj === undefined) {
+            embedObj = defaultRenderEmbed(child);
+          }
+
+          if (embedObj) {
+            const {
+              component: EmbedComponent,
+              props: embedProps = emptyProps
+            } = embedObj;
+
+            children.push(
+              <Embed key={child.key} node={child} renderMark={customRenderMark}>
+                <EmbedComponent
+                  {...embedProps}
+                  blockNode={node}
+                  deleteInlineByKey={deleteInlineByKey}
+                />
+              </Embed>
+            );
+          }
+        }
+      });
+    } else {
+      children = <br data-ignore />;
+    }
 
     return (
       <BlockComponent
         {...blockProps}
         className={classNames.join(" ")}
-        style={style}
         data-block
         data-key={node.key}
       >
-        {content}
+        {children}
       </BlockComponent>
     );
   }

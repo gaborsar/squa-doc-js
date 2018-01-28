@@ -1,10 +1,10 @@
 import Delta from "quill-delta";
-import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
 import LeafMixin from "./mixins/Leaf";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
+import defaultSchema from "../plugins/schema";
 
 export default class Embed extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
@@ -17,7 +17,7 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
 
   constructor(props = {}) {
     const {
-      schema = new Schema(),
+      schema = defaultSchema,
       key = createKey(),
       style = Style.create(),
       value = {}
@@ -51,14 +51,6 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
 
   get delta() {
     return new Delta().insert(this.value, this.style.toObject());
-  }
-
-  get isBlockEmbed() {
-    return this.schema.isBlockEmbed(this.type);
-  }
-
-  get isInlineEmbed() {
-    return this.schema.isInlineEmbed(this.type);
   }
 
   format(attributes) {

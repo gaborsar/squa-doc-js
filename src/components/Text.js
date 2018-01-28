@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
+import defaultRenderMark from "../plugins/renderers/renderMark";
+
+const emptyProps = {};
 
 export default class Text extends Component {
   constructor(props) {
@@ -26,31 +29,36 @@ export default class Text extends Component {
   }
 
   render() {
-    const { node, renderMark } = this.props;
+    const { node, renderMark: customRenderMark } = this.props;
 
-    let content = node.value;
+    let children = node.value;
     const classNames = ["ed-text"];
-    let style = {};
 
     node.style.marks.forEach(mark => {
-      const {
-        component: MarkComponent = "",
-        props: markProps = {},
-        className: markClassName = "",
-        style: markStyle
-      } =
-        renderMark(mark) || {};
+      let markObj;
 
-      if (MarkComponent) {
-        content = <MarkComponent {...markProps}>{content}</MarkComponent>;
+      if (customRenderMark) {
+        markObj = customRenderMark(mark);
       }
 
-      if (markClassName) {
-        classNames.push(markClassName);
+      if (markObj === undefined) {
+        markObj = defaultRenderMark(mark);
       }
 
-      if (markStyle) {
-        style = { ...style, ...markStyle };
+      if (markObj) {
+        const {
+          component: MarkComponent,
+          props: markProps = emptyProps,
+          className: markClassName
+        } = markObj;
+
+        if (MarkComponent) {
+          children = <MarkComponent {...markProps}>{children}</MarkComponent>;
+        }
+
+        if (markClassName) {
+          classNames.push(markClassName);
+        }
       }
     });
 
@@ -58,11 +66,10 @@ export default class Text extends Component {
       <span
         key={this.forceFlag ? "A" : "B"}
         className={classNames.join(" ")}
-        style={style}
         data-text
         data-key={node.key}
       >
-        {content}
+        {children}
       </span>
     );
   }

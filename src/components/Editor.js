@@ -7,15 +7,7 @@ import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
-
-import {
-  renderWrapper as defaultRenderWrapper,
-  renderBlock as defaultRenderBlock,
-  renderEmbed as defaultRenderEmbed,
-  renderMark as defaultRenderMark
-} from "../plugins/renderer";
-import { tokenizeNode as defaultTokenizeNode } from "../plugins/parser";
-import { onKeyDown as defaultOnKeyDown } from "../plugins/handlers";
+import defaultOnKeyDown from "../plugins/handlers/onKeyDown";
 
 import {
   EOL,
@@ -247,7 +239,7 @@ export default class Editor extends PureComponent {
   };
 
   handleInput = change => {
-    const { tokenizeNode = defaultTokenizeNode } = this.props;
+    const { tokenizeNode: customTokenizeNode } = this.props;
     const { value } = change;
     const { document } = value;
 
@@ -282,7 +274,7 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    const delta = parseNode(blockNode, tokenizeNode);
+    const delta = parseNode(blockNode, customTokenizeNode);
 
     const diff = blockBefore.delta.diff(delta);
 
@@ -393,7 +385,7 @@ export default class Editor extends PureComponent {
   onPasteHTML = (change, event) => {
     const {
       value,
-      tokenizeNode = defaultTokenizeNode,
+      tokenizeNode: customTokenizeNode,
       onChange = sink
     } = this.props;
     const { selection: { isCollapsed } } = value;
@@ -402,7 +394,7 @@ export default class Editor extends PureComponent {
 
     const data = event.clipboardData.getData("text/html");
 
-    let fragment = parseHTML(data, tokenizeNode);
+    let fragment = parseHTML(data, customTokenizeNode);
 
     if (fragment.ops.length) {
       const op = fragment.ops[fragment.ops.length - 1];
@@ -441,8 +433,6 @@ export default class Editor extends PureComponent {
 
     change.insertText(data, value.getFormat()).save();
 
-    change.save();
-
     onChange(change);
   };
 
@@ -464,12 +454,23 @@ export default class Editor extends PureComponent {
     }
   };
 
-  deleteBlockByKey = key => {
+  deleteBlockByKey = blockKey => {
     const { value, onChange = sink } = this.props;
 
     const change = value
       .change()
-      .deleteBlockByKey(key)
+      .deleteBlockByKey(blockKey)
+      .save();
+
+    onChange(change);
+  };
+
+  deleteInlineByKey = (blockKey, inlineKey) => {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .deleteInlineByKey(blockKey, inlineKey)
       .save();
 
     onChange(change);
@@ -511,10 +512,10 @@ export default class Editor extends PureComponent {
   render() {
     const {
       value,
-      renderWrapper = defaultRenderWrapper,
-      renderBlock = defaultRenderBlock,
-      renderEmbed = defaultRenderEmbed,
-      renderMark = defaultRenderMark
+      renderWrapper,
+      renderBlock,
+      renderEmbed,
+      renderMark
     } = this.props;
     const { document } = value;
 
@@ -547,6 +548,7 @@ export default class Editor extends PureComponent {
               renderEmbed={renderEmbed}
               renderMark={renderMark}
               deleteBlockByKey={this.deleteBlockByKey}
+              deleteInlineByKey={this.deleteInlineByKey}
             />
           </div>
         </ErrorBoundary>

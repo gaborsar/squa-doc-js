@@ -1,6 +1,6 @@
-import Schema from "../model/Schema";
+import createSchema from "../model/createSchema";
 
-export const rules = {
+const schema = createSchema({
   block: {
     marks: ["type", "align", "indent"],
     embeds: ["block-image"]
@@ -10,11 +10,11 @@ export const rules = {
     embeds: ["inline-image"]
   },
   "block-image": {
-    marks: ["alt", "caption"]
+    marks: ["alt", "caption", "align"]
   },
   "inline-image": {
-    marks: ["alt"]
+    marks: ["alt", "link"]
   }
-};
+});
 
-export const schema = new Schema(rules);
+export default schema;

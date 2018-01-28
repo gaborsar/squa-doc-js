@@ -1,11 +1,11 @@
 import Delta from "quill-delta";
-import Schema from "./Schema";
 import Text from "./Text";
 import Embed from "./Embed";
 import Node from "./Node";
 import Block from "./Block";
 import ParentMixin from "./mixins/Parent";
 import createKey from "./utils/createKey";
+import defaultSchema from "../plugins/schema";
 
 import { EOL } from "../constants";
 
@@ -16,7 +16,7 @@ export default class Document extends ParentMixin(Node) {
 
   constructor(props = {}) {
     const {
-      schema = new Schema(),
+      schema = defaultSchema,
       key = createKey(),
       children = [Block.create()]
     } = props;
