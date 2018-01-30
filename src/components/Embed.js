@@ -1,38 +1,40 @@
 import React, { PureComponent } from "react";
+import defaultRenderMark from "../plugins/renderers/renderMark";
+
+const emptyProps = {};
 
 export default class Embed extends PureComponent {
   render() {
-    const { node, renderEmbed, renderMark, deleteBlockByKey } = this.props;
+    const { node, renderMark: customRenderMark, children } = this.props;
 
-    const { component: EmbedComponent = "", props: embedProps = {} } =
-      renderEmbed(node) || {};
-
-    let content = (
-      <EmbedComponent {...embedProps} deleteBlockByKey={deleteBlockByKey} />
-    );
-
+    let content = children;
     const classNames = ["ed-embed"];
-    let style = {};
 
     node.style.marks.forEach(mark => {
-      const {
-        component: MarkComponent = "",
-        props: markProps = {},
-        className: markClassName = "",
-        style: markStyle
-      } =
-        renderMark(mark) || {};
+      let markObj;
 
-      if (MarkComponent) {
-        content = <MarkComponent {...markProps}>{content}</MarkComponent>;
+      if (customRenderMark) {
+        markObj = customRenderMark(mark);
       }
 
-      if (markClassName) {
-        classNames.push(markClassName);
+      if (markObj === undefined) {
+        markObj = defaultRenderMark(mark);
       }
 
-      if (markStyle) {
-        style = { ...style, ...markStyle };
+      if (markObj) {
+        const {
+          component: MarkComponent,
+          props: markProps = emptyProps,
+          className: markClassName
+        } = markObj;
+
+        if (MarkComponent) {
+          content = <MarkComponent {...markProps}>{content}</MarkComponent>;
+        }
+
+        if (markClassName) {
+          classNames.push(markClassName);
+        }
       }
     });
 
@@ -42,7 +44,6 @@ export default class Embed extends PureComponent {
       <Container
         contentEditable={false}
         className={classNames.join(" ")}
-        style={style}
         data-embed
         data-key={node.key}
       >

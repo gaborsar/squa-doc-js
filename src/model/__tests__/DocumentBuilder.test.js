@@ -1,4 +1,3 @@
-import Schema from "../Schema";
 import Mark from "../Mark";
 import Style from "../Style";
 import Text from "../Text";
@@ -7,29 +6,12 @@ import Block from "../Block";
 import Document from "../Document";
 import DocumentBuilder from "../DocumentBuilder";
 
-const schema = new Schema({
-  block: {
-    marks: ["align"],
-    embeds: ["video"]
-  },
-  inline: {
-    marks: ["bold"],
-    embeds: ["image"]
-  },
-  video: {
-    marks: ["quality"]
-  },
-  image: {
-    marks: ["alt"]
-  }
-});
-
 test("DocumentBuilder", () => {
-  const actual = new DocumentBuilder(schema)
+  const actual = new DocumentBuilder()
     .insert("foo", { bold: true })
-    .insert({ image: "foo" }, { alt: "foo" })
+    .insert({ "inline-image": "foo" }, { alt: "foo" })
     .insert("\n", { align: "left" })
-    .insert({ video: "foo" }, { quality: "high" })
+    .insert({ "block-image": "foo" }, { alt: "foo" })
     .insert("foo\nfoo\n")
     .build();
 
@@ -66,7 +48,7 @@ test("DocumentBuilder", () => {
               ]
             }),
             value: {
-              image: "foo"
+              "inline-image": "foo"
             }
           })
         ]
@@ -75,13 +57,13 @@ test("DocumentBuilder", () => {
         style: Style.create({
           marks: [
             Mark.create({
-              type: "quality",
-              value: "high"
+              type: "alt",
+              value: "foo"
             })
           ]
         }),
         value: {
-          video: "foo"
+          "block-image": "foo"
         }
       }),
       Block.create({

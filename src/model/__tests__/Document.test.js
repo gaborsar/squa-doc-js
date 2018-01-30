@@ -1,21 +1,23 @@
 import Delta from "quill-delta";
-import Schema from "../Schema";
 import DocumentBuilder from "../DocumentBuilder";
+import extendSchema from "../extendSchema";
+import defaultSchema from "../../plugins/schema";
 
-const schema = new Schema({
-  block: {
-    embeds: ["block-image"],
-    marks: ["common"]
+const schema = extendSchema(defaultSchema, {
+  isBlockMark(markType) {
+    if (markType === "common") {
+      return true;
+    }
   },
-  inline: {
-    embeds: ["inline-image"],
-    marks: ["common"]
+  isInlineMark(markType) {
+    if (markType === "common") {
+      return true;
+    }
   },
-  "block-image": {
-    marks: ["alt"]
-  },
-  "inline-image": {
-    marks: ["alt"]
+  isEmbedMark(embedType, markType) {
+    if (markType === "common") {
+      return true;
+    }
   }
 });
 

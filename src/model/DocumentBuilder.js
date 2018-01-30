@@ -2,11 +2,12 @@ import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
 import Document from "./Document";
+import defaultSchema from "../plugins/schema";
 
 import { EOL } from "../constants";
 
 export default class DocumentBuilder {
-  constructor(schema) {
+  constructor(schema = defaultSchema) {
     this._schema = schema;
     this._inlines = [];
     this._blocks = [];
@@ -25,12 +26,6 @@ export default class DocumentBuilder {
   _insertInlineEmbed(value, attributes) {
     const { _schema: schema } = this;
 
-    const type = Embed.type(value);
-
-    if (!schema.isInlineEmbed(type)) {
-      throw new Error(`Invalid inline embed type: ${type}`);
-    }
-
     const node = Embed.create({ schema, value }).format(attributes);
 
     this._inlines.push(node);
@@ -42,10 +37,6 @@ export default class DocumentBuilder {
     const { _schema: schema } = this;
 
     const type = Embed.type(value);
-
-    if (!schema.isBlockEmbed(type)) {
-      throw new Error(`Invalid block embed type: ${type}`);
-    }
 
     if (this._inlines.length) {
       throw new Error(`Invalid embed type: ${type}`);

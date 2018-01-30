@@ -2,49 +2,55 @@ import React, { PureComponent } from "react";
 import { isEqual } from "lodash/fp";
 import Embed from "./Embed";
 import Block from "./Block";
+import defaultRenderWrapper from "../plugins/renderers/renderWrapper";
+import defaultRenderBlock from "../plugins/renderers/renderBlock";
+import defaultRenderEmbed from "../plugins/renderers/renderEmbed";
+
+const emptyProps = {};
 
 export default class Document extends PureComponent {
   render() {
     const {
       node,
-      renderWrapper,
-      renderBlock,
-      renderEmbed,
-      renderMark,
-      deleteBlockByKey
+      renderWrapper: customRenderWrapper,
+      renderBlock: customRenderBlock,
+      renderEmbed: customRenderEmbed,
+      renderMark: customRenderMark,
+      deleteBlockByKey,
+      deleteInlineByKey
     } = this.props;
 
-    const blocks = [];
+    const children = [];
 
     let buffer = {
       key: "",
       component: "",
-      props: {},
-      blocks: []
+      props: emptyProps,
+      children: []
     };
 
-    const flush = (key = "", component = "", props = {}) => {
-      if (buffer.blocks.length !== 0) {
+    const flush = (key = "", component = "", props = emptyProps) => {
+      if (buffer.children.length !== 0) {
         if (buffer.component) {
           const {
             component: WrapperComponent,
             props: wrapperProps,
             key: wrapperKey,
-            blocks: wrappedBlocks
+            children: wrapperChildren
           } = buffer;
 
-          blocks.push(
+          children.push(
             <WrapperComponent
               {...wrapperProps}
               key={wrapperKey}
               data-wrapper
               data-key={wrapperKey}
             >
-              {wrappedBlocks}
+              {wrapperChildren}
             </WrapperComponent>
           );
         } else {
-          blocks.push(...buffer.blocks);
+          children.push(...buffer.children);
         }
       }
 
@@ -52,39 +58,96 @@ export default class Document extends PureComponent {
         key,
         component,
         props,
-        blocks: []
+        children: []
       };
     };
 
     node.children.forEach(child => {
       if (child.kind === "block") {
-        const { component = "", props = {} } = renderWrapper(child) || {};
+        let wrapperObj;
 
-        if (buffer.component !== component || !isEqual(buffer.props, props)) {
-          flush(child.key, component, props);
+        if (customRenderWrapper) {
+          wrapperObj = customRenderWrapper(child);
         }
 
-        buffer.blocks.push(
-          <Block
-            key={child.key}
-            node={child}
-            renderBlock={renderBlock}
-            renderEmbed={renderEmbed}
-            renderMark={renderMark}
-          />
-        );
+        if (wrapperObj === undefined) {
+          wrapperObj = defaultRenderWrapper(child);
+        }
+
+        if (wrapperObj === undefined) {
+          wrapperObj = {};
+        }
+
+        if (wrapperObj) {
+          let blockObj;
+
+          if (customRenderBlock) {
+            blockObj = customRenderBlock(child);
+          }
+
+          if (blockObj === undefined) {
+            blockObj = defaultRenderBlock(child);
+          }
+
+          if (blockObj) {
+            const {
+              component: WrapperComponent = "",
+              props: wrapperProps = emptyProps
+            } = wrapperObj;
+
+            if (
+              buffer.component !== WrapperComponent ||
+              !isEqual(buffer.props, wrapperProps)
+            ) {
+              flush(child.key, WrapperComponent, wrapperProps);
+            }
+
+            const {
+              component: BlockComponent = "p",
+              props: blockProps = emptyProps
+            } = blockObj;
+
+            buffer.children.push(
+              <Block
+                key={child.key}
+                node={child}
+                renderEmbed={customRenderEmbed}
+                renderMark={customRenderMark}
+                deleteInlineByKey={deleteInlineByKey}
+                BlockComponent={BlockComponent}
+                blockProps={blockProps}
+              />
+            );
+          }
+        }
       } else {
         flush(child.key);
 
-        buffer.blocks.push(
-          <Embed
-            key={child.key}
-            node={child}
-            renderEmbed={renderEmbed}
-            renderMark={renderMark}
-            deleteBlockByKey={deleteBlockByKey}
-          />
-        );
+        let embedObj;
+
+        if (customRenderEmbed) {
+          embedObj = customRenderEmbed(child);
+        }
+
+        if (embedObj === undefined) {
+          embedObj = defaultRenderEmbed(child);
+        }
+
+        if (embedObj) {
+          const {
+            component: EmbedComponent,
+            props: embedProps = emptyProps
+          } = embedObj;
+
+          buffer.children.push(
+            <Embed key={child.key} node={child} renderMark={customRenderMark}>
+              <EmbedComponent
+                {...embedProps}
+                deleteBlockByKey={deleteBlockByKey}
+              />
+            </Embed>
+          );
+        }
       }
     });
 
@@ -92,7 +155,7 @@ export default class Document extends PureComponent {
 
     return (
       <div className="ed-document" data-document data-key={node.key}>
-        {blocks}
+        {children}
       </div>
     );
   }

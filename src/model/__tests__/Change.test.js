@@ -1,35 +1,14 @@
-import Schema from "../Schema";
+import Delta from "quill-delta";
 import Value from "../Value";
-import DocumentBuilder from "../DocumentBuilder";
 
 import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
-const schema = new Schema({
-  block: {
-    marks: ["align"],
-    embeds: ["video"]
-  },
-  inline: {
-    marks: ["bold", "italic"],
-    embeds: ["image"]
-  },
-  video: {
-    marks: ["quality"]
-  },
-  image: {
-    marks: ["alt"]
-  }
-});
-
 describe("Change", () => {
   test("history", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("\n").build()
-    });
+    const value = Value.fromJSON();
 
-    const { value: actualValue } = value
+    const change = value
       .change()
-
       // first change
       .insertText("aaa", { bold: true })
       .save("insert")
@@ -52,329 +31,312 @@ describe("Change", () => {
       .redo()
       .redo();
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa", { bold: true })
       .insert("bbb", { italic: true })
-      .insert("\n")
-      .build();
+      .insert("\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
 
-    expect(actualValue.selection.anchorOffset).toBe(0);
-    expect(actualValue.selection.focusOffset).toBe(0);
+    expect(change.value.selection.anchorOffset).toBe(0);
+    expect(change.value.selection.focusOffset).toBe(0);
   });
 
   test("setMode()", () => {
-    const { value } = Value.create()
-      .change()
-      .setMode(EDITOR_MODE_COMPOSITION);
-    expect(value.mode).toBe(EDITOR_MODE_COMPOSITION);
+    const value = Value.fromJSON();
+    const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
+    expect(change.value.mode).toBe(EDITOR_MODE_COMPOSITION);
   });
 
   test("select()", () => {
-    const { value } = Value.create()
-      .change()
-      .select(3, 6);
-    expect(value.selection.anchorOffset).toBe(3);
-    expect(value.selection.focusOffset).toBe(6);
+    const value = Value.fromJSON();
+    const change = value.change().select(3, 6);
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(6);
   });
 
   test("selectCharacterBackward()", () => {
-    const { value } = Value.create()
+    const value = Value.fromJSON();
+
+    const change = value
       .change()
       .select(3, 3)
       .selectCharacterBackward();
-    expect(value.selection.anchorOffset).toBe(2);
-    expect(value.selection.focusOffset).toBe(3);
+
+    expect(change.value.selection.anchorOffset).toBe(2);
+    expect(change.value.selection.focusOffset).toBe(3);
   });
 
   test("selectCharacterForward()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 3)
       .selectCharacterForward();
 
-    expect(actualValue.selection.anchorOffset).toBe(3);
-    expect(actualValue.selection.focusOffset).toBe(4);
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(4);
   });
 
   describe("selectWordBackward()", () => {
     test("select a word", () => {
-      const value = Value.create({
-        document: new DocumentBuilder(schema).insert("aaa bbb \n").build()
+      const value = Value.fromJSON({
+        contents: new Delta().insert("aaa bbb \n")
       });
 
-      const { value: actualValue } = value
+      const change = value
         .change()
         .select(8, 8)
         .selectWordBackward();
 
-      expect(actualValue.selection.anchorOffset).toBe(4);
-      expect(actualValue.selection.focusOffset).toBe(8);
+      expect(change.value.selection.anchorOffset).toBe(4);
+      expect(change.value.selection.focusOffset).toBe(8);
     });
 
     test("select the first word", () => {
-      const value = Value.create({
-        document: new DocumentBuilder(schema).insert("aaa bbb\n").build()
+      const value = Value.fromJSON({
+        contents: new Delta().insert("aaa bbb\n")
       });
 
-      const { value: actualValue } = value
+      const change = value
         .change()
         .select(4, 4)
         .selectWordBackward();
 
-      expect(actualValue.selection.anchorOffset).toBe(0);
-      expect(actualValue.selection.focusOffset).toBe(4);
+      expect(change.value.selection.anchorOffset).toBe(0);
+      expect(change.value.selection.focusOffset).toBe(4);
     });
   });
 
   describe("selectWordForward()", () => {
     test("select a word", () => {
-      const value = Value.create({
-        document: new DocumentBuilder(schema).insert("aaa bbb ccc\n").build()
+      const value = Value.fromJSON({
+        contents: new Delta().insert("aaa bbb ccc\n")
       });
 
-      const { value: actualValue } = value
+      const change = value
         .change()
         .select(3, 3)
         .selectWordForward();
 
-      expect(actualValue.selection.anchorOffset).toBe(3);
-      expect(actualValue.selection.focusOffset).toBe(7);
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(7);
     });
 
     test("select the last word", () => {
-      const value = Value.create({
-        document: new DocumentBuilder(schema).insert("aaa bbb\n").build()
+      const value = Value.fromJSON({
+        contents: new Delta().insert("aaa bbb\n")
       });
 
-      const { value: actualValue } = value
+      const change = value
         .change()
         .select(3, 3)
         .selectWordForward();
 
-      expect(actualValue.selection.anchorOffset).toBe(3);
-      expect(actualValue.selection.focusOffset).toBe(7);
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(7);
     });
   });
 
   test("selectBlockBackward()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
-        .insert("aaabbb\n")
-        .insert("cccddd\n")
-        .build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n").insert("cccddd\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(10, 10)
       .selectBlockBackward();
 
-    expect(actualValue.selection.anchorOffset).toBe(7);
-    expect(actualValue.selection.focusOffset).toBe(10);
+    expect(change.value.selection.anchorOffset).toBe(7);
+    expect(change.value.selection.focusOffset).toBe(10);
   });
 
   test("selectBlockForward()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 3)
       .selectBlockForward();
 
-    expect(actualValue.selection.anchorOffset).toBe(3);
-    expect(actualValue.selection.focusOffset).toBe(6);
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(6);
   });
 
   test("replaceBlock()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaa\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaa\n")
     });
 
     const block = value.document.children[0];
     const newBlock = block.deleteAt(0, 3).insertAt(0, "bbb");
 
-    const { value: actualValue } = value.change().replaceBlock(newBlock, block);
+    const change = value.change().replaceBlock(newBlock, block);
 
-    const expectedDocument = new DocumentBuilder(schema)
-      .insert("bbb\n")
-      .build();
+    const expectedContents = new Delta().insert("bbb\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("format()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 10)
       .format({ bold: true });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa")
       .insert("bbb", { bold: true })
       .insert("\n")
       .insert("ccc", { bold: true })
       .insert("ddd")
-      .insert("\n")
-      .build();
+      .insert("\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("formatBlock()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 10)
       .formatBlock({ align: "left" });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaabbb")
       .insert("\n", { align: "left" })
       .insert("cccddd")
-      .insert("\n", { align: "left" })
-      .build();
+      .insert("\n", { align: "left" });
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("formatInline()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\ncccddd\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 10)
       .formatInline({ bold: true });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa")
       .insert("bbb", { bold: true })
       .insert("\n")
       .insert("ccc", { bold: true })
       .insert("ddd")
-      .insert("\n")
-      .build();
+      .insert("\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("insertText()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 3)
       .insertText("ccc", { bold: true });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa")
       .insert("ccc", { bold: true })
-      .insert("bbb\n")
-      .build();
+      .insert("bbb\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
 
-    expect(actualValue.selection.anchorOffset).toBe(6);
-    expect(actualValue.selection.focusOffset).toBe(6);
+    expect(change.value.selection.anchorOffset).toBe(6);
+    expect(change.value.selection.focusOffset).toBe(6);
   });
 
   test("insertEmbed()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema).insert("aaabbb\n").build()
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n")
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 3)
-      .insertEmbed({ image: "foo" }, { bold: true });
+      .insertEmbed({ "inline-image": "foo" }, { alt: "foo" });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa")
-      .insert({ image: "foo" }, { bold: true })
-      .insert("bbb\n")
-      .build();
+      .insert({ "inline-image": "foo" }, { alt: "foo" })
+      .insert("bbb\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
 
-    expect(actualValue.selection.anchorOffset).toBe(4);
-    expect(actualValue.selection.focusOffset).toBe(4);
+    expect(change.value.selection.anchorOffset).toBe(4);
+    expect(change.value.selection.focusOffset).toBe(4);
   });
 
   test("delete()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaabbb")
         .insert("\n", { type: "heading-one" })
         .insert("cccddd\n")
-        .build()
     });
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .select(3, 10)
       .delete();
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaaddd")
-      .insert("\n", { type: "heading-one" })
-      .build();
+      .insert("\n", { type: "heading-one" });
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
 
-    expect(actualValue.selection.anchorOffset).toBe(3);
-    expect(actualValue.selection.focusOffset).toBe(3);
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(3);
   });
 
   test("replaceBlockByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
     const newBlock = block.deleteAt(0, 3).insertAt(0, "ddd");
 
-    const { value: actualValue } = value
-      .change()
-      .replaceBlockByKey(block.key, newBlock);
+    const change = value.change().replaceBlockByKey(block.key, newBlock);
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa\n")
       .insert("ddd\n")
-      .insert("ccc\n")
-      .build();
+      .insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("replaceInlineByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
@@ -382,113 +344,100 @@ describe("Change", () => {
 
     const newInline = inline.setValue("ddd");
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .replaceInlineByKey(block.key, inline.key, newInline);
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa\n")
       .insert("ddd\n")
-      .insert("ccc\n")
-      .build();
+      .insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("formatBlockByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .formatBlockByKey(block.key, { align: "left" });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa\n")
       .insert("bbb")
       .insert("\n", { align: "left" })
-      .insert("ccc\n")
-      .build();
+      .insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("formatInlineByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
     const inline = block.children[0];
 
-    const { value: actualValue } = value
+    const change = value
       .change()
       .formatInlineByKey(block.key, inline.key, { bold: true });
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa\n")
       .insert("bbb", { bold: true })
       .insert("\n")
-      .insert("ccc\n")
-      .build();
+      .insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("deleteBlockByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
 
-    const { value: actualValue } = value.change().deleteBlockByKey(block.key);
+    const change = value.change().deleteBlockByKey(block.key);
 
-    const expectedDocument = new DocumentBuilder(schema)
-      .insert("aaa\n")
-      .insert("ccc\n")
-      .build();
+    const expectedContents = new Delta().insert("aaa\n").insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 
   test("deleteInlineByKey()", () => {
-    const value = Value.create({
-      document: new DocumentBuilder(schema)
+    const value = Value.fromJSON({
+      contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
         .insert("ccc\n")
-        .build()
     });
 
     const block = value.document.children[1];
     const inline = block.children[0];
 
-    const { value: actualValue } = value
-      .change()
-      .deleteInlineByKey(block.key, inline.key);
+    const change = value.change().deleteInlineByKey(block.key, inline.key);
 
-    const expectedDocument = new DocumentBuilder(schema)
+    const expectedContents = new Delta()
       .insert("aaa\n")
       .insert("\n")
-      .insert("ccc\n")
-      .build();
+      .insert("ccc\n");
 
-    expect(actualValue.document.delta).toEqual(expectedDocument.delta);
+    expect(change.value.contents).toEqual(expectedContents);
   });
 });

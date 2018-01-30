@@ -1,5 +1,4 @@
 import Delta from "quill-delta";
-import Schema from "./Schema";
 import Style from "./Style";
 import Node from "./Node";
 import Text from "./Text";
@@ -7,6 +6,7 @@ import Embed from "./Embed";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
+import defaultSchema from "../plugins/schema";
 
 import { EOL } from "../constants";
 
@@ -17,7 +17,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
 
   constructor(props = {}) {
     const {
-      schema = new Schema(),
+      schema = defaultSchema,
       key = createKey(),
       style = Style.create(),
       children = []
@@ -175,7 +175,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     return node;
   }
 
-  insertInlineEmbed(offset, value, attributes = {}) {
+  insertInlineEmbedAt(offset, value, attributes = {}) {
     let node = this;
 
     const { schema } = node;
@@ -199,7 +199,7 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
     }
 
     if (typeof value === "object") {
-      return this.insertInlineEmbed(offset, value, attributes);
+      return this.insertInlineEmbedAt(offset, value, attributes);
     }
 
     throw new Error(`Invalid value: ${value}`);

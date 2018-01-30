@@ -1,22 +1,11 @@
 import Delta from "quill-delta";
-import Schema from "../Schema";
 import BlockBuilder from "../BlockBuilder";
-
-const schema = new Schema({
-  block: {
-    marks: ["align"]
-  },
-  inline: {
-    marks: ["bold"],
-    embeds: ["image"]
-  }
-});
 
 describe("Block", () => {
   test("length", () => {
-    const node = new BlockBuilder(schema)
+    const node = new BlockBuilder()
       .insert("aaa")
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("bbb")
       .build();
 
@@ -24,9 +13,9 @@ describe("Block", () => {
   });
 
   test("text", () => {
-    const node = new BlockBuilder(schema)
+    const node = new BlockBuilder()
       .insert("aaa")
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("bbb")
       .build();
 
@@ -34,15 +23,15 @@ describe("Block", () => {
   });
 
   test("delta", () => {
-    const block = new BlockBuilder(schema)
+    const block = new BlockBuilder()
       .insert("aaa", { bold: true })
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("bbb")
       .build();
 
     const delta = new Delta()
       .insert("aaa", { bold: true })
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("bbb")
       .insert("\n");
 
@@ -51,79 +40,79 @@ describe("Block", () => {
 
   describe("apply()", () => {
     test("format a range", () => {
-      const node = new BlockBuilder(schema).insert("aaabbbccc\n").build();
+      const node = new BlockBuilder().insert("aaabbbccc").build();
 
       const delta = new Delta().retain(3).retain(3, { bold: true });
 
       const actual = node.apply(delta);
 
-      const expected = new BlockBuilder(schema)
+      const expected = new BlockBuilder()
         .insert("aaa")
         .insert("bbb", { bold: true })
-        .insert("ccc\n")
+        .insert("ccc")
         .build();
 
       expect(actual.delta).toEqual(expected.delta);
     });
 
     test("insert text", () => {
-      const node = new BlockBuilder(schema).insert("aaabbb\n").build();
+      const node = new BlockBuilder().insert("aaabbb").build();
 
       const delta = new Delta().retain(3).insert("ccc", { bold: true });
 
       const actual = node.apply(delta);
 
-      const expected = new BlockBuilder(schema)
+      const expected = new BlockBuilder()
         .insert("aaa")
         .insert("ccc", { bold: true })
-        .insert("bbb\n")
+        .insert("bbb")
         .build();
 
       expect(actual.delta).toEqual(expected.delta);
     });
 
     test("insert an inline embed", () => {
-      const node = new BlockBuilder(schema).insert("aaabbb\n").build();
+      const node = new BlockBuilder().insert("aaabbb").build();
 
       const delta = new Delta()
         .retain(3)
-        .insert({ image: "foo" }, { bold: true });
+        .insert({ "inline-image": "foo" }, { alt: "foo" });
 
       const actual = node.apply(delta);
 
-      const expected = new BlockBuilder(schema)
+      const expected = new BlockBuilder()
         .insert("aaa")
-        .insert({ image: "foo" }, { bold: true })
-        .insert("bbb\n")
+        .insert({ "inline-image": "foo" }, { alt: "foo" })
+        .insert("bbb")
         .build();
 
       expect(actual.delta).toEqual(expected.delta);
     });
 
     test("delete a range", () => {
-      const node = new BlockBuilder(schema).insert("aaabbbccc\n").build();
+      const node = new BlockBuilder().insert("aaabbbccc").build();
 
       const delta = new Delta().retain(3).delete(3);
 
       const actual = node.apply(delta);
 
-      const expected = new BlockBuilder(schema).insert("aaaccc\n").build();
+      const expected = new BlockBuilder().insert("aaaccc").build();
 
       expect(actual.delta).toEqual(expected.delta);
     });
   });
 
   test("slice()", () => {
-    const actual = new BlockBuilder(schema)
+    const actual = new BlockBuilder()
       .insert("aaabbb")
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("cccddd")
       .build()
       .slice(3, 10);
 
-    const expected = new BlockBuilder(schema)
+    const expected = new BlockBuilder()
       .insert("bbb")
-      .insert({ image: "foo" })
+      .insert({ "inline-image": "foo" })
       .insert("ccc")
       .build();
 
@@ -131,19 +120,19 @@ describe("Block", () => {
   });
 
   test("concat()", () => {
-    const nodeA = new BlockBuilder(schema)
+    const nodeA = new BlockBuilder()
       .insert("aaa")
       .build()
       .format({ align: "left" });
 
-    const nodeB = new BlockBuilder(schema)
+    const nodeB = new BlockBuilder()
       .insert("bbb")
       .build()
       .format({ align: "right" });
 
     const actual = nodeA.concat(nodeB);
 
-    const expected = new BlockBuilder(schema)
+    const expected = new BlockBuilder()
       .insert("aaabbb")
       .build()
       .format({ align: "right" });

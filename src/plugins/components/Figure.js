@@ -16,7 +16,7 @@ export default class Figure extends PureComponent {
     const { node, children } = this.props;
     return (
       <figure className="ed-figure">
-        {children}
+        <div className="ed-figure__content">{children}</div>
         <figcaption className="ed-figure__caption">
           {node.getMark("caption")}
         </figcaption>

@@ -1,9 +1,10 @@
 import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
+import defaultSchema from "../plugins/schema";
 
 export default class BlockBuilder {
-  constructor(schema) {
+  constructor(schema = defaultSchema) {
     this._schema = schema;
     this._nodes = [];
   }
@@ -20,12 +21,6 @@ export default class BlockBuilder {
 
   _insertEmbed(value, attributes) {
     const { _schema: schema } = this;
-
-    const type = Embed.type(value);
-
-    if (!schema.isInlineEmbed(type)) {
-      throw new Error(`Invalid inline embed type: ${type}`);
-    }
 
     const node = Embed.create({ schema, value }).format(attributes);
 

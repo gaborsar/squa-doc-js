@@ -1,17 +1,11 @@
-import Schema from "../Schema";
 import DocumentBuilder from "../DocumentBuilder";
 import Selection from "../Selection";
 import Value from "../Value";
 
-const schema = new Schema({
-  block: { marks: ["align", "indent"] },
-  inline: { marks: ["bold", "italic"] }
-});
-
 describe("Value", () => {
   describe("getFormat()", () => {
     test("at offset", () => {
-      const document = new DocumentBuilder(schema)
+      const document = new DocumentBuilder()
         .insert("aaa", { bold: true })
         .insert("bbb", { italic: true })
         .insert("\n", { align: "left" })
@@ -28,7 +22,7 @@ describe("Value", () => {
     });
 
     test("at range", () => {
-      const document = new DocumentBuilder(schema)
+      const document = new DocumentBuilder()
         .insert("aaabbb", { bold: true, italic: true })
         .insert("\n", { align: "left", indent: 1 })
         .insert("cccddd", { bold: true })

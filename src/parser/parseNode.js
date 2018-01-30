@@ -1,4 +1,5 @@
 import Delta from "quill-delta";
+import defaultTokenizeNode from "../plugins/tokenizers/tokenizeNode";
 
 import { EOL } from "../constants";
 
@@ -10,7 +11,7 @@ const defaultContext = {
 
 export default function parseNode(
   node,
-  tokenizeNode,
+  customTokenizeNode,
   context = defaultContext
 ) {
   let delta = new Delta();
@@ -21,52 +22,62 @@ export default function parseNode(
     node.nodeType === Node.ELEMENT_NODE &&
     !node.hasOwnProperty("data-ignore")
   ) {
-    const tokens = tokenizeNode(node, context);
+    let tokens;
 
-    let isBlock = false;
-    let isEmbed = false;
-
-    for (const token of tokens) {
-      if (token.wrapper) {
-        context = {
-          ...context,
-          wrapper: {
-            ...context.wrapper,
-            ...token.wrapper
-          }
-        };
-      } else if (token.block) {
-        if (token.block.type) {
-          isBlock = true;
-        }
-        context = {
-          ...context,
-          block: {
-            ...context.block,
-            ...token.block
-          }
-        };
-      } else if (token.inline) {
-        context = {
-          ...context,
-          inline: {
-            ...context.inline,
-            ...token.inline
-          }
-        };
-      } else if (token.insert) {
-        isEmbed = true;
-        delta.insert(token.insert, token.attributes);
-      }
+    if (customTokenizeNode) {
+      tokens = customTokenizeNode(node, context);
     }
 
-    if (!isEmbed) {
-      for (const child of node.childNodes) {
-        delta = delta.concat(parseNode(child, tokenizeNode, context));
+    if (tokens === undefined) {
+      tokens = defaultTokenizeNode(node, context);
+    }
+
+    if (tokens) {
+      let isBlock = false;
+      let isEmbed = false;
+
+      for (const token of tokens) {
+        if (token.wrapper) {
+          context = {
+            ...context,
+            wrapper: {
+              ...context.wrapper,
+              ...token.wrapper
+            }
+          };
+        } else if (token.block) {
+          if (token.block.type) {
+            isBlock = true;
+          }
+          context = {
+            ...context,
+            block: {
+              ...context.block,
+              ...token.block
+            }
+          };
+        } else if (token.inline) {
+          context = {
+            ...context,
+            inline: {
+              ...context.inline,
+              ...token.inline
+            }
+          };
+        } else if (token.insert) {
+          isEmbed = true;
+          delta.insert(token.insert, token.attributes);
+        }
       }
 
-      if (isBlock) {
-        delta.insert(EOL, context.block);
+      if (!isEmbed) {
+        for (const child of node.childNodes) {
+          delta = delta.concat(parseNode(child, customTokenizeNode, context));
+        }
+
+        if (isBlock) {
+          delta.insert(EOL, context.block);
+        }
       }
     }
   }

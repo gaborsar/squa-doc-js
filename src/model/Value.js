@@ -1,16 +1,26 @@
+import Delta from "quill-delta";
 import Document from "./Document";
 import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
+import extendSchema from "./extendSchema";
+import defaultSchema from "../plugins/schema";
 
-import { EDITOR_MODE_EDIT } from "../constants";
+import { EOL, EDITOR_MODE_EDIT } from "../constants";
 
 export default class Value {
   static create(props = {}) {
     return new Value(props);
   }
 
-  static fromDelta(schema, delta) {
+  static fromJSON(props = {}) {
+    const {
+      schema: customSchema = {},
+      contents: delta = new Delta().insert(EOL)
+    } = props;
+
+    const schema = extendSchema(defaultSchema, customSchema);
+
     const builder = new DocumentBuilder(schema);
 
     delta.forEach(op => {
@@ -42,12 +52,6 @@ export default class Value {
     this.inlineStyleOverride = inlineStyleOverride;
   }
 
-  toDelta() {
-    const { document: { delta } } = this;
-
-    return delta;
-  }
-
   merge(props) {
     return Value.create({ ...this, ...props });
   }
@@ -66,6 +70,10 @@ export default class Value {
 
   get hasInlineStyleOverride() {
     return !!this.inlineStyleOverride;
+  }
+
+  get contents() {
+    return this.document.delta;
   }
 
   change() {
