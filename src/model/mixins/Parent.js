@@ -1,15 +1,10 @@
 import Position from "../Position";
-import RangeIterator from "../RangeIterator";
 import RangeBuilder from "../RangeBuilder";
 
 const ParentMixin = superclass =>
   class extends superclass {
     createPosition(offset, inclusive = false) {
       return Position.create(this.children, offset, inclusive);
-    }
-
-    createIterator() {
-      return new RangeIterator(this.children);
     }
 
     createRange(startOffset, endOffset) {
@@ -27,8 +22,20 @@ const ParentMixin = superclass =>
       return this.setChildren();
     }
 
+    prependChild(child) {
+      return this.setChildren([child].concat(this.children));
+    }
+
+    prependChildren(children) {
+      return this.setChildren(children.concat(this.children));
+    }
+
     appendChild(child) {
       return this.setChildren(this.children.concat(child));
+    }
+
+    appendChildren(children) {
+      return this.setChildren(this.children.concat(children));
     }
 
     insertBefore(newChild, referenceChild) {

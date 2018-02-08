@@ -9,6 +9,7 @@ describe("Change", () => {
 
     const change = value
       .change()
+
       // first change
       .insertText("aaa", { bold: true })
       .save("insert")

@@ -45,11 +45,7 @@ export default class Block extends PureComponent {
       children = [];
 
       node.children.forEach(child => {
-        if (child.kind === "text") {
-          children.push(
-            <Text key={child.key} node={child} renderMark={customRenderMark} />
-          );
-        } else {
+        if (child.isEmbed) {
           let embedObj;
 
           if (customRenderEmbed) {
@@ -76,6 +72,10 @@ export default class Block extends PureComponent {
               </Embed>
             );
           }
+        } else {
+          children.push(
+            <Text key={child.key} node={child} renderMark={customRenderMark} />
+          );
         }
       });
     } else {

@@ -29,7 +29,7 @@ function removeListItem(change, event) {
 
   const { node: block } = pos;
 
-  if (block.kind !== "block" || !block.isEmpty) {
+  if (block.isEmbed || !block.isEmpty) {
     return false;
   }
 

@@ -35,7 +35,15 @@ export default class BlockBuilder {
     }
 
     if (typeof value === "object") {
-      return this._insertEmbed(value, attributes);
+      const { _schema: schema } = this;
+
+      const type = Embed.type(value);
+
+      if (schema.isInlineEmbed(type)) {
+        return this._insertEmbed(value, attributes);
+      }
+
+      throw new Error(`Invalid embed type: ${type}`);
     }
 
     throw new Error(`Invalid value: ${value}`);
