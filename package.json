@@ -4,6 +4,7 @@
   "description": "Squa-Doc Editor",
   "main": "dist/SquaDocEditor.js",
   "scripts": {
+    "benchmark": "babel-node scripts/benchmarks/document.js",
     "build": "webpack",
     "format:example": "prettier --write 'example/src/**/*.js'",
     "format:src": "prettier --write 'src/**/*.js'",
