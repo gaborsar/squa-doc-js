@@ -148,9 +148,21 @@ describe("parseHTML()", () => {
     expect(actual).toEqual(expected);
   });
 
+  test("strikethrough", () => {
+    const actual = parseHTML("<s>aaa</s>");
+    const expected = new Delta().insert("aaa", { strikethrough: true });
+    expect(actual).toEqual(expected);
+  });
+
   test("code", () => {
     const actual = parseHTML("<code>aaa</code>");
     const expected = new Delta().insert("aaa", { code: true });
+    expect(actual).toEqual(expected);
+  });
+
+  test("color", () => {
+    const actual = parseHTML('<span style="color: red">aaa</code>');
+    const expected = new Delta().insert("aaa", { color: "red" });
     expect(actual).toEqual(expected);
   });
 

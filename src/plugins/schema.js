@@ -6,7 +6,16 @@ const schema = createSchema({
     embeds: ["block-image"]
   },
   inline: {
-    marks: ["link", "anchor", "bold", "italic", "underline", "code"],
+    marks: [
+      "link",
+      "anchor",
+      "bold",
+      "italic",
+      "underline",
+      "strikethrough",
+      "code",
+      "color"
+    ],
     embeds: ["inline-image"]
   },
   "block-image": {

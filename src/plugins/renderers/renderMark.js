@@ -21,7 +21,13 @@ export default function renderMark(mark) {
     case "underline":
       return { component: "u" };
 
+    case "strikethrough":
+      return { component: "s" };
+
     case "code":
       return { component: "code" };
+
+    case "color":
+      return { style: { color: mark.value } };
   }
 }

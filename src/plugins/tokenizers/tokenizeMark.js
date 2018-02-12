@@ -36,6 +36,15 @@ export default function tokenzieMark(node) {
       });
       break;
 
+    case "S":
+    case "DEL":
+      tokens.push({
+        inline: {
+          strikethrough: true
+        }
+      });
+      break;
+
     case "CODE":
       tokens.push({
         inline: {
@@ -67,6 +76,14 @@ export default function tokenzieMark(node) {
         }
       });
     }
+  }
+
+  if (node.style.color) {
+    tokens.push({
+      inline: {
+        color: node.style.color
+      }
+    });
   }
 
   return tokens;

@@ -33,6 +33,7 @@ export default class Text extends Component {
 
     let children = node.value;
     const classNames = ["ed-text"];
+    let style = {};
 
     node.style.marks.forEach(mark => {
       let markObj;
@@ -49,7 +50,8 @@ export default class Text extends Component {
         const {
           component: MarkComponent,
           props: markProps = emptyProps,
-          className: markClassName
+          className: markClassName,
+          style: markStyle
         } = markObj;
 
         if (MarkComponent) {
@@ -59,6 +61,10 @@ export default class Text extends Component {
         if (markClassName) {
           classNames.push(markClassName);
         }
+
+        if (markStyle) {
+          style = { ...style, ...markStyle };
+        }
       }
     });
 
@@ -66,6 +72,7 @@ export default class Text extends Component {
       <span
         key={this.forceFlag ? "A" : "B"}
         className={classNames.join(" ")}
+        style={style}
         data-text
         data-key={node.key}
       >
