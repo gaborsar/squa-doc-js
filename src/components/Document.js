@@ -63,7 +63,35 @@ export default class Document extends PureComponent {
     };
 
     node.children.forEach(child => {
-      if (child.kind === "block") {
+      if (child.isEmbed) {
+        flush(child.key);
+
+        let embedObj;
+
+        if (customRenderEmbed) {
+          embedObj = customRenderEmbed(child);
+        }
+
+        if (embedObj === undefined) {
+          embedObj = defaultRenderEmbed(child);
+        }
+
+        if (embedObj) {
+          const {
+            component: EmbedComponent,
+            props: embedProps = emptyProps
+          } = embedObj;
+
+          buffer.children.push(
+            <Embed key={child.key} node={child} renderMark={customRenderMark}>
+              <EmbedComponent
+                {...embedProps}
+                deleteBlockByKey={deleteBlockByKey}
+              />
+            </Embed>
+          );
+        }
+      } else {
         let wrapperObj;
 
         if (customRenderWrapper) {
@@ -119,34 +147,6 @@ export default class Document extends PureComponent {
               />
             );
           }
-        }
-      } else {
-        flush(child.key);
-
-        let embedObj;
-
-        if (customRenderEmbed) {
-          embedObj = customRenderEmbed(child);
-        }
-
-        if (embedObj === undefined) {
-          embedObj = defaultRenderEmbed(child);
-        }
-
-        if (embedObj) {
-          const {
-            component: EmbedComponent,
-            props: embedProps = emptyProps
-          } = embedObj;
-
-          buffer.children.push(
-            <Embed key={child.key} node={child} renderMark={customRenderMark}>
-              <EmbedComponent
-                {...embedProps}
-                deleteBlockByKey={deleteBlockByKey}
-              />
-            </Embed>
-          );
         }
       }
     });

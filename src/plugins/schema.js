@@ -10,10 +10,10 @@ const schema = createSchema({
     embeds: ["inline-image"]
   },
   "block-image": {
-    marks: ["alt", "caption", "align"]
+    marks: ["align", "caption", "alt"]
   },
   "inline-image": {
-    marks: ["alt", "link"]
+    marks: ["link", "alt"]
   }
 });
 

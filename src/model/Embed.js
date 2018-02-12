@@ -33,12 +33,20 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
     return Embed.create({ ...this, ...props });
   }
 
-  get kind() {
-    return "embed";
-  }
-
   get type() {
     return Embed.type(this.value);
+  }
+
+  get isEmbed() {
+    return true;
+  }
+
+  get isBlock() {
+    return this.schema.isBlockEmbed(this.type);
+  }
+
+  get isInline() {
+    return this.schema.isInlineEmbed(this.type);
   }
 
   get length() {
@@ -58,9 +66,5 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
       this.schema.isEmbedMark(this.type, type)
     );
     return this.setStyle(style);
-  }
-
-  formatAt(offset, length, attributes) {
-    return offset === 0 && length === 1 ? this.format(attributes) : this;
   }
 }

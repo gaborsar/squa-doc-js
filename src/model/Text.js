@@ -28,8 +28,16 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
     return Text.create({ ...this, ...props });
   }
 
-  get kind() {
-    return "text";
+  get isEmbed() {
+    return false;
+  }
+
+  get isBlock() {
+    return false;
+  }
+
+  get isInline() {
+    return true;
   }
 
   get length() {

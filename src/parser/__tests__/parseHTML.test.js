@@ -203,4 +203,26 @@ describe("parseHTML()", () => {
     );
     expect(actual).toEqual(expected);
   });
+
+  test("parse a custome node", () => {
+    const tokenizeNode = node => {
+      if (node.nodeName === "S") {
+        return [{ inline: { strikethrough: true } }];
+      }
+    };
+    const actual = parseHTML("<s>aaa</s>", tokenizeNode);
+    const expected = new Delta().insert("aaa", { strikethrough: true });
+    expect(actual).toEqual(expected);
+  });
+
+  test("ignore a node", () => {
+    const tokenizeNode = node => {
+      if (node.nodeName === "S") {
+        return null;
+      }
+    };
+    const actual = parseHTML("<span><s>aaa</s>bbb</span>", tokenizeNode);
+    const expected = new Delta().insert("bbb");
+    expect(actual).toEqual(expected);
+  });
 });

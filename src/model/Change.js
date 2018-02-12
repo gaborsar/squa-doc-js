@@ -215,6 +215,10 @@ export default class Change {
       length += 1;
     }
 
+    if (length === 0) {
+      return this;
+    }
+
     selection = selection.setAnchorOffset(anchorOffset - length);
 
     value = value.setSelection(selection);
@@ -238,7 +242,7 @@ export default class Change {
 
     const { node: { text }, offset } = pos;
 
-    if (offset === 0) {
+    if (offset >= text.length - EOL.length) {
       return this;
     }
 
@@ -250,6 +254,10 @@ export default class Change {
 
     while (/\w/.test(text[offset + length]) && offset + length < text.length) {
       length += 1;
+    }
+
+    if (length === 0) {
+      return this;
     }
 
     selection = selection.setFocusOffset(focusOffset + length);
@@ -302,8 +310,12 @@ export default class Change {
 
     const { node: { length }, offset } = pos;
 
+    if (offset >= length - EOL.length) {
+      return this;
+    }
+
     selection = selection.setFocusOffset(
-      focusOffset + length - offset - EOL.length
+      focusOffset + length - EOL.length - offset
     );
 
     value = value.setSelection(selection);
@@ -343,7 +355,11 @@ export default class Change {
     let { value } = this;
     let { document, selection } = value;
 
-    const { startOffset, endOffset } = selection;
+    const { isCollapsed, startOffset, endOffset } = selection;
+
+    if (isCollapsed) {
+      return this;
+    }
 
     document = document.formatAt(startOffset, endOffset, attributes);
 
@@ -407,7 +423,7 @@ export default class Change {
       document.createRange(startOffset, endOffset).forEach(el => {
         const { node: block, startOffset, endOffset } = el;
 
-        if (block.kind === "block") {
+        if (!block.isEmbed) {
           const newBlock = block.formatAt(
             startOffset,
             Math.min(endOffset, block.length - EOL.length),
@@ -485,7 +501,11 @@ export default class Change {
     let { value } = this;
     let { document, selection } = value;
 
-    const { startOffset, endOffset } = selection;
+    const { isCollapsed, startOffset, endOffset } = selection;
+
+    if (isCollapsed) {
+      return this;
+    }
 
     const posBefore = document.createPosition(startOffset);
 
@@ -547,7 +567,7 @@ export default class Change {
 
     const block = document.getChildByKey(blockKey);
 
-    if (!block || block.kind !== "block") {
+    if (!block || block.isEmbed) {
       return this;
     }
 

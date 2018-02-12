@@ -4,12 +4,4 @@ export default class RangeElement {
     this.startOffset = startOffset;
     this.endOffset = endOffset;
   }
-
-  get length() {
-    return this.endOffset - this.startOffset;
-  }
-
-  get isPartial() {
-    return this.length !== this.node.length;
-  }
 }

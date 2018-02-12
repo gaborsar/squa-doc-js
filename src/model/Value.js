@@ -56,10 +56,6 @@ export default class Value {
     return Value.create({ ...this, ...props });
   }
 
-  get kind() {
-    return "value";
-  }
-
   get canUndo() {
     return !!this.undoStack.length;
   }
@@ -120,7 +116,7 @@ export default class Value {
 
         attributes = { ...attributes, ...block.style.toObject() };
 
-        if (block.kind === "block") {
+        if (!block.isEmbed) {
           const inlinePos = block.createPosition(blockOffset, true);
 
           if (inlinePos) {
@@ -142,7 +138,7 @@ export default class Value {
 
         blockStyles.push(block.style);
 
-        if (block.kind === "block") {
+        if (!block.isEmbed) {
           const { startOffset, endOffset } = el;
 
           block.createRange(startOffset, endOffset).forEach(el => {
