@@ -1,30 +1,46 @@
-#app {
-  display: flex;
-  justify-content: center;
+body {
+  margin: 0;
+  padding: 0;
 }
 
-.editor {
-  width: 700px;
-  margin: 10px;
-  border: 1px solid #aaa;
-  box-shadow: 0 1px 3px #aaa;
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #ccc;
+  background: white;
+}
+
+.content {
+  z-index: 1;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
 }
 
 .menu {
   display: flex;
-  padding: 5px;
-  border-bottom: 1px solid #aaa;
+  align-items: center;
+  width: 1000px;
 }
 
 .button {
+  width: 50px;
+  height: 50px;
   margin: 0;
-  background: white;
+  padding: 0;
+  text-align: center;
   border: none;
   outline: none;
   font-size: 12px;
   font-weight: bold;
   color: #888;
   cursor: pointer;
+  transition: color 100ms;
 }
 
 .button:hover {
@@ -46,25 +62,26 @@
 .color-menu__body {
   z-index: 2;
   position: absolute;
-  top: 30px;
-  left: -40.5px; /* (107-26)/2 */
+  top: 60px;
+  left: 0;
   display: flex;
   flex-wrap: wrap;
   width: 100px;
   padding: 5px 0 0 5px;
   background: white;
-  border: 1px solid #aaa;
-  box-shadow: 0 1px 3px #aaa;
+  border: 1px solid #ccc;
 }
 
 .color-button {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   margin: 0 5px 5px 0;
   padding: 0;
   border: none;
   outline: none;
   cursor: pointer;
+  border: 1px solid transparent;
+  transition: border 100ms;
 }
 
 .color-button:hover {
@@ -73,60 +90,103 @@
 
 .separator {
   width: 0;
-  border-right: 1px solid #aaa;
+  height: 25px;
+  border-right: 1px solid #ccc;
   margin: 0 3px;
 }
 
 .ed-editor {
+  width: 1000px;
+  margin: 10px;
   padding: 10px 30px;
+  font-family: sans-serif;
 }
 
-.ed-editor * {
+.ed-editor [contenteditable] {
   outline: none;
 }
 
-.ed-document blockquote {
-  margin: 0;
-  padding-left: 10px;
-  border-left: 3px solid cyan;
+.ed-editor h1,
+.ed-editor h2,
+.ed-editor p,
+.ed-editor blockquote,
+.ed-editor pre,
+.ed-editor ul,
+.ed-editor ol {
+  margin: 50px 0;
 }
 
-.ed-document pre {
-  line-height: 20px;
-  padding: 10px 20px;
+.ed-editor li,
+.ed-editor .checkable {
+  margin: 15px 0;
+}
+
+.ed-editor h1,
+.ed-editor h2 {
+  font-weight: normal;
+}
+
+.ed-editor h1 {
+  font-size: 48px;
+}
+
+.ed-editor h2 {
+  font-size: 36px;
+}
+
+.ed-editor p,
+.ed-editor blockquote,
+.ed-editor pre,
+.ed-editor li,
+.ed-editor .checkable {
+  font-size: 19px;
+  font-weight: lighter;
+  line-height: 30px;
+}
+
+.ed-editor blockquote {
+  margin: 30px 100px;
+  font-style: italic;
+}
+
+.ed-editor pre {
+  font-weight: lighter;
+  padding: 30px 40px;
   background: #eee;
-  border: 1px solid #aaa;
+  border-radius: 3px;
 }
 
-.checkable {
+.ed-editor .checkable {
   margin-left: 27px;
 }
 
-.checkable.ed-indent-1 {
+.ed-editor .checkable.ed-indent-1 {
   margin-left: 47px;
 }
 
-.checkable.ed-indent-2 {
+.ed-editor .checkable.ed-indent-2 {
   margin-left: 67px;
 }
 
-.checkable.ed-indent-3 {
+.ed-editor .checkable.ed-indent-3 {
   margin-left: 87px;
 }
 
-.checkable.ed-indent-4 {
+.ed-editor .checkable.ed-indent-4 {
   margin-left: 107px;
 }
 
-.checkable.ed-indent-5 {
+.ed-editor .checkable.ed-indent-5 {
   margin-left: 127px;
 }
 
-.checkable input[type="checkbox"] {
-  margin-right: 6px;
+.ed-editor .checkbox {
+  display: inline;
+  margin-right: 10px;
+  color: #555;
+  cursor: pointer;
 }
 
-.checked {
-  text-decoration: line-through;
-  color: gray;
+.ed-editor .checked .ed-text {
+  color: #aaa;
 }

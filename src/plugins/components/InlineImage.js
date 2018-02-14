@@ -1,6 +1,8 @@
-import React from "react";
+import React, { PureComponent } from "react";
 
-export default function InlineImage(props) {
-  const { src, alt } = props;
-  return <img src={src} alt={alt} />;
+export default class InlineImage extends PureComponent {
+  render() {
+    const { src, alt } = this.props;
+    return <img src={src} alt={alt} />;
+  }
 }

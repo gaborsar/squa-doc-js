@@ -134,6 +134,44 @@ export default class Change {
     return this;
   }
 
+  moveCursorLeft() {
+    let { value } = this;
+    let { selection } = value;
+
+    const { anchorOffset } = selection;
+
+    if (anchorOffset <= 0) {
+      return this;
+    }
+
+    selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  moveCursorRight() {
+    let { value } = this;
+    let { selection } = value;
+
+    const { anchorOffset } = selection;
+
+    if (anchorOffset >= document.length - 1) {
+      return this;
+    }
+
+    selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
   select(anchorOffset, focusOffset) {
     let { value } = this;
     let { selection } = value;

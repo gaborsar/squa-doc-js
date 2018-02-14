@@ -49,6 +49,28 @@ describe("Change", () => {
     expect(change.value.mode).toBe(EDITOR_MODE_COMPOSITION);
   });
 
+  test("moveCursorLeft()", () => {
+    const value = Value.fromJSON();
+    const change = value
+      .change()
+      .select(3, 3)
+      .moveCursorLeft();
+    expect(change.value.selection.anchorOffset).toBe(2);
+    expect(change.value.selection.focusOffset).toBe(2);
+  });
+
+  test("moveCursorRight()", () => {
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaabbb\n")
+    });
+    const change = value
+      .change()
+      .select(3, 3)
+      .moveCursorRight();
+    expect(change.value.selection.anchorOffset).toBe(4);
+    expect(change.value.selection.focusOffset).toBe(4);
+  });
+
   test("select()", () => {
     const value = Value.fromJSON();
     const change = value.change().select(3, 6);

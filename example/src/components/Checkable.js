@@ -1,10 +1,11 @@
 import React, { PureComponent } from "react";
 
 export default class Checkable extends PureComponent {
-  handleChange = event => {
-    const { blockKey, formatBlockByKey } = this.props;
+  handleClick = event => {
+    event.preventDefault();
+    const { blockKey, formatBlockByKey, checked } = this.props;
     formatBlockByKey(blockKey, {
-      checked: event.target.checked || null
+      checked: checked ? null : true
     });
   };
 
@@ -18,12 +19,12 @@ export default class Checkable extends PureComponent {
     } = this.props;
     return (
       <div {...otherProps}>
-        <span contentEditable={false}>
-          <input
-            type="checkbox"
-            checked={checked}
-            onChange={this.handleChange}
-          />
+        <span
+          className="checkbox"
+          contentEditable={false}
+          onMouseDown={this.handleClick}
+        >
+          <i className={`fas ${checked ? "fa-check-square" : "fa-square"}`} />
         </span>
         {children}
       </div>
