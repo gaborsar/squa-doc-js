@@ -12,109 +12,140 @@ const initialContents = new Delta()
 
   .insert("Heading level two")
   .insert("\n", {
-    type: "heading-two"
+    type: "heading-two",
+    align: "center"
   })
 
   .insert(
-    {
-      "block-image": "https://thumbs.dreamstime.com/x/old-book-17580496.jpg"
-    },
-    {
-      alt: "Old Book",
-      caption: "Old Book"
-    }
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
   )
-  .insert("Lorem ipsum dolor sit amet, ")
-  .insert("consectetur", {
-    bold: true
-  })
-  .insert(" ")
-  .insert("adipiscing", {
-    italic: true
-  })
-  .insert(" elit. ")
+
   .insert(
-    {
-      "inline-image": "http://9p.io/plan9/img/9logo.jpg"
-    },
-    {
-      alt: "Plan 9"
-    }
-  )
-  .insert(" ")
-  .insert("Mauris enim quam, semper eu ex id, consectetur vulputate elit. ")
-  .insert("Suspendisse molestie vel arcu et euismod. ")
-  .insert(
-    "Sed tincidunt, erat vel convallis finibus, ante purus tempus purus, at suscipit nisl ex vel magna."
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus."
   )
   .insert("\n", {
-    type: "paragraph"
+    type: "blockquote"
   })
 
-  .insert("Unordered list item 1")
+  .insert(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
+  )
+
+  .insert("Curabitur iaculis vestibulum lorem")
   .insert("\n", {
     type: "unordered-list-item"
   })
-  .insert("Unordered list item 2")
+  .insert("Condimentum aliquam turpis iaculis molestie")
   .insert("\n", {
     type: "unordered-list-item",
     indent: 1
   })
-  .insert("Unordered list item 3")
+  .insert("Ut vehicula libero tellus")
   .insert("\n", {
     type: "unordered-list-item",
     indent: 1
   })
 
-  .insert("Ordered list item 1")
+  .insert(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
+  )
+
+  .insert("Curabitur iaculis vestibulum lorem")
   .insert("\n", {
     type: "ordered-list-item"
   })
-  .insert("Ordered list item 2")
+  .insert("Condimentum aliquam turpis iaculis molestie")
   .insert("\n", {
     type: "ordered-list-item",
     indent: 1
   })
-  .insert("Ordered list item 3")
+  .insert("Ut vehicula libero tellus")
   .insert("\n", {
     type: "ordered-list-item",
     indent: 1
   })
 
-  .insert("Checkbox list item 1")
+  .insert(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
+  )
+
+  .insert("Curabitur iaculis vestibulum lorem")
   .insert("\n", {
     type: "checkable"
   })
-  .insert("Checkbox list item 2")
+  .insert("Condimentum aliquam turpis iaculis molestie")
   .insert("\n", {
     type: "checkable",
     checked: true,
     indent: 1
   })
-  .insert("Checkbox list item 3")
+  .insert("Ut vehicula libero tellus")
   .insert("\n", {
     type: "checkable",
     checked: true,
     indent: 1
   })
 
-  .insert("Donec at lacus sed eros cursus tincidunt. ")
-  .insert("Pellentesque ac convallis turpis, ut tincidunt nisi. ")
-  .insert("Suspendisse rutrum auctor tellus, in lobortis erat dapibus et. ")
-  .insert("Aliquam ac sem tellus. ")
   .insert(
-    "Integer pretium sapien et dui pellentesque, vitae ultrices neque placerat. "
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
   )
-  .insert("Ut tempus nibh neque, et dapibus magna venenatis ac. ")
-  .insert("Nulla scelerisque non ligula et varius. ")
-  .insert("Etiam condimentum in purus sit amet auctor. ")
-  .insert("In eros est, posuere nec erat ac, feugiat pretium metus. ")
-  .insert("Nunc nec ultrices risus. ")
-  .insert("Fusce eu nulla ante. ")
-  .insert("Vivamus in faucibus felis.")
-  .insert("\n", {
-    type: "paragraph"
-  });
+
+  .insert("procedure bubbleSort( A : list of sortable items )")
+  .insert("\n", { type: "code" })
+  .insert("n = length(A)")
+  .insert("\n", { type: "code" })
+  .insert("repeat")
+  .insert("\n", { type: "code" })
+  .insert("    swapped = false")
+  .insert("\n", { type: "code" })
+  .insert("    for i = 1 to n-1 inclusive do")
+  .insert("\n", { type: "code" })
+  .insert("        /* if this pair is out of order */")
+  .insert("\n", { type: "code" })
+  .insert("        if A[i-1] > A[i] then")
+  .insert("\n", { type: "code" })
+  .insert("            /* swap them and remember something changed */")
+  .insert("\n", { type: "code" })
+  .insert("            swap( A[i-1], A[i] )")
+  .insert("\n", { type: "code" })
+  .insert("            swapped = true")
+  .insert("\n", { type: "code" })
+  .insert("        end if")
+  .insert("\n", { type: "code" })
+  .insert("    end for")
+  .insert("\n", { type: "code" })
+  .insert("until not swapped")
+  .insert("\n", { type: "code" })
+  .insert("end procedure")
+  .insert("\n", { type: "code" })
+
+  .insert(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
+  )
+
+  .insert(
+    {
+      "block-image": "/images/javascript.256.svg"
+    },
+    {
+      alt: "JavaScript",
+      caption: "JavaScript"
+    }
+  )
+
+  .insert("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh ")
+
+  .insert(
+    {
+      "inline-image": "/images/javascript.19.svg"
+    },
+    {
+      alt: "JavaScript"
+    }
+  )
+  .insert(
+    " risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus.\n"
+  );
 
 ReactDOM.render(
   <App initialContents={initialContents} />,

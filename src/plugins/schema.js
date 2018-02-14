@@ -19,7 +19,7 @@ const schema = createSchema({
     embeds: ["inline-image"]
   },
   "block-image": {
-    marks: ["align", "caption", "alt"]
+    marks: ["align", "alt", "caption"]
   },
   "inline-image": {
     marks: ["link", "alt"]

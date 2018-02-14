@@ -14,6 +14,8 @@ import {
   KEY_BACKSPACE,
   KEY_DELETE,
   KEY_ENTER,
+  KEY_LEFT,
+  KEY_RIGHT,
   KEY_Z,
   EDITOR_MODE_EDIT,
   EDITOR_MODE_COMPOSITION
@@ -190,6 +192,36 @@ export default class Editor extends PureComponent {
     onChange(change);
   };
 
+  handleKeyDownLeft = (change, event) => {
+    const { value, onChange = sink } = this.props;
+    const { selection: { isCollapsed } } = value;
+
+    if (event.metaKey || event.altKey || event.shiftKey || !isCollapsed) {
+      return;
+    }
+
+    event.preventDefault();
+
+    change.moveCursorLeft();
+
+    onChange(change);
+  };
+
+  handleKeyDownRight = (change, event) => {
+    const { value, onChange = sink } = this.props;
+    const { selection: { isCollapsed } } = value;
+
+    if (event.metaKey || event.altKey || event.shiftKey || !isCollapsed) {
+      return;
+    }
+
+    event.preventDefault();
+
+    change.moveCursorRight();
+
+    onChange(change);
+  };
+
   handleKeyDownUndo = (change, event) => {
     const { onChange = sink } = this.props;
 
@@ -229,6 +261,14 @@ export default class Editor extends PureComponent {
 
     if (event.keyCode === KEY_ENTER) {
       return this.handleKeyDownEnter(change, event);
+    }
+
+    if (event.keyCode === KEY_LEFT) {
+      return this.handleKeyDownLeft(change, event);
+    }
+
+    if (event.keyCode === KEY_RIGHT) {
+      return this.handleKeyDownRight(change, event);
     }
 
     if (event.keyCode === KEY_Z && event.metaKey) {

@@ -1,11 +1,17 @@
-import React from "react";
+import React, { PureComponent } from "react";
 import Figure from "./Figure";
 
-export default function BlockImage(props) {
-  const { blockKey, deleteBlockByKey, src, alt } = props;
-  return (
-    <Figure blockKey={blockKey} deleteBlockByKey={deleteBlockByKey}>
-      <img src={src} alt={alt} />
-    </Figure>
-  );
+export default class BlockImage extends PureComponent {
+  render() {
+    const { blockKey, deleteBlockByKey, src, alt, caption } = this.props;
+    return (
+      <Figure
+        blockKey={blockKey}
+        deleteBlockByKey={deleteBlockByKey}
+        caption={caption}
+      >
+        <img src={src} alt={alt} />
+      </Figure>
+    );
+  }
 }
