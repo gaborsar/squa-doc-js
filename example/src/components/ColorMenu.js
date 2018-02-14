@@ -10,44 +10,48 @@ export default class ColorMenu extends PureComponent {
   }
 
   handleToggleClick = () => {
-    this.setState(state => ({
-      isOpen: !state.isOpen
-    }));
+    this.setState(state => {
+      return {
+        isOpen: !state.isOpen
+      };
+    });
   };
 
-  handleColorClick = value => {
-    const { onChange } = this.props;
-    this.setState({ isOpen: false });
-    onChange(value);
+  handleColorClick = attributes => {
+    const { onClick } = this.props;
+    this.setState({
+      isOpen: false
+    });
+    onClick(attributes);
   };
 
   render() {
-    const { value } = this.props;
+    const { format } = this.props;
     const { isOpen } = this.state;
     return (
       <div className="color-menu">
         <div className="color-menu__header">
           <button className="button" onMouseDown={this.handleToggleClick}>
-            <i className="fas fa-paint-brush" style={{ color: value }} />
+            <i className="fas fa-paint-brush" style={{ color: format.color }} />
           </button>
         </div>
         {isOpen && (
           <div className="color-menu__body">
-            <ColorButton value={null} onClick={this.handleColorClick} />
-            <ColorButton value="silver" onClick={this.handleColorClick} />
-            <ColorButton value="gray" onClick={this.handleColorClick} />
-            <ColorButton value="maroon" onClick={this.handleColorClick} />
-            <ColorButton value="red" onClick={this.handleColorClick} />
-            <ColorButton value="purple" onClick={this.handleColorClick} />
-            <ColorButton value="fuchsia" onClick={this.handleColorClick} />
-            <ColorButton value="green" onClick={this.handleColorClick} />
-            <ColorButton value="lime" onClick={this.handleColorClick} />
-            <ColorButton value="olive" onClick={this.handleColorClick} />
-            <ColorButton value="yellow" onClick={this.handleColorClick} />
-            <ColorButton value="navy" onClick={this.handleColorClick} />
-            <ColorButton value="blue" onClick={this.handleColorClick} />
-            <ColorButton value="teal" onClick={this.handleColorClick} />
-            <ColorButton value="aqua" onClick={this.handleColorClick} />
+            <ColorButton color={null} onClick={this.handleColorClick} />
+            <ColorButton color="silver" onClick={this.handleColorClick} />
+            <ColorButton color="gray" onClick={this.handleColorClick} />
+            <ColorButton color="maroon" onClick={this.handleColorClick} />
+            <ColorButton color="red" onClick={this.handleColorClick} />
+            <ColorButton color="purple" onClick={this.handleColorClick} />
+            <ColorButton color="fuchsia" onClick={this.handleColorClick} />
+            <ColorButton color="green" onClick={this.handleColorClick} />
+            <ColorButton color="lime" onClick={this.handleColorClick} />
+            <ColorButton color="olive" onClick={this.handleColorClick} />
+            <ColorButton color="yellow" onClick={this.handleColorClick} />
+            <ColorButton color="navy" onClick={this.handleColorClick} />
+            <ColorButton color="blue" onClick={this.handleColorClick} />
+            <ColorButton color="teal" onClick={this.handleColorClick} />
+            <ColorButton color="aqua" onClick={this.handleColorClick} />
           </div>
         )}
       </div>

@@ -81,7 +81,7 @@
   padding: 10px 30px;
 }
 
-.ed-editable {
+.ed-editor * {
   outline: none;
 }
 
@@ -96,4 +96,37 @@
   padding: 10px 20px;
   background: #eee;
   border: 1px solid #aaa;
+}
+
+.checkable {
+  margin-left: 27px;
+}
+
+.checkable.ed-indent-1 {
+  margin-left: 47px;
+}
+
+.checkable.ed-indent-2 {
+  margin-left: 67px;
+}
+
+.checkable.ed-indent-3 {
+  margin-left: 87px;
+}
+
+.checkable.ed-indent-4 {
+  margin-left: 107px;
+}
+
+.checkable.ed-indent-5 {
+  margin-left: 127px;
+}
+
+.checkable input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.checked {
+  text-decoration: line-through;
+  color: gray;
 }

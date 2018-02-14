@@ -1,29 +1,24 @@
 import { INDENT_MAX } from "../../constants";
 
 function indentBlock(change, block) {
-  if (
-    block.type === "unordered-list-item" ||
-    block.type === "ordered-list-item"
-  ) {
-    const { attributes } = block;
+  const { attributes } = block;
 
-    if (attributes.indent) {
-      if (attributes.indent < INDENT_MAX) {
-        change.replaceBlock(
-          block.format({
-            indent: attributes.indent + 1
-          }),
-          block
-        );
-      }
-    } else {
+  if (attributes.indent) {
+    if (attributes.indent < INDENT_MAX) {
       change.replaceBlock(
         block.format({
-          indent: 1
+          indent: attributes.indent + 1
         }),
         block
       );
     }
+  } else {
+    change.replaceBlock(
+      block.format({
+        indent: 1
+      }),
+      block
+    );
   }
 }
 

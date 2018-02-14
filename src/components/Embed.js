@@ -5,10 +5,16 @@ const emptyProps = {};
 
 export default class Embed extends PureComponent {
   render() {
-    const { node, renderMark: customRenderMark, children } = this.props;
+    const {
+      node,
+      EmbedComponent,
+      embedProps,
+      renderMark: customRenderMark
+    } = this.props;
 
-    let content = children;
-    const classNames = ["ed-embed"];
+    const Container = node.isBlock ? "div" : "span";
+
+    const markObjects = [];
 
     node.style.marks.forEach(mark => {
       let markObj;
@@ -22,28 +28,54 @@ export default class Embed extends PureComponent {
       }
 
       if (markObj) {
-        const {
-          component: MarkComponent,
-          props: markProps = emptyProps,
-          className: markClassName
-        } = markObj;
-
-        if (MarkComponent) {
-          content = <MarkComponent {...markProps}>{content}</MarkComponent>;
-        }
-
-        if (markClassName) {
-          classNames.push(markClassName);
-        }
+        markObjects.push(markObj);
       }
     });
 
-    const Container = node.isBlockEmbed ? "div" : "span";
+    const classNames = [];
+    let style = {};
+
+    markObjects.forEach(markObj => {
+      const {
+        className: markClassName = "",
+        style: markStyle = null
+      } = markObj;
+
+      if (markClassName) {
+        classNames.push(markClassName);
+      }
+
+      if (markStyle) {
+        style = {
+          ...style,
+          ...markStyle
+        };
+      }
+    });
+
+    let content = (
+      <EmbedComponent
+        {...embedProps}
+        className={classNames.join(" ")}
+        style={style}
+      />
+    );
+
+    markObjects.forEach(markObj => {
+      const {
+        component: MarkComponent = "",
+        props: markProps = emptyProps
+      } = markObj;
+
+      if (MarkComponent) {
+        content = <MarkComponent {...markProps}>{content}</MarkComponent>;
+      }
+    });
 
     return (
       <Container
+        className="ed-embed"
         contentEditable={false}
-        className={classNames.join(" ")}
         data-embed
         data-key={node.key}
       >

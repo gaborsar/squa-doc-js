@@ -21,34 +21,48 @@
 
 /* UNORDERED LISTS */
 
+.ed-document ul {
+  padding: 0;
+}
+
 .ed-document ul > li {
-  padding-left: 20px;
   list-style-type: none;
 }
 
+.ed-document ul > li {
+  margin-left: 45px;
+}
+
 .ed-document ul > li.ed-indent-1 {
-  padding-left: 40px;
+  margin-left: 65px;
 }
 
 .ed-document ul > li.ed-indent-2 {
-  padding-left: 60px;
+  margin-left: 85px;
 }
 
 .ed-document ul > li.ed-indent-3 {
-  padding-left: 80px;
+  margin-left: 105px;
 }
 
 .ed-document ul > li.ed-indent-4 {
-  padding-left: 100px;
+  margin-left: 125px;
 }
 
 .ed-document ul > li.ed-indent-5 {
-  padding-left: 120px;
+  margin-left: 145px;
+}
+
+.ed-document ul > li:before {
+  display: inline-block;
+  min-width: 40px;
+  margin-right: 5px;
+  margin-left: -45px;
+  text-align: right;
 }
 
 .ed-document ul > li:before {
   content: "\25CF";
-  margin-right: 10px;
 }
 
 .ed-document ul > li.ed-indent-1:before {
@@ -73,66 +87,79 @@
 
 /* ORDERED LISTS */
 
+.ed-document ol {
+  padding: 0;
+}
+
 .ed-document ol > li {
-  counter-reset: list-1 list-2 list-3 list-4 list-5;
-  counter-increment: list-0;
   list-style-type: none;
-  padding-left: 20px;
+}
+
+.ed-document ol > li {
+  margin-left: 45px;
+  counter-reset: li-1 li-2 li-3 li-4 li-5;
+  counter-increment: li-0;
 }
 
 .ed-document ol > li.ed-indent-1 {
-  counter-reset: list-2 list-3 list-4 list-5;
-  counter-increment: list-1;
-  padding-left: 40px;
+  margin-left: 65px;
+  counter-reset: li-2 li-3 li-4 li-5;
+  counter-increment: li-1;
 }
 
 .ed-document ol > li.ed-indent-2 {
-  counter-reset: list-1 list-3 list-4 list-5;
-  counter-increment: list-2;
-  padding-left: 60px;
+  margin-left: 85px;
+  counter-reset: li-3 li-4 li-5;
+  counter-increment: li-2;
 }
 
 .ed-document ol > li.ed-indent-3 {
-  counter-reset: list-1 list-2 list-4 list-5;
-  counter-increment: list-3;
-  padding-left: 80px;
+  margin-left: 105px;
+  counter-reset: li-4 li-5;
+  counter-increment: li-3;
 }
 
 .ed-document ol > li.ed-indent-4 {
-  counter-reset: list-1 list-2 list-3 list-5;
-  counter-increment: list-4;
-  padding-left: 100px;
+  margin-left: 125px;
+  counter-reset: li-5;
+  counter-increment: li-4;
 }
 
 .ed-document ol > li.ed-indent-5 {
-  counter-reset: list-1 list-2 list-3 list-4;
-  counter-increment: list-5;
-  padding-left: 120px;
+  margin-left: 145px;
+  counter-increment: li-5;
 }
 
 .ed-document ol > li:before {
-  margin-right: 4px;
-  content: counter(list-0, decimal) ". ";
+  display: inline-block;
+  min-width: 40px;
+  margin-right: 5px;
+  margin-left: -45px;
+  text-align: right;
+}
+
+.ed-document ol > li:before {
+  content: counter(li-0) ".";
 }
 
 .ed-document ol > li.ed-indent-1:before {
-  content: counter(list-1, decimal) ". ";
+  content: counter(li-1) ".";
 }
 
 .ed-document ol > li.ed-indent-2:before {
-  content: counter(list-2, decimal) ". ";
+  content: counter(li-2) ".";
 }
 
 .ed-document ol > li.ed-indent-3:before {
-  content: counter(list-3, decimal) ". ";
+  content: counter(li-3) ".";
 }
 
 .ed-document ol > li.ed-indent-4:before {
-  content: counter(list-4, decimal) ". ";
+  content: counter(li-4) ".";
 }
 
 .ed-document ol > li.ed-indent-5:before {
-  content: counter(list-5, decimal) ". ";
+  content: counter(li-5) ".";
 }
 
 /* ALIGN */

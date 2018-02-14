@@ -542,11 +542,11 @@ export default class Change {
     return this;
   }
 
-  replaceBlockByKey(key, newBlock) {
+  replaceBlockByKey(blockKey, newBlock) {
     let { value } = this;
     let { document } = value;
 
-    const block = document.getChildByKey(key);
+    const block = document.getChildByKey(blockKey);
 
     if (!block) {
       return this;
@@ -588,11 +588,11 @@ export default class Change {
     return this;
   }
 
-  formatBlockByKey(key, attributes) {
+  formatBlockByKey(blockKey, attributes) {
     let { value } = this;
     let { document } = value;
 
-    const block = document.getChildByKey(key);
+    const block = document.getChildByKey(blockKey);
 
     if (!block) {
       return this;
@@ -638,11 +638,11 @@ export default class Change {
     return this;
   }
 
-  deleteBlockByKey(key) {
+  deleteBlockByKey(blockKey) {
     let { value } = this;
     let { document } = value;
 
-    const block = document.getChildByKey(key);
+    const block = document.getChildByKey(blockKey);
 
     if (!block) {
       return this;

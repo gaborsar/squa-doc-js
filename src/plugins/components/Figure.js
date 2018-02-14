@@ -8,18 +8,16 @@ export default class Figure extends PureComponent {
   }
 
   onClickDelete = () => {
-    const { node: { key }, deleteBlockByKey } = this.props;
-    deleteBlockByKey(key);
+    const { blockKey, deleteBlockByKey } = this.props;
+    deleteBlockByKey(blockKey);
   };
 
   render() {
-    const { node, children } = this.props;
+    const { caption, children } = this.props;
     return (
       <figure className="ed-figure">
         <div className="ed-figure__content">{children}</div>
-        <figcaption className="ed-figure__caption">
-          {node.getMark("caption")}
-        </figcaption>
+        <figcaption className="ed-figure__caption">{caption}</figcaption>
         <div className="ed-figure__controls">
           <button
             type="button"

@@ -71,7 +71,7 @@ describe("getNativePosition()", () => {
 
     const { node, offset } = getNativePosition(root, 4);
     expect(node).toBe(block2);
-    expect(offset).toBe(0);
+    expect(offset).toBe(1);
   });
 
   test("within an embed node", () => {

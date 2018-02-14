@@ -1,12 +1,35 @@
 import BlockImage from "../components/BlockImage";
 import InlineImage from "../components/InlineImage";
 
-export default function renderEmbed(node) {
-  switch (node.type) {
-    case "block-image":
-      return { component: BlockImage, props: { node } };
+function renderBlockImage(node, defaultProps) {
+  const { blockKey, deleteBlockByKey } = defaultProps;
+  return {
+    component: BlockImage,
+    props: {
+      blockKey,
+      deleteBlockByKey,
+      src: node.value["block-image"],
+      alt: node.getMark("alt"),
+      caption: node.getMark("caption")
+    }
+  };
+}
 
-    case "inline-image":
-      return { component: InlineImage, props: { node } };
+function renderInlineImage(node) {
+  return {
+    component: InlineImage,
+    props: {
+      src: node.value["inline-image"],
+      alt: node.getMark("alt")
+    }
+  };
+}
+
+export default function renderEmbed(node, defaultProps) {
+  if (node.type === "block-image") {
+    return renderBlockImage(node, defaultProps);
+  }
+  if (node.type === "inline-image") {
+    return renderInlineImage(node);
   }
 }
