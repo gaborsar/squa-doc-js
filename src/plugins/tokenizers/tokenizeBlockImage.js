@@ -29,11 +29,17 @@ export default function tokenizeBlockImage(node, context) {
       let attributes = context.block;
 
       if (alt) {
-        attributes = { ...attributes, alt };
+        attributes = {
+          ...attributes,
+          alt
+        };
       }
 
       if (caption) {
-        attributes = { ...attributes, caption };
+        attributes = {
+          ...attributes,
+          caption
+        };
       }
 
       tokens.push({

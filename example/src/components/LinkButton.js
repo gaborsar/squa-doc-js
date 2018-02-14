@@ -3,8 +3,13 @@ import classNames from "classnames";
 
 export default class LinkButton extends PureComponent {
   onMouseDownCallback = () => {
-    const { onClick, format, type } = this.props;
-    onClick(format[type] ? null : prompt("Enter link."));
+    const { onClick, format } = this.props;
+    if (format.link) {
+      onClick({ link: null });
+    } else {
+      const link = prompt("Enter link.");
+      onClick({ link });
+    }
   };
 
   handleMouseDown = event => {
@@ -13,15 +18,14 @@ export default class LinkButton extends PureComponent {
   };
 
   render() {
-    const { format, type, disabled, children } = this.props;
+    const { format, children } = this.props;
     return (
       <button
         type="button"
         className={classNames("button", {
-          "button--active": format[type]
+          "button--active": format.link
         })}
         onMouseDown={this.handleMouseDown}
-        disabled={disabled}
       >
         {children}
       </button>

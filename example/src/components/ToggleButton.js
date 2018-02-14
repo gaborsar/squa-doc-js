@@ -5,7 +5,9 @@ export default class ToggleButton extends PureComponent {
   handleMouseDown = event => {
     event.preventDefault();
     const { onClick, format, type, value } = this.props;
-    onClick(format[type] === value ? null : value);
+    onClick({
+      [type]: format[type] === value ? null : value
+    });
   };
 
   render() {

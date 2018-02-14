@@ -8,12 +8,11 @@ export default class SimpleButton extends PureComponent {
   };
 
   render() {
-    const { disabled, children } = this.props;
+    const { children } = this.props;
     return (
       <button
         type="button"
         className="button"
-        disabled={disabled}
         onMouseDown={this.handleMouseDown}
       >
         {children}

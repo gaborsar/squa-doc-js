@@ -3,17 +3,17 @@ import React, { PureComponent } from "react";
 export default class ColorButton extends PureComponent {
   handleMouseDown = event => {
     event.preventDefault();
-    const { onClick, value } = this.props;
-    onClick(value);
+    const { color, onClick } = this.props;
+    onClick({ color });
   };
 
   render() {
-    const { value } = this.props;
+    const { color } = this.props;
     return (
       <button
         type="button"
         className="color-button"
-        style={{ background: value || "black" }}
+        style={{ background: color || "black" }}
         onMouseDown={this.handleMouseDown}
       />
     );

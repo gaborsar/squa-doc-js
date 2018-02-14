@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import SimpleButton from "./SimpleButton";
+import BlockTypeButton from "./BlockTypeButton";
 import ToggleButton from "./ToggleButton";
 import ColorMenu from "./ColorMenu";
 import LinkButton from "./LinkButton";
@@ -18,20 +19,20 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  toggleBlockType = type => {
+  formatBlock = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
-      .formatBlock({ type })
+      .formatBlock(attributes)
       .save();
     onChange(change);
   };
 
-  toggleAlign = align => {
+  formatInline = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
-      .formatBlock({ align })
+      .formatInline(attributes)
       .save();
     onChange(change);
   };
@@ -54,69 +55,6 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  toggleBold = bold => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ bold })
-      .save();
-    onChange(change);
-  };
-
-  toggleItalic = italic => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ italic })
-      .save();
-    onChange(change);
-  };
-
-  toggleUnderline = underline => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ underline })
-      .save();
-    onChange(change);
-  };
-
-  toggleStrikethrough = strikethrough => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ strikethrough })
-      .save();
-    onChange(change);
-  };
-
-  toggleCode = code => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ code })
-      .save();
-    onChange(change);
-  };
-
-  toggleLink = link => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ link })
-      .save();
-    onChange(change);
-  };
-
-  changeColor = color => {
-    const { value, onChange } = this.props;
-    const change = value
-      .change()
-      .formatInline({ color })
-      .save();
-    onChange(change);
-  };
-
   render() {
     const { value } = this.props;
     const { canUndo, canRedo } = value;
@@ -130,61 +68,72 @@ export default class Menu extends PureComponent {
           <i className="fas fa-redo" />
         </SimpleButton>
         <span className="separator" />
-        <ToggleButton
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="heading-one"
-          onClick={this.toggleBlockType}
+          type="heading-one"
+          resetIndent
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-heading" />1
-        </ToggleButton>
-        <ToggleButton
+        </BlockTypeButton>
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="heading-two"
-          onClick={this.toggleBlockType}
+          type="heading-two"
+          resetIndent
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-heading" />2
-        </ToggleButton>
-        <ToggleButton
+        </BlockTypeButton>
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="blockquote"
-          onClick={this.toggleBlockType}
+          type="blockquote"
+          resetIndent
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-quote-right" />
-        </ToggleButton>
-        <ToggleButton
+        </BlockTypeButton>
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="code"
-          onClick={this.toggleBlockType}
+          type="code"
+          resetIndent
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-code" />
-        </ToggleButton>
+        </BlockTypeButton>
         <span className="separator" />
-        <ToggleButton
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="unordered-list-item"
-          onClick={this.toggleBlockType}
+          type="unordered-list-item"
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-list-ul" />
-        </ToggleButton>
-        <ToggleButton
+        </BlockTypeButton>
+        <BlockTypeButton
           format={format}
-          type="type"
-          value="ordered-list-item"
-          onClick={this.toggleBlockType}
+          type="ordered-list-item"
+          resetChecked
+          onClick={this.formatBlock}
         >
           <i className="fas fa-list-ol" />
-        </ToggleButton>
+        </BlockTypeButton>
+        <BlockTypeButton
+          format={format}
+          type="checkable"
+          onClick={this.formatBlock}
+        >
+          <i className="fas fa-check-square" />
+        </BlockTypeButton>
         <span className="separator" />
         <ToggleButton
           format={format}
           type="align"
           value="left"
-          onClick={this.toggleAlign}
+          onClick={this.formatBlock}
         >
           <i className="fas fa-align-left" />
         </ToggleButton>
@@ -192,7 +141,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="center"
-          onClick={this.toggleAlign}
+          onClick={this.formatBlock}
         >
           <i className="fas fa-align-center" />
         </ToggleButton>
@@ -200,7 +149,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="right"
-          onClick={this.toggleAlign}
+          onClick={this.formatBlock}
         >
           <i className="fas fa-align-right" />
         </ToggleButton>
@@ -208,7 +157,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="justify"
-          onClick={this.toggleAlign}
+          onClick={this.formatBlock}
         >
           <i className="fas fa-align-justify" />
         </ToggleButton>
@@ -224,7 +173,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="bold"
           value={true}
-          onClick={this.toggleBold}
+          onClick={this.formatInline}
         >
           <i className="fas fa-bold" />
         </ToggleButton>
@@ -232,7 +181,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="italic"
           value={true}
-          onClick={this.toggleItalic}
+          onClick={this.formatInline}
         >
           <i className="fas fa-italic" />
         </ToggleButton>
@@ -240,7 +189,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="underline"
           value={true}
-          onClick={this.toggleUnderline}
+          onClick={this.formatInline}
         >
           <i className="fas fa-underline" />
         </ToggleButton>
@@ -248,7 +197,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="strikethrough"
           value={true}
-          onClick={this.toggleStrikethrough}
+          onClick={this.formatInline}
         >
           <i className="fas fa-strikethrough" />
         </ToggleButton>
@@ -256,13 +205,13 @@ export default class Menu extends PureComponent {
           format={format}
           type="code"
           value={true}
-          onClick={this.toggleCode}
+          onClick={this.formatInline}
         >
           <i className="fas fa-code" />
         </ToggleButton>
-        <ColorMenu value={format.color} onChange={this.changeColor} />
+        <ColorMenu format={format} onClick={this.formatInline} />
         <span className="separator" />
-        <LinkButton format={format} type="link" onClick={this.toggleLink}>
+        <LinkButton format={format} onClick={this.formatInline}>
           <i className="fas fa-link" />
         </LinkButton>
       </div>

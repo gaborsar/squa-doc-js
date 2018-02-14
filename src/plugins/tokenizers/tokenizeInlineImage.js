@@ -9,7 +9,10 @@ export default function tokenizeInlineImage(node, context) {
       let attributes = context.inline;
 
       if (alt) {
-        attributes = { ...attributes, alt };
+        attributes = {
+          ...attributes,
+          alt
+        };
       }
 
       tokens.push({

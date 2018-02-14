@@ -1,6 +1,5 @@
 import isTextNode from "./isTextNode";
 import isElementNode from "./isElementNode";
-import isIgnoredNode from "./isIgnoredNode";
 import isWrapperNode from "./isWrapperNode";
 import isBlockNode from "./isBlockNode";
 import isEmbedNode from "./isEmbedNode";
@@ -18,25 +17,23 @@ export default function getNativePosition(node, offset) {
         return { node: child, offset };
       }
     } else if (isElementNode(child)) {
-      if (isIgnoredNode(child)) {
-        if (offset === 0) {
-          return { node, offset: i };
-        }
-      } else if (
-        isEmbedNode(child) ||
-        isLineBreakNode(child) ||
-        isImageNode(child)
-      ) {
-        if (offset === 0) {
-          return { node, offset: i };
-        }
-      } else if (isWrapperNode(child) || isBlockNode(child)) {
-        if (offset < childLength) {
-          return getNativePosition(child, offset);
-        }
-      } else {
-        if (offset <= childLength) {
-          return getNativePosition(child, offset);
+      if (childLength !== 0) {
+        if (
+          isEmbedNode(child) ||
+          isLineBreakNode(child) ||
+          isImageNode(child)
+        ) {
+          if (offset === 0) {
+            return { node, offset: i };
+          }
+        } else if (isWrapperNode(child) || isBlockNode(child)) {
+          if (offset < childLength) {
+            return getNativePosition(child, offset);
+          }
+        } else {
+          if (offset <= childLength) {
+            return getNativePosition(child, offset);
+          }
         }
       }
     }

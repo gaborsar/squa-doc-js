@@ -1,26 +1,21 @@
 function outdentBlock(change, block) {
-  if (
-    block.type === "unordered-list-item" ||
-    block.type === "ordered-list-item"
-  ) {
-    const { attributes } = block;
+  const { attributes } = block;
 
-    if (attributes.indent) {
-      if (attributes.indent > 1) {
-        change.replaceBlock(
-          block.format({
-            indent: Math.max(attributes.indent - 1, 0)
-          }),
-          block
-        );
-      } else {
-        change.replaceBlock(
-          block.format({
-            indent: null
-          }),
-          block
-        );
-      }
+  if (attributes.indent) {
+    if (attributes.indent > 1) {
+      change.replaceBlock(
+        block.format({
+          indent: Math.max(attributes.indent - 1, 0)
+        }),
+        block
+      );
+    } else {
+      change.replaceBlock(
+        block.format({
+          indent: null
+        }),
+        block
+      );
     }
   }
 }

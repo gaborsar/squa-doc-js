@@ -31,9 +31,9 @@ export default class Text extends Component {
   render() {
     const { node, renderMark: customRenderMark } = this.props;
 
-    let children = node.value;
     const classNames = ["ed-text"];
     let style = {};
+    let content = node.value;
 
     node.style.marks.forEach(mark => {
       let markObj;
@@ -50,12 +50,12 @@ export default class Text extends Component {
         const {
           component: MarkComponent,
           props: markProps = emptyProps,
-          className: markClassName,
-          style: markStyle
+          className: markClassName = "",
+          style: markStyle = null
         } = markObj;
 
         if (MarkComponent) {
-          children = <MarkComponent {...markProps}>{children}</MarkComponent>;
+          content = <MarkComponent {...markProps}>{content}</MarkComponent>;
         }
 
         if (markClassName) {
@@ -63,7 +63,10 @@ export default class Text extends Component {
         }
 
         if (markStyle) {
-          style = { ...style, ...markStyle };
+          style = {
+            ...style,
+            ...markStyle
+          };
         }
       }
     });
@@ -76,7 +79,7 @@ export default class Text extends Component {
         data-text
         data-key={node.key}
       >
-        {children}
+        {content}
       </span>
     );
   }

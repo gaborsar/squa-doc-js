@@ -29,10 +29,12 @@ export default function parseNode(
     }
 
     if (tokens === undefined) {
-      tokens = defaultTokenizeNode(node, context);
+      tokens = [];
     }
 
     if (tokens) {
+      tokens.push(...defaultTokenizeNode(node, context));
+
       let isBlock = false;
       let isEmbed = false;
 

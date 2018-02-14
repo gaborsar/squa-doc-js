@@ -16,6 +16,10 @@ export default class Document extends PureComponent {
       renderBlock: customRenderBlock,
       renderEmbed: customRenderEmbed,
       renderMark: customRenderMark,
+      replaceBlockByKey,
+      replaceInlineByKey,
+      formatBlockByKey,
+      formatInlineByKey,
       deleteBlockByKey,
       deleteInlineByKey
     } = this.props;
@@ -66,14 +70,21 @@ export default class Document extends PureComponent {
       if (child.isEmbed) {
         flush(child.key);
 
+        const defaultEmbedProps = {
+          blockKey: child.key,
+          replaceBlockByKey: replaceBlockByKey,
+          formatBlockByKey: formatBlockByKey,
+          deleteBlockByKey: deleteBlockByKey
+        };
+
         let embedObj;
 
         if (customRenderEmbed) {
-          embedObj = customRenderEmbed(child);
+          embedObj = customRenderEmbed(child, defaultEmbedProps);
         }
 
         if (embedObj === undefined) {
-          embedObj = defaultRenderEmbed(child);
+          embedObj = defaultRenderEmbed(child, defaultEmbedProps);
         }
 
         if (embedObj) {
@@ -83,12 +94,13 @@ export default class Document extends PureComponent {
           } = embedObj;
 
           buffer.children.push(
-            <Embed key={child.key} node={child} renderMark={customRenderMark}>
-              <EmbedComponent
-                {...embedProps}
-                deleteBlockByKey={deleteBlockByKey}
-              />
-            </Embed>
+            <Embed
+              key={child.key}
+              node={child}
+              EmbedComponent={EmbedComponent}
+              embedProps={embedProps}
+              renderMark={customRenderMark}
+            />
           );
         }
       } else {
@@ -103,23 +115,30 @@ export default class Document extends PureComponent {
         }
 
         if (wrapperObj === undefined) {
-          wrapperObj = {};
+          wrapperObj = { componet: "" };
         }
 
         if (wrapperObj) {
+          const defaultBlockProps = {
+            blockKey: child.key,
+            replaceBlockByKey: replaceBlockByKey,
+            formatBlockByKey: formatBlockByKey,
+            deleteBlockByKey: deleteBlockByKey
+          };
+
           let blockObj;
 
           if (customRenderBlock) {
-            blockObj = customRenderBlock(child);
+            blockObj = customRenderBlock(child, defaultBlockProps);
           }
 
           if (blockObj === undefined) {
-            blockObj = defaultRenderBlock(child);
+            blockObj = defaultRenderBlock(child, defaultBlockProps);
           }
 
           if (blockObj) {
             const {
-              component: WrapperComponent = "",
+              component: WrapperComponent,
               props: wrapperProps = emptyProps
             } = wrapperObj;
 
@@ -131,7 +150,7 @@ export default class Document extends PureComponent {
             }
 
             const {
-              component: BlockComponent = "p",
+              component: BlockComponent,
               props: blockProps = emptyProps
             } = blockObj;
 
@@ -139,11 +158,13 @@ export default class Document extends PureComponent {
               <Block
                 key={child.key}
                 node={child}
-                renderEmbed={customRenderEmbed}
-                renderMark={customRenderMark}
-                deleteInlineByKey={deleteInlineByKey}
                 BlockComponent={BlockComponent}
                 blockProps={blockProps}
+                renderEmbed={customRenderEmbed}
+                renderMark={customRenderMark}
+                replaceInlineByKey={replaceInlineByKey}
+                formatInlineByKey={formatInlineByKey}
+                deleteInlineByKey={deleteInlineByKey}
               />
             );
           }

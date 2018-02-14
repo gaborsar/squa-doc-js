@@ -114,67 +114,65 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownBackspace = (change, event) => {
-    const { value, onChange = sink } = this.props;
+    const { value, onKeyDownBackspace = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
     if (isCollapsed) {
       if (event.metaKey) {
-        change
-          .selectBlockBackward()
-          .delete()
-          .save();
+        change.selectBlockBackward();
       } else if (event.altKey) {
-        change
-          .selectWordBackward()
-          .delete()
-          .save();
+        change.selectWordBackward();
       } else {
-        change
-          .selectCharacterBackward()
-          .delete()
-          .save("delete_character_backward");
+        change.selectCharacterBackward();
       }
+    }
+
+    change.delete();
+
+    onKeyDownBackspace(change, event);
+
+    if (isCollapsed && !event.metaKey && !event.altKey) {
+      change.save("delete_character_backward");
     } else {
-      change.delete().save();
+      change.save();
     }
 
     onChange(change);
   };
 
   handleKeyDownDelete = (change, event) => {
-    const { value, onChange = sink } = this.props;
+    const { value, onKeyDownDelete = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
     if (isCollapsed) {
       if (event.metaKey) {
-        change
-          .selectBlockForward()
-          .delete()
-          .save();
+        change.selectBlockForward();
       } else if (event.altKey) {
-        change
-          .selectWordForward()
-          .delete()
-          .save();
+        change.selectWordForward();
       } else {
-        change
-          .selectCharacterForward()
-          .delete()
-          .save("delete_character_forward");
+        change.selectCharacterForward();
       }
+    }
+
+    change.delete();
+
+    onKeyDownDelete(change, event);
+
+    if (isCollapsed && !event.metaKey && !event.altKey) {
+      change.save("delete_character_forward");
     } else {
-      change.delete().save();
+      change.save();
     }
 
     onChange(change);
   };
 
   handleKeyDownEnter = (change, event) => {
-    const { value, onChange = sink } = this.props;
+    const { value, onKeyDownEnter = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
@@ -183,7 +181,11 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insertText(EOL, value.getFormat()).save();
+    change.insertText(EOL, value.getFormat());
+
+    onKeyDownEnter(change, event);
+
+    change.save();
 
     onChange(change);
   };
@@ -454,6 +456,50 @@ export default class Editor extends PureComponent {
     }
   };
 
+  replaceBlockByKey = (blockKey, newBlock) => {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .replaceBlockByKey(blockKey, newBlock)
+      .save();
+
+    onChange(change);
+  };
+
+  replaceInlineByKey = (blockKey, inlineKey, newInline) => {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .replaceInlineByKey(blockKey, inlineKey, newInline)
+      .save();
+
+    onChange(change);
+  };
+
+  formatBlockByKey = (blockKey, attributes) => {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .formatBlockByKey(blockKey, attributes)
+      .save();
+
+    onChange(change);
+  };
+
+  formatInlineByKey = (blockKey, inlineKey, attributes) => {
+    const { value, onChange = sink } = this.props;
+
+    const change = value
+      .change()
+      .formatInlineByKey(blockKey, inlineKey, attributes)
+      .save();
+
+    onChange(change);
+  };
+
   deleteBlockByKey = blockKey => {
     const { value, onChange = sink } = this.props;
 
@@ -526,8 +572,8 @@ export default class Editor extends PureComponent {
             ref={this.setRootNode}
             className="ed-editable"
             contentEditable
-            spellCheck
             suppressContentEditableWarning
+            spellCheck
             onSelect={this.handleSelect}
             onMouseDown={this.handleMouseDown}
             onKeyDown={this.handleKeyDown}
@@ -547,6 +593,10 @@ export default class Editor extends PureComponent {
               renderBlock={renderBlock}
               renderEmbed={renderEmbed}
               renderMark={renderMark}
+              replaceBlockByKey={this.replaceBlockByKey}
+              replaceInlineByKey={this.replaceInlineByKey}
+              formatBlockByKey={this.formatBlockByKey}
+              formatInlineByKey={this.formatInlineByKey}
               deleteBlockByKey={this.deleteBlockByKey}
               deleteInlineByKey={this.deleteInlineByKey}
             />
