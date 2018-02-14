@@ -4,27 +4,20 @@ import classNames from "classnames";
 import { Delta, Value, Editor, indent, outdent } from "../../src/SquaDocEditor";
 
 class SimpleButton extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
-  onMouseDown = event => {
-    const { onClick } = this.props;
-
+  handleMouseDown = event => {
     event.preventDefault();
-
+    const { onClick } = this.props;
     onClick();
   };
 
   render() {
     const { disabled, children } = this.props;
-
     return (
       <button
         type="button"
         className="button"
         disabled={disabled}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={this.handleMouseDown}
       >
         {children}
       </button>
@@ -33,28 +26,21 @@ class SimpleButton extends PureComponent {
 }
 
 class ToggleButton extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
-  onMouseDown = event => {
-    const { onClick, format, type, value } = this.props;
-
+  handleMouseDown = event => {
     event.preventDefault();
-
+    const { onClick, format, type, value } = this.props;
     onClick(format[type] === value ? null : value);
   };
 
   render() {
     const { format, type, value, disabled, children } = this.props;
-
     return (
       <button
         type="button"
         className={classNames("button", {
           "button--active": format[type] === value
         })}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={this.handleMouseDown}
         disabled={disabled}
       >
         {children}
@@ -64,32 +50,25 @@ class ToggleButton extends PureComponent {
 }
 
 class LinkButton extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   onMouseDownCallback = () => {
     const { onClick, format, type } = this.props;
-
     onClick(format[type] ? null : prompt("Enter link."));
   };
 
-  onMouseDown = event => {
+  handleMouseDown = event => {
     event.preventDefault();
-
     window.requestAnimationFrame(this.onMouseDownCallback);
   };
 
   render() {
     const { format, type, disabled, children } = this.props;
-
     return (
       <button
         type="button"
         className={classNames("button", {
           "button--active": format[type]
         })}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={this.handleMouseDown}
         disabled={disabled}
       >
         {children}
@@ -98,132 +77,196 @@ class LinkButton extends PureComponent {
   }
 }
 
-class Menu extends PureComponent {
+class ColorButton extends PureComponent {
+  handleMouseDown = event => {
+    event.preventDefault();
+    const { onClick, value } = this.props;
+    onClick(value);
+  };
+
+  render() {
+    const { value } = this.props;
+    return (
+      <button
+        type="button"
+        className="color-button"
+        style={{ background: value || "black" }}
+        onMouseDown={this.handleMouseDown}
+      />
+    );
+  }
+}
+
+class ColorMenu extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      isOpen: false
+    };
   }
 
+  handleToggleClick = () => {
+    this.setState(state => ({
+      isOpen: !state.isOpen
+    }));
+  };
+
+  handleColorClick = value => {
+    const { onChange } = this.props;
+    this.setState({ isOpen: false });
+    onChange(value);
+  };
+
+  render() {
+    const { value } = this.props;
+    const { isOpen } = this.state;
+    return (
+      <div className="color-menu">
+        <div className="color-menu__header">
+          <button className="button" onMouseDown={this.handleToggleClick}>
+            <i className="fas fa-paint-brush" style={{ color: value }} />
+          </button>
+        </div>
+        {isOpen && (
+          <div className="color-menu__body">
+            <ColorButton value={null} onClick={this.handleColorClick} />
+            <ColorButton value="silver" onClick={this.handleColorClick} />
+            <ColorButton value="gray" onClick={this.handleColorClick} />
+            <ColorButton value="maroon" onClick={this.handleColorClick} />
+            <ColorButton value="red" onClick={this.handleColorClick} />
+            <ColorButton value="purple" onClick={this.handleColorClick} />
+            <ColorButton value="fuchsia" onClick={this.handleColorClick} />
+            <ColorButton value="green" onClick={this.handleColorClick} />
+            <ColorButton value="lime" onClick={this.handleColorClick} />
+            <ColorButton value="olive" onClick={this.handleColorClick} />
+            <ColorButton value="yellow" onClick={this.handleColorClick} />
+            <ColorButton value="navy" onClick={this.handleColorClick} />
+            <ColorButton value="blue" onClick={this.handleColorClick} />
+            <ColorButton value="teal" onClick={this.handleColorClick} />
+            <ColorButton value="aqua" onClick={this.handleColorClick} />
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+class Menu extends PureComponent {
   undo = () => {
     const { value, onChange } = this.props;
-
     const change = value.change().undo();
-
     onChange(change);
   };
 
   redo = () => {
     const { value, onChange } = this.props;
-
     const change = value.change().redo();
-
     onChange(change);
   };
 
   toggleBlockType = type => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatBlock({ type })
       .save();
-
     onChange(change);
   };
 
   toggleAlign = align => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatBlock({ align })
       .save();
-
     onChange(change);
   };
 
   indent = () => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .call(indent)
       .save();
-
     onChange(change);
   };
 
   outdent = () => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .call(outdent)
       .save();
-
     onChange(change);
   };
 
   toggleBold = bold => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatInline({ bold })
       .save();
-
     onChange(change);
   };
 
   toggleItalic = italic => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatInline({ italic })
       .save();
-
     onChange(change);
   };
 
   toggleUnderline = underline => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatInline({ underline })
       .save();
+    onChange(change);
+  };
 
+  toggleStrikethrough = strikethrough => {
+    const { value, onChange } = this.props;
+    const change = value
+      .change()
+      .formatInline({ strikethrough })
+      .save();
     onChange(change);
   };
 
   toggleCode = code => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatInline({ code })
       .save();
-
     onChange(change);
   };
 
   toggleLink = link => {
     const { value, onChange } = this.props;
-
     const change = value
       .change()
       .formatInline({ link })
       .save();
+    onChange(change);
+  };
 
+  changeColor = color => {
+    const { value, onChange } = this.props;
+    const change = value
+      .change()
+      .formatInline({ color })
+      .save();
     onChange(change);
   };
 
   render() {
     const { value } = this.props;
     const { canUndo, canRedo } = value;
-
     const format = value.getFormat();
-
     return (
       <div className="menu">
         <SimpleButton format={format} onClick={this.undo} disabled={!canUndo}>
@@ -349,12 +392,21 @@ class Menu extends PureComponent {
         </ToggleButton>
         <ToggleButton
           format={format}
+          type="strikethrough"
+          value={true}
+          onClick={this.toggleStrikethrough}
+        >
+          <i className="fas fa-strikethrough" />
+        </ToggleButton>
+        <ToggleButton
+          format={format}
           type="code"
           value={true}
           onClick={this.toggleCode}
         >
           <i className="fas fa-code" />
         </ToggleButton>
+        <ColorMenu value={format.color} onChange={this.changeColor} />
         <span className="separator" />
         <LinkButton format={format} type="link" onClick={this.toggleLink}>
           <i className="fas fa-link" />
@@ -367,7 +419,6 @@ class Menu extends PureComponent {
 class App extends PureComponent {
   constructor(props) {
     super(props);
-
     const { value } = props;
     this.state = { value };
   }
@@ -375,15 +426,12 @@ class App extends PureComponent {
   onChange = change => {
     // eslint-disable-next-line no-console
     console.log(change);
-
     const { value } = change;
-
     this.setState({ value });
   };
 
   render() {
     const { value } = this.state;
-
     return (
       <div className="app">
         <div className="editor">
@@ -398,23 +446,41 @@ class App extends PureComponent {
 const value = Value.fromJSON({
   contents: new Delta()
     .insert("Heading level one")
-    .insert("\n", { type: "heading-one", align: "center" })
+    .insert("\n", {
+      type: "heading-one",
+      align: "center"
+    })
+
     .insert("Heading level two")
-    .insert("\n", { type: "heading-two" })
+    .insert("\n", {
+      type: "heading-two"
+    })
+
     .insert(
       {
         "block-image": "https://thumbs.dreamstime.com/x/old-book-17580496.jpg"
       },
-      { alt: "Old Book", caption: "Old Book" }
+      {
+        alt: "Old Book",
+        caption: "Old Book"
+      }
     )
     .insert("Lorem ipsum dolor sit amet, ")
-    .insert("consectetur", { bold: true })
+    .insert("consectetur", {
+      bold: true
+    })
     .insert(" ")
-    .insert("adipiscing", { italic: true })
+    .insert("adipiscing", {
+      italic: true
+    })
     .insert(" elit. ")
     .insert(
-      { "inline-image": "http://9p.io/plan9/img/9logo.jpg" },
-      { alt: "Plan 9" }
+      {
+        "inline-image": "http://9p.io/plan9/img/9logo.jpg"
+      },
+      {
+        alt: "Plan 9"
+      }
     )
     .insert(" ")
     .insert("Mauris enim quam, semper eu ex id, consectetur vulputate elit. ")
@@ -422,19 +488,40 @@ const value = Value.fromJSON({
     .insert(
       "Sed tincidunt, erat vel convallis finibus, ante purus tempus purus, at suscipit nisl ex vel magna."
     )
-    .insert("\n", { type: "paragraph" })
+    .insert("\n", {
+      type: "paragraph"
+    })
+
     .insert("Unordered list item 1")
-    .insert("\n", { type: "unordered-list-item" })
+    .insert("\n", {
+      type: "unordered-list-item"
+    })
     .insert("Unordered list item 2")
-    .insert("\n", { type: "unordered-list-item", indent: 1 })
+    .insert("\n", {
+      type: "unordered-list-item",
+      indent: 1
+    })
     .insert("Unordered list item 3")
-    .insert("\n", { type: "unordered-list-item", indent: 1 })
+    .insert("\n", {
+      type: "unordered-list-item",
+      indent: 1
+    })
+
     .insert("Ordered list item 1")
-    .insert("\n", { type: "ordered-list-item" })
+    .insert("\n", {
+      type: "ordered-list-item"
+    })
     .insert("Ordered list item 2")
-    .insert("\n", { type: "ordered-list-item", indent: 1 })
+    .insert("\n", {
+      type: "ordered-list-item",
+      indent: 1
+    })
     .insert("Ordered list item 3")
-    .insert("\n", { type: "ordered-list-item", indent: 1 })
+    .insert("\n", {
+      type: "ordered-list-item",
+      indent: 1
+    })
+
     .insert("Donec at lacus sed eros cursus tincidunt. ")
     .insert("Pellentesque ac convallis turpis, ut tincidunt nisi. ")
     .insert("Suspendisse rutrum auctor tellus, in lobortis erat dapibus et. ")
@@ -449,7 +536,9 @@ const value = Value.fromJSON({
     .insert("Nunc nec ultrices risus. ")
     .insert("Fusce eu nulla ante. ")
     .insert("Vivamus in faucibus felis.")
-    .insert("\n", { type: "paragraph" })
+    .insert("\n", {
+      type: "paragraph"
+    })
 });
 
 ReactDOM.render(<App value={value} />, document.getElementById("app"));
