@@ -6,31 +6,36 @@ export default class BlockIterator {
   }
 
   next(length) {
+    if (length === 0) {
+      return;
+    }
+
     const { children: nodes } = this._block;
 
-    if (this._index < nodes.length) {
-      const node = nodes[this._index];
+    if (this._index >= nodes.length) {
+      return;
+    }
 
-      if (this._offset === 0 && node.length <= length) {
-        this._index++;
+    const node = nodes[this._index];
 
-        return node;
-      }
+    if (this._offset === 0 && node.length <= length) {
+      this._index++;
 
-      if (node.length <= this._offset + length) {
-        const slice = node.slice(this._offset);
+      return node;
+    }
 
-        this._index++;
-        this._offset = 0;
+    if (node.length <= this._offset + length) {
+      const slice = node.slice(this._offset);
 
-        return slice;
-      }
-
-      const slice = node.slice(this._offset, this._offset + length);
-
-      this._offset += length;
+      this._index++;
+      this._offset = 0;
 
       return slice;
     }
+
+    const slice = node.slice(this._offset, this._offset + length);
+
+    this._offset += length;
+    return slice;
   }
 }

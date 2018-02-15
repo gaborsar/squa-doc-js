@@ -5,7 +5,7 @@ import BlockEditor from "./BlockEditor";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 import { EOL } from "../constants";
 
@@ -21,15 +21,16 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
       style = Style.create(),
       children = []
     } = props;
-
     super(schema, key);
-
     this.style = style;
     this.children = children;
   }
 
   merge(props) {
-    return Block.create({ ...this, ...props });
+    return Block.create({
+      ...this,
+      ...props
+    });
   }
 
   get isEmbed() {

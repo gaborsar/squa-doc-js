@@ -10,34 +10,30 @@ export default class BlockEditor {
   }
 
   retain(length) {
-    while (length) {
-      const node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       this._nodes.push(node);
 
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
   }
 
   format(length, attributes) {
-    while (length) {
-      let node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       node = node.format(attributes);
 
       this._nodes.push(node);
 
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
@@ -84,14 +80,12 @@ export default class BlockEditor {
   }
 
   delete(length) {
-    while (length) {
-      const node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
@@ -114,13 +108,11 @@ export default class BlockEditor {
         this.delete(op.delete);
       }
     });
-
     return this;
   }
 
   build() {
     this.retain(Infinity);
-
     return this._block.setChildren(this._nodes).normalize();
   }
 }

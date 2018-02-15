@@ -14,7 +14,10 @@ export default function getNativePosition(node, offset) {
 
     if (isTextNode(child)) {
       if (offset <= childLength) {
-        return { node: child, offset };
+        return {
+          node: child,
+          offset
+        };
       }
     } else if (isElementNode(child)) {
       if (childLength !== 0) {
@@ -24,7 +27,10 @@ export default function getNativePosition(node, offset) {
           isImageNode(child)
         ) {
           if (offset === 0) {
-            return { node, offset: i };
+            return {
+              node,
+              offset: i
+            };
           }
         } else if (isWrapperNode(child) || isBlockNode(child)) {
           if (offset < childLength) {
@@ -41,5 +47,8 @@ export default function getNativePosition(node, offset) {
     offset -= childLength;
   }
 
-  return { node, offset: node.childNodes.length };
+  return {
+    node,
+    offset: node.childNodes.length
+  };
 }

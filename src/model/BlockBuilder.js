@@ -1,7 +1,7 @@
 import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 export default class BlockBuilder {
   constructor(schema = defaultSchema) {

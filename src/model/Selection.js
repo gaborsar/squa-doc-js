@@ -10,7 +10,10 @@ export default class Selection {
   }
 
   merge(props) {
-    return Selection.create({ ...this, ...props });
+    return Selection.create({
+      ...this,
+      ...props
+    });
   }
 
   get isCollapsed() {
@@ -67,7 +70,6 @@ export default class Selection {
 
   deleteAt(offset, length) {
     let selection = this;
-
     const { anchorOffset, focusOffset } = selection;
 
     if (offset < anchorOffset) {
@@ -91,29 +93,22 @@ export default class Selection {
 
   apply(delta) {
     let offset = 0;
-
     let selection = this;
 
     delta.forEach(op => {
       if (typeof op.retain === "number") {
         const { retain: length } = op;
-
         offset += length;
       } else if (typeof op.insert === "string") {
         const { insert: { length } } = op;
-
         selection = selection.insertAt(offset, length);
-
         offset += length;
       } else if (typeof op.insert === "object") {
         const length = 1;
-
         selection = selection.insertAt(offset, length);
-
         offset += length;
       } else if (typeof op.delete === "number") {
         const { delete: length } = op;
-
         selection = selection.deleteAt(offset, length);
       }
     });

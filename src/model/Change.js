@@ -65,6 +65,7 @@ export default class Change {
     }
 
     let snapshot = undoStack[undoStack.length - 1];
+
     const { undoDelta, selection: nextSelection } = snapshot;
 
     const nextDocument = document.apply(undoDelta);
@@ -72,6 +73,7 @@ export default class Change {
     undoStack = undoStack.slice(0, -1);
 
     snapshot = snapshot.setSelection(selection);
+
     redoStack = redoStack.concat(snapshot);
 
     if (redoStack.length > HISTORY_STACK_SIZE) {
@@ -99,11 +101,13 @@ export default class Change {
     }
 
     let snapshot = redoStack[redoStack.length - 1];
+
     const { redoDelta, selection: nextSelection } = snapshot;
 
     const nextDocument = document.apply(redoDelta);
 
     snapshot = snapshot.setSelection(selection);
+
     undoStack = undoStack.concat(snapshot);
 
     if (undoStack.length > HISTORY_STACK_SIZE) {
@@ -137,7 +141,6 @@ export default class Change {
   moveCursorLeft() {
     let { value } = this;
     let { selection } = value;
-
     const { anchorOffset } = selection;
 
     if (anchorOffset <= 0) {
@@ -145,7 +148,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -164,7 +166,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -190,7 +191,6 @@ export default class Change {
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;
-
     const { anchorOffset } = selection;
 
     if (anchorOffset <= 0) {
@@ -198,7 +198,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(anchorOffset - 1);
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -217,7 +216,6 @@ export default class Change {
     }
 
     selection = selection.setFocusOffset(focusOffset + 1);
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -228,7 +226,6 @@ export default class Change {
   selectWordBackward() {
     let { value } = this;
     let { document, selection } = value;
-
     const { anchorOffset } = selection;
 
     const pos = document.createPosition(anchorOffset);
@@ -244,11 +241,9 @@ export default class Change {
     }
 
     let length = 0;
-
     while (/\W/.test(text[offset - length - 1]) && offset - length > 0) {
       length += 1;
     }
-
     while (/\w/.test(text[offset - length - 1]) && offset - length > 0) {
       length += 1;
     }
@@ -258,7 +253,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(anchorOffset - length);
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -269,7 +263,6 @@ export default class Change {
   selectWordForward() {
     let { value } = this;
     let { document, selection } = value;
-
     const { focusOffset } = selection;
 
     const pos = document.createPosition(focusOffset);
@@ -285,11 +278,9 @@ export default class Change {
     }
 
     let length = 0;
-
     while (/\W/.test(text[offset + length]) && offset + length < text.length) {
       length += 1;
     }
-
     while (/\w/.test(text[offset + length]) && offset + length < text.length) {
       length += 1;
     }
@@ -299,7 +290,6 @@ export default class Change {
     }
 
     selection = selection.setFocusOffset(focusOffset + length);
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -310,7 +300,6 @@ export default class Change {
   selectBlockBackward() {
     let { value } = this;
     let { document, selection } = value;
-
     const { anchorOffset } = selection;
 
     const pos = document.createPosition(anchorOffset);
@@ -326,7 +315,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(anchorOffset - offset);
-
     value = value.setSelection(selection);
 
     this.value = value;
@@ -337,7 +325,6 @@ export default class Change {
   selectBlockForward() {
     let { value } = this;
     let { document, selection } = value;
-
     const { focusOffset } = selection;
 
     const pos = document.createPosition(focusOffset);
@@ -368,7 +355,6 @@ export default class Change {
     let { document } = value;
 
     document = document.regenerateKey();
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -381,7 +367,6 @@ export default class Change {
     let { document } = value;
 
     document = document.replaceChild(newBlock, referenceBlock);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -392,7 +377,6 @@ export default class Change {
   format(attributes) {
     let { value } = this;
     let { document, selection } = value;
-
     const { isCollapsed, startOffset, endOffset } = selection;
 
     if (isCollapsed) {
@@ -400,7 +384,6 @@ export default class Change {
     }
 
     document = document.formatAt(startOffset, endOffset, attributes);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -411,7 +394,6 @@ export default class Change {
   formatBlock(attributes) {
     let { value } = this;
     let { document, selection } = value;
-
     const { isCollapsed } = selection;
 
     if (isCollapsed) {
@@ -424,16 +406,16 @@ export default class Change {
       }
 
       const { node: block } = pos;
-
       const newBlock = block.format(attributes);
 
       document = document.replaceChild(newBlock, block);
     } else {
       const { startOffset, endOffset } = selection;
 
-      document.createRange(startOffset, endOffset).forEach(el => {
-        const { node: block } = el;
+      const range = document.createRange(startOffset, endOffset);
 
+      range.forEach(el => {
+        const { node: block } = el;
         const newBlock = block.format(attributes);
 
         document = document.replaceChild(newBlock, block);
@@ -450,7 +432,6 @@ export default class Change {
   formatInline(attributes) {
     let { value } = this;
     let { document, selection } = value;
-
     const { isCollapsed } = selection;
 
     if (isCollapsed) {
@@ -458,7 +439,9 @@ export default class Change {
     } else {
       const { startOffset, endOffset } = selection;
 
-      document.createRange(startOffset, endOffset).forEach(el => {
+      const range = document.createRange(startOffset, endOffset);
+
+      range.forEach(el => {
         const { node: block, startOffset, endOffset } = el;
 
         if (!block.isEmbed) {
@@ -474,16 +457,13 @@ export default class Change {
 
       value = value.setDocument(document).setSelection(selection);
     }
-
     this.value = value;
-
     return this;
   }
 
   insertText(text, attributes = {}) {
     let { value } = this;
     let { document, selection } = value;
-
     const { anchorOffset } = selection;
 
     document = document.insertAt(anchorOffset, text, attributes);
@@ -502,13 +482,10 @@ export default class Change {
   insertEmbed(data, attributes = {}) {
     let { value } = this;
     let { document, selection } = value;
-
     const { anchorOffset } = selection;
 
     document = document.insertAt(anchorOffset, data, attributes);
-
     selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
-
     value = value.setDocument(document).setSelection(selection);
 
     this.value = value;
@@ -519,15 +496,12 @@ export default class Change {
   insertFragment(fragment) {
     let { value } = this;
     let { document, selection } = value;
-
     const { anchorOffset } = selection;
 
     const delta = new Delta().retain(anchorOffset).concat(fragment);
 
     document = document.apply(delta);
-
     selection = selection.collapse().apply(delta);
-
     value = value.setDocument(document).setSelection(selection);
 
     this.value = value;
@@ -538,7 +512,6 @@ export default class Change {
   delete() {
     let { value } = this;
     let { document, selection } = value;
-
     const { isCollapsed, startOffset, endOffset } = selection;
 
     if (isCollapsed) {
@@ -572,7 +545,6 @@ export default class Change {
     }
 
     selection = selection.setAnchorOffset(startOffset).collapse();
-
     value = value.setDocument(document).setSelection(selection);
 
     this.value = value;
@@ -591,7 +563,6 @@ export default class Change {
     }
 
     document = document.replaceChild(newBlock, block);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -618,7 +589,6 @@ export default class Change {
     const newBlock = block.replaceChild(newInline, inline);
 
     document = document.replaceChild(newBlock, block);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -639,7 +609,6 @@ export default class Change {
     const newBlock = block.format(attributes);
 
     document = document.replaceChild(newBlock, block);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -664,11 +633,9 @@ export default class Change {
     }
 
     const newInline = inline.format(attributes);
-
     const newBlock = block.replaceChild(newInline, inline);
 
     document = document.replaceChild(newBlock, block);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -687,7 +654,6 @@ export default class Change {
     }
 
     document = document.removeChild(block);
-
     value = value.setDocument(document);
 
     this.value = value;
@@ -714,7 +680,6 @@ export default class Change {
     const newBlock = block.removeChild(inline);
 
     document = document.replaceChild(newBlock, block);
-
     value = value.setDocument(document);
 
     this.value = value;

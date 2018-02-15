@@ -4,9 +4,11 @@ import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
 import extendSchema from "./extendSchema";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 import { EOL, EDITOR_MODE_EDIT } from "../constants";
+
+const defaultContents = [{ insert: EOL }];
 
 export default class Value {
   static create(props = {}) {
@@ -14,18 +16,16 @@ export default class Value {
   }
 
   static fromJSON(props = {}) {
-    const {
-      schema: customSchema = {},
-      contents: delta = new Delta().insert(EOL)
-    } = props;
+    const { schema: customSchema = {}, contents = defaultContents } = props;
 
     const schema = extendSchema(defaultSchema, customSchema);
+
+    const delta = new Delta(contents);
 
     const builder = new DocumentBuilder(schema);
 
     delta.forEach(op => {
       const { insert: value, attributes = {} } = op;
-
       builder.insert(value, attributes);
     });
 
@@ -43,7 +43,6 @@ export default class Value {
       redoStack = [],
       inlineStyleOverride = null
     } = props;
-
     this.mode = mode;
     this.document = document;
     this.selection = selection;
@@ -53,7 +52,10 @@ export default class Value {
   }
 
   merge(props) {
-    return Value.create({ ...this, ...props });
+    return Value.create({
+      ...this,
+      ...props
+    });
   }
 
   get canUndo() {
@@ -77,11 +79,17 @@ export default class Value {
   }
 
   setDocument(document = Document.create()) {
-    return this.merge({ document, inlineStyleOverride: null });
+    return this.merge({
+      document,
+      inlineStyleOverride: null
+    });
   }
 
   setSelection(selection = Selection.create()) {
-    return this.merge({ selection, inlineStyleOverride: null });
+    return this.merge({
+      selection,
+      inlineStyleOverride: null
+    });
   }
 
   setMode(mode = EDITOR_MODE_EDIT) {
@@ -114,15 +122,19 @@ export default class Value {
       if (blockPos) {
         const { node: block, offset: blockOffset } = blockPos;
 
-        attributes = { ...attributes, ...block.style.toObject() };
+        attributes = {
+          ...attributes,
+          ...block.style.toObject()
+        };
 
         if (!block.isEmbed) {
           const inlinePos = block.createPosition(blockOffset, true);
 
           if (inlinePos) {
-            const { node: inline } = inlinePos;
-
-            attributes = { ...attributes, ...inline.style.toObject() };
+            attributes = {
+              ...attributes,
+              ...inlinePos.node.style.toObject()
+            };
           }
         }
       }
@@ -130,10 +142,11 @@ export default class Value {
       const { startOffset, endOffset } = selection;
 
       const blockStyles = [];
-
       const inlineStyles = [];
 
-      document.createRange(startOffset, endOffset).forEach(el => {
+      const range = document.createRange(startOffset, endOffset);
+
+      range.forEach(el => {
         const { node: block } = el;
 
         blockStyles.push(block.style);
@@ -141,10 +154,10 @@ export default class Value {
         if (!block.isEmbed) {
           const { startOffset, endOffset } = el;
 
-          block.createRange(startOffset, endOffset).forEach(el => {
-            const { node: inline } = el;
+          const range = block.createRange(startOffset, endOffset);
 
-            inlineStyles.push(inline.style);
+          range.forEach(el => {
+            inlineStyles.push(el.node.style);
           });
         }
       });
@@ -156,7 +169,10 @@ export default class Value {
           blockStyle = blockStyle.intersect(currentStyle);
         });
 
-        attributes = { ...attributes, ...blockStyle.toObject() };
+        attributes = {
+          ...attributes,
+          ...blockStyle.toObject()
+        };
       }
 
       if (inlineStyles.length) {
@@ -166,11 +182,17 @@ export default class Value {
           inlineStyle = inlineStyle.intersect(currentStyle);
         });
 
-        attributes = { ...attributes, ...inlineStyle.toObject() };
+        attributes = {
+          ...attributes,
+          ...inlineStyle.toObject()
+        };
       }
     }
 
-    attributes = { ...attributes, ...inlineStyleOverride };
+    attributes = {
+      ...attributes,
+      ...inlineStyleOverride
+    };
 
     return attributes;
   }

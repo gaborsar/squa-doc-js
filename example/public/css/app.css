@@ -161,23 +161,23 @@ body {
 }
 
 .ed-editor .checkable.ed-indent-1 {
-  margin-left: 47px;
+  margin-left: 57px;
 }
 
 .ed-editor .checkable.ed-indent-2 {
-  margin-left: 67px;
-}
-
-.ed-editor .checkable.ed-indent-3 {
   margin-left: 87px;
 }
 
+.ed-editor .checkable.ed-indent-3 {
+  margin-left: 117px;
+}
+
 .ed-editor .checkable.ed-indent-4 {
-  margin-left: 107px;
+  margin-left: 147px;
 }
 
 .ed-editor .checkable.ed-indent-5 {
-  margin-left: 127px;
+  margin-left: 177px;
 }
 
 .ed-editor .checkbox {

@@ -2,9 +2,9 @@ import React, { PureComponent } from "react";
 import { isEqual } from "lodash/fp";
 import Embed from "./Embed";
 import Block from "./Block";
-import defaultRenderWrapper from "../plugins/renderers/renderWrapper";
-import defaultRenderBlock from "../plugins/renderers/renderBlock";
-import defaultRenderEmbed from "../plugins/renderers/renderEmbed";
+import defaultRenderWrapper from "../defaults/renderers/renderWrapper";
+import defaultRenderBlock from "../defaults/renderers/renderBlock";
+import defaultRenderEmbed from "../defaults/renderers/renderEmbed";
 
 const emptyProps = {};
 
@@ -115,7 +115,9 @@ export default class Document extends PureComponent {
         }
 
         if (wrapperObj === undefined) {
-          wrapperObj = { componet: "" };
+          wrapperObj = {
+            componet: ""
+          };
         }
 
         if (wrapperObj) {

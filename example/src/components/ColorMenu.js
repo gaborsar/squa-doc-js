@@ -9,7 +9,8 @@ export default class ColorMenu extends PureComponent {
     };
   }
 
-  handleToggleClick = () => {
+  handleToggleClick = event => {
+    event.preventDefault();
     this.setState(state => {
       return {
         isOpen: !state.isOpen

@@ -3,21 +3,26 @@ import classNames from "classnames";
 
 export default class BlockTypeButton extends PureComponent {
   handleMouseDown = event => {
-    event.preventDefault();
     const { format, type, resetIndent, resetChecked, onClick } = this.props;
+
+    event.preventDefault();
+
     let attributes;
+
     if (format.type === type) {
       attributes = {
         type: null
       };
     } else {
       attributes = { type };
+
       if (resetIndent) {
         attributes = {
           ...attributes,
           indent: null
         };
       }
+
       if (resetChecked) {
         attributes = {
           ...attributes,
@@ -25,6 +30,7 @@ export default class BlockTypeButton extends PureComponent {
         };
       }
     }
+
     onClick(attributes);
   };
 

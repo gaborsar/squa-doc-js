@@ -4,7 +4,7 @@ import Block from "./Block";
 import DocumentEditor from "./DocumentEditor";
 import ParentMixin from "./mixins/Parent";
 import createKey from "./utils/createKey";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 export default class Document extends ParentMixin(Node) {
   static create(props = {}) {
@@ -17,14 +17,15 @@ export default class Document extends ParentMixin(Node) {
       key = createKey(),
       children = [Block.create()]
     } = props;
-
     super(schema, key);
-
     this.children = children;
   }
 
   merge(props) {
-    return Document.create({ ...this, ...props });
+    return Document.create({
+      ...this,
+      ...props
+    });
   }
 
   get length() {
