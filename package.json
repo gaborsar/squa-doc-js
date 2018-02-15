@@ -1,6 +1,6 @@
 {
   "name": "squa-editor",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Squa Editor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
@@ -47,6 +47,10 @@
     "transform": {
       ".*": "<rootDir>/node_modules/babel-jest"
     },
-    "unmockedModulePathPatterns": ["react", "enzyme", "quill-delta"]
+    "unmockedModulePathPatterns": [
+      "react",
+      "enzyme",
+      "quill-delta"
+    ]
   }
 }

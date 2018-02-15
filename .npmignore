@@ -1,6 +1,10 @@
 .babelrc
+.DS_Store
 .eslintrc.json
+.idea
+.vscode
 benchmarks
+coverage
 docs
 example
 Procfile
