@@ -1,82 +1,26 @@
 import React, { PureComponent } from "react";
-import { Value, Editor } from "../../../src/SquaDocEditor";
+import { Value, Editor } from "../../../src/SquaEditor";
 import Menu from "./Menu";
-import Checkable from "./Checkable";
-
-const schema = {
-  isBlockMark(markType) {
-    if (markType === "checked") {
-      return true;
-    }
-  }
-};
-
-function renderBlock(node, defaultProps) {
-  if (node.type === "checkable") {
-    const { blockKey, formatBlockByKey } = defaultProps;
-    return {
-      component: Checkable,
-      props: {
-        blockKey,
-        formatBlockByKey,
-        checked: !!node.getMark("checked")
-      }
-    };
-  }
-}
-
-function renderMark(mark) {
-  if (mark.type === "type" && mark.value === "checkable") {
-    return {
-      className: "checkable"
-    };
-  }
-  if (mark.type === "checked") {
-    return {
-      className: "checked"
-    };
-  }
-}
-
-function tokenizeNode(node) {
-  const tokens = [];
-  if (node.classList.contains("checkable")) {
-    tokens.push({
-      block: {
-        type: "checkable"
-      }
-    });
-  }
-  if (node.classList.contains("checked")) {
-    tokens.push({
-      block: {
-        checked: true
-      }
-    });
-  }
-  return tokens;
-}
-
-function onKeyDownEnter(change) {
-  change.formatBlock({
-    checked: null
-  });
-}
+import schema from "./editor/schema";
+import renderBlock from "./editor/renderBlock";
+import renderMark from "./editor/renderMark";
+import tokenizeNode from "./editor/tokenizeNode";
+import onKeyDown from "./editor/onKeyDown";
+import afterKeyDownEnter from "./editor/afterKeyDownEnter";
 
 export default class App extends PureComponent {
   constructor(props) {
     super(props);
     const { initialContents } = props;
-    const value = Value.fromJSON({
-      schema,
-      contents: initialContents
-    });
-    this.state = { value };
+    this.state = {
+      value: Value.fromJSON({
+        schema,
+        contents: initialContents
+      })
+    };
   }
 
   onChange = change => {
-    // eslint-disable-next-line no-console
-    console.log(change);
     const { value } = change;
     this.setState({ value });
   };
@@ -94,7 +38,8 @@ export default class App extends PureComponent {
             renderBlock={renderBlock}
             renderMark={renderMark}
             tokenizeNode={tokenizeNode}
-            onKeyDownEnter={onKeyDownEnter}
+            onKeyDown={onKeyDown}
+            afterKeyDownEnter={afterKeyDownEnter}
             onChange={this.onChange}
           />
         </div>

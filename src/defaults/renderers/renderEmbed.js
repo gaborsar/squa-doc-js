@@ -26,10 +26,11 @@ function renderInlineImage(node) {
 }
 
 export default function renderEmbed(node, defaultProps) {
-  if (node.type === "block-image") {
-    return renderBlockImage(node, defaultProps);
-  }
-  if (node.type === "inline-image") {
-    return renderInlineImage(node);
+  switch (node.type) {
+    case "block-image":
+      return renderBlockImage(node, defaultProps);
+
+    case "inline-image":
+      return renderInlineImage(node);
   }
 }

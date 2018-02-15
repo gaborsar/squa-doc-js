@@ -17,7 +17,6 @@ export default class DocumentEditor {
     node = node.prependChildren(this._inlines);
 
     this._blocks.push(node);
-
     this._inlines = [];
 
     return this;
@@ -35,18 +34,13 @@ export default class DocumentEditor {
 
   _retainInline(node) {
     this._inlines.push(node);
-
     return this;
   }
 
   retain(length) {
-    while (length) {
-      const node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       if (node.isBlock) {
         if (node.isEmbed) {
           this._retainBlockEmbed(node);
@@ -58,6 +52,8 @@ export default class DocumentEditor {
       }
 
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
@@ -71,7 +67,6 @@ export default class DocumentEditor {
     node = node.prependChildren(this._inlines);
 
     this._blocks.push(node);
-
     this._inlines = [];
 
     return this;
@@ -98,13 +93,9 @@ export default class DocumentEditor {
   }
 
   format(length, attributes) {
-    while (length) {
-      const node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       if (node.isBlock) {
         if (node.isEmbed) {
           this._formatAndPushBlockEmbed(node, attributes);
@@ -116,6 +107,8 @@ export default class DocumentEditor {
       }
 
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
@@ -127,7 +120,6 @@ export default class DocumentEditor {
     const block = Block.create({ schema, children }).format(attributes);
 
     this._blocks.push(block);
-
     this._inlines = [];
 
     return this;
@@ -180,7 +172,6 @@ export default class DocumentEditor {
 
       while (lines.length) {
         this._insertBlock(attributes);
-
         line = lines.shift();
 
         if (line.length) {
@@ -193,7 +184,6 @@ export default class DocumentEditor {
 
     if (typeof value === "object") {
       const { schema } = this._document;
-
       const type = Embed.type(value);
 
       if (schema.isBlockEmbed(type)) {
@@ -211,14 +201,12 @@ export default class DocumentEditor {
   }
 
   delete(length) {
-    while (length) {
-      const node = this._iterator.next(length);
+    let node = this._iterator.next(length);
 
-      if (!node) {
-        break;
-      }
-
+    while (length && node) {
       length -= node.length;
+
+      node = this._iterator.next(length);
     }
 
     return this;
@@ -241,13 +229,11 @@ export default class DocumentEditor {
         this.delete(op.delete);
       }
     });
-
     return this;
   }
 
   build() {
     this.retain(Infinity);
-
     return this._document.setChildren(this._blocks);
   }
 }

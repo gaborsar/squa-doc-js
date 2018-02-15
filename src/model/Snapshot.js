@@ -20,7 +20,10 @@ export default class Snapshot {
   }
 
   merge(props) {
-    return Snapshot.create({ ...this, ...props });
+    return Snapshot.create({
+      ...this,
+      ...props
+    });
   }
 
   setType(type) {
@@ -44,8 +47,11 @@ export default class Snapshot {
   }
 
   concat(other) {
-    return this.setUndoDelta(other.undoDelta.compose(this.undoDelta))
-      .setRedoDelta(this.redoDelta.compose(other.redoDelta))
+    const undoDelta = other.undoDelta.compose(this.undoDelta);
+    const redoDelta = this.redoDelta.compose(other.redoDelta);
+
+    return this.setUndoDelta(undoDelta)
+      .setRedoDelta(redoDelta)
       .setTimestamp(other.timestamp);
   }
 }

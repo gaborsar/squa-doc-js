@@ -2,7 +2,7 @@ import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
 import Document from "./Document";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 import { EOL } from "../constants";
 
@@ -55,7 +55,6 @@ export default class DocumentBuilder {
     const node = Block.create({ schema, children }).format(attributes);
 
     this._blocks.push(node);
-
     this._inlines = [];
 
     return this;
@@ -72,7 +71,6 @@ export default class DocumentBuilder {
 
       while (lines.length) {
         this._insertBlock(attributes);
-
         line = lines.shift();
 
         if (line.length) {
@@ -85,7 +83,6 @@ export default class DocumentBuilder {
 
     if (typeof value === "object") {
       const { _schema: schema } = this;
-
       const type = Embed.type(value);
 
       if (schema.isInlineEmbed(type)) {

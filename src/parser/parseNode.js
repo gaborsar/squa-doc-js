@@ -1,5 +1,5 @@
 import Delta from "quill-delta";
-import defaultTokenizeNode from "../plugins/tokenizers/tokenizeNode";
+import defaultTokenizeNode from "../defaults/tokenizers/tokenizeNode";
 
 import { EOL } from "../constants";
 

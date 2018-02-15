@@ -13,7 +13,10 @@ export default function normalizeNativePosition(node, offset) {
       isLineBreakNode(node) ||
       isImageNode(node)
     ) {
-      return { node, offset: 0 };
+      return {
+        node,
+        offset: 0
+      };
     }
 
     let length = 0;
@@ -22,7 +25,10 @@ export default function normalizeNativePosition(node, offset) {
       length += getNodeLength(node.childNodes[i]);
     }
 
-    return { node, offset: length };
+    return {
+      node,
+      offset: length
+    };
   }
 
   return { node, offset };

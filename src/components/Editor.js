@@ -7,7 +7,7 @@ import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
-import defaultOnKeyDown from "../plugins/handlers/onKeyDown";
+import defaultOnKeyDown from "../defaults/handlers/onKeyDown";
 
 import {
   EOL,
@@ -116,7 +116,7 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownBackspace = (change, event) => {
-    const { value, onKeyDownBackspace = sink, onChange = sink } = this.props;
+    const { value, afterKeyDownBackspace = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
@@ -133,7 +133,7 @@ export default class Editor extends PureComponent {
 
     change.delete();
 
-    onKeyDownBackspace(change, event);
+    afterKeyDownBackspace(change, event);
 
     if (isCollapsed && !event.metaKey && !event.altKey) {
       change.save("delete_character_backward");
@@ -145,7 +145,7 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownDelete = (change, event) => {
-    const { value, onKeyDownDelete = sink, onChange = sink } = this.props;
+    const { value, afterKeyDownDelete = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
@@ -162,7 +162,7 @@ export default class Editor extends PureComponent {
 
     change.delete();
 
-    onKeyDownDelete(change, event);
+    afterKeyDownDelete(change, event);
 
     if (isCollapsed && !event.metaKey && !event.altKey) {
       change.save("delete_character_forward");
@@ -174,7 +174,7 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownEnter = (change, event) => {
-    const { value, onKeyDownEnter = sink, onChange = sink } = this.props;
+    const { value, afterKeyDownEnter = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
@@ -183,9 +183,11 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insertText(EOL, value.getFormat());
+    const format = value.getFormat();
 
-    onKeyDownEnter(change, event);
+    change.insertText(EOL, format);
+
+    afterKeyDownEnter(change, event);
 
     change.save();
 
@@ -243,11 +245,14 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDown = event => {
-    const { value, onKeyDown = defaultOnKeyDown, onChange = sink } = this.props;
+    const { value, onKeyDown = sink, onChange = sink } = this.props;
 
     const change = value.change();
 
-    if (onKeyDown(change, event, this)) {
+    if (
+      onKeyDown(change, event, this) ||
+      defaultOnKeyDown(change, event, this)
+    ) {
       return onChange(change);
     }
 
@@ -373,7 +378,7 @@ export default class Editor extends PureComponent {
 
     event.preventDefault();
 
-    const attributes = value.getFormat();
+    const format = value.getFormat();
 
     const change = value
       .change()
@@ -381,7 +386,7 @@ export default class Editor extends PureComponent {
       .save();
 
     if (event.data) {
-      change.insertText(event.data, attributes).save("input");
+      change.insertText(event.data, format).save("input");
     }
 
     onChange(change);
@@ -473,7 +478,9 @@ export default class Editor extends PureComponent {
       change.delete();
     }
 
-    change.insertText(data, value.getFormat()).save();
+    const format = value.getFormat();
+
+    change.insertText(data, format).save();
 
     onChange(change);
   };

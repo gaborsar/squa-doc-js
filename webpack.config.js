@@ -4,14 +4,17 @@ const webpack = require("webpack");
 
 const base = {
   module: {
-    loaders:[
+    loaders: [
       {
         test: /.jsx?$/,
         loader: "babel-loader",
         exclude: /node_modules/,
         query: {
           presets: ["es2015", "react"],
-          plugins: ["transform-object-rest-spread", "transform-class-properties"]
+          plugins: [
+            "transform-object-rest-spread",
+            "transform-class-properties"
+          ]
         }
       },
       {
@@ -20,16 +23,16 @@ const base = {
       }
     ]
   }
-}
+};
 
 module.exports = [
   {
     ...base,
-    entry: __dirname + "/src/SquaDocEditor.js",
+    entry: __dirname + "/src/SquaEditor.js",
     output: {
       path: __dirname + "/dist",
-      filename: "SquaDocEditor.js",
-      library: ["SquaDocEditor"],
+      filename: "SquaEditor.js",
+      library: ["SquaEditor"],
       libraryTarget: "umd"
     },
     plugins: [

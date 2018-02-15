@@ -1,1 +1,5 @@
-# SquaDoc Editor
+# SquaEditor
+
+## Licence
+
+GNU LGPLv3

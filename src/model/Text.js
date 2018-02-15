@@ -3,7 +3,7 @@ import Node from "./Node";
 import LeafMixin from "./mixins/Leaf";
 import FormatMixin from "./mixins/Format";
 import createKey from "./utils/createKey";
-import defaultSchema from "../plugins/schema";
+import defaultSchema from "../defaults/schema";
 
 export default class Text extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
@@ -17,15 +17,16 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
       style = Style.create(),
       value = ""
     } = props;
-
     super(schema, key);
-
     this.style = style;
     this.value = value;
   }
 
   merge(props) {
-    return Text.create({ ...this, ...props });
+    return Text.create({
+      ...this,
+      ...props
+    });
   }
 
   get isEmbed() {

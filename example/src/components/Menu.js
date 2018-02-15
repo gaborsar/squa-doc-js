@@ -4,7 +4,7 @@ import BlockTypeButton from "./BlockTypeButton";
 import ToggleButton from "./ToggleButton";
 import ColorMenu from "./ColorMenu";
 import LinkButton from "./LinkButton";
-import { indent, outdent } from "../../../src/SquaDocEditor";
+import { indent, outdent } from "../../../src/SquaEditor";
 
 export default class Menu extends PureComponent {
   undo = () => {

@@ -9,7 +9,9 @@ export default class Pool {
         return pooled;
       }
     }
+
     this._values.push(value);
+
     return value;
   }
 }

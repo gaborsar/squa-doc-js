@@ -1,8 +1,10 @@
 {
-  "name": "squa-doc-editor",
-  "version": "2.0.1",
-  "description": "Squa-Doc Editor",
-  "main": "dist/SquaDocEditor.js",
+  "name": "squa-editor",
+  "version": "0.0.1",
+  "description": "Squa Editor",
+  "author": "Gabor Sar",
+  "license": "GNU LGPLv3",
+  "main": "dist/SquaEditor.js",
   "scripts": {
     "benchmark": "babel-node scripts/benchmarks/document.js",
     "build": "webpack",
@@ -15,8 +17,6 @@
     "start": "node example/src/server.js",
     "test": "npm run lint && npm run jest"
   },
-  "author": "Gabor Sar <gabor.sar@gmail.com>",
-  "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

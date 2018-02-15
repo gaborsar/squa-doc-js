@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
-import defaultRenderMark from "../plugins/renderers/renderMark";
+import defaultRenderMark from "../defaults/renderers/renderMark";
 
 const emptyProps = {};
 

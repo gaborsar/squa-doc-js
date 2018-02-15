@@ -1,8 +1,8 @@
 import React, { PureComponent } from "react";
 import Text from "./Text";
 import Embed from "./Embed";
-import defaultRenderEmbed from "../plugins/renderers/renderEmbed";
-import defaultRenderMark from "../plugins/renderers/renderMark";
+import defaultRenderEmbed from "../defaults/renderers/renderEmbed";
+import defaultRenderMark from "../defaults/renderers/renderMark";
 
 const emptyProps = {};
 
@@ -51,7 +51,7 @@ export default class Block extends PureComponent {
         if (markStyle) {
           style = {
             ...style,
-            markStyle
+            ...markStyle
           };
         }
       }

@@ -14,7 +14,6 @@ import {
 function removeListItem(change, event) {
   const { value } = change;
   const { document, selection } = value;
-
   const { isCollapsed, anchorOffset } = selection;
 
   if (!isCollapsed) {
@@ -42,7 +41,9 @@ function removeListItem(change, event) {
 
   event.preventDefault();
 
-  const newBlock = block.format({ type: null });
+  const newBlock = block.format({
+    type: null
+  });
 
   change.replaceBlock(newBlock, block).save();
 

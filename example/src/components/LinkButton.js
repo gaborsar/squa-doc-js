@@ -4,12 +4,9 @@ import classNames from "classnames";
 export default class LinkButton extends PureComponent {
   onMouseDownCallback = () => {
     const { onClick, format } = this.props;
-    if (format.link) {
-      onClick({ link: null });
-    } else {
-      const link = prompt("Enter link.");
-      onClick({ link });
-    }
+    onClick({
+      link: format.link ? null : prompt("Enter link.")
+    });
   };
 
   handleMouseDown = event => {

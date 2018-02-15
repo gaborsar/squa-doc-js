@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import defaultRenderMark from "../plugins/renderers/renderMark";
+import defaultRenderMark from "../defaults/renderers/renderMark";
 
 const emptyProps = {};
 

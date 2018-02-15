@@ -2,10 +2,6 @@ import Style from "../Style";
 
 const FormatMixin = superclass =>
   class extends superclass {
-    get attributes() {
-      return this.style.toObject();
-    }
-
     setStyle(style = Style.create()) {
       return this.merge({ style });
     }

@@ -34,23 +34,23 @@
 }
 
 .ed-document ul > li.ed-indent-1 {
-  margin-left: 65px;
+  margin-left: 75px;
 }
 
 .ed-document ul > li.ed-indent-2 {
-  margin-left: 85px;
-}
-
-.ed-document ul > li.ed-indent-3 {
   margin-left: 105px;
 }
 
+.ed-document ul > li.ed-indent-3 {
+  margin-left: 135px;
+}
+
 .ed-document ul > li.ed-indent-4 {
-  margin-left: 125px;
+  margin-left: 165px;
 }
 
 .ed-document ul > li.ed-indent-5 {
-  margin-left: 145px;
+  margin-left: 195px;
 }
 
 .ed-document ul > li:before {
@@ -102,31 +102,31 @@
 }
 
 .ed-document ol > li.ed-indent-1 {
-  margin-left: 65px;
+  margin-left: 75px;
   counter-reset: li-2 li-3 li-4 li-5;
   counter-increment: li-1;
 }
 
 .ed-document ol > li.ed-indent-2 {
-  margin-left: 85px;
+  margin-left: 105px;
   counter-reset: li-3 li-4 li-5;
   counter-increment: li-2;
 }
 
 .ed-document ol > li.ed-indent-3 {
-  margin-left: 105px;
+  margin-left: 135px;
   counter-reset: li-4 li-5;
   counter-increment: li-3;
 }
 
 .ed-document ol > li.ed-indent-4 {
-  margin-left: 125px;
+  margin-left: 165px;
   counter-reset: li-5;
   counter-increment: li-4;
 }
 
 .ed-document ol > li.ed-indent-5 {
-  margin-left: 145px;
+  margin-left: 195px;
   counter-increment: li-5;
 }
 
