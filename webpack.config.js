@@ -8,7 +8,9 @@ function factory({ name, main }) {
     entry: `${__dirname}/packages/${name}/src/index.js`,
     output: {
       path: `${__dirname}/packages/${name}`,
-      filename: main
+      filename: main,
+      library: name,
+      libraryTarget: "umd"
     },
     plugins: [
       new webpack.DefinePlugin({
