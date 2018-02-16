@@ -2,7 +2,8 @@
 
 ```jsx
 import React, { PureComponent } from "react";
-import { Delta, Value, Editor } from "squa-editor";
+import Delta from "quill-delta";
+import { Value, Editor } from "squa-editor";
 
 function isInlineEmbed(embedType) {
   if (embedType === "inline-image") {

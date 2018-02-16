@@ -2,7 +2,8 @@
 
 ```jsx
 import React, { PureComponent } from "react";
-import { Delta, Value, Editor } from "squa-editor";
+import Delta from "quill-delta";
+import { Value, Editor } from "squa-editor";
 
 function renderBlock(node) {
   switch (node.type) {
@@ -19,7 +20,7 @@ function tokenizeNode(node) {
     case "H1":
       tokens.push({ block: { type: "heading-one" } });
       break;
-    case "p":
+    case "P":
       tokens.push({ block: { type: "paragraph" } });
       break;
   }

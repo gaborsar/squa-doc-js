@@ -2,17 +2,18 @@
 
 ```jsx
 import React, { PureComponent } from "react";
-import { Delta, Value, Editor } from "squa-editor";
-
-const KEY_M = 77;
+import Delta from "quill-delta";
+import { Value, Editor } from "squa-editor";
 
 function onKeyDown(change, event) {
-  if (event.keyCode === KEY_M && event.ctrlKey) {
+  // ctrl + M = Enter
+  if (event.ctrlKey && event.keyCode === 77) {
     event.preventDefault();
     change
       .delete()
       .insertText("\n")
       .save();
+    return true;
   }
 }
 
