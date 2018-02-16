@@ -7,7 +7,7 @@ function factory({ name, main }) {
   return {
     entry: `${__dirname}/packages/${name}/src/index.js`,
     output: {
-      path: `${__dirname}/packages/${name}/lib/`,
+      path: `${__dirname}/packages/${name}`,
       filename: main
     },
     plugins: [
