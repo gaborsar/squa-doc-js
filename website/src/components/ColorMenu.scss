@@ -1,0 +1,32 @@
+.color-menu {
+  position: relative;
+
+  .color-menu__body {
+    z-index: 3;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100px;
+    padding: 5px 0 0 5px;
+    background: white;
+    border: 1px solid #ccc;
+
+    .button {
+      width: 20px;
+      height: 20px;
+      margin: 0 5px 5px 0;
+      padding: 0;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border 100ms;
+    }
+
+    .button:hover {
+      border: 1px solid black;
+    }
+  }
+}

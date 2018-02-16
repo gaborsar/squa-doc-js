@@ -3,8 +3,71 @@
 const webpack = require("webpack");
 const SquaEditor = require("./packages/squa-editor/package.json");
 
-function factory({ name, main }) {
+function genericFactory(config) {
   return {
+    ...config,
+    plugins: [
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify("production")
+      }),
+      new webpack.optimize.UglifyJsPlugin()
+    ],
+    module: {
+      loaders: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: ["es2015", "react"],
+              plugins: [
+                "transform-object-rest-spread",
+                "transform-class-properties"
+              ]
+            }
+          }
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            {
+              loader: "style-loader"
+            },
+            {
+              loader: "css-loader"
+            },
+            {
+              loader: "sass-loader"
+            }
+          ]
+        },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: "style-loader"
+            },
+            {
+              loader: "css-loader"
+            }
+          ]
+        },
+        {
+          test: /\.(ttf|woff|woff2|eot|svg)$/,
+          use: [
+            {
+              loader: "file-loader"
+            }
+          ]
+        }
+      ]
+    }
+  };
+}
+
+function packageFactory({ name, main }) {
+  return genericFactory({
     entry: `${__dirname}/packages/${name}/src/index.js`,
     output: {
       path: `${__dirname}/packages/${name}`,
@@ -12,13 +75,6 @@ function factory({ name, main }) {
       library: name,
       libraryTarget: "umd"
     },
-    plugins: [
-      new webpack.DefinePlugin({
-        "process.env": {
-          NODE_ENV: JSON.stringify("production")
-        }
-      })
-    ],
     externals: {
       react: {
         root: "React",
@@ -26,28 +82,18 @@ function factory({ name, main }) {
         commonjs: "react",
         amd: "react"
       }
-    },
-    module: {
-      loaders: [
-        {
-          test: /.jsx?$/,
-          loader: "babel-loader",
-          exclude: /node_modules/,
-          query: {
-            presets: ["es2015", "react"],
-            plugins: [
-              "transform-object-rest-spread",
-              "transform-class-properties"
-            ]
-          }
-        },
-        {
-          test: /\.css$/,
-          loader: "style-loader!css-loader"
-        }
-      ]
     }
-  };
+  });
 }
 
-module.exports = [factory(SquaEditor)];
+function appFactory(path) {
+  return genericFactory({
+    entry: `${__dirname}/${path}/src/index.js`,
+    output: {
+      path: `${__dirname}/${path}/public`,
+      filename: "bundle.js"
+    }
+  });
+}
+
+module.exports = [packageFactory(SquaEditor), appFactory("website")];

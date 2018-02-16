@@ -1,0 +1,38 @@
+.checkable {
+  margin: 15px 0 15px 27px;
+  margin-left: 27px;
+  font-size: 19px;
+  font-weight: lighter;
+  line-height: 30px;
+
+  &.ed-indent-1 {
+    margin-left: 57px;
+  }
+
+  &.ed-indent-2 {
+    margin-left: 87px;
+  }
+
+  &.ed-indent-3 {
+    margin-left: 117px;
+  }
+
+  &.ed-indent-4 {
+    margin-left: 147px;
+  }
+
+  &.ed-indent-5 {
+    margin-left: 177px;
+  }
+
+  .checkbox {
+    display: inline;
+    margin-right: 10px;
+    color: #555;
+    cursor: pointer;
+  }
+
+  .checked .ed-text {
+    color: #aaa;
+  }
+}
