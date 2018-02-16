@@ -2,7 +2,29 @@
 
 const webpack = require("webpack");
 
-const base = {
+module.exports = {
+  entry: `${__dirname}/src/SquaEditor.js`,
+  output: {
+    path: `${__dirname}/dist`,
+    filename: "SquaEditor.js",
+    library: ["SquaEditor"],
+    libraryTarget: "umd"
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: JSON.stringify("production")
+      }
+    })
+  ],
+  externals: {
+    react: {
+      root: "React",
+      commonjs2: "react",
+      commonjs: "react",
+      amd: "react"
+    }
+  },
   module: {
     loaders: [
       {
@@ -24,39 +46,3 @@ const base = {
     ]
   }
 };
-
-module.exports = [
-  {
-    ...base,
-    entry: __dirname + "/src/SquaEditor.js",
-    output: {
-      path: __dirname + "/dist",
-      filename: "SquaEditor.js",
-      library: ["SquaEditor"],
-      libraryTarget: "umd"
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        "process.env": {
-          NODE_ENV: JSON.stringify("production")
-        }
-      })
-    ],
-    externals: {
-      react: {
-        root: "React",
-        commonjs2: "react",
-        commonjs: "react",
-        amd: "react"
-      }
-    }
-  },
-  {
-    ...base,
-    entry: __dirname + "/example/src/app.js",
-    output: {
-      path: __dirname + "/example/public",
-      filename: "app.js"
-    }
-  }
-];

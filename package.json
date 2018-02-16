@@ -1,23 +1,26 @@
 {
   "name": "squa-editor",
-  "version": "0.0.5",
-  "description": "Squa Editor",
+  "version": "0.0.6",
+  "description": "SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "dist/SquaEditor.js",
   "scripts": {
     "benchmark": "babel-node scripts/benchmarks/document.js",
     "build": "webpack",
-    "format:example": "prettier --write 'example/src/**/*.js'",
-    "format:src": "prettier --write 'src/**/*.js'",
-    "format": "npm run format:src && npm run format:example",
+    "format": "prettier --write 'src/**/*.js'",
     "jest": "jest src",
     "lint": "eslint src",
     "prepublish": "npm run build",
-    "start": "node example/src/server.js",
     "test": "npm run lint && npm run jest"
   },
   "dependencies": {
+    "lodash": "^4.17.4",
+    "react-dom": "^16.0.0",
+    "react": "^16.0.0",
+    "quill-delta": "^3.5.0"
+  },
+  "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.0",
@@ -26,22 +29,14 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-react": "^6.24.0",
-    "classnames": "^2.2.5",
     "css-loader": "^0.28.0",
-    "express": "^4.16.2",
-    "lodash": "^4.17.4",
-    "quill-delta": "^3.5.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "enzyme": "^3.0.0",
+    "eslint-plugin-react": "^7.0.0",
+    "eslint": "^4.5.0",
+    "jest": "^21.1.0",
+    "prettier": "^1.8.2",
     "style-loader": "^0.18.0",
     "webpack": "^3.5.0"
-  },
-  "devDependencies": {
-    "enzyme": "^3.0.0",
-    "eslint": "^4.5.0",
-    "eslint-plugin-react": "^7.0.0",
-    "jest": "^21.1.0",
-    "prettier": "^1.8.2"
   },
   "jest": {
     "transform": {
