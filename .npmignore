@@ -7,6 +7,5 @@ benchmarks
 coverage
 docs
 Procfile
-scripts
 src
 webpack.config.js
