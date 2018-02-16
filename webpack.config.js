@@ -1,48 +1,51 @@
 "use strict";
 
 const webpack = require("webpack");
+const SquaEditor = require("./packages/squa-editor/package.json");
 
-module.exports = {
-  entry: `${__dirname}/src/SquaEditor.js`,
-  output: {
-    path: `${__dirname}/dist`,
-    filename: "SquaEditor.js",
-    library: ["SquaEditor"],
-    libraryTarget: "umd"
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production")
-      }
-    })
-  ],
-  externals: {
-    react: {
-      root: "React",
-      commonjs2: "react",
-      commonjs: "react",
-      amd: "react"
-    }
-  },
-  module: {
-    loaders: [
-      {
-        test: /.jsx?$/,
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        query: {
-          presets: ["es2015", "react"],
-          plugins: [
-            "transform-object-rest-spread",
-            "transform-class-properties"
-          ]
+function factory({ name, main }) {
+  return {
+    entry: `${__dirname}/packages/${name}/src/index.js`,
+    output: {
+      path: `${__dirname}/packages/${name}/lib/`,
+      filename: main
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        "process.env": {
+          NODE_ENV: JSON.stringify("production")
         }
-      },
-      {
-        test: /\.css$/,
-        loader: "style-loader!css-loader"
+      })
+    ],
+    externals: {
+      react: {
+        root: "React",
+        commonjs2: "react",
+        commonjs: "react",
+        amd: "react"
       }
-    ]
-  }
-};
+    },
+    module: {
+      loaders: [
+        {
+          test: /.jsx?$/,
+          loader: "babel-loader",
+          exclude: /node_modules/,
+          query: {
+            presets: ["es2015", "react"],
+            plugins: [
+              "transform-object-rest-spread",
+              "transform-class-properties"
+            ]
+          }
+        },
+        {
+          test: /\.css$/,
+          loader: "style-loader!css-loader"
+        }
+      ]
+    }
+  };
+}
+
+module.exports = [factory(SquaEditor)];

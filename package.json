@@ -1,17 +1,13 @@
 {
-  "name": "squa-editor",
-  "version": "0.0.6",
-  "description": "SquaEditor",
-  "author": "Gabor Sar",
+  "private": true,
+  "name": "squa-editor-packages",
   "license": "GNU LGPLv3",
-  "main": "dist/SquaEditor.js",
   "scripts": {
     "benchmark": "babel-node benchmarks/document.js",
     "build": "webpack",
-    "format": "prettier --write 'src/**/*.js' 'benchmarks/**/*.js'",
+    "format": "prettier --write 'packages/*/src/**/*.js' 'benchmarks/**/*.js'",
     "jest": "jest src",
     "lint": "eslint src",
-    "prepublish": "npm run build",
     "test": "npm run lint && npm run jest"
   },
   "dependencies": {

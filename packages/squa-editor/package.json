@@ -1,0 +1,14 @@
+{
+  "name": "squa-editor",
+  "version": "0.0.7",
+  "description": "SquaEditor",
+  "author": "Gabor Sar",
+  "license": "GNU LGPLv3",
+  "main": "lib/SquaEditor.js",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "react-dom": "^16.0.0",
+    "react": "^16.0.0",
+    "quill-delta": "^3.5.0"
+  }
+}
