@@ -1,10 +1,15 @@
 {
   "name": "squa-editor",
-  "version": "0.0.9",
-  "description": "SquaEditor",
+  "version": "0.0.10",
+  "description": "A rich text editor for React",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/SquaEditor.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gaborsar/squa-editor"
+  },
+  "keywords": ["rich", "text", "editor"],
   "dependencies": {
     "lodash": "^4.17.4",
     "react-dom": "^16.0.0",
