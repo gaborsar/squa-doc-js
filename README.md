@@ -25,16 +25,13 @@ import React, { PureComponent } from "react";
 import Delta from "quill-delta";
 import { Value, Editor } from "squa-editor";
 
-const initialValue = Value.fromJSON({
-  contents: new Delta().insert("Hello world!\n")
-});
+const contents = new Delta().insert("Hello world!\n");
+const value = Value.fromJSON({ contents });
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      value: initialValue
-    };
+    this.state = { value };
   }
 
   onChange = ({ value }) => {
@@ -48,7 +45,7 @@ class App extends PureComponent {
 }
 ```
 
-You can find more examples in the [documentation](packages/squa-editor/docs/api.md).
+You can find more examples in the [documentation](packages/squa-editor/README.md).
 
 ## Licence
 

@@ -1,4 +1,48 @@
-## Custom Event Handlers
+# Custom Event Handlers
+
+You can customize the behaviour of the editor using the following event handlers:
+
+## onChange
+
+This function is called after every `change` event.
+
+```jsx
+onChange: (change: Change) => void
+```
+
+## onKeyDown
+
+This function is called after every `keyDown` event, before the default handler of the editor. You can prevent the default handler by returning `true` from this function.
+
+```jsx
+onKeyDown: (change: Change, event: KeyboardEvent) => boolean;
+```
+
+## afterKeyDownBackspace
+
+This function is called after every `keyDownBacksapce` event, after the default handler of the editor.
+
+```jsx
+afterKeyDownBackspace: (change: Change, event: KeyboardEvent) => void;
+```
+
+## afterKeyDownDelete
+
+This function is called after every `keyDownDelete` event, after the default handler of the editor.
+
+```jsx
+afterKeyDownDelete: (change: Change, event: KeyboardEvent) => void;
+```
+
+## afterKeyDownEnter
+
+This function is called after every `keyDownEnter` event, after the default handler of the editor.
+
+```jsx
+afterKeyDownEnter: (change: Change, event: KeyboardEvent) => void;
+```
+
+## Example
 
 ```jsx
 import React, { PureComponent } from "react";
@@ -17,14 +61,13 @@ function onKeyDown(change, event) {
   }
 }
 
-const initialValue = Value.fromJSON({
-  contents: new Delta().insert("Hello world!\n")
-});
+const contents = new Delta().insert("Hello world!\n");
+const value = Value.fromJSON({ contents });
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { value: initialValue };
+    this.state = { value };
   }
 
   onChange = ({ value }) => {
