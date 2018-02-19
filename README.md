@@ -4,6 +4,20 @@ A rich text editor for [React](https://github.com/facebook/react), built around 
 
 Inspired by [Draft.js](https://github.com/facebook/draft-js), [Quill](https://github.com/quilljs/quill) and [Slate](https://github.com/ianstormtaylor/slate).
 
+## Installation
+
+First, you have to install [Quill's Delta](https://github.com/quilljs/delta):
+
+```
+npm install --save quill-delta
+```
+
+Then, you can install the editor:
+
+```
+npm install --save squa-editor
+```
+
 ## Quickstart
 
 ```jsx
@@ -35,12 +49,6 @@ class App extends PureComponent {
 ```
 
 You can find more examples in the [documentation](packages/squa-editor/docs/api.md).
-
-## Install
-
-```
-npm install squa-editor
-```
 
 ## Licence
 
