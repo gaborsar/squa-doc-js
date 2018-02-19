@@ -249,10 +249,7 @@ export default class Editor extends PureComponent {
 
     const change = value.change();
 
-    if (
-      onKeyDown(change, event, this) ||
-      defaultOnKeyDown(change, event, this)
-    ) {
+    if (onKeyDown(change, event) || defaultOnKeyDown(change, event)) {
       return onChange(change);
     }
 

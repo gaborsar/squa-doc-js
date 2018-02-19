@@ -1,6 +1,6 @@
 {
   "name": "squa-editor",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A rich text editor for React",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",

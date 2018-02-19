@@ -1,4 +1,8 @@
-## Custom Wrappers
+## Custom Wrapper Nodes
+
+To define custom wrapper nodes, you have to define your own `renderWrapper` function, potentially your own `renderBlock` function, and your own `tokenizeNode` function.
+
+## Example
 
 ```jsx
 import React, { PureComponent } from "react";
@@ -8,32 +12,41 @@ import { Value, Editor } from "squa-editor";
 function renderWrapper(node) {
   switch (node.type) {
     case "unordered-list-item":
-      return { component: "ul" };
+      return {
+        component: "ul"
+      };
     case "ordered-list-item":
-      return { component: "ol" };
+      return {
+        component: "ol"
+      };
   }
 }
 
 function renderBlock(node) {
   switch (node.type) {
     case "unordered-list-item":
-      return { component: "li" };
     case "ordered-list-item":
-      return { component: "li" };
+      return {
+        component: "li"
+      };
   }
 }
 
-function tokenizeNode(node) {
+function tokenizeNode(node, context) {
   const tokens = [];
   switch (node.nodeName) {
     case "UL":
       tokens.push({
-        wrapper: { type: "unordered-list" }
+        wrapper: {
+          type: "unordered-list"
+        }
       });
       break;
     case "OL":
       tokens.push({
-        wrapper: { type: "ordered-list" }
+        wrapper: {
+          type: "ordered-list"
+        }
       });
       break;
     case "LI":
@@ -41,7 +54,7 @@ function tokenizeNode(node) {
         tokens.push({
           block: { type: "unordered-list-item" }
         });
-      } else if (context.wrapper.type === "ordered-list") {
+      } else {
         tokens.push({
           block: { type: "ordered-list-item" }
         });
@@ -51,26 +64,38 @@ function tokenizeNode(node) {
   return tokens;
 }
 
-const initialValue = Value.fromJSON({
-  contents: new Delta()
-    .insert("First unordered list item")
-    .insert("\n", { type: "unordered-list-item" })
-    .insert("Second unordered list item")
-    .insert("\n", { type: "unordered-list-item" })
-    .insert("Third unordered list item")
-    .insert("\n", { type: "unordered-list-item" })
-    .insert("First ordered list item")
-    .insert("\n", { type: "ordered-list-item" })
-    .insert("Second ordered list item")
-    .insert("\n", { type: "ordered-list-item" })
-    .insert("Third ordered list item")
-    .insert("\n", { type: "ordered-list-item" })
-});
+const contents = new Delta()
+  .insert("First unordered list item")
+  .insert("\n", {
+    type: "unordered-list-item"
+  })
+  .insert("Second unordered list item")
+  .insert("\n", {
+    type: "unordered-list-item"
+  })
+  .insert("Third unordered list item")
+  .insert("\n", {
+    type: "unordered-list-item"
+  })
+  .insert("First ordered list item")
+  .insert("\n", {
+    type: "ordered-list-item"
+  })
+  .insert("Second ordered list item")
+  .insert("\n", {
+    type: "ordered-list-item"
+  })
+  .insert("Third ordered list item")
+  .insert("\n", {
+    type: "ordered-list-item"
+  });
+
+const value = Value.fromJSON({ contents });
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { value: initialValue };
+    this.state = { value };
   }
 
   onChange = ({ value }) => {

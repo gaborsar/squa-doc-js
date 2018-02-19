@@ -1,4 +1,8 @@
-## Custom Blocks
+## Custom Block Nodes
+
+To define custom block nodes, you have to define your own `renderBlock` function, and your own `tokenizeNode` function.
+
+## Example
 
 ```jsx
 import React, { PureComponent } from "react";
@@ -8,9 +12,13 @@ import { Value, Editor } from "squa-editor";
 function renderBlock(node) {
   switch (node.type) {
     case "heading-one":
-      return { component: "h1" };
+      return {
+        component: "h1"
+      };
     case "paragraph":
-      return { component: "p" };
+      return {
+        component: "p"
+      };
   }
 }
 
@@ -18,27 +26,39 @@ function tokenizeNode(node) {
   const tokens = [];
   switch (node.nodeName) {
     case "H1":
-      tokens.push({ block: { type: "heading-one" } });
+      tokens.push({
+        block: {
+          type: "heading-one"
+        }
+      });
       break;
     case "P":
-      tokens.push({ block: { type: "paragraph" } });
+      tokens.push({
+        block: {
+          type: "paragraph"
+        }
+      });
       break;
   }
   return tokens;
 }
 
-const initialValue = Value.fromJSON({
-  contents: new Delta()
-    .insert("Heading one")
-    .insert("\n", { type: "heading-one" })
-    .insert("Paragraph")
-    .insert("\n", { type: "paragraph" })
-});
+const contents = new Delta()
+  .insert("Heading one")
+  .insert("\n", {
+    type: "heading-one"
+  })
+  .insert("Paragraph")
+  .insert("\n", {
+    type: "paragraph"
+  });
+
+const value = Value.fromJSON({ contents });
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { value: initialValue };
+    this.state = { value };
   }
 
   onChange = ({ value }) => {
