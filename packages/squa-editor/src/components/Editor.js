@@ -573,6 +573,7 @@ export default class Editor extends PureComponent {
 
     const { value } = this.props;
     const { selection: editorSelection } = value;
+    const { isBackward } = editorSelection;
 
     const domRange = getNativeRange(
       this.rootNode,
@@ -586,13 +587,44 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    nativeSelection.removeAllRanges();
+    if (
+      domRange.anchorNode === nativeSelection.anchorNode &&
+      domRange.anchorOffset === nativeSelection.anchorOffset &&
+      domRange.focusNode === nativeSelection.focusNode &&
+      domRange.focusOffset === nativeSelection.focusOffset
+    ) {
+      return;
+    }
 
-    const nativeRange = document.createRange();
-    nativeSelection.addRange(nativeRange);
+    if (nativeSelection.setBaseAndExtent) {
+      nativeSelection.setBaseAndExtent(
+        domRange.anchorNode,
+        domRange.anchorOffset,
+        domRange.focusNode,
+        domRange.focusOffset
+      );
+    } else if (nativeSelection.extend) {
+      const nativeRange = document.createRange();
 
-    nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
-    nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
+      nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
+
+      nativeSelection.removeAllRanges();
+      nativeSelection.addRange(nativeRange);
+      nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
+    } else {
+      const nativeRange = document.createRange();
+
+      if (isBackward) {
+        nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
+        nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
+      } else {
+        nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
+        nativeRange.setEnd(domRange.focusNode, domRange.focusOffset);
+      }
+
+      nativeSelection.removeAllRanges();
+      nativeSelection.addRange(nativeRange);
+    }
   }
 
   componentDidUpdate() {
