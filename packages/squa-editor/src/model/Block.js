@@ -4,23 +4,17 @@ import Node from "./Node";
 import BlockEditor from "./BlockEditor";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
-import createKey from "./utils/createKey";
-import defaultSchema from "../defaults/schema";
+import EditMixin from "./mixins/Edit";
 
 import { EOL } from "../constants";
 
-export default class Block extends FormatMixin(ParentMixin(Node)) {
+export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   static create(props = {}) {
     return new Block(props);
   }
 
   constructor(props = {}) {
-    const {
-      schema = defaultSchema,
-      key = createKey(),
-      style = Style.create(),
-      children = []
-    } = props;
+    const { schema, key, style = Style.create(), children = [] } = props;
     super(schema, key);
     this.style = style;
     this.children = children;
@@ -111,32 +105,5 @@ export default class Block extends FormatMixin(ParentMixin(Node)) {
 
   edit() {
     return new BlockEditor(this);
-  }
-
-  formatAt(startOffset, endOffset, attributes) {
-    return this.edit()
-      .retain(startOffset)
-      .format(endOffset - startOffset, attributes)
-      .build();
-  }
-
-  insertAt(offset, value, attributes = {}) {
-    return this.edit()
-      .retain(offset)
-      .insert(value, attributes)
-      .build();
-  }
-
-  deleteAt(startOffset, endOffset) {
-    return this.edit()
-      .retain(startOffset)
-      .delete(endOffset - startOffset)
-      .build();
-  }
-
-  apply(delta) {
-    return this.edit()
-      .apply(delta)
-      .build();
   }
 }

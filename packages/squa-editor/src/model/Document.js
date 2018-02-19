@@ -1,22 +1,16 @@
 import Delta from "quill-delta";
 import Node from "./Node";
-import Block from "./Block";
 import DocumentEditor from "./DocumentEditor";
 import ParentMixin from "./mixins/Parent";
-import createKey from "./utils/createKey";
-import defaultSchema from "../defaults/schema";
+import EditMixin from "./mixins/Edit";
 
-export default class Document extends ParentMixin(Node) {
+export default class Document extends EditMixin(ParentMixin(Node)) {
   static create(props = {}) {
     return new Document(props);
   }
 
   constructor(props = {}) {
-    const {
-      schema = defaultSchema,
-      key = createKey(),
-      children = [Block.create()]
-    } = props;
+    const { schema, key, children = [] } = props;
     super(schema, key);
     this.children = children;
   }
@@ -44,32 +38,5 @@ export default class Document extends ParentMixin(Node) {
 
   edit() {
     return new DocumentEditor(this);
-  }
-
-  formatAt(startOffset, endOffset, attributes) {
-    return this.edit()
-      .retain(startOffset)
-      .format(endOffset - startOffset, attributes)
-      .build();
-  }
-
-  insertAt(offset, value, attributes = {}) {
-    return this.edit()
-      .retain(offset)
-      .insert(value, attributes)
-      .build();
-  }
-
-  deleteAt(startOffset, endOffset) {
-    return this.edit()
-      .retain(startOffset)
-      .delete(endOffset - startOffset)
-      .build();
-  }
-
-  apply(delta) {
-    return this.edit()
-      .apply(delta)
-      .build();
   }
 }

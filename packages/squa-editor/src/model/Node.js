@@ -1,7 +1,7 @@
 import createKey from "./utils/createKey";
 
 export default class Node {
-  constructor(schema, key) {
+  constructor(schema, key = createKey()) {
     this.schema = schema;
     this.key = key;
   }
