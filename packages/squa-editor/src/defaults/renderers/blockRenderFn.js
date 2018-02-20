@@ -1,20 +1,5 @@
-export default function renderBlock(node) {
-  switch (node.type) {
-    case "unordered-list-item":
-      return {
-        component: "li"
-      };
-
-    case "ordered-list-item":
-      return {
-        component: "li"
-      };
-
-    case "code":
-      return {
-        component: "div"
-      };
-
+export default function blockRenderFn(node) {
+  switch (node.getMark("type")) {
     case "heading-one":
       return {
         component: "h1"
@@ -45,14 +30,32 @@ export default function renderBlock(node) {
         component: "h6"
       };
 
+    case "blockquote":
+      return {
+        component: "blockquote"
+      };
+
     case "paragraph":
       return {
         component: "p"
       };
 
-    case "blockquote":
+    case "unordered-list-item":
       return {
-        component: "blockquote"
+        wrapper: "ul",
+        component: "li"
+      };
+
+    case "ordered-list-item":
+      return {
+        wrapper: "ol",
+        component: "li"
+      };
+
+    case "code":
+      return {
+        wrapper: "pre",
+        component: "div"
       };
 
     default:

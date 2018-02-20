@@ -4,15 +4,22 @@ import isIgnoredNode from "./isIgnoredNode";
 import isBlockNode from "./isBlockNode";
 import isEmbedNode from "./isEmbedNode";
 import isLineBreakNode from "./isLineBreakNode";
-import isImageNode from "./isImageNode";
 
 export default function getNodeLength(node) {
   if (isTextNode(node)) {
     return node.nodeValue.length;
   }
 
-  if (isElementNode(node) && !isIgnoredNode(node)) {
-    if (isEmbedNode(node) || isLineBreakNode(node) || isImageNode(node)) {
+  if (isElementNode(node)) {
+    if (isEmbedNode(node)) {
+      return 1;
+    }
+
+    if (isIgnoredNode(node)) {
+      return 0;
+    }
+
+    if (isLineBreakNode(node)) {
       return 1;
     }
 

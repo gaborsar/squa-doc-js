@@ -180,6 +180,64 @@
   text-align: justify;
 }
 
+/* COLORS */
+
+.ed-color-silver {
+  color: silver;
+}
+
+.ed-color-gray {
+  color: gray;
+}
+
+.ed-color-maroon {
+  color: maroon;
+}
+
+.ed-color-red {
+  color: red;
+}
+
+.ed-color-purple {
+  color: purple;
+}
+
+.ed-color-fuchsia {
+  color: fuchsia;
+}
+
+.ed-color-green {
+  color: green;
+}
+
+.ed-color-lime {
+  color: lime;
+}
+
+.ed-color-olive {
+  color: olive;
+}
+
+.ed-color-yellow {
+  color: yellow;
+}
+
+.ed-color-navy {
+  color: navy;
+}
+
+.ed-color-blue {
+  color: blue;
+}
+
+.ed-color-teal {
+  color: teal;
+}
+
+.ed-color-aqua {
+  color: aqua;
+}
+
 /* EMBEDS */
 
 .ed-document .ed-embed {

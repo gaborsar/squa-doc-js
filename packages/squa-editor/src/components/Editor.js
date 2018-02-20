@@ -25,7 +25,9 @@ import "./Editor.css";
 
 const sink = () => {};
 
-const preventDefault = event => event.preventDefault();
+const preventDefault = event => {
+  event.preventDefault();
+};
 
 export default class Editor extends PureComponent {
   constructor(props) {
@@ -487,7 +489,7 @@ export default class Editor extends PureComponent {
 
     const change = value.change();
 
-    if (onPaste(change, event, this)) {
+    if (onPaste(change, event)) {
       return onChange(change);
     }
 
@@ -634,15 +636,15 @@ export default class Editor extends PureComponent {
   render() {
     const {
       value,
-      renderWrapper,
-      renderBlock,
-      renderEmbed,
-      renderMark
+      blockStyleFn,
+      inlineStyleFn,
+      blockRenderFn,
+      embedRenderFn
     } = this.props;
     const { document } = value;
 
     return (
-      <div className="ed-editor" data-editor>
+      <div className="ed-editor">
         <ErrorBoundary>
           <div
             ref={this.setRootNode}
@@ -665,16 +667,16 @@ export default class Editor extends PureComponent {
             <Document
               key={document.key}
               node={document}
-              renderWrapper={renderWrapper}
-              renderBlock={renderBlock}
-              renderEmbed={renderEmbed}
-              renderMark={renderMark}
               replaceBlockByKey={this.replaceBlockByKey}
-              replaceInlineByKey={this.replaceInlineByKey}
               formatBlockByKey={this.formatBlockByKey}
-              formatInlineByKey={this.formatInlineByKey}
               deleteBlockByKey={this.deleteBlockByKey}
+              replaceInlineByKey={this.replaceInlineByKey}
+              formatInlineByKey={this.formatInlineByKey}
               deleteInlineByKey={this.deleteInlineByKey}
+              blockRenderFn={blockRenderFn}
+              embedRenderFn={embedRenderFn}
+              blockStyleFn={blockStyleFn}
+              inlineStyleFn={inlineStyleFn}
             />
           </div>
         </ErrorBoundary>

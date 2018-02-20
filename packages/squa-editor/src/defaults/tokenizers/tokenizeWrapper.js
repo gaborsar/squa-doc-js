@@ -4,7 +4,8 @@ export default function tokenizeWrapper(node) {
   switch (node.nodeName) {
     case "UL":
       tokens.push({
-        wrapper: {
+        type: "wrapper-node",
+        payload: {
           type: "unordered-list"
         }
       });
@@ -12,7 +13,8 @@ export default function tokenizeWrapper(node) {
 
     case "OL":
       tokens.push({
-        wrapper: {
+        type: "wrapper-node",
+        payload: {
           type: "ordered-list"
         }
       });
@@ -20,7 +22,8 @@ export default function tokenizeWrapper(node) {
 
     case "PRE":
       tokens.push({
-        wrapper: {
+        type: "wrapper-node",
+        payload: {
           type: "code"
         }
       });

@@ -45,15 +45,6 @@ describe("normalizeNativePosition()", () => {
     expect(offset).toBe(0);
   });
 
-  test("image node", () => {
-    const img = document.createElement("img");
-
-    const { node, offset } = normalizeNativePosition(img, 1);
-
-    expect(node).toBe(img);
-    expect(offset).toBe(0);
-  });
-
   test("parent node", () => {
     const div = document.createElement("div");
 

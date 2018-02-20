@@ -1,25 +1,20 @@
-export default function tokenizeInlineImage(node, context) {
+export default function tokenizeInlineImage(node) {
   const tokens = [];
 
-  if (node.nodeName === "IMG") {
-    const value = node.getAttribute("src");
-    const alt = node.getAttribute("alt");
-
-    if (value) {
-      let attributes = context.inline;
-
-      if (alt) {
-        attributes = {
-          ...attributes,
-          alt
-        };
+  if (node.nodeName === "IMG" && node.hasAttribute("src")) {
+    tokens.push({
+      type: "inline-embed",
+      payload: {
+        "inline-image": node.getAttribute("src")
       }
+    });
 
+    if (node.hasAttribute("alt")) {
       tokens.push({
-        insert: {
-          "inline-image": value
-        },
-        attributes
+        type: "inline-style",
+        payload: {
+          alt: node.getAttribute("alt")
+        }
       });
     }
   }

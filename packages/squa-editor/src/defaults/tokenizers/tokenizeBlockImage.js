@@ -1,53 +1,35 @@
-import findChildNode from "../../dom/findChildNode";
-import isImageNode from "../../dom/isImageNode";
-import isFigcaptionNode from "../../dom/isFigcaptionNode";
-
-export default function tokenizeBlockImage(node, context) {
+export default function tokenizeBlockImage(node) {
   const tokens = [];
 
   if (node.nodeName === "FIGURE") {
-    let type;
-    let value;
-    let alt;
-    let caption;
+    const img = node.childNodes[0];
+    const figcaption = node.childNodes[1];
 
-    const img = findChildNode(node, isImageNode);
-
-    if (img) {
-      type = "block-image";
-      value = img.getAttribute("src");
-      alt = img.getAttribute("alt");
-    }
-
-    const figcaption = findChildNode(node, isFigcaptionNode);
-
-    if (figcaption) {
-      caption = figcaption.textContent;
-    }
-
-    if (type && value) {
-      let attributes = context.block;
-
-      if (alt) {
-        attributes = {
-          ...attributes,
-          alt
-        };
-      }
-
-      if (caption) {
-        attributes = {
-          ...attributes,
-          caption
-        };
-      }
-
+    if (img && img.nodeName === "IMG" && img.hasAttribute("src")) {
       tokens.push({
-        insert: {
-          [type]: value
-        },
-        attributes
+        type: "block-embed",
+        payload: {
+          "block-image": img.getAttribute("src")
+        }
       });
+
+      if (img.hasAttribute("alt")) {
+        tokens.push({
+          type: "block-style",
+          payload: {
+            alt: img.getAttribute("alt")
+          }
+        });
+      }
+
+      if (figcaption) {
+        tokens.push({
+          type: "block-style",
+          payload: {
+            caption: figcaption.textContent
+          }
+        });
+      }
     }
   }
 

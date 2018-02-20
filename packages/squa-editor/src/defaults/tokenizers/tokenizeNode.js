@@ -8,8 +8,8 @@ export default function tokenizeNode(node, context) {
   const tokens = [];
 
   tokens.push(
-    ...tokenizeBlockImage(node, context),
-    ...tokenizeInlineImage(node, context),
+    ...tokenizeBlockImage(node),
+    ...tokenizeInlineImage(node),
     ...tokenizeWrapper(node),
     ...tokenizeBlock(node, context),
     ...tokenizeMark(node)

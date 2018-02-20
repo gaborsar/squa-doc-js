@@ -1,183 +1,174 @@
 import React, { PureComponent } from "react";
-import { isEqual } from "lodash/fp";
+import joinClassNames from "classnames";
 import Embed from "./Embed";
 import Block from "./Block";
-import defaultRenderWrapper from "../defaults/renderers/renderWrapper";
-import defaultRenderBlock from "../defaults/renderers/renderBlock";
-import defaultRenderEmbed from "../defaults/renderers/renderEmbed";
-
-const emptyProps = {};
+import defaultBlockRenderFn from "../defaults/renderers/blockRenderFn";
+import defaultEmbedRenderFn from "../defaults/renderers/embedRenderFn";
+import defaultBlockStyleFn from "../defaults/renderers/blockStyleFn";
 
 export default class Document extends PureComponent {
   render() {
     const {
       node,
-      renderWrapper: customRenderWrapper,
-      renderBlock: customRenderBlock,
-      renderEmbed: customRenderEmbed,
-      renderMark: customRenderMark,
       replaceBlockByKey,
-      replaceInlineByKey,
       formatBlockByKey,
-      formatInlineByKey,
       deleteBlockByKey,
-      deleteInlineByKey
+      replaceInlineByKey,
+      formatInlineByKey,
+      deleteInlineByKey,
+      blockRenderFn: customBlockRenderFn,
+      embedRenderFn: customEmbedRenderFn,
+      blockStyleFn: customBlockStyleFn,
+      inlineStyleFn: customInlineStyleFn
     } = this.props;
 
-    const children = [];
-
-    let buffer = {
-      key: "",
-      component: "",
-      props: emptyProps,
-      children: []
-    };
-
-    const flush = (key = "", component = "", props = emptyProps) => {
-      if (buffer.children.length !== 0) {
-        if (buffer.component) {
-          const {
-            component: WrapperComponent,
-            props: wrapperProps,
-            key: wrapperKey,
-            children: wrapperChildren
-          } = buffer;
-
-          children.push(
-            <WrapperComponent
-              {...wrapperProps}
-              key={wrapperKey}
-              data-wrapper
-              data-key={wrapperKey}
-            >
-              {wrapperChildren}
-            </WrapperComponent>
-          );
-        } else {
-          children.push(...buffer.children);
-        }
-      }
-
-      buffer = {
-        key,
-        component,
-        props,
-        children: []
-      };
-    };
+    const blocks = [];
 
     node.children.forEach(child => {
-      if (child.isEmbed) {
-        flush(child.key);
+      const classNames = [];
 
+      child.style.marks.forEach(mark => {
+        let markObj;
+
+        if (customBlockStyleFn) {
+          markObj = customBlockStyleFn(mark);
+        }
+
+        if (!markObj) {
+          markObj = defaultBlockStyleFn(mark);
+        }
+
+        if (!markObj) {
+          markObj = {};
+        }
+
+        const { className: markClassName } = markObj;
+
+        if (markClassName) {
+          classNames.push(markClassName);
+        }
+      });
+
+      if (child.isEmbed) {
         const defaultEmbedProps = {
           blockKey: child.key,
-          replaceBlockByKey: replaceBlockByKey,
-          formatBlockByKey: formatBlockByKey,
-          deleteBlockByKey: deleteBlockByKey
+          replaceBlockByKey,
+          formatBlockByKey,
+          deleteBlockByKey
         };
 
         let embedObj;
 
-        if (customRenderEmbed) {
-          embedObj = customRenderEmbed(child, defaultEmbedProps);
+        if (customEmbedRenderFn) {
+          embedObj = customEmbedRenderFn(child, defaultEmbedProps);
         }
 
-        if (embedObj === undefined) {
-          embedObj = defaultRenderEmbed(child, defaultEmbedProps);
+        if (!embedObj) {
+          embedObj = defaultEmbedRenderFn(child, defaultEmbedProps);
         }
 
-        if (embedObj) {
-          const {
-            component: EmbedComponent,
-            props: embedProps = emptyProps
-          } = embedObj;
-
-          buffer.children.push(
-            <Embed
-              key={child.key}
-              node={child}
-              EmbedComponent={EmbedComponent}
-              embedProps={embedProps}
-              renderMark={customRenderMark}
-            />
-          );
+        if (!embedObj) {
+          throw new Error(`Invalid embed: ${child.type}`);
         }
+
+        const { component, props } = embedObj;
+
+        const element = (
+          <Embed
+            key={child.key}
+            node={child}
+            EmbedComponent={component}
+            embedProps={props}
+            embedClassName={joinClassNames(classNames)}
+          />
+        );
+
+        blocks.push({ key: child.key, element });
       } else {
-        let wrapperObj;
+        const defaultBlockProps = {
+          blockKey: child.key,
+          replaceBlockByKey,
+          formatBlockByKey,
+          deleteBlockByKey
+        };
 
-        if (customRenderWrapper) {
-          wrapperObj = customRenderWrapper(child);
+        let blockObj;
+
+        if (customBlockRenderFn) {
+          blockObj = customBlockRenderFn(child, defaultBlockProps);
         }
 
-        if (wrapperObj === undefined) {
-          wrapperObj = defaultRenderWrapper(child);
+        if (!blockObj) {
+          blockObj = defaultBlockRenderFn(child, defaultBlockProps);
         }
 
-        if (wrapperObj === undefined) {
-          wrapperObj = {
-            componet: ""
-          };
+        if (!blockObj) {
+          throw new Error(`Invalid block: ${child.type}`);
         }
 
-        if (wrapperObj) {
-          const defaultBlockProps = {
-            blockKey: child.key,
-            replaceBlockByKey: replaceBlockByKey,
-            formatBlockByKey: formatBlockByKey,
-            deleteBlockByKey: deleteBlockByKey
-          };
+        const { wrapper, component, props } = blockObj;
 
-          let blockObj;
+        const element = (
+          <Block
+            key={child.key}
+            node={child}
+            BlockComponent={component}
+            blockProps={props}
+            blockClassName={joinClassNames(classNames)}
+            replaceInlineByKey={replaceInlineByKey}
+            formatInlineByKey={formatInlineByKey}
+            deleteInlineByKey={deleteInlineByKey}
+            embedRenderFn={customEmbedRenderFn}
+            inlineStyleFn={customInlineStyleFn}
+          />
+        );
 
-          if (customRenderBlock) {
-            blockObj = customRenderBlock(child, defaultBlockProps);
-          }
-
-          if (blockObj === undefined) {
-            blockObj = defaultRenderBlock(child, defaultBlockProps);
-          }
-
-          if (blockObj) {
-            const {
-              component: WrapperComponent,
-              props: wrapperProps = emptyProps
-            } = wrapperObj;
-
-            if (
-              buffer.component !== WrapperComponent ||
-              !isEqual(buffer.props, wrapperProps)
-            ) {
-              flush(child.key, WrapperComponent, wrapperProps);
-            }
-
-            const {
-              component: BlockComponent,
-              props: blockProps = emptyProps
-            } = blockObj;
-
-            buffer.children.push(
-              <Block
-                key={child.key}
-                node={child}
-                BlockComponent={BlockComponent}
-                blockProps={blockProps}
-                renderEmbed={customRenderEmbed}
-                renderMark={customRenderMark}
-                replaceInlineByKey={replaceInlineByKey}
-                formatInlineByKey={formatInlineByKey}
-                deleteInlineByKey={deleteInlineByKey}
-              />
-            );
-          }
-        }
+        blocks.push({ wrapper, key: child.key, element });
       }
     });
 
-    flush();
+    const children = [];
+
+    let CurrentWrapper;
+    let currentKey;
+    let currentChildren = [];
+
+    blocks.forEach(block => {
+      const { wrapper, key, element } = block;
+
+      if (CurrentWrapper !== wrapper) {
+        if (currentChildren.length) {
+          if (CurrentWrapper) {
+            children.push(
+              <CurrentWrapper key={currentKey}>
+                {currentChildren}
+              </CurrentWrapper>
+            );
+          } else {
+            children.push(...currentChildren);
+          }
+        }
+
+        CurrentWrapper = wrapper;
+        currentKey = key;
+        currentChildren = [];
+      }
+
+      currentChildren.push(element);
+    });
+
+    if (currentChildren.length) {
+      if (CurrentWrapper) {
+        children.push(
+          <CurrentWrapper key={currentKey}>{currentChildren}</CurrentWrapper>
+        );
+      } else {
+        children.push(...currentChildren);
+      }
+    }
 
     return (
-      <div className="ed-document" data-document data-key={node.key}>
+      <div className="ed-document" data-key={node.key}>
         {children}
       </div>
     );
