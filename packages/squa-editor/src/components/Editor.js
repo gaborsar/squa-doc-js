@@ -453,6 +453,31 @@ export default class Editor extends PureComponent {
     onChange(change);
   };
 
+  handleBeforeInput = event => {
+    const { value, onChange = sink } = this.props;
+    const { selection: { isCollapsed } } = value;
+
+    if (value.mode === EDITOR_MODE_COMPOSITION) {
+      return;
+    }
+
+    if (isCollapsed) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const format = value.getFormat();
+
+    const change = value
+      .change()
+      .delete()
+      .insertText(event.key, format)
+      .save("input");
+
+    onChange(change);
+  };
+
   handleInput = () => {
     const { value, onChange = sink } = this.props;
 
@@ -662,6 +687,7 @@ export default class Editor extends PureComponent {
             onKeyDown={this.handleKeyDown}
             onCompositionStart={this.handleCompositionStart}
             onCompositionEnd={this.handleCompositionEnd}
+            onBeforeInput={this.handleBeforeInput}
             onInput={this.handleInput}
             onCut={this.handleCut}
             onPaste={this.handlePaste}
