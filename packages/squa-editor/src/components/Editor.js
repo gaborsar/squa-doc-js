@@ -41,6 +41,12 @@ export default class Editor extends PureComponent {
     this.rootNode = rootNode;
   };
 
+  focus = () => {
+    if (this.rootNode) {
+      this.rootNode.focus();
+    }
+  };
+
   handleSelect = () => {
     const { value, onChange = sink } = this.props;
     const { selection: editorSelection } = value;
@@ -84,6 +90,67 @@ export default class Editor extends PureComponent {
 
     onChange(change);
   };
+
+  updateSelection() {
+    if (!this.rootNode) {
+      return;
+    }
+
+    const { value } = this.props;
+    const { selection: editorSelection } = value;
+    const { isBackward } = editorSelection;
+
+    const domRange = getNativeRange(
+      this.rootNode,
+      editorSelection.anchorOffset,
+      editorSelection.focusOffset
+    );
+
+    const nativeSelection = window.getSelection();
+
+    if (!nativeSelection) {
+      return;
+    }
+
+    if (
+      domRange.anchorNode === nativeSelection.anchorNode &&
+      domRange.anchorOffset === nativeSelection.anchorOffset &&
+      domRange.focusNode === nativeSelection.focusNode &&
+      domRange.focusOffset === nativeSelection.focusOffset
+    ) {
+      return;
+    }
+
+    if (nativeSelection.setBaseAndExtent) {
+      nativeSelection.setBaseAndExtent(
+        domRange.anchorNode,
+        domRange.anchorOffset,
+        domRange.focusNode,
+        domRange.focusOffset
+      );
+    } else if (nativeSelection.extend) {
+      const nativeRange = document.createRange();
+
+      nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
+
+      nativeSelection.removeAllRanges();
+      nativeSelection.addRange(nativeRange);
+      nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
+    } else {
+      const nativeRange = document.createRange();
+
+      if (isBackward) {
+        nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
+        nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
+      } else {
+        nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
+        nativeRange.setEnd(domRange.focusNode, domRange.focusOffset);
+      }
+
+      nativeSelection.removeAllRanges();
+      nativeSelection.addRange(nativeRange);
+    }
+  }
 
   handleMouseMove = event => {
     if (!this.isMouseDown) {
@@ -567,67 +634,6 @@ export default class Editor extends PureComponent {
 
     onChange(change);
   };
-
-  updateSelection() {
-    if (!this.rootNode) {
-      return;
-    }
-
-    const { value } = this.props;
-    const { selection: editorSelection } = value;
-    const { isBackward } = editorSelection;
-
-    const domRange = getNativeRange(
-      this.rootNode,
-      editorSelection.anchorOffset,
-      editorSelection.focusOffset
-    );
-
-    const nativeSelection = window.getSelection();
-
-    if (!nativeSelection) {
-      return;
-    }
-
-    if (
-      domRange.anchorNode === nativeSelection.anchorNode &&
-      domRange.anchorOffset === nativeSelection.anchorOffset &&
-      domRange.focusNode === nativeSelection.focusNode &&
-      domRange.focusOffset === nativeSelection.focusOffset
-    ) {
-      return;
-    }
-
-    if (nativeSelection.setBaseAndExtent) {
-      nativeSelection.setBaseAndExtent(
-        domRange.anchorNode,
-        domRange.anchorOffset,
-        domRange.focusNode,
-        domRange.focusOffset
-      );
-    } else if (nativeSelection.extend) {
-      const nativeRange = document.createRange();
-
-      nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
-
-      nativeSelection.removeAllRanges();
-      nativeSelection.addRange(nativeRange);
-      nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
-    } else {
-      const nativeRange = document.createRange();
-
-      if (isBackward) {
-        nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
-        nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
-      } else {
-        nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
-        nativeRange.setEnd(domRange.focusNode, domRange.focusOffset);
-      }
-
-      nativeSelection.removeAllRanges();
-      nativeSelection.addRange(nativeRange);
-    }
-  }
 
   componentDidUpdate() {
     this.updateSelection();
