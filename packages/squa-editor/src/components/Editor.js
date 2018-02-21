@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import Delta from "quill-delta";
 import joinClassNames from "classnames";
 import ErrorBoundary from "./ErrorBoundary";
+import ContentEditable from "./ContentEditable";
 import Document from "./Document";
 import getRange from "../dom/getRange";
 import getNativeRange from "../dom/getNativeRange";
@@ -686,11 +687,9 @@ export default class Editor extends PureComponent {
       >
         <ErrorBoundary>
           {this.renderPlaceholder()}
-          <div
-            ref={this.setRootNode}
+          <ContentEditable
+            editableRef={this.setRootNode}
             className="ed-editable"
-            contentEditable
-            suppressContentEditableWarning
             spellCheck
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
@@ -720,7 +719,7 @@ export default class Editor extends PureComponent {
               blockStyleFn={blockStyleFn}
               inlineStyleFn={inlineStyleFn}
             />
-          </div>
+          </ContentEditable>
         </ErrorBoundary>
       </div>
     );
