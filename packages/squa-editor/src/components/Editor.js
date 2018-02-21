@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import Delta from "quill-delta";
+import joinClassNames from "classnames";
 import ErrorBoundary from "./ErrorBoundary";
 import Document from "./Document";
 import getRange from "../dom/getRange";
@@ -33,6 +34,10 @@ export default class Editor extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isFocused: false
+    };
+
     this.rootNode = null;
     this.isMouseDown = false;
   }
@@ -45,6 +50,19 @@ export default class Editor extends PureComponent {
     if (this.rootNode) {
       this.rootNode.focus();
     }
+  };
+
+  handlePlaceholderClick = event => {
+    event.preventDefault();
+    this.focus();
+  };
+
+  handleFocus = () => {
+    this.setState({ isFocused: true });
+  };
+
+  handleBlur = () => {
+    this.setState({ isFocused: false });
   };
 
   handleSelect = () => {
@@ -644,7 +662,7 @@ export default class Editor extends PureComponent {
 
     if (isEmpty && placeholder) {
       return (
-        <span className="ed-placeholder" onMouseDown={this.focus}>
+        <span className="ed-placeholder" onClick={this.handlePlaceholderClick}>
           {placeholder}
         </span>
       );
@@ -659,8 +677,13 @@ export default class Editor extends PureComponent {
       blockRenderFn,
       embedRenderFn
     } = this.props;
+    const { isFocused } = this.state;
     return (
-      <div className="ed-editor">
+      <div
+        className={joinClassNames("ed-editor", {
+          "ed-editor--focused": isFocused
+        })}
+      >
         <ErrorBoundary>
           {this.renderPlaceholder()}
           <div
@@ -669,6 +692,8 @@ export default class Editor extends PureComponent {
             contentEditable
             suppressContentEditableWarning
             spellCheck
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
             onSelect={this.handleSelect}
             onMouseDown={this.handleMouseDown}
             onKeyDown={this.handleKeyDown}
