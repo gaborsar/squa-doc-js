@@ -37,7 +37,7 @@ body {
     left: 30px; // 30 (editor padding)
     font-size: 19px;
     font-weight: lighter;
-    color: #eee;
+    color: #aaa;
     line-height: 30px;
   }
 
@@ -91,5 +91,11 @@ body {
     font-size: 19px;
     font-weight: lighter;
     line-height: 30px;
+  }
+}
+
+.ed-editor--focused {
+  .ed-placeholder {
+    color: #eee;
   }
 }
