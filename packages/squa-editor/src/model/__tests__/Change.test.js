@@ -89,6 +89,94 @@ describe("Change", () => {
     expect(change.value.selection.focusOffset).toBe(8);
   });
 
+  test("collapse()", () => {
+    const value = Value.fromJSON();
+
+    const change = value
+      .change()
+      .select(3, 6)
+      .collapse();
+
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(3);
+  });
+
+  test("collapseToStart()", () => {
+    const value = Value.fromJSON();
+
+    const change = value
+      .change()
+      .select(3, 6)
+      .collapseToStart();
+
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(3);
+  });
+
+  test("collapseToEnd()", () => {
+    const value = Value.fromJSON();
+
+    const change = value
+      .change()
+      .select(3, 6)
+      .collapseToEnd();
+
+    expect(change.value.selection.anchorOffset).toBe(6);
+    expect(change.value.selection.focusOffset).toBe(6);
+  });
+
+  describe("collapseToLeft()", () => {
+    test("forward", () => {
+      const value = Value.fromJSON();
+
+      const change = value
+        .change()
+        .select(3, 6)
+        .collapseToLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(3);
+    });
+
+    test("backward", () => {
+      const value = Value.fromJSON();
+
+      const change = value
+        .change()
+        .select(6, 3)
+        .collapseToLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(3);
+    });
+  });
+
+  describe("collapseToRight()", () => {
+    test("forward", () => {
+      const value = Value.fromJSON();
+
+      const change = value
+        .change()
+        .select(3, 6)
+        .collapseToRight();
+
+      expect(change.value.selection.anchorOffset).toBe(6);
+      expect(change.value.selection.focusOffset).toBe(6);
+    });
+
+    test("backward", () => {
+      const value = Value.fromJSON();
+
+      const change = value
+        .change()
+        .select(6, 3)
+        .collapseToRight();
+
+      expect(change.value.selection.anchorOffset).toBe(6);
+      expect(change.value.selection.focusOffset).toBe(6);
+    });
+  });
+
   test("selectCharacterBackward()", () => {
     const value = Value.fromJSON();
 
