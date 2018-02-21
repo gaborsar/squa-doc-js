@@ -16,10 +16,7 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
   }
 
   merge(props) {
-    return Text.create({
-      ...this,
-      ...props
-    });
+    return Text.create({ ...this, ...props });
   }
 
   get isEmbed() {

@@ -32,51 +32,64 @@ body {
     outline: none;
   }
 
-  // Margin
-
-  h1,
-  h2,
-  p,
-  pre,
-  ul,
-  ol {
-    margin: 50px 0;
+  .ed-placeholder {
+    top: 60px; // 10 (editor padding) + 50 (p padding)
+    left: 30px; // 30 (editor padding)
+    font-size: 19px;
+    font-weight: lighter;
+    color: #eee;
+    line-height: 30px;
   }
 
-  h1,
-  h2 {
+  h1 {
+    margin: 50px 0;
+    font-size: 48px;
     font-weight: normal;
   }
 
-  p,
-  blockquote,
-  pre,
-  li {
+  h2 {
+    margin: 50px 0;
+    font-size: 36px;
+    font-weight: normal;
+  }
+
+  p {
+    margin: 50px 0;
     font-size: 19px;
     font-weight: lighter;
     line-height: 30px;
   }
 
-  li {
-    margin: 15px 0;
-  }
-
-  h1 {
-    font-size: 48px;
-  }
-
-  h2 {
-    font-size: 36px;
-  }
-
   blockquote {
     margin: 30px 100px;
+    font-size: 19px;
+    font-weight: lighter;
     font-style: italic;
+    line-height: 30px;
   }
 
   pre {
+    margin: 50px 0;
     padding: 30px 40px;
+    font-size: 19px;
+    font-weight: lighter;
+    line-height: 30px;
     background: #eee;
     border-radius: 3px;
+  }
+
+  ul {
+    margin: 50px 0;
+  }
+
+  ol {
+    margin: 50px 0;
+  }
+
+  li {
+    margin: 15px 0;
+    font-size: 19px;
+    font-weight: lighter;
+    line-height: 30px;
   }
 }

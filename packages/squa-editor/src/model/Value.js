@@ -52,10 +52,7 @@ export default class Value {
   }
 
   merge(props) {
-    return Value.create({
-      ...this,
-      ...props
-    });
+    return Value.create({ ...this, ...props });
   }
 
   get canUndo() {
