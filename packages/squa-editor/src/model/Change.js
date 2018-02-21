@@ -188,6 +188,14 @@ export default class Change {
     return this;
   }
 
+  selectAll() {
+    const { value: { document } } = this;
+
+    this.select(0, document.length);
+
+    return this;
+  }
+
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;
@@ -512,7 +520,7 @@ export default class Change {
   delete() {
     let { value } = this;
     let { document, selection } = value;
-    const { isCollapsed, startOffset, endOffset } = selection;
+    let { isCollapsed, startOffset, endOffset } = selection;
 
     if (isCollapsed) {
       return this;
@@ -522,6 +530,10 @@ export default class Change {
 
     if (!posBefore) {
       return this;
+    }
+
+    if (endOffset === document.length) {
+      endOffset -= 1;
     }
 
     document = document.deleteAt(startOffset, endOffset);
