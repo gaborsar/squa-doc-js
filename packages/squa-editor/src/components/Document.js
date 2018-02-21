@@ -133,20 +133,24 @@ export default class Document extends PureComponent {
     let currentKey;
     let currentChildren = [];
 
+    const renderWrapper = () => {
+      if (CurrentWrapper) {
+        children.push(
+          <CurrentWrapper key={currentKey} data-wrapper data-key={currentKey}>
+            {currentChildren}
+          </CurrentWrapper>
+        );
+      } else {
+        children.push(...currentChildren);
+      }
+    };
+
     blocks.forEach(block => {
       const { wrapper, key, element } = block;
 
       if (CurrentWrapper !== wrapper) {
         if (currentChildren.length) {
-          if (CurrentWrapper) {
-            children.push(
-              <CurrentWrapper key={currentKey}>
-                {currentChildren}
-              </CurrentWrapper>
-            );
-          } else {
-            children.push(...currentChildren);
-          }
+          renderWrapper();
         }
 
         CurrentWrapper = wrapper;
@@ -158,13 +162,7 @@ export default class Document extends PureComponent {
     });
 
     if (currentChildren.length) {
-      if (CurrentWrapper) {
-        children.push(
-          <CurrentWrapper key={currentKey}>{currentChildren}</CurrentWrapper>
-        );
-      } else {
-        children.push(...currentChildren);
-      }
+      renderWrapper();
     }
 
     return (

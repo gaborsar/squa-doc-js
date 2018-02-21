@@ -25,6 +25,16 @@ export default class ContentEditable extends PureComponent {
     onInput();
   };
 
+  handleKeyDown = event => {
+    const { onBeforeInput, onKeyDown } = this.props;
+
+    if (!event.ctrlKey && !event.metaKey && event.key.length === 1) {
+      onBeforeInput(event);
+    } else {
+      onKeyDown(event);
+    }
+  };
+
   editableRef = node => {
     const { editableRef } = this.props;
 
@@ -59,7 +69,6 @@ export default class ContentEditable extends PureComponent {
       onBlur,
       onSelect,
       onMouseDown,
-      onKeyDown,
       onCompositionStart,
       onCompositionEnd,
       onCut,
@@ -79,7 +88,7 @@ export default class ContentEditable extends PureComponent {
         onBlur={onBlur}
         onSelect={onSelect}
         onMouseDown={onMouseDown}
-        onKeyDown={onKeyDown}
+        onKeyDown={this.handleKeyDown}
         onCompositionStart={onCompositionStart}
         onCompositionEnd={onCompositionEnd}
         onCut={onCut}
