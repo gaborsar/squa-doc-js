@@ -21,10 +21,7 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   }
 
   merge(props) {
-    return Block.create({
-      ...this,
-      ...props
-    });
+    return Block.create({ ...this, ...props });
   }
 
   get isEmbed() {
@@ -39,6 +36,14 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
     return false;
   }
 
+  get isEmpty() {
+    return this.children.length === 0;
+  }
+
+  get isPristine() {
+    return this.style.marks.length === 0;
+  }
+
   get type() {
     return this.getMark("type");
   }
@@ -48,10 +53,6 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
       (length, child) => length + child.length,
       EOL.length
     );
-  }
-
-  get isEmpty() {
-    return this.length === EOL.length;
   }
 
   get text() {

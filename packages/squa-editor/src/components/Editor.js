@@ -639,19 +639,30 @@ export default class Editor extends PureComponent {
     this.updateSelection();
   }
 
+  renderPlaceholder() {
+    const { value: { document: { isEmpty } }, placeholder } = this.props;
+
+    if (isEmpty && placeholder) {
+      return (
+        <span className="ed-placeholder" onMouseDown={this.focus}>
+          {placeholder}
+        </span>
+      );
+    }
+  }
+
   render() {
     const {
-      value,
+      value: { document },
       blockStyleFn,
       inlineStyleFn,
       blockRenderFn,
       embedRenderFn
     } = this.props;
-    const { document } = value;
-
     return (
       <div className="ed-editor">
         <ErrorBoundary>
+          {this.renderPlaceholder()}
           <div
             ref={this.setRootNode}
             className="ed-editable"

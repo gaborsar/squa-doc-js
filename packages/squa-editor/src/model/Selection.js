@@ -10,10 +10,7 @@ export default class Selection {
   }
 
   merge(props) {
-    return Selection.create({
-      ...this,
-      ...props
-    });
+    return Selection.create({ ...this, ...props });
   }
 
   get isCollapsed() {

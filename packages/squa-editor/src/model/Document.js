@@ -16,10 +16,17 @@ export default class Document extends EditMixin(ParentMixin(Node)) {
   }
 
   merge(props) {
-    return Document.create({
-      ...this,
-      ...props
-    });
+    return Document.create({ ...this, ...props });
+  }
+
+  get isEmpty() {
+    if (this.children.length !== 1) {
+      return false;
+    }
+
+    const child = this.children[0];
+
+    return child.isEmpty && child.isPristine;
   }
 
   get length() {

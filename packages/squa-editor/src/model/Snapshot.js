@@ -20,10 +20,7 @@ export default class Snapshot {
   }
 
   merge(props) {
-    return Snapshot.create({
-      ...this,
-      ...props
-    });
+    return Snapshot.create({ ...this, ...props });
   }
 
   setType(type) {

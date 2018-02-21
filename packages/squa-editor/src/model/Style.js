@@ -26,10 +26,7 @@ export default class Style {
   }
 
   merge(props) {
-    return Style.create({
-      ...this,
-      ...props
-    });
+    return Style.create({ ...this, ...props });
   }
 
   setMarks(marks) {

@@ -21,10 +21,7 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
   }
 
   merge(props) {
-    return Embed.create({
-      ...this,
-      ...props
-    });
+    return Embed.create({ ...this, ...props });
   }
 
   get type() {

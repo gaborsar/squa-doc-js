@@ -34,6 +34,7 @@ export default class App extends PureComponent {
         </div>
         <div className="content">
           <Editor
+            placeholder="Enter some text..."
             value={value}
             onChange={this.onChange}
             blockRenderFn={blockRenderFn}
