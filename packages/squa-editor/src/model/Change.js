@@ -196,6 +196,71 @@ export default class Change {
     return this;
   }
 
+  collapse() {
+    let { value } = this;
+    let { selection } = value;
+
+    selection = selection.collapse();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  collapseToEnd() {
+    let { value } = this;
+    let { selection } = value;
+
+    selection = selection.collapseToEnd();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  collapseToStart() {
+    let { value } = this;
+    let { selection } = value;
+
+    selection = selection.collapseToStart();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  collapseToLeft() {
+    let { value } = this;
+    let { selection } = value;
+
+    selection = selection.collapseToLeft();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
+  collapseToRight() {
+    let { value } = this;
+    let { selection } = value;
+
+    selection = selection.collapseToRight();
+
+    value = value.setSelection(selection);
+
+    this.value = value;
+
+    return this;
+  }
+
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;

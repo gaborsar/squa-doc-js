@@ -49,6 +49,22 @@ export default class Selection {
     return this.setFocusOffset(this.anchorOffset);
   }
 
+  collapseToStart() {
+    return this.setFocusOffset(this.anchorOffset);
+  }
+
+  collapseToEnd() {
+    return this.setAnchorOffset(this.focusOffset);
+  }
+
+  collapseToLeft() {
+    return this.isBackward ? this.collapseToEnd() : this.collapseToStart();
+  }
+
+  collapseToRight() {
+    return this.isBackward ? this.collapseToStart() : this.collapseToEnd();
+  }
+
   insertAt(offset, length) {
     let selection = this;
 
