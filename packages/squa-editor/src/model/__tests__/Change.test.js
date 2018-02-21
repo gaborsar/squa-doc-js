@@ -78,6 +78,17 @@ describe("Change", () => {
     expect(change.value.selection.focusOffset).toBe(6);
   });
 
+  test("selectAll()", () => {
+    const value = Value.fromJSON({
+      contents: new Delta().insert("aaa\nbbb\n")
+    });
+
+    const change = value.change().selectAll();
+
+    expect(change.value.selection.anchorOffset).toBe(0);
+    expect(change.value.selection.focusOffset).toBe(8);
+  });
+
   test("selectCharacterBackward()", () => {
     const value = Value.fromJSON();
 
