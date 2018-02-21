@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import Delta from "quill-delta";
 import joinClassNames from "classnames";
 import ErrorBoundary from "./ErrorBoundary";
 import ContentEditable from "./ContentEditable";
@@ -9,6 +8,8 @@ import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
+import optimizeInsertDelta from "./utils/optimizeInsertDelta";
+import optimizeFragmentDelta from "./utils/optimizeFragmentDelta";
 import defaultOnKeyDown from "../defaults/handlers/onKeyDown";
 
 import {
@@ -373,7 +374,7 @@ export default class Editor extends PureComponent {
   afterInput = change => {
     const { tokenizeNode: customTokenizeNode } = this.props;
     const { value } = change;
-    const { document } = value;
+    const { document, inlineStyleOverride } = value;
 
     const nativeSelection = window.getSelection();
 
@@ -410,6 +411,10 @@ export default class Editor extends PureComponent {
 
     const diff = blockBefore.delta.diff(delta);
 
+    if (inlineStyleOverride) {
+      optimizeInsertDelta(diff, inlineStyleOverride);
+    }
+
     let blockAfter = blockBefore.apply(diff);
 
     if (blockBefore.length === EOL.length) {
@@ -444,35 +449,6 @@ export default class Editor extends PureComponent {
     const change = value.change().setMode(EDITOR_MODE_EDIT);
 
     this.afterInput(change);
-
-    onChange(change);
-  };
-
-  handleBeforeInput = event => {
-    const { value, onChange = sink } = this.props;
-    const { hasInlineStyleOverride } = value;
-    const { selection: { isCollapsed } } = value;
-
-    if (value.mode === EDITOR_MODE_COMPOSITION) {
-      return;
-    }
-
-    if (isCollapsed && !hasInlineStyleOverride) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const format = value.getFormat();
-
-    const change = value
-      .change()
-      .delete()
-      .save();
-
-    if (event.data) {
-      change.insertText(event.data, format).save("input");
-    }
 
     onChange(change);
   };
@@ -526,21 +502,9 @@ export default class Editor extends PureComponent {
 
     const data = event.clipboardData.getData("text/html");
 
-    let fragment = parseHTML(data, customTokenizeNode);
+    const fragment = parseHTML(data, customTokenizeNode);
 
-    if (fragment.ops.length) {
-      const op = fragment.ops[fragment.ops.length - 1];
-
-      if (typeof op.insert === "string") {
-        const { insert: text } = op;
-
-        if (text[text.length - 1] === EOL) {
-          fragment = fragment.compose(
-            new Delta().retain(fragment.length() - 1).delete(1)
-          );
-        }
-      }
-    }
+    optimizeFragmentDelta(fragment);
 
     if (!isCollapsed) {
       change.delete();
@@ -698,7 +662,6 @@ export default class Editor extends PureComponent {
             onKeyDown={this.handleKeyDown}
             onCompositionStart={this.handleCompositionStart}
             onCompositionEnd={this.handleCompositionEnd}
-            onBeforeInput={this.handleBeforeInput}
             onInput={this.handleInput}
             onCut={this.handleCut}
             onPaste={this.handlePaste}
