@@ -62,7 +62,6 @@ export default class ContentEditable extends PureComponent {
       onKeyDown,
       onCompositionStart,
       onCompositionEnd,
-      onBeforeInput,
       onCut,
       onPaste,
       onDragStart,
@@ -83,7 +82,6 @@ export default class ContentEditable extends PureComponent {
         onKeyDown={onKeyDown}
         onCompositionStart={onCompositionStart}
         onCompositionEnd={onCompositionEnd}
-        onBeforeInput={onBeforeInput}
         onCut={onCut}
         onPaste={onPaste}
         onDragStart={onDragStart}
