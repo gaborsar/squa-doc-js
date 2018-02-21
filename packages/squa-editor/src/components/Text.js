@@ -9,12 +9,23 @@ export default class Text extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    const { textClassName: className } = this.props;
+    const { textClassName: nextClassName } = nextProps;
+
+    if (className !== nextClassName) {
+      return true;
+    }
+
     const { node: { value: nextValue } } = nextProps;
 
     // eslint-disable-next-line react/no-find-dom-node
     const node = findDOMNode(this);
 
-    return node.textContent !== nextValue;
+    if (node.textContent !== nextValue) {
+      return true;
+    }
+
+    return false;
   }
 
   componentDidMount() {
