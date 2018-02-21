@@ -1,17 +1,14 @@
 import React, { PureComponent } from "react";
-import Figure from "./Figure";
+import "./BlockImage.css";
 
 export default class BlockImage extends PureComponent {
   render() {
-    const { blockKey, deleteBlockByKey, src, alt, caption } = this.props;
+    const { src, alt, caption, ...otherProps } = this.props;
     return (
-      <Figure
-        blockKey={blockKey}
-        deleteBlockByKey={deleteBlockByKey}
-        caption={caption}
-      >
+      <figure {...otherProps}>
         <img src={src} alt={alt} />
-      </Figure>
+        <figcaption>{caption}</figcaption>
+      </figure>
     );
   }
 }

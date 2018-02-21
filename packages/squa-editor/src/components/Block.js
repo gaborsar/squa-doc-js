@@ -1,10 +1,9 @@
 import React, { PureComponent } from "react";
+import joinClassNames from "classnames";
 import Text from "./Text";
 import Embed from "./Embed";
-import defaultRenderEmbed from "../defaults/renderers/renderEmbed";
-import defaultRenderMark from "../defaults/renderers/renderMark";
-
-const emptyProps = {};
+import defaultEmbedRenderFn from "../defaults/renderers/embedRenderFn";
+import defaultInlineStyleFn from "../defaults/renderers/inlineStyleFn";
 
 export default class Block extends PureComponent {
   render() {
@@ -13,108 +12,112 @@ export default class Block extends PureComponent {
       BlockComponent,
       blockProps,
       blockClassName,
-      renderEmbed: customRenderEmbed,
-      renderMark: customRenderMark,
       replaceInlineByKey,
       formatInlineByKey,
-      deleteInlineByKey
+      deleteInlineByKey,
+      embedRenderFn: customEmbedRenderFn,
+      inlineStyleFn: customInlineStyleFn
     } = this.props;
 
-    const classNames = ["ed-block"];
-    let style = {};
+    const children = [];
 
-    if (blockClassName) {
-      classNames.push(blockClassName);
-    }
+    node.children.forEach(child => {
+      const { key } = child;
 
-    node.style.marks.forEach(mark => {
-      let markObj;
+      const markObjects = [];
 
-      if (customRenderMark) {
-        markObj = customRenderMark(mark);
-      }
+      child.style.marks.forEach(mark => {
+        let markObj;
 
-      if (markObj === undefined) {
-        markObj = defaultRenderMark(mark);
-      }
+        if (customInlineStyleFn) {
+          markObj = customInlineStyleFn(mark);
+        }
 
-      if (markObj) {
-        const {
-          className: markClassName = "",
-          style: markStyle = null
-        } = markObj;
+        if (!markObj) {
+          markObj = defaultInlineStyleFn(mark);
+        }
+
+        if (markObj) {
+          markObjects.push(markObj);
+        }
+      });
+
+      const classNames = [];
+
+      markObjects.forEach(markObj => {
+        const { className: markClassName } = markObj;
 
         if (markClassName) {
           classNames.push(markClassName);
         }
+      });
 
-        if (markStyle) {
-          style = {
-            ...style,
-            ...markStyle
-          };
+      let element;
+
+      if (child.isEmbed) {
+        const defaultEmbedProps = {
+          inlineKey: key,
+          replaceInlineByKey,
+          formatInlineByKey,
+          deleteInlineByKey
+        };
+
+        let embedObj;
+
+        if (customEmbedRenderFn) {
+          embedObj = customEmbedRenderFn(child, defaultEmbedProps);
         }
+
+        if (!embedObj) {
+          embedObj = defaultEmbedRenderFn(child, defaultEmbedProps);
+        }
+
+        if (!embedObj) {
+          throw new Error(`Invalid embed: ${child.type}`);
+        }
+
+        const { component, props } = embedObj;
+
+        element = (
+          <Embed
+            key={child.key}
+            node={child}
+            EmbedComponent={component}
+            embedProps={props}
+            embedClassName={joinClassNames(classNames)}
+          />
+        );
+      } else {
+        element = (
+          <Text
+            key={child.key}
+            node={child}
+            textClassName={joinClassNames(classNames)}
+          />
+        );
       }
-    });
 
-    let children;
+      markObjects.forEach(markObj => {
+        const { component: MarkComponent, props: markProps } = markObj;
 
-    if (node.children.length) {
-      children = [];
-
-      node.children.forEach(child => {
-        if (child.isEmbed) {
-          const defaultEmbedProps = {
-            blockKey: node.key,
-            inlineKey: child.key,
-            replaceInlineByKey: replaceInlineByKey,
-            formatInlineByKey: formatInlineByKey,
-            deleteInlineByKey: deleteInlineByKey
-          };
-
-          let embedObj;
-
-          if (customRenderEmbed) {
-            embedObj = customRenderEmbed(child, defaultEmbedProps);
-          }
-
-          if (embedObj === undefined) {
-            embedObj = defaultRenderEmbed(child, defaultEmbedProps);
-          }
-
-          if (embedObj) {
-            const {
-              component: EmbedComponent,
-              props: embedProps = emptyProps
-            } = embedObj;
-
-            children.push(
-              <Embed
-                key={child.key}
-                node={child}
-                EmbedComponent={EmbedComponent}
-                embedProps={embedProps}
-                renderMark={customRenderMark}
-              />
-            );
-          }
-        } else {
-          children.push(
-            <Text key={child.key} node={child} renderMark={customRenderMark} />
-          );
+        if (MarkComponent) {
+          element = <MarkComponent {...markProps}>{element}</MarkComponent>;
         }
       });
-    } else {
-      children = <br data-ignore />;
+
+      children.push(element);
+    });
+
+    if (children.length === 0) {
+      children.push(<br data-ignore />);
     }
 
     return (
       <BlockComponent
         {...blockProps}
-        className={classNames.join(" ")}
-        style={style}
         data-block
         data-key={node.key}
+        className={joinClassNames("ed-block", blockClassName)}
       >
         {children}
       </BlockComponent>

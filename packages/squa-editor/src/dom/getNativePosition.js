@@ -4,7 +4,6 @@ import isWrapperNode from "./isWrapperNode";
 import isBlockNode from "./isBlockNode";
 import isEmbedNode from "./isEmbedNode";
 import isLineBreakNode from "./isLineBreakNode";
-import isImageNode from "./isImageNode";
 import getNodeLength from "./getNodeLength";
 
 export default function getNativePosition(node, offset) {
@@ -21,11 +20,7 @@ export default function getNativePosition(node, offset) {
       }
     } else if (isElementNode(child)) {
       if (childLength !== 0) {
-        if (
-          isEmbedNode(child) ||
-          isLineBreakNode(child) ||
-          isImageNode(child)
-        ) {
+        if (isEmbedNode(child) || isLineBreakNode(child)) {
           if (offset === 0) {
             return {
               node,

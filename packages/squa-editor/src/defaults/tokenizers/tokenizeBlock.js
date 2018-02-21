@@ -5,13 +5,15 @@ export default function tokenizeBlock(node, context) {
     case "LI":
       if (context.wrapper.type === "unordered-list") {
         tokens.push({
-          block: {
+          type: "block-node",
+          payload: {
             type: "unordered-list-item"
           }
         });
       } else if (context.wrapper.type === "ordered-list") {
         tokens.push({
-          block: {
+          type: "block-node",
+          payload: {
             type: "ordered-list-item"
           }
         });
@@ -22,7 +24,8 @@ export default function tokenizeBlock(node, context) {
     case "BR":
       if (context.wrapper.type === "code") {
         tokens.push({
-          block: {
+          type: "block-node",
+          payload: {
             type: "code"
           }
         });
@@ -31,7 +34,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H1":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-one"
         }
       });
@@ -39,7 +43,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H2":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-two"
         }
       });
@@ -47,7 +52,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H3":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-three"
         }
       });
@@ -55,7 +61,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H4":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-four"
         }
       });
@@ -63,7 +70,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H5":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-five"
         }
       });
@@ -71,7 +79,8 @@ export default function tokenizeBlock(node, context) {
 
     case "H6":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "heading-six"
         }
       });
@@ -79,7 +88,8 @@ export default function tokenizeBlock(node, context) {
 
     case "P":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "paragraph"
         }
       });
@@ -87,7 +97,8 @@ export default function tokenizeBlock(node, context) {
 
     case "BLOCKQUOTE":
       tokens.push({
-        block: {
+        type: "block-node",
+        payload: {
           type: "blockquote"
         }
       });

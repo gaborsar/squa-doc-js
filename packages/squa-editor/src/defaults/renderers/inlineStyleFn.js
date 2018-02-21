@@ -1,15 +1,5 @@
-export default function renderMark(mark) {
+export default function inlineStyleFn(mark) {
   switch (mark.type) {
-    case "align":
-      return {
-        className: `ed-align-${mark.value}`
-      };
-
-    case "indent":
-      return {
-        className: `ed-indent-${mark.value}`
-      };
-
     case "link":
       return {
         component: "a",
@@ -50,9 +40,7 @@ export default function renderMark(mark) {
 
     case "color":
       return {
-        style: {
-          color: mark.value
-        }
+        className: `ed-color-${mark.value}`
       };
   }
 }

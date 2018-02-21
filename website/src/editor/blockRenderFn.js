@@ -1,6 +1,6 @@
-import Checkable from "../Checkable";
+import Checkable from "./components/Checkable";
 
-function renderCheckable(node, defaultProps) {
+function checkableRenderFn(node, defaultProps) {
   const { blockKey, formatBlockByKey } = defaultProps;
   return {
     component: Checkable,
@@ -12,8 +12,8 @@ function renderCheckable(node, defaultProps) {
   };
 }
 
-export default function renderBlock(node, defaultProps) {
+export default function blockRenderFn(node, defaultProps) {
   if (node.type === "checkable") {
-    return renderCheckable(node, defaultProps);
+    return checkableRenderFn(node, defaultProps);
   }
 }

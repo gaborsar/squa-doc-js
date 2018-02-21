@@ -277,7 +277,8 @@ export default new Delta({
       },
       attributes: {
         alt: "JavaScript",
-        caption: "JavaScript"
+        caption: "JavaScript",
+        align: "center"
       }
     },
     {

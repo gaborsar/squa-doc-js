@@ -68,11 +68,4 @@ describe("getNodeLength()", () => {
     const length = getNodeLength(br);
     expect(length).toBe(1);
   });
-
-  test("img node", () => {
-    const img = document.createElement("img");
-
-    const length = getNodeLength(img);
-    expect(length).toBe(1);
-  });
 });

@@ -4,7 +4,8 @@ export default function tokenzieMark(node) {
   switch (node.nodeName) {
     case "A":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           link: node.getAttribute("href")
         }
       });
@@ -13,7 +14,8 @@ export default function tokenzieMark(node) {
     case "B":
     case "STRONG":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           bold: true
         }
       });
@@ -22,7 +24,8 @@ export default function tokenzieMark(node) {
     case "I":
     case "EM":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           italic: true
         }
       });
@@ -30,7 +33,8 @@ export default function tokenzieMark(node) {
 
     case "U":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           underline: true
         }
       });
@@ -39,7 +43,8 @@ export default function tokenzieMark(node) {
     case "S":
     case "DEL":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           strikethrough: true
         }
       });
@@ -47,7 +52,8 @@ export default function tokenzieMark(node) {
 
     case "CODE":
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           code: true
         }
       });
@@ -59,31 +65,33 @@ export default function tokenzieMark(node) {
 
     if (className.startsWith("ed-align-")) {
       tokens.push({
-        block: {
+        type: "block-style",
+        payload: {
           align: className.replace("ed-align-", "")
         }
       });
     } else if (className.startsWith("ed-indent-")) {
       tokens.push({
-        block: {
+        type: "block-style",
+        payload: {
           indent: parseInt(className.replace("ed-indent-", ""), 10)
         }
       });
     } else if (className.startsWith("ed-anchor-")) {
       tokens.push({
-        inline: {
+        type: "inline-style",
+        payload: {
           anchor: className.replace("ed-anchor-", "")
         }
       });
+    } else if (className.startsWith("ed-color-")) {
+      tokens.push({
+        type: "inline-style",
+        payload: {
+          color: className.replace("ed-color-", "")
+        }
+      });
     }
-  }
-
-  if (node.style.color) {
-    tokens.push({
-      inline: {
-        color: node.style.color
-      }
-    });
   }
 
   return tokens;

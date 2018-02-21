@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
 import { Value, Editor } from "../../../packages/squa-editor/src";
 import Menu from "./Menu";
-import schema from "./editor/schema";
-import renderBlock from "./editor/renderBlock";
-import renderMark from "./editor/renderMark";
-import tokenizeNode from "./editor/tokenizeNode";
-import onKeyDown from "./editor/onKeyDown";
-import afterKeyDownEnter from "./editor/afterKeyDownEnter";
+import schema from "../editor/schema";
+import blockRenderFn from "../editor/blockRenderFn";
+import blockStyleFn from "../editor/blockStyleFn";
+import tokenizeNode from "../editor/tokenizeNode";
+import onKeyDown from "../editor/onKeyDown";
+import afterKeyDownEnter from "../editor/afterKeyDownEnter";
 
 export default class App extends PureComponent {
   constructor(props) {
@@ -35,12 +35,12 @@ export default class App extends PureComponent {
         <div className="content">
           <Editor
             value={value}
-            renderBlock={renderBlock}
-            renderMark={renderMark}
+            onChange={this.onChange}
+            blockRenderFn={blockRenderFn}
+            blockStyleFn={blockStyleFn}
             tokenizeNode={tokenizeNode}
             onKeyDown={onKeyDown}
             afterKeyDownEnter={afterKeyDownEnter}
-            onChange={this.onChange}
           />
         </div>
       </div>

@@ -161,7 +161,7 @@ describe("parseHTML()", () => {
   });
 
   test("color", () => {
-    const actual = parseHTML('<span style="color: red">aaa</code>');
+    const actual = parseHTML('<span class="ed-color-red">aaa</span>');
     const expected = new Delta().insert("aaa", { color: "red" });
     expect(actual).toEqual(expected);
   });
@@ -218,23 +218,19 @@ describe("parseHTML()", () => {
 
   test("parse a custome node", () => {
     const tokenizeNode = node => {
+      const tokens = [];
       if (node.nodeName === "S") {
-        return [{ inline: { strikethrough: true } }];
+        tokens.push({
+          type: "inline-sytyle",
+          payload: {
+            strikethrough: true
+          }
+        });
       }
+      return tokens;
     };
     const actual = parseHTML("<s>aaa</s>", tokenizeNode);
     const expected = new Delta().insert("aaa", { strikethrough: true });
-    expect(actual).toEqual(expected);
-  });
-
-  test("ignore a node", () => {
-    const tokenizeNode = node => {
-      if (node.nodeName === "S") {
-        return null;
-      }
-    };
-    const actual = parseHTML("<span><s>aaa</s>bbb</span>", tokenizeNode);
-    const expected = new Delta().insert("bbb");
     expect(actual).toEqual(expected);
   });
 });

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
-import defaultRenderMark from "../defaults/renderers/renderMark";
-
-const emptyProps = {};
+import joinClassNames from "classnames";
 
 export default class Text extends Component {
   constructor(props) {
@@ -11,13 +9,12 @@ export default class Text extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { node: { style } } = this.props;
-    const { node: { value: nextValue, style: nextStyle } } = nextProps;
+    const { node: { value: nextValue } } = nextProps;
 
     // eslint-disable-next-line react/no-find-dom-node
     const node = findDOMNode(this);
 
-    return style !== nextStyle || node.textContent !== nextValue;
+    return node.textContent !== nextValue;
   }
 
   componentDidMount() {
@@ -29,57 +26,15 @@ export default class Text extends Component {
   }
 
   render() {
-    const { node, renderMark: customRenderMark } = this.props;
-
-    const classNames = ["ed-text"];
-    let style = {};
-    let content = node.value;
-
-    node.style.marks.forEach(mark => {
-      let markObj;
-
-      if (customRenderMark) {
-        markObj = customRenderMark(mark);
-      }
-
-      if (markObj === undefined) {
-        markObj = defaultRenderMark(mark);
-      }
-
-      if (markObj) {
-        const {
-          component: MarkComponent,
-          props: markProps = emptyProps,
-          className: markClassName = "",
-          style: markStyle = null
-        } = markObj;
-
-        if (MarkComponent) {
-          content = <MarkComponent {...markProps}>{content}</MarkComponent>;
-        }
-
-        if (markClassName) {
-          classNames.push(markClassName);
-        }
-
-        if (markStyle) {
-          style = {
-            ...style,
-            ...markStyle
-          };
-        }
-      }
-    });
-
+    const { node, textClassName } = this.props;
     return (
       <span
         key={this.forceFlag ? "A" : "B"}
-        className={classNames.join(" ")}
-        style={style}
         data-text
         data-key={node.key}
+        className={joinClassNames("ed-text", textClassName)}
       >
-        {content}
+        {node.text}
       </span>
     );
   }

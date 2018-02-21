@@ -3,7 +3,8 @@ export default function tokenizeNode(node) {
 
   if (node.classList.contains("checkable")) {
     tokens.push({
-      block: {
+      type: "block-node",
+      payload: {
         type: "checkable"
       }
     });
@@ -11,7 +12,8 @@ export default function tokenizeNode(node) {
 
   if (node.classList.contains("checked")) {
     tokens.push({
-      block: {
+      type: "block-style",
+      payload: {
         checked: true
       }
     });
