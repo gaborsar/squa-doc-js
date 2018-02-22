@@ -166,12 +166,6 @@ describe("parseHTML()", () => {
     expect(actual).toEqual(expected);
   });
 
-  test("text", () => {
-    const actual = parseHTML("aaa");
-    const expected = new Delta().insert("aaa");
-    expect(actual).toEqual(expected);
-  });
-
   test("align", () => {
     const actual = parseHTML('<p class="ed-align-left"></p>');
     const expected = new Delta().insert("\n", {

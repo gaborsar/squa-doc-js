@@ -362,12 +362,20 @@ export default class Editor extends PureComponent {
       return this.handleKeyDownRight(change, event);
     }
 
-    if (event.keyCode === KEY_Z && event.metaKey) {
-      if (event.shiftKey) {
-        return this.handleKeyDownRedo(change, event);
-      } else {
-        return this.handleKeyDownUndo(change, event);
-      }
+    if (event.metaKey && event.key === "z") {
+      return this.handleKeyDownUndo(change, event);
+    }
+
+    if (event.metaKey && event.key === "Z") {
+      return this.handleKeyDownRedo(change, event);
+    }
+
+    if (event.ctrlKey && event.key === "z") {
+      return this.handleKeyDownUndo(change, event);
+    }
+
+    if (event.ctrlKey && event.key === "y") {
+      return this.handleKeyDownRedo(change, event);
     }
   };
 
@@ -453,7 +461,7 @@ export default class Editor extends PureComponent {
     onChange(change);
   };
 
-  handleBeforeInput = event => {
+  handleBeforeInput = () => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -465,15 +473,10 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    event.preventDefault();
-
-    const format = value.getFormat();
-
     const change = value
       .change()
       .delete()
-      .insertText(event.key, format)
-      .save("input");
+      .save();
 
     onChange(change);
   };

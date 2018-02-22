@@ -25,7 +25,7 @@ export default class Change {
     const { delta: prevDelta } = prevDocument;
     const { delta } = document;
 
-    const undoDelta = delta.diff(prevDelta, selection.startOffset);
+    const undoDelta = delta.diff(prevDelta);
     const redoDelta = prevDelta.diff(delta);
 
     let snapshot = Snapshot.create({ type, undoDelta, redoDelta, selection });

@@ -7,35 +7,63 @@ const config = {
   subtree: true
 };
 
+function getEventKey(event) {
+  let key = event.key;
+
+  if (key === "Spacebar") {
+    key = " ";
+  }
+
+  return key;
+}
+
+function isPotentialInputEvent(event) {
+  if (event.ctrlKey === true || event.metaKey === true) {
+    return false;
+  }
+
+  const key = getEventKey(event);
+
+  return key.length === 1;
+}
+
 export default class ContentEditable extends PureComponent {
   constructor(props) {
     super(props);
 
     this.isUpdating = false;
-    this.observer = new MutationObserver(this.callback);
+    this.observer = new MutationObserver(this.handleMutations);
   }
 
-  callback = () => {
+  handleKeyDown = event => {
+    const { onKeyDown, onBeforeInput } = this.props;
+
+    onKeyDown(event);
+
+    if (event.defaultPrevented === true) {
+      return;
+    }
+
+    const isInputEvent = isPotentialInputEvent(event);
+
+    if (isInputEvent === false) {
+      return;
+    }
+
+    onBeforeInput(event);
+  };
+
+  handleMutations = () => {
+    const { onInput } = this.props;
+
     if (this.isUpdating) {
       return;
     }
 
-    const { onInput } = this.props;
-
     onInput();
   };
 
-  handleKeyDown = event => {
-    const { onBeforeInput, onKeyDown } = this.props;
-
-    if (!event.ctrlKey && !event.metaKey && event.key.length === 1) {
-      onBeforeInput(event);
-    } else {
-      onKeyDown(event);
-    }
-  };
-
-  editableRef = node => {
+  setRootNode = node => {
     const { editableRef } = this.props;
 
     editableRef(node);
@@ -57,10 +85,6 @@ export default class ContentEditable extends PureComponent {
     });
   }
 
-  componentWillUnmount() {
-    this.observer.disconnect();
-  }
-
   render() {
     const {
       className,
@@ -69,17 +93,17 @@ export default class ContentEditable extends PureComponent {
       onBlur,
       onSelect,
       onMouseDown,
-      onCompositionStart,
-      onCompositionEnd,
       onCut,
       onPaste,
       onDragStart,
       onDrop,
+      onCompositionStart,
+      onCompositionEnd,
       children
     } = this.props;
     return (
       <div
-        ref={this.editableRef}
+        ref={this.setRootNode}
         className={className}
         contentEditable
         suppressContentEditableWarning
@@ -88,13 +112,13 @@ export default class ContentEditable extends PureComponent {
         onBlur={onBlur}
         onSelect={onSelect}
         onMouseDown={onMouseDown}
-        onKeyDown={this.handleKeyDown}
-        onCompositionStart={onCompositionStart}
-        onCompositionEnd={onCompositionEnd}
         onCut={onCut}
         onPaste={onPaste}
         onDragStart={onDragStart}
         onDrop={onDrop}
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
+        onKeyDown={this.handleKeyDown}
       >
         {children}
       </div>
