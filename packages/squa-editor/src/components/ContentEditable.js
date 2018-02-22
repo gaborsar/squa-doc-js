@@ -1,6 +1,13 @@
 import React, { PureComponent } from "react";
 
-const getEventKey = event => {
+const config = {
+  childList: true,
+  attributes: true,
+  characterData: true,
+  subtree: true
+};
+
+function getEventKey(event) {
   let key = event.key;
 
   if (key === "Spacebar") {
@@ -8,9 +15,9 @@ const getEventKey = event => {
   }
 
   return key;
-};
+}
 
-const isPotentialInputEvent = event => {
+function isPotentialInputEvent(event) {
   if (event.ctrlKey === true || event.metaKey === true) {
     return false;
   }
@@ -18,19 +25,18 @@ const isPotentialInputEvent = event => {
   const key = getEventKey(event);
 
   return key.length === 1;
-};
+}
 
 export default class ContentEditable extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.isUpdating = false;
+    this.observer = new MutationObserver(this.handleMutations);
   }
 
   handleKeyDown = event => {
     const { onKeyDown, onBeforeInput } = this.props;
-
-    if (event.defaultPrevented === true) {
-      return;
-    }
 
     onKeyDown(event);
 
@@ -47,29 +53,37 @@ export default class ContentEditable extends PureComponent {
     onBeforeInput(event);
   };
 
-  handleKeyUp = event => {
+  handleMutations = () => {
     const { onInput } = this.props;
 
-    if (event.defaultPrevented === true) {
+    if (this.isUpdating) {
       return;
     }
 
-    const isInputEvent = isPotentialInputEvent(event);
-
-    if (isInputEvent === false) {
-      return;
-    }
-
-    onInput(event);
+    onInput();
   };
 
   setRootNode = node => {
     const { editableRef } = this.props;
 
+    editableRef(node);
+
+    this.observer.disconnect();
+
     if (node) {
-      editableRef(node);
+      this.observer.observe(node, config);
     }
   };
+
+  componentWillUpdate() {
+    this.isUpdating = true;
+  }
+
+  componentDidUpdate() {
+    window.requestAnimationFrame(() => {
+      this.isUpdating = false;
+    });
+  }
 
   render() {
     const {
@@ -105,7 +119,6 @@ export default class ContentEditable extends PureComponent {
         onCompositionStart={onCompositionStart}
         onCompositionEnd={onCompositionEnd}
         onKeyDown={this.handleKeyDown}
-        onKeyUp={this.handleKeyUp}
       >
         {children}
       </div>

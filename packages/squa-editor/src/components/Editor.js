@@ -120,12 +120,6 @@ export default class Editor extends PureComponent {
     const { selection: editorSelection } = value;
     const { isBackward } = editorSelection;
 
-    console.log(
-      "update selection",
-      editorSelection.anchorOffset,
-      editorSelection.focusOffset
-    );
-
     const domRange = getNativeRange(
       this.rootNode,
       editorSelection.anchorOffset,
@@ -368,12 +362,20 @@ export default class Editor extends PureComponent {
       return this.handleKeyDownRight(change, event);
     }
 
-    if (event.keyCode === KEY_Z && event.metaKey) {
-      if (event.shiftKey) {
-        return this.handleKeyDownRedo(change, event);
-      } else {
-        return this.handleKeyDownUndo(change, event);
-      }
+    if (event.metaKey && event.key === "z") {
+      return this.handleKeyDownUndo(change, event);
+    }
+
+    if (event.metaKey && event.key === "Z") {
+      return this.handleKeyDownRedo(change, event);
+    }
+
+    if (event.ctrlKey && event.key === "z") {
+      return this.handleKeyDownUndo(change, event);
+    }
+
+    if (event.ctrlKey && event.key === "y") {
+      return this.handleKeyDownRedo(change, event);
     }
   };
 
@@ -452,8 +454,6 @@ export default class Editor extends PureComponent {
   handleCompositionEnd = () => {
     const { value, onChange = sink } = this.props;
 
-    console.log("composition end");
-
     const change = value.change().setMode(EDITOR_MODE_EDIT);
 
     this.afterInput(change);
@@ -473,8 +473,6 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    console.log("before input");
-
     const change = value
       .change()
       .delete()
@@ -489,8 +487,6 @@ export default class Editor extends PureComponent {
     if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
-
-    console.log("after input");
 
     const change = value.change();
 
