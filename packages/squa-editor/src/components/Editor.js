@@ -120,6 +120,12 @@ export default class Editor extends PureComponent {
     const { selection: editorSelection } = value;
     const { isBackward } = editorSelection;
 
+    console.log(
+      "update selection",
+      editorSelection.anchorOffset,
+      editorSelection.focusOffset
+    );
+
     const domRange = getNativeRange(
       this.rootNode,
       editorSelection.anchorOffset,
@@ -446,6 +452,8 @@ export default class Editor extends PureComponent {
   handleCompositionEnd = () => {
     const { value, onChange = sink } = this.props;
 
+    console.log("composition end");
+
     const change = value.change().setMode(EDITOR_MODE_EDIT);
 
     this.afterInput(change);
@@ -453,7 +461,7 @@ export default class Editor extends PureComponent {
     onChange(change);
   };
 
-  handleBeforeInput = event => {
+  handleBeforeInput = () => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
@@ -465,15 +473,12 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    event.preventDefault();
-
-    const format = value.getFormat();
+    console.log("before input");
 
     const change = value
       .change()
       .delete()
-      .insertText(event.key, format)
-      .save("input");
+      .save();
 
     onChange(change);
   };
@@ -484,6 +489,8 @@ export default class Editor extends PureComponent {
     if (value.mode === EDITOR_MODE_COMPOSITION) {
       return;
     }
+
+    console.log("after input");
 
     const change = value.change();
 

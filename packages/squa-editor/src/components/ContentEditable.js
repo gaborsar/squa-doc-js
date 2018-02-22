@@ -1,65 +1,75 @@
 import React, { PureComponent } from "react";
 
-const config = {
-  childList: true,
-  attributes: true,
-  characterData: true,
-  subtree: true
+const getEventKey = event => {
+  let key = event.key;
+
+  if (key === "Spacebar") {
+    key = " ";
+  }
+
+  return key;
+};
+
+const isPotentialInputEvent = event => {
+  if (event.ctrlKey === true || event.metaKey === true) {
+    return false;
+  }
+
+  const key = getEventKey(event);
+
+  return key.length === 1;
 };
 
 export default class ContentEditable extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.isUpdating = false;
-    this.observer = new MutationObserver(this.callback);
   }
 
-  callback = () => {
-    if (this.isUpdating) {
+  handleKeyDown = event => {
+    const { onKeyDown, onBeforeInput } = this.props;
+
+    if (event.defaultPrevented === true) {
       return;
     }
 
+    onKeyDown(event);
+
+    if (event.defaultPrevented === true) {
+      return;
+    }
+
+    const isInputEvent = isPotentialInputEvent(event);
+
+    if (isInputEvent === false) {
+      return;
+    }
+
+    onBeforeInput(event);
+  };
+
+  handleKeyUp = event => {
     const { onInput } = this.props;
 
-    onInput();
-  };
-
-  handleKeyDown = event => {
-    const { onBeforeInput, onKeyDown } = this.props;
-
-    if (!event.ctrlKey && !event.metaKey && event.key.length === 1) {
-      onBeforeInput(event);
-    } else {
-      onKeyDown(event);
+    if (event.defaultPrevented === true) {
+      return;
     }
+
+    const isInputEvent = isPotentialInputEvent(event);
+
+    if (isInputEvent === false) {
+      return;
+    }
+
+    onInput(event);
   };
 
-  editableRef = node => {
+  setRootNode = node => {
     const { editableRef } = this.props;
 
-    editableRef(node);
-
-    this.observer.disconnect();
-
     if (node) {
-      this.observer.observe(node, config);
+      editableRef(node);
     }
   };
-
-  componentWillUpdate() {
-    this.isUpdating = true;
-  }
-
-  componentDidUpdate() {
-    window.requestAnimationFrame(() => {
-      this.isUpdating = false;
-    });
-  }
-
-  componentWillUnmount() {
-    this.observer.disconnect();
-  }
 
   render() {
     const {
@@ -69,17 +79,17 @@ export default class ContentEditable extends PureComponent {
       onBlur,
       onSelect,
       onMouseDown,
-      onCompositionStart,
-      onCompositionEnd,
       onCut,
       onPaste,
       onDragStart,
       onDrop,
+      onCompositionStart,
+      onCompositionEnd,
       children
     } = this.props;
     return (
       <div
-        ref={this.editableRef}
+        ref={this.setRootNode}
         className={className}
         contentEditable
         suppressContentEditableWarning
@@ -88,13 +98,14 @@ export default class ContentEditable extends PureComponent {
         onBlur={onBlur}
         onSelect={onSelect}
         onMouseDown={onMouseDown}
-        onKeyDown={this.handleKeyDown}
-        onCompositionStart={onCompositionStart}
-        onCompositionEnd={onCompositionEnd}
         onCut={onCut}
         onPaste={onPaste}
         onDragStart={onDragStart}
         onDrop={onDrop}
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
+        onKeyDown={this.handleKeyDown}
+        onKeyUp={this.handleKeyUp}
       >
         {children}
       </div>
