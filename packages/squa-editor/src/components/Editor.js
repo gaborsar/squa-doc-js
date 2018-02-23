@@ -342,32 +342,32 @@ export default class Editor extends PureComponent {
       return onChange(change);
     }
 
-    if (event.keyCode === KEY_BACKSPACE) {
+    if (event.key === "Backspace") {
       return this.handleKeyDownBackspace(change, event);
     }
 
-    if (event.keyCode === KEY_DELETE) {
+    if (event.key === "Delete") {
       return this.handleKeyDownDelete(change, event);
     }
 
-    if (event.keyCode === KEY_ENTER) {
+    if (event.key === "Enter") {
       return this.handleKeyDownEnter(change, event);
     }
 
-    if (event.keyCode === KEY_LEFT) {
+    if (event.key === "ArrowLeft") {
       return this.handleKeyDownLeft(change, event);
     }
 
-    if (event.keyCode === KEY_RIGHT) {
+    if (event.key === "ArrowRight") {
       return this.handleKeyDownRight(change, event);
     }
 
     if (event.metaKey && event.key === "z") {
-      return this.handleKeyDownUndo(change, event);
-    }
-
-    if (event.metaKey && event.key === "Z") {
-      return this.handleKeyDownRedo(change, event);
+      if (event.shiftKey) {
+        return this.handleKeyDownRedo(change, event);
+      } else {
+        return this.handleKeyDownUndo(change, event);
+      }
     }
 
     if (event.ctrlKey && event.key === "z") {

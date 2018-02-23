@@ -32,7 +32,7 @@ function removeCheckable(change, event) {
 }
 
 export default function onKeyDown(change, event) {
-  if (event.key === "Enter" || event.key === "Backspace") {
+  if (event.key === "Backspace" || event.key === "Enter") {
     return removeCheckable(change, event);
   }
 

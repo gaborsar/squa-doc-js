@@ -83,15 +83,15 @@ function onToggleItalic(change, event) {
 }
 
 export default function onKeyDown(change, event) {
-  if (event.keyCode === KEY_BACKSPACE) {
+  if (event.key === "Backspace") {
     return removeListItem(change, event);
   }
 
-  if (event.keyCode === KEY_ENTER) {
+  if (event.key === "Enter") {
     return removeListItem(change, event);
   }
 
-  if (event.keyCode === KEY_TAB) {
+  if (event.key === "Tab") {
     if (event.shiftKey) {
       return onOutdent(change, event);
     } else {
@@ -99,19 +99,19 @@ export default function onKeyDown(change, event) {
     }
   }
 
-  if (event.keyCode === KEY_B && event.metaKey) {
+  if (event.metaKey && event.key === "b") {
     return onToggleBold(change, event);
   }
 
-  if (event.keyCode === KEY_I && event.metaKey) {
+  if (event.metaKey && event.key === "i") {
     return onToggleItalic(change, event);
   }
 
-  if (event.keyCode === KEY_B && event.ctrlKey) {
+  if (event.ctrlKey && event.key === "b") {
     return onToggleBold(change, event);
   }
 
-  if (event.keyCode === KEY_I && event.ctrlKey) {
+  if (event.ctrlKey && event.key === "i") {
     return onToggleItalic(change, event);
   }
 
