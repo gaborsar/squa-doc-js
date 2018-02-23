@@ -172,38 +172,6 @@ export default class Editor extends PureComponent {
     }
   }
 
-  handleMouseMove = event => {
-    if (!this.isMouseDown) {
-      return;
-    }
-
-    requestAnimationFrame(() => this.handleSelect(event));
-  };
-
-  handleMouseUp = () => {
-    if (!this.isMouseDown) {
-      return;
-    }
-
-    this.isMouseDown = false;
-
-    document.removeEventListener("mousemove", this.handleMouseMove);
-    document.removeEventListener("mouseup", this.handleMouseUp);
-  };
-
-  handleMouseDown = event => {
-    if (this.isMouseDown) {
-      return;
-    }
-
-    this.isMouseDown = true;
-
-    requestAnimationFrame(() => this.handleSelect(event));
-
-    document.addEventListener("mousemove", this.handleMouseMove);
-    document.addEventListener("mouseup", this.handleMouseUp);
-  };
-
   handleKeyDownBackspace = (change, event) => {
     const { value, afterKeyDownBackspace = sink, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
@@ -285,30 +253,36 @@ export default class Editor extends PureComponent {
 
   handleKeyDownLeft = (change, event) => {
     const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
 
-    if (event.metaKey || event.altKey || event.shiftKey || !isCollapsed) {
+    if (event.metaKey || event.altKey) {
       return;
     }
 
     event.preventDefault();
 
-    change.moveCursorLeft();
+    if (event.shiftKey) {
+      change.selectCharacterBackward();
+    } else {
+      change.moveCursorLeft();
+    }
 
     onChange(change);
   };
 
   handleKeyDownRight = (change, event) => {
     const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
 
-    if (event.metaKey || event.altKey || event.shiftKey || !isCollapsed) {
+    if (event.metaKey || event.altKey) {
       return;
     }
 
     event.preventDefault();
 
-    change.moveCursorRight();
+    if (event.shiftKey) {
+      change.selectCharacterForward();
+    } else {
+      change.moveCursorRight();
+    }
 
     onChange(change);
   };
@@ -686,7 +660,6 @@ export default class Editor extends PureComponent {
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
             onSelect={this.handleSelect}
-            onMouseDown={this.handleMouseDown}
             onKeyDown={this.handleKeyDown}
             onCompositionStart={this.handleCompositionStart}
             onCompositionEnd={this.handleCompositionEnd}
