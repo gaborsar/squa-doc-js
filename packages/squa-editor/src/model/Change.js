@@ -141,13 +141,18 @@ export default class Change {
   moveCursorLeft() {
     let { value } = this;
     let { selection } = value;
-    const { anchorOffset } = selection;
+    const { isCollapsed, anchorOffset } = selection;
 
-    if (anchorOffset <= 0) {
-      return this;
+    if (isCollapsed) {
+      if (anchorOffset === 0) {
+        return this;
+      }
+
+      selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+    } else {
+      selection = selection.collapseToLeft();
     }
 
-    selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
     value = value.setSelection(selection);
 
     this.value = value;
@@ -157,15 +162,19 @@ export default class Change {
 
   moveCursorRight() {
     let { value } = this;
-    let { selection } = value;
+    let { document, selection } = value;
+    const { isCollapsed, anchorOffset } = selection;
 
-    const { anchorOffset } = selection;
+    if (isCollapsed) {
+      if (anchorOffset >= document.length - 1) {
+        return this;
+      }
 
-    if (anchorOffset >= document.length - 1) {
-      return this;
+      selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
+    } else {
+      selection = selection.collapseToRight();
     }
 
-    selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
     value = value.setSelection(selection);
 
     this.value = value;
@@ -264,13 +273,22 @@ export default class Change {
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;
-    const { anchorOffset } = selection;
+    const { isBackward, anchorOffset, focusOffset } = selection;
 
-    if (anchorOffset <= 0) {
-      return this;
+    if (isBackward) {
+      if (isFocusOffset === 0) {
+        return this;
+      }
+
+      selection = selection.setFocusOffset(focusOffset - 1);
+    } else {
+      if (anchorOffset === 0) {
+        return this;
+      }
+
+      selection = selection.setAnchorOffset(anchorOffset - 1);
     }
 
-    selection = selection.setAnchorOffset(anchorOffset - 1);
     value = value.setSelection(selection);
 
     this.value = value;
@@ -282,13 +300,22 @@ export default class Change {
     let { value } = this;
     let { document, selection } = value;
 
-    const { focusOffset } = selection;
+    const { isBackward, anchorOffset, focusOffset } = selection;
 
-    if (focusOffset >= document.length - 1) {
-      return this;
+    if (isBackward) {
+      if (anchorOffset >= document.length - 1) {
+        return this;
+      }
+
+      selection = selection.setAnchorOffset(anchorOffset + 1);
+    } else {
+      if (focusOffset >= document.length - 1) {
+        return this;
+      }
+
+      selection = selection.setFocusOffset(focusOffset + 1);
     }
 
-    selection = selection.setFocusOffset(focusOffset + 1);
     value = value.setSelection(selection);
 
     this.value = value;

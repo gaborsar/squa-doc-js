@@ -92,7 +92,6 @@ export default class ContentEditable extends PureComponent {
       onFocus,
       onBlur,
       onSelect,
-      onMouseDown,
       onCut,
       onPaste,
       onDragStart,
@@ -111,7 +110,6 @@ export default class ContentEditable extends PureComponent {
         onFocus={onFocus}
         onBlur={onBlur}
         onSelect={onSelect}
-        onMouseDown={onMouseDown}
         onCut={onCut}
         onPaste={onPaste}
         onDragStart={onDragStart}
