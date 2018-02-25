@@ -185,8 +185,8 @@ describe("Change", () => {
       .select(3, 3)
       .selectCharacterBackward();
 
-    expect(change.value.selection.anchorOffset).toBe(2);
-    expect(change.value.selection.focusOffset).toBe(3);
+    expect(change.value.selection.anchorOffset).toBe(3);
+    expect(change.value.selection.focusOffset).toBe(2);
   });
 
   test("selectCharacterForward()", () => {

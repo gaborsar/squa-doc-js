@@ -273,21 +273,13 @@ export default class Change {
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;
-    const { isBackward, anchorOffset, focusOffset } = selection;
+    const { isCollapsed, isBackward, anchorOffset, focusOffset } = selection;
 
-    if (isBackward) {
-      if (isFocusOffset === 0) {
-        return this;
-      }
-
-      selection = selection.setFocusOffset(focusOffset - 1);
-    } else {
-      if (anchorOffset === 0) {
-        return this;
-      }
-
-      selection = selection.setAnchorOffset(anchorOffset - 1);
+    if ((isCollapsed || isBackward) && focusOffset === 0) {
+      return this;
     }
+
+    selection = selection.setFocusOffset(focusOffset - 1);
 
     value = value.setSelection(selection);
 
@@ -300,21 +292,13 @@ export default class Change {
     let { value } = this;
     let { document, selection } = value;
 
-    const { isBackward, anchorOffset, focusOffset } = selection;
+    const { isCollapsed, isBackward, focusOffset } = selection;
 
-    if (isBackward) {
-      if (anchorOffset >= document.length - 1) {
-        return this;
-      }
-
-      selection = selection.setAnchorOffset(anchorOffset + 1);
-    } else {
-      if (focusOffset >= document.length - 1) {
-        return this;
-      }
-
-      selection = selection.setFocusOffset(focusOffset + 1);
+    if ((isCollapsed || !isBackward) && focusOffset >= document.length - 1) {
+      return this;
     }
+
+    selection = selection.setFocusOffset(focusOffset + 1);
 
     value = value.setSelection(selection);
 
