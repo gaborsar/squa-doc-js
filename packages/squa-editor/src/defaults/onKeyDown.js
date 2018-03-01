@@ -1,15 +1,7 @@
-import indent from "../changes/indent";
-import outdent from "../changes/outdent";
-import toggleBold from "../changes/toggleBold";
-import toggleItalic from "../changes/toggleItalic";
-
-import {
-  KEY_BACKSPACE,
-  KEY_ENTER,
-  KEY_TAB,
-  KEY_B,
-  KEY_I
-} from "../../constants";
+import indent from "./changes/indent";
+import outdent from "./changes/outdent";
+import toggleBold from "./changes/toggleBold";
+import toggleItalic from "./changes/toggleItalic";
 
 function removeListItem(change, event) {
   const { value } = change;
@@ -99,19 +91,11 @@ export default function onKeyDown(change, event) {
     }
   }
 
-  if (event.metaKey && event.key === "b") {
+  if ((event.metaKey || event.ctrlKey) && event.key === "b") {
     return onToggleBold(change, event);
   }
 
-  if (event.metaKey && event.key === "i") {
-    return onToggleItalic(change, event);
-  }
-
-  if (event.ctrlKey && event.key === "b") {
-    return onToggleBold(change, event);
-  }
-
-  if (event.ctrlKey && event.key === "i") {
+  if ((event.metaKey || event.ctrlKey) && event.key === "i") {
     return onToggleItalic(change, event);
   }
 

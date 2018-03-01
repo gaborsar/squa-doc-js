@@ -1,4 +1,4 @@
-export default function tokenizeInlineImage(node) {
+export default function tokenizeNode(node) {
   const tokens = [];
 
   if (node.nodeName === "IMG" && node.hasAttribute("src")) {

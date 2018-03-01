@@ -1,9 +1,9 @@
 import Delta from "quill-delta";
+import Schema from "./Schema";
 import Document from "./Document";
 import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
-import extendSchema from "./extendSchema";
 import defaultSchema from "../defaults/schema";
 
 import { EOL, EDITOR_MODE_EDIT } from "../constants";
@@ -16,13 +16,11 @@ export default class Value {
   }
 
   static fromJSON(props = {}) {
-    const { schema: customSchema = {}, contents = defaultContents } = props;
-
-    const schema = extendSchema(defaultSchema, customSchema);
+    const { schema = defaultSchema, contents = defaultContents } = props;
 
     const delta = new Delta(contents);
 
-    const builder = new DocumentBuilder(schema);
+    const builder = new DocumentBuilder(new Schema(schema));
 
     delta.forEach(op => {
       const { insert: value, attributes = {} } = op;

@@ -53,8 +53,13 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
   }
 
   format(attributes) {
-    const style = this.style.update(attributes, type =>
-      this.schema.isEmbedMark(this.type, type)
+    const style = this.style.update(
+      attributes,
+      markType =>
+        (this.isBlock
+          ? this.schema.isBlockMark(markType)
+          : this.schema.isInlineMark(markType)) ||
+        this.schema.isEmbedMark(this.type, markType)
     );
     return this.setStyle(style);
   }

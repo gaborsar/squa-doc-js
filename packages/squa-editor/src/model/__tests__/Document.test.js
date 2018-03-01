@@ -1,6 +1,11 @@
 import Delta from "quill-delta";
 import { random } from "lodash/fp";
+import Schema from "../Schema";
 import DocumentBuilder from "../DocumentBuilder";
+import combineSchemas from "../../plugins/combineSchemas";
+import defaultSchema from "../../defaults/schema";
+import blockImageSchema from "../../../../squa-editor-block-image-plugin/schema";
+import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/schema";
 
 const insertInlineOperations = [
   { insert: "aaa" },
@@ -57,7 +62,11 @@ describe("Document", () => {
       const eventualDelta = randomDelta();
       const changeDelta = initialDelta.diff(eventualDelta);
 
-      const builder = new DocumentBuilder();
+      const schema = new Schema(
+        combineSchemas([defaultSchema, blockImageSchema, inlineImageSchema])
+      );
+
+      const builder = new DocumentBuilder(schema);
       initialDelta.forEach(op => {
         builder.insert(op.insert, op.attributes);
       });

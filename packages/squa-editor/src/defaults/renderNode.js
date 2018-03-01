@@ -1,5 +1,5 @@
-export default function blockRenderFn(node) {
-  switch (node.getMark("type")) {
+export default function renderNode(node) {
+  switch (node.type) {
     case "heading-one":
       return {
         component: "h1"
@@ -33,11 +33,6 @@ export default function blockRenderFn(node) {
     case "blockquote":
       return {
         component: "blockquote"
-      };
-
-    case "paragraph":
-      return {
-        component: "p"
       };
 
     case "unordered-list-item":

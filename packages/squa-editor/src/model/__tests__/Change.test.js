@@ -1,6 +1,8 @@
 import Delta from "quill-delta";
 import Value from "../Value";
-
+import combineSchemas from "../../plugins/combineSchemas";
+import defaultSchema from "../../defaults/schema";
+import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/schema";
 import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
 describe("Change", () => {
@@ -389,7 +391,10 @@ describe("Change", () => {
   });
 
   test("insertEmbed()", () => {
+    const schema = combineSchemas([defaultSchema, inlineImageSchema]);
+
     const value = Value.fromJSON({
+      schema,
       contents: new Delta().insert("aaabbb\n")
     });
 
