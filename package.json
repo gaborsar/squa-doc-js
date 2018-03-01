@@ -31,7 +31,6 @@
     "lodash": "^4.17.4",
     "node-sass": "^4.7.2",
     "quill-delta": "^3.5.0",
-    "ramda": "^0.25.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "sass-loader": "^6.0.6",
@@ -50,10 +49,6 @@
     "transform": {
       ".*": "<rootDir>/node_modules/babel-jest"
     },
-    "unmockedModulePathPatterns": [
-      "react",
-      "enzyme",
-      "quill-delta"
-    ]
+    "unmockedModulePathPatterns": ["react", "enzyme", "quill-delta"]
   }
 }
