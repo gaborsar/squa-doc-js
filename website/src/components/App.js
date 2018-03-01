@@ -7,7 +7,7 @@ import {
 } from "../../../packages/squa-editor/src";
 import blockImagePlugin from "../../../packages/squa-editor-block-image-plugin/plugin";
 import inlineImagePlugin from "../../../packages/squa-editor-inline-image-plugin/plugin";
-import checkableListPlugin from "../checkable-list-plugin/plugin";
+import checkablePlugin from "../../../packages/squa-editor-checkable-plugin/plugin";
 import Menu from "./Menu";
 
 const {
@@ -19,7 +19,7 @@ const {
 } = combinePlugins([
   blockImagePlugin,
   inlineImagePlugin,
-  checkableListPlugin,
+  checkablePlugin,
   defaultPlugin
 ]);
 
