@@ -11,8 +11,8 @@ const properties = [
   { name: "onKeyDown", combiner: combineHandlers }
 ];
 
-const combinePlugins = plugins =>
-  properties.reduce((plugin, { name, combiner }) => {
+export default function combinePlugins(plugins) {
+  return properties.reduce((plugin, { name, combiner }) => {
     const properties = plugins
       .filter(plugin => plugin.hasOwnProperty(name))
       .map(plugin => plugin[name]);
@@ -21,5 +21,4 @@ const combinePlugins = plugins =>
       [name]: combiner(properties)
     };
   }, {});
-
-export default combinePlugins;
+}

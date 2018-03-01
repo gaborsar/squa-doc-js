@@ -1,4 +1,3 @@
-const combineHandlers = handlers => (...args) =>
-  handlers.some(handler => handler(...args));
-
-export default combineHandlers;
+export default function combineHandlers(handlers) {
+  return (...args) => handlers.some(handler => handler(...args));
+}

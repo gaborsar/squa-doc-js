@@ -6,18 +6,18 @@ const methods = [
   "isEmbedMark"
 ];
 
-const combineSchemaMethods = methods => (...args) =>
-  methods.some(method => method(...args));
+function combineMethods(methods) {
+  return (...args) => methods.some(method => method(...args));
+}
 
-const combineSchemas = schemas =>
-  methods.reduce((schema, name) => {
+export default function combineSchemas(schemas) {
+  return methods.reduce((schema, name) => {
     const methods = schemas
       .filter(schema => schema.hasOwnProperty(name))
       .map(schema => schema[name]);
     return {
       ...schema,
-      [name]: combineSchemaMethods(methods)
+      [name]: combineMethods(methods)
     };
   }, {});
-
-export default combineSchemas;
+}
