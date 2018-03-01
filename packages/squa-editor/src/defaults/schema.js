@@ -1,5 +1,3 @@
-import createSchema from "../model/createSchema";
-
 const blockMarks = ["type", "align", "indent"];
 
 const inlineMarks = [

@@ -5,9 +5,9 @@ import {
   combinePlugins,
   defaultPlugin
 } from "../../../packages/squa-editor/src";
-import blockImagePlugin from "../../../packages/squa-editor-block-image-plugin/plugin";
-import inlineImagePlugin from "../../../packages/squa-editor-inline-image-plugin/plugin";
-import checkablePlugin from "../../../packages/squa-editor-checkable-plugin/plugin";
+import blockImagePlugin from "../../../packages/squa-editor-block-image-plugin/src";
+import inlineImagePlugin from "../../../packages/squa-editor-inline-image-plugin/src";
+import checkablePlugin from "../../../packages/squa-editor-checkable-plugin/src";
 import Menu from "./Menu";
 
 const {

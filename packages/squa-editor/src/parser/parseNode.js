@@ -1,5 +1,4 @@
 import Delta from "quill-delta";
-
 import { EOL } from "../constants";
 
 const defaultContext = {

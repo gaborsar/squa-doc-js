@@ -5,7 +5,6 @@ import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
 import defaultSchema from "../defaults/schema";
-
 import { EOL, EDITOR_MODE_EDIT } from "../constants";
 
 const defaultContents = [{ insert: EOL }];

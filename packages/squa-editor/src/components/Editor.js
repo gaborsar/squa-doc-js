@@ -14,18 +14,7 @@ import defaultRenderNode from "../defaults/renderNode";
 import defaultRenderMark from "../defaults/renderMark";
 import defaultOnKeyDown from "../defaults/onKeyDown";
 import defaultTokenizeNode from "../defaults/tokenizeNode";
-
-import {
-  EOL,
-  KEY_BACKSPACE,
-  KEY_DELETE,
-  KEY_ENTER,
-  KEY_LEFT,
-  KEY_RIGHT,
-  KEY_Z,
-  EDITOR_MODE_EDIT,
-  EDITOR_MODE_COMPOSITION
-} from "../constants";
+import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
 
 import "./Editor.css";
 
@@ -198,6 +187,8 @@ export default class Editor extends PureComponent {
           .delete()
           .save("delete_character_backward");
       }
+    } else {
+      change.delete().save();
     }
 
     onChange(change);
@@ -226,6 +217,8 @@ export default class Editor extends PureComponent {
           .delete()
           .save("delete_character_forward");
       }
+    } else {
+      change.delete().save();
     }
 
     onChange(change);

@@ -2,7 +2,6 @@ import DocumentIterator from "./DocumentIterator";
 import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
-
 import { EOL } from "../constants";
 
 export default class DocumentEditor {

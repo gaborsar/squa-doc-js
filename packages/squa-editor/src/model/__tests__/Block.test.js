@@ -4,7 +4,7 @@ import Schema from "../Schema";
 import BlockBuilder from "../BlockBuilder";
 import combineSchemas from "../../plugins/combineSchemas";
 import defaultSchema from "../../defaults/schema";
-import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/schema";
+import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/src/schema";
 
 const insertInlineOperations = [
   { insert: "aaa" },

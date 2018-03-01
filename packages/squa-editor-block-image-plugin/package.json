@@ -1,7 +1,7 @@
 {
-  "name": "squa-editor",
-  "version": "0.0.29",
-  "description": "A rich text editor for React",
+  "name": "squa-editor-block-image-plugin",
+  "version": "0.0.1",
+  "description": "Block image plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
@@ -11,9 +11,7 @@
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
-    "lodash": "^4.17.4",
     "react-dom": "^16.0.0",
-    "react": "^16.0.0",
-    "quill-delta": "^3.5.0"
+    "react": "^16.0.0"
   }
 }
