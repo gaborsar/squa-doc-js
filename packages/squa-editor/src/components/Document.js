@@ -2,9 +2,6 @@ import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
 import Embed from "./Embed";
 import Block from "./Block";
-import defaultBlockRenderFn from "../defaults/renderers/blockRenderFn";
-import defaultEmbedRenderFn from "../defaults/renderers/embedRenderFn";
-import defaultBlockStyleFn from "../defaults/renderers/blockStyleFn";
 
 export default class Document extends PureComponent {
   render() {
@@ -16,10 +13,8 @@ export default class Document extends PureComponent {
       replaceInlineByKey,
       formatInlineByKey,
       deleteInlineByKey,
-      blockRenderFn: customBlockRenderFn,
-      embedRenderFn: customEmbedRenderFn,
-      blockStyleFn: customBlockStyleFn,
-      inlineStyleFn: customInlineStyleFn
+      renderNode,
+      renderMark
     } = this.props;
 
     const blocks = [];
@@ -28,19 +23,7 @@ export default class Document extends PureComponent {
       const classNames = [];
 
       child.style.marks.forEach(mark => {
-        let markObj;
-
-        if (customBlockStyleFn) {
-          markObj = customBlockStyleFn(mark);
-        }
-
-        if (!markObj) {
-          markObj = defaultBlockStyleFn(mark);
-        }
-
-        if (!markObj) {
-          markObj = {};
-        }
+        const markObj = renderMark(mark) || {};
 
         const { className: markClassName } = markObj;
 
@@ -57,15 +40,7 @@ export default class Document extends PureComponent {
           deleteBlockByKey
         };
 
-        let embedObj;
-
-        if (customEmbedRenderFn) {
-          embedObj = customEmbedRenderFn(child, defaultEmbedProps);
-        }
-
-        if (!embedObj) {
-          embedObj = defaultEmbedRenderFn(child, defaultEmbedProps);
-        }
+        const embedObj = renderNode(child, defaultEmbedProps);
 
         if (!embedObj) {
           throw new Error(`Invalid embed: ${child.type}`);
@@ -92,15 +67,7 @@ export default class Document extends PureComponent {
           deleteBlockByKey
         };
 
-        let blockObj;
-
-        if (customBlockRenderFn) {
-          blockObj = customBlockRenderFn(child, defaultBlockProps);
-        }
-
-        if (!blockObj) {
-          blockObj = defaultBlockRenderFn(child, defaultBlockProps);
-        }
+        const blockObj = renderNode(child, defaultBlockProps);
 
         if (!blockObj) {
           throw new Error(`Invalid block: ${child.type}`);
@@ -118,8 +85,8 @@ export default class Document extends PureComponent {
             replaceInlineByKey={replaceInlineByKey}
             formatInlineByKey={formatInlineByKey}
             deleteInlineByKey={deleteInlineByKey}
-            embedRenderFn={customEmbedRenderFn}
-            inlineStyleFn={customInlineStyleFn}
+            renderNode={renderNode}
+            renderMark={renderMark}
           />
         );
 

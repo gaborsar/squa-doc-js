@@ -1,12 +1,27 @@
 import React, { PureComponent } from "react";
-import { Value, Editor } from "../../../packages/squa-editor/src";
+import {
+  Value,
+  Editor,
+  combinePlugins,
+  defaultPlugin
+} from "../../../packages/squa-editor/src";
+import blockImagePlugin from "../../../packages/squa-editor-block-image-plugin/src";
+import inlineImagePlugin from "../../../packages/squa-editor-inline-image-plugin/src";
+import checkablePlugin from "../../../packages/squa-editor-checkable-plugin/src";
 import Menu from "./Menu";
-import schema from "../editor/schema";
-import blockRenderFn from "../editor/blockRenderFn";
-import blockStyleFn from "../editor/blockStyleFn";
-import tokenizeNode from "../editor/tokenizeNode";
-import onKeyDown from "../editor/onKeyDown";
-import afterKeyDownEnter from "../editor/afterKeyDownEnter";
+
+const {
+  schema,
+  renderNode,
+  renderMark,
+  tokenizeNode,
+  onKeyDown
+} = combinePlugins([
+  blockImagePlugin,
+  inlineImagePlugin,
+  checkablePlugin,
+  defaultPlugin
+]);
 
 export default class App extends PureComponent {
   constructor(props) {
@@ -37,11 +52,10 @@ export default class App extends PureComponent {
             placeholder="Enter some text..."
             value={value}
             onChange={this.onChange}
-            blockRenderFn={blockRenderFn}
-            blockStyleFn={blockStyleFn}
+            renderNode={renderNode}
+            renderMark={renderMark}
             tokenizeNode={tokenizeNode}
             onKeyDown={onKeyDown}
-            afterKeyDownEnter={afterKeyDownEnter}
           />
         </div>
       </div>

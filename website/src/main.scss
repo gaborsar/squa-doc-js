@@ -96,6 +96,18 @@ body {
   b {
     font-weight: bold;
   }
+
+  .checkable {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 19px;
+    font-weight: lighter;
+    line-height: 30px;
+  }
+
+  .checked {
+    color: #aaa;
+  }
 }
 
 .ed-editor--focused {

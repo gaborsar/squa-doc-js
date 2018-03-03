@@ -1,4 +1,4 @@
-export default function blockStyleFn(mark) {
+export default function renderMark(mark) {
   if (mark.type === "type" && mark.value === "checkable") {
     return {
       className: "checkable"

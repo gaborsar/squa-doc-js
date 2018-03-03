@@ -2,8 +2,6 @@ import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
 import Text from "./Text";
 import Embed from "./Embed";
-import defaultEmbedRenderFn from "../defaults/renderers/embedRenderFn";
-import defaultInlineStyleFn from "../defaults/renderers/inlineStyleFn";
 
 export default class Block extends PureComponent {
   render() {
@@ -15,8 +13,8 @@ export default class Block extends PureComponent {
       replaceInlineByKey,
       formatInlineByKey,
       deleteInlineByKey,
-      embedRenderFn: customEmbedRenderFn,
-      inlineStyleFn: customInlineStyleFn
+      renderNode,
+      renderMark
     } = this.props;
 
     const children = [];
@@ -30,15 +28,7 @@ export default class Block extends PureComponent {
         const markObjects = [];
 
         child.style.marks.forEach(mark => {
-          let markObj;
-
-          if (customInlineStyleFn) {
-            markObj = customInlineStyleFn(mark);
-          }
-
-          if (!markObj) {
-            markObj = defaultInlineStyleFn(mark);
-          }
+          const markObj = renderMark(mark);
 
           if (markObj) {
             markObjects.push(markObj);
@@ -65,15 +55,7 @@ export default class Block extends PureComponent {
             deleteInlineByKey
           };
 
-          let embedObj;
-
-          if (customEmbedRenderFn) {
-            embedObj = customEmbedRenderFn(child, defaultEmbedProps);
-          }
-
-          if (!embedObj) {
-            embedObj = defaultEmbedRenderFn(child, defaultEmbedProps);
-          }
+          const embedObj = renderNode(child, defaultEmbedProps);
 
           if (!embedObj) {
             throw new Error(`Invalid embed: ${child.type}`);

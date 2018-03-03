@@ -1,15 +1,13 @@
 # Custom Embed Nodes
 
-To define custom embed nodes, you have to define your own `schema`, and your own `embedRenderFn` and `tokenizeNode` functions.
+To define custom embed nodes, you have to define your own `schema`, and your own `renderNode` and `tokenizeNode` functions.
 
 If you would like to define a block level embed node you need a `schema` similar to this:
 
 ```jsx
 const schema = {
   isBlockEmbed(embedType) {
-    if (embedType === "block-image") {
-      return true;
-    }
+    return embedType === "block-image";
   }
 };
 ```
@@ -19,22 +17,20 @@ If you would like to define an inline level embed node you need a `schema` simil
 ```jsx
 const schema = {
   isInlineEmbed(embedType) {
-    if (embedType === "inline-image") {
-      return true;
-    }
+    return embedType === "inline-image";
   }
 };
 ```
 
-Defining your own `embedRenderFn` function:
+Defining your own `renderNode` function:
 
 ```jsx
-function embedRenderFn(node) {
+function renderNode(node) {
   if (node.type === "inline-image") {
     return {
       component: "img",
       props: {
-        src: node.value["inline-image"]
+        src: node.value[node.type]
       }
     };
   }

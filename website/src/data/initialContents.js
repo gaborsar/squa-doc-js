@@ -151,7 +151,7 @@ export default new Delta({
       }
     },
     {
-      insert: "n = length(A},"
+      insert: "n = length(A),"
     },
     {
       insert: "\n",

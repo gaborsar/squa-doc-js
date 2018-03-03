@@ -1,6 +1,4 @@
 import Delta from "quill-delta";
-import defaultTokenizeNode from "../defaults/tokenizers/tokenizeNode";
-
 import { EOL } from "../constants";
 
 const defaultContext = {
@@ -11,7 +9,7 @@ const defaultContext = {
 
 export default function parseNode(
   node,
-  customTokenizeNode,
+  tokenizeNode,
   context = defaultContext
 ) {
   let delta = new Delta();
@@ -22,13 +20,7 @@ export default function parseNode(
     node.nodeType === Node.ELEMENT_NODE &&
     !node.hasOwnProperty("data-ignore")
   ) {
-    let tokens = [];
-
-    if (customTokenizeNode) {
-      tokens = tokens.concat(customTokenizeNode(node, context));
-    }
-
-    tokens = tokens.concat(defaultTokenizeNode(node, context));
+    const tokens = tokenizeNode(node, context);
 
     let isBlock = false;
     let isBlockEmbed = false;
@@ -99,7 +91,7 @@ export default function parseNode(
       delta.insert(embedValue, context.inline);
     } else {
       for (const child of node.childNodes) {
-        delta = delta.concat(parseNode(child, customTokenizeNode, context));
+        delta = delta.concat(parseNode(child, tokenizeNode, context));
       }
       if (isBlock) {
         delta.insert(EOL, context.block);

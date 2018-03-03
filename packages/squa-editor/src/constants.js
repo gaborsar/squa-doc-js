@@ -1,20 +1,7 @@
 export const EOL = "\n";
 
-export const KEY_BACKSPACE = 8;
-export const KEY_DELETE = 46;
-export const KEY_ENTER = 13;
-export const KEY_TAB = 9;
-export const KEY_LEFT = 37;
-export const KEY_RIGHT = 39;
-export const KEY_B = 66;
-export const KEY_I = 73;
-export const KEY_Y = 89;
-export const KEY_Z = 90;
-
 export const EDITOR_MODE_EDIT = "edit";
 export const EDITOR_MODE_COMPOSITION = "composition";
 
 export const HISTORY_STACK_SIZE = 100;
 export const HISTORY_UNDO_DELAY = 1000;
-
-export const INDENT_MAX = 5;

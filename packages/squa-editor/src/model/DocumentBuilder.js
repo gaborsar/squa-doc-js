@@ -2,12 +2,10 @@ import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
 import Document from "./Document";
-import defaultSchema from "../defaults/schema";
-
 import { EOL } from "../constants";
 
 export default class DocumentBuilder {
-  constructor(schema = defaultSchema) {
+  constructor(schema) {
     this._schema = schema;
     this._inlines = [];
     this._blocks = [];

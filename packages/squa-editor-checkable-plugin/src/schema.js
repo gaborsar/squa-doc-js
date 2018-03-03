@@ -1,8 +1,6 @@
 const schema = {
   isBlockMark(markType) {
-    if (markType === "checked") {
-      return true;
-    }
+    return markType === "checked";
   }
 };
 

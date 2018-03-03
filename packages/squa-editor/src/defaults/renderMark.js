@@ -1,16 +1,19 @@
-export default function inlineStyleFn(mark) {
+export default function renderMark(mark) {
   switch (mark.type) {
+    case "align":
+    case "indent":
+    case "anchor":
+    case "color":
+      return {
+        className: `ed-${mark.type}-${mark.value}`
+      };
+
     case "link":
       return {
         component: "a",
         props: {
           href: mark.value
         }
-      };
-
-    case "anchor":
-      return {
-        className: `ed-anchor-${mark.value}`
       };
 
     case "bold":
@@ -36,11 +39,6 @@ export default function inlineStyleFn(mark) {
     case "code":
       return {
         component: "code"
-      };
-
-    case "color":
-      return {
-        className: `ed-color-${mark.value}`
       };
   }
 }

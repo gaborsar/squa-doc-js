@@ -1,6 +1,5 @@
 import Delta from "quill-delta";
 import Snapshot from "./Snapshot";
-
 import { EOL, HISTORY_STACK_SIZE, HISTORY_UNDO_DELAY } from "../constants";
 
 export default class Change {

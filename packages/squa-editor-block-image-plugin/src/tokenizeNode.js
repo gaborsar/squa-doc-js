@@ -1,4 +1,4 @@
-export default function tokenizeBlockImage(node) {
+export default function tokenizeNode(node) {
   const tokens = [];
 
   if (node.nodeName === "FIGURE") {

@@ -1,11 +1,11 @@
 # Custom Block Nodes
 
-To define custom block nodes, you have to define your own `blockRenderFn` and `tokenizeNode` functions.
+To define custom block nodes, you have to define your own `renderNode` and `tokenizeNode` functions.
 
-Defining your own `blockRenderFn` function:
+Defining your own `renderNode` function:
 
 ```jsx
-function blockRenderFn(node) {
+function renderNode(node) {
   switch (node.type) {
     case "heading-one":
       return {

@@ -5,7 +5,6 @@ import BlockEditor from "./BlockEditor";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
 import EditMixin from "./mixins/Edit";
-
 import { EOL } from "../constants";
 
 export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {

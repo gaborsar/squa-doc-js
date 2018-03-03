@@ -1,4 +1,4 @@
-import { INDENT_MAX } from "../../constants";
+const INDENT_MAX = 5;
 
 function indentBlock(change, block) {
   let indent = block.getMark("indent");

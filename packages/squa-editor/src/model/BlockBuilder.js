@@ -1,10 +1,9 @@
 import Text from "./Text";
 import Embed from "./Embed";
 import Block from "./Block";
-import defaultSchema from "../defaults/schema";
 
 export default class BlockBuilder {
-  constructor(schema = defaultSchema) {
+  constructor(schema) {
     this._schema = schema;
     this._nodes = [];
   }

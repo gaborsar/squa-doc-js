@@ -4,6 +4,19 @@ import Node from "./Node";
 import LeafMixin from "./mixins/Leaf";
 import FormatMixin from "./mixins/Format";
 
+function isValidMarkType(schema, embedType, markType) {
+  if (schema.isBlockEmbed(embedType)) {
+    if (schema.isBlockMark(markType)) {
+      return true;
+    }
+  } else {
+    if (schema.isInlineMark(markType)) {
+      return true;
+    }
+  }
+  return schema.isEmbedMark(embedType, markType);
+}
+
 export default class Embed extends FormatMixin(LeafMixin(Node)) {
   static create(props = {}) {
     return new Embed(props);
@@ -53,8 +66,8 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
   }
 
   format(attributes) {
-    const style = this.style.update(attributes, type =>
-      this.schema.isEmbedMark(this.type, type)
+    const style = this.style.update(attributes, markType =>
+      isValidMarkType(this.schema, this.type, markType)
     );
     return this.setStyle(style);
   }

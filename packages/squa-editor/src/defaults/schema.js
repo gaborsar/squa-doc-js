@@ -1,29 +1,24 @@
-import createSchema from "../model/createSchema";
+const blockMarks = ["type", "align", "indent"];
 
-const schema = createSchema({
-  block: {
-    marks: ["type", "align", "indent"],
-    embeds: ["block-image"]
+const inlineMarks = [
+  "link",
+  "anchor",
+  "bold",
+  "italic",
+  "underline",
+  "strikethrough",
+  "code",
+  "color"
+];
+
+const schema = {
+  isBlockMark(markType) {
+    return blockMarks.indexOf(markType) !== -1;
   },
-  inline: {
-    marks: [
-      "link",
-      "anchor",
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-      "code",
-      "color"
-    ],
-    embeds: ["inline-image"]
-  },
-  "block-image": {
-    marks: ["alt", "caption"]
-  },
-  "inline-image": {
-    marks: ["alt"]
+
+  isInlineMark(markType) {
+    return inlineMarks.indexOf(markType) !== -1;
   }
-});
+};
 
 export default schema;

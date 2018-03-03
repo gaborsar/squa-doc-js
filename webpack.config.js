@@ -2,6 +2,9 @@
 
 const webpack = require("webpack");
 const SquaEditor = require("./packages/squa-editor/package.json");
+const BlockImagePlugin = require("./packages/squa-editor-block-image-plugin/package.json");
+const InlineImagePlugin = require("./packages/squa-editor-inline-image-plugin/package.json");
+const CheckablePlugin = require("./packages/squa-editor-checkable-plugin/package.json");
 
 function genericFactory(config) {
   return {
@@ -96,4 +99,10 @@ function appFactory(path) {
   });
 }
 
-module.exports = [packageFactory(SquaEditor), appFactory("website")];
+module.exports = [
+  packageFactory(SquaEditor),
+  packageFactory(BlockImagePlugin),
+  packageFactory(InlineImagePlugin),
+  packageFactory(CheckablePlugin),
+  appFactory("website")
+];

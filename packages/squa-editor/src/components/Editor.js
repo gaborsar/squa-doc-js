@@ -10,19 +10,11 @@ import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
 import optimizeInsertDelta from "./utils/optimizeInsertDelta";
 import optimizeFragmentDelta from "./utils/optimizeFragmentDelta";
-import defaultOnKeyDown from "../defaults/handlers/onKeyDown";
-
-import {
-  EOL,
-  KEY_BACKSPACE,
-  KEY_DELETE,
-  KEY_ENTER,
-  KEY_LEFT,
-  KEY_RIGHT,
-  KEY_Z,
-  EDITOR_MODE_EDIT,
-  EDITOR_MODE_COMPOSITION
-} from "../constants";
+import defaultRenderNode from "../defaults/renderNode";
+import defaultRenderMark from "../defaults/renderMark";
+import defaultOnKeyDown from "../defaults/onKeyDown";
+import defaultTokenizeNode from "../defaults/tokenizeNode";
+import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
 
 import "./Editor.css";
 
@@ -173,65 +165,67 @@ export default class Editor extends PureComponent {
   }
 
   handleKeyDownBackspace = (change, event) => {
-    const { value, afterKeyDownBackspace = sink, onChange = sink } = this.props;
+    const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
     if (isCollapsed) {
       if (event.metaKey) {
-        change.selectBlockBackward();
+        change
+          .selectBlockBackward()
+          .delete()
+          .save();
       } else if (event.altKey) {
-        change.selectWordBackward();
+        change
+          .selectWordBackward()
+          .delete()
+          .save();
       } else {
-        change.selectCharacterBackward();
+        change
+          .selectCharacterBackward()
+          .delete()
+          .save("delete_character_backward");
       }
-    }
-
-    change.delete();
-
-    afterKeyDownBackspace(change, event);
-
-    if (isCollapsed && !event.metaKey && !event.altKey) {
-      change.save("delete_character_backward");
     } else {
-      change.save();
+      change.delete().save();
     }
 
     onChange(change);
   };
 
   handleKeyDownDelete = (change, event) => {
-    const { value, afterKeyDownDelete = sink, onChange = sink } = this.props;
+    const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
     if (isCollapsed) {
       if (event.metaKey) {
-        change.selectBlockForward();
+        change
+          .selectBlockForward()
+          .delete()
+          .save();
       } else if (event.altKey) {
-        change.selectWordForward();
+        change
+          .selectWordForward()
+          .delete()
+          .save();
       } else {
-        change.selectCharacterForward();
+        change
+          .selectCharacterForward()
+          .delete()
+          .save("delete_character_forward");
       }
-    }
-
-    change.delete();
-
-    afterKeyDownDelete(change, event);
-
-    if (isCollapsed && !event.metaKey && !event.altKey) {
-      change.save("delete_character_forward");
     } else {
-      change.save();
+      change.delete().save();
     }
 
     onChange(change);
   };
 
   handleKeyDownEnter = (change, event) => {
-    const { value, afterKeyDownEnter = sink, onChange = sink } = this.props;
+    const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
@@ -242,11 +236,7 @@ export default class Editor extends PureComponent {
 
     const format = value.getFormat();
 
-    change.insertText(EOL, format);
-
-    afterKeyDownEnter(change, event);
-
-    change.save();
+    change.insertText(EOL, format).save();
 
     onChange(change);
   };
@@ -308,11 +298,11 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDown = event => {
-    const { value, onKeyDown = sink, onChange = sink } = this.props;
+    const { value, onKeyDown = defaultOnKeyDown, onChange = sink } = this.props;
 
     const change = value.change();
 
-    if (onKeyDown(change, event) || defaultOnKeyDown(change, event)) {
+    if (onKeyDown(change, event)) {
       return onChange(change);
     }
 
@@ -354,7 +344,7 @@ export default class Editor extends PureComponent {
   };
 
   afterInput = change => {
-    const { tokenizeNode: customTokenizeNode } = this.props;
+    const { tokenizeNode = defaultTokenizeNode } = this.props;
     const { value } = change;
     const { document, inlineStyleOverride } = value;
 
@@ -389,7 +379,7 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    const delta = parseNode(blockNode, customTokenizeNode);
+    const delta = parseNode(blockNode, tokenizeNode);
 
     const diff = blockBefore.delta.diff(delta);
 
@@ -495,7 +485,7 @@ export default class Editor extends PureComponent {
   handlePasteHTML = (change, event) => {
     const {
       value,
-      tokenizeNode: customTokenizeNode,
+      tokenizeNode = defaultTokenizeNode,
       onChange = sink
     } = this.props;
     const { selection: { isCollapsed } } = value;
@@ -504,7 +494,7 @@ export default class Editor extends PureComponent {
 
     const data = event.clipboardData.getData("text/html");
 
-    const fragment = parseHTML(data, customTokenizeNode);
+    const fragment = parseHTML(data, tokenizeNode);
 
     optimizeFragmentDelta(fragment);
 
@@ -639,10 +629,8 @@ export default class Editor extends PureComponent {
   render() {
     const {
       value: { document },
-      blockStyleFn,
-      inlineStyleFn,
-      blockRenderFn,
-      embedRenderFn
+      renderNode = defaultRenderNode,
+      renderMark = defaultRenderMark
     } = this.props;
     const { isFocused } = this.state;
     return (
@@ -679,10 +667,8 @@ export default class Editor extends PureComponent {
               replaceInlineByKey={this.replaceInlineByKey}
               formatInlineByKey={this.formatInlineByKey}
               deleteInlineByKey={this.deleteInlineByKey}
-              blockRenderFn={blockRenderFn}
-              embedRenderFn={embedRenderFn}
-              blockStyleFn={blockStyleFn}
-              inlineStyleFn={inlineStyleFn}
+              renderNode={renderNode}
+              renderMark={renderMark}
             />
           </ContentEditable>
         </ErrorBoundary>

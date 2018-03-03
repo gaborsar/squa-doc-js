@@ -1,6 +1,6 @@
 # Custom Event Handlers
 
-You can customize the behaviour of the editor using the following event handlers:
+You can customize the behavior of the editor using the following event handlers:
 
 ## onChange
 
@@ -18,30 +18,6 @@ This function is called after every `keyDown` event, before the default handler 
 onKeyDown: (change: Change, event: KeyboardEvent) => boolean;
 ```
 
-## afterKeyDownBackspace
-
-This function is called after every `keyDownBacksapce` event, after the default handler of the editor.
-
-```jsx
-afterKeyDownBackspace: (change: Change, event: KeyboardEvent) => void;
-```
-
-## afterKeyDownDelete
-
-This function is called after every `keyDownDelete` event, after the default handler of the editor.
-
-```jsx
-afterKeyDownDelete: (change: Change, event: KeyboardEvent) => void;
-```
-
-## afterKeyDownEnter
-
-This function is called after every `keyDownEnter` event, after the default handler of the editor.
-
-```jsx
-afterKeyDownEnter: (change: Change, event: KeyboardEvent) => void;
-```
-
 ## Example
 
 ```jsx
@@ -50,14 +26,16 @@ import Delta from "quill-delta";
 import { Value, Editor } from "squa-editor";
 
 function onKeyDown(change, event) {
-  // ctrl + M = Enter
-  if (event.ctrlKey && event.keyCode === 77) {
+  // ctrl + m = Enter
+  if (event.ctrlKey && event.key === "m") {
     event.preventDefault();
     change
       .delete()
       .insertText("\n")
       .save();
     return true;
+  } else {
+    return false;
   }
 }
 
