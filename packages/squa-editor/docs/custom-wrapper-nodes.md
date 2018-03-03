@@ -1,11 +1,11 @@
 # Custom Wrapper Nodes
 
-To define custom wrapper nodes, you have to define your own `blockRenderFn` and `tokenizeNode` functions.
+To define custom wrapper nodes, you have to define your own `renderNode` and `tokenizeNode` functions.
 
-Defining your own `blockRenderFn` function:
+Defining your own `renderNode` function:
 
 ```jsx
-function blockRenderFn(node) {
+function renderNode(node) {
   switch (node.type) {
     case "unordered-list-item":
       return {
@@ -44,18 +44,14 @@ function tokenizeNode(node, context) {
       });
       break;
     case "LI":
-      if (context.wrapper.type === "unordered-list") {
+      if (
+        context.wrapper.type === "unordered-list" ||
+        context.wrapper.type === "ordered-list"
+      ) {
         tokens.push({
           type: "block-node",
           payload: {
-            type: "unordered-list-item"
-          }
-        });
-      } else {
-        tokens.push({
-          type: "block-node",
-          payload: {
-            type: "ordered-list-item"
+            type: `${context.wrapper.type}-item`
           }
         });
       }
