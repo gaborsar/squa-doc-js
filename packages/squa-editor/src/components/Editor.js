@@ -14,6 +14,7 @@ import defaultRenderNode from "../defaults/renderNode";
 import defaultRenderMark from "../defaults/renderMark";
 import defaultOnKeyDown from "../defaults/onKeyDown";
 import defaultTokenizeNode from "../defaults/tokenizeNode";
+import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
 
 import "./Editor.css";
@@ -344,7 +345,10 @@ export default class Editor extends PureComponent {
   };
 
   afterInput = change => {
-    const { tokenizeNode = defaultTokenizeNode } = this.props;
+    const {
+      tokenizeNode = defaultTokenizeNode,
+      tokenizeClassName = defaultTokenizeClassName
+    } = this.props;
     const { value } = change;
     const { document, inlineStyleOverride } = value;
 
@@ -379,7 +383,7 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    const delta = parseNode(blockNode, tokenizeNode);
+    const delta = parseNode(blockNode, tokenizeNode, tokenizeClassName);
 
     const diff = blockBefore.delta.diff(delta);
 
@@ -486,6 +490,7 @@ export default class Editor extends PureComponent {
     const {
       value,
       tokenizeNode = defaultTokenizeNode,
+      tokenizeClassName = defaultTokenizeClassName,
       onChange = sink
     } = this.props;
     const { selection: { isCollapsed } } = value;
@@ -494,7 +499,7 @@ export default class Editor extends PureComponent {
 
     const data = event.clipboardData.getData("text/html");
 
-    const fragment = parseHTML(data, tokenizeNode);
+    const fragment = parseHTML(data, tokenizeNode, tokenizeClassName);
 
     optimizeFragmentDelta(fragment);
 
