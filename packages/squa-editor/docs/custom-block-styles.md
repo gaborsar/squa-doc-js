@@ -1,6 +1,6 @@
 # Custom Block Styles
 
-To define custom block styles, you have to define your own `schema`, and your own `renderMark` and `tokenizeNode` functions.
+To define custom block styles, you have to define your own `schema`, and your own `renderMark` and `tokenizeClassName` functions.
 
 If you would like to define a block style for block nodes you need a `schema` similar to this:
 
@@ -34,23 +34,18 @@ function renderMark(mark) {
 }
 ```
 
-Defining your own `tokenizeNode` function:
+Defining your own `tokenizeClassName` function:
 
 ```jsx
-function tokenizeNode(node) {
+function tokenizeClassName(className) {
   const tokens = [];
-  if (node.classList) {
-    for (let i = 0; i < node.classList.length; i++) {
-      const className = node.classList.item(i);
-      if (className.startsWith("align-")) {
-        tokens.push({
-          type: "block-style",
-          payload: {
-            align: className.replace("align-", "")
-          }
-        });
+  if (className.startsWith("align-")) {
+    tokens.push({
+      type: "block-style",
+      payload: {
+        align: className.replace("align-", "")
       }
-    }
+    });
   }
   return tokens;
 }

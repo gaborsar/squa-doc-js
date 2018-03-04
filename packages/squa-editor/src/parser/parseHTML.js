@@ -22,7 +22,7 @@ function createFragmentElement(html) {
   return element;
 }
 
-export default function parseHTML(html, tokenizeNode) {
+export default function parseHTML(html, tokenizeNode, tokenizeClassName) {
   const element = createFragmentElement(html);
-  return parseNode(element, tokenizeNode);
+  return parseNode(element, tokenizeNode, tokenizeClassName);
 }

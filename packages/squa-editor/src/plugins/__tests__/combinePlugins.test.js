@@ -75,13 +75,22 @@ describe("combinePlugins", () => {
 
   test("tokenizeNode()", () => {
     const { tokenizeNode } = combinePlugins([
-      { tokenizeNode: v => (v === "a" ? ["a1"] : []) },
-      { tokenizeNode: v => (v === "a" ? ["a2"] : v === "b" ? ["b1"] : []) },
-      { tokenizeNode: v => (v === "b" ? ["b2"] : []) }
+      { tokenizeNode: v => (v === "a" ? ["a"] : []) },
+      { tokenizeNode: v => (v === "b" ? ["b"] : []) }
     ]);
-    expect(tokenizeNode("a")).toEqual(["a1", "a2"]);
-    expect(tokenizeNode("b")).toEqual(["b1", "b2"]);
+    expect(tokenizeNode("a")).toEqual(["a"]);
+    expect(tokenizeNode("b")).toEqual(["b"]);
     expect(tokenizeNode("c")).toEqual([]);
+  });
+
+  test("tokenizeClassName()", () => {
+    const { tokenizeClassName } = combinePlugins([
+      { tokenizeClassName: v => (v === "a" ? ["a"] : []) },
+      { tokenizeClassName: v => (v === "b" ? ["b"] : []) }
+    ]);
+    expect(tokenizeClassName("a")).toEqual(["a"]);
+    expect(tokenizeClassName("b")).toEqual(["b"]);
+    expect(tokenizeClassName("c")).toEqual([]);
   });
 
   test("onKeyDown()", () => {

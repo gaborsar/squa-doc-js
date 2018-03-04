@@ -185,41 +185,5 @@ export default function tokenizeNode(node, context) {
       break;
   }
 
-  if (node.classList) {
-    for (let i = 0; i < node.classList.length; i++) {
-      const className = node.classList.item(i);
-
-      if (className.startsWith("ed-align-")) {
-        tokens.push({
-          type: "block-style",
-          payload: {
-            align: className.replace("ed-align-", "")
-          }
-        });
-      } else if (className.startsWith("ed-indent-")) {
-        tokens.push({
-          type: "block-style",
-          payload: {
-            indent: parseInt(className.replace("ed-indent-", ""), 10)
-          }
-        });
-      } else if (className.startsWith("ed-anchor-")) {
-        tokens.push({
-          type: "inline-style",
-          payload: {
-            anchor: className.replace("ed-anchor-", "")
-          }
-        });
-      } else if (className.startsWith("ed-color-")) {
-        tokens.push({
-          type: "inline-style",
-          payload: {
-            color: className.replace("ed-color-", "")
-          }
-        });
-      }
-    }
-  }
-
   return tokens;
 }
