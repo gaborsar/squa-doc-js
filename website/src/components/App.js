@@ -15,6 +15,7 @@ const {
   renderNode,
   renderMark,
   tokenizeNode,
+  tokenizeClassName,
   onKeyDown
 } = combinePlugins([
   blockImagePlugin,
@@ -55,6 +56,7 @@ export default class App extends PureComponent {
             renderNode={renderNode}
             renderMark={renderMark}
             tokenizeNode={tokenizeNode}
+            tokenizeClassName={tokenizeClassName}
             onKeyDown={onKeyDown}
           />
         </div>
