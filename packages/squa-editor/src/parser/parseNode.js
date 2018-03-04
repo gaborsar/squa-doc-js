@@ -10,6 +10,7 @@ const defaultContext = {
 export default function parseNode(
   node,
   tokenizeNode,
+  tokenizeClassName,
   context = defaultContext
 ) {
   let delta = new Delta();
@@ -20,7 +21,15 @@ export default function parseNode(
     node.nodeType === Node.ELEMENT_NODE &&
     !node.hasOwnProperty("data-ignore")
   ) {
-    const tokens = tokenizeNode(node, context);
+    let tokens = tokenizeNode(node, context);
+
+    if (node.classList) {
+      for (let i = 0; i < node.classList.length; i++) {
+        const className = node.classList.item(i);
+
+        tokens = tokens.concat(tokenizeClassName(className, context));
+      }
+    }
 
     let isBlock = false;
     let isBlockEmbed = false;
@@ -91,7 +100,9 @@ export default function parseNode(
       delta.insert(embedValue, context.inline);
     } else {
       for (const child of node.childNodes) {
-        delta = delta.concat(parseNode(child, tokenizeNode, context));
+        delta = delta.concat(
+          parseNode(child, tokenizeNode, tokenizeClassName, context)
+        );
       }
       if (isBlock) {
         delta.insert(EOL, context.block);

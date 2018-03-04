@@ -1,6 +1,6 @@
 # Custom Inline Styles
 
-To define custom inline styles, you have to define your own `schema`, and your own `renderMark` and `tokenizeNode` functions.
+To define custom inline styles, you have to define your own `schema`, and your own `renderMark`, and `tokenizeNode` or `tokenizeClassName` functions.
 
 If you would like to define an inline style for inline nodes you need a `schema` similar to this:
 
@@ -63,12 +63,12 @@ function tokenizeNode(node) {
 }
 ```
 
-If you render a mark as a CSS class you need a `tokenizeNode` function similar to this:
+If you render a mark as a CSS class you need a `tokenizeClassName` function similar to this:
 
 ```jsx
-function tokenizeNode(node) {
+function tokenizeClassName(className) {
   const tokens = [];
-  if (node.classList && node.classList.contains("bold")) {
+  if (className === "bold") {
     tokens.push({
       type: "inline-style",
       payload: {

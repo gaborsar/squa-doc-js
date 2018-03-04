@@ -8,6 +8,7 @@ const properties = [
   { name: "renderNode", combiner: combineRenderers },
   { name: "renderMark", combiner: combineRenderers },
   { name: "tokenizeNode", combiner: combineTokenizers },
+  { name: "tokenizeClassName", combiner: combineTokenizers },
   { name: "onKeyDown", combiner: combineHandlers }
 ];
 

@@ -49,6 +49,10 @@
     "transform": {
       ".*": "<rootDir>/node_modules/babel-jest"
     },
-    "unmockedModulePathPatterns": ["react", "enzyme", "quill-delta"]
+    "unmockedModulePathPatterns": [
+      "react",
+      "enzyme",
+      "quill-delta"
+    ]
   }
 }
