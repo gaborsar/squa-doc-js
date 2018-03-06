@@ -4,14 +4,14 @@
   .color-menu__body {
     z-index: 3;
     position: absolute;
-    top: 60px;
-    left: 0;
+    top: 40px;
+    left: -35px;
     display: flex;
     flex-wrap: wrap;
     width: 100px;
     padding: 5px 0 0 5px;
-    background: white;
-    border: 1px solid #ccc;
+    background: #eee;
+    box-shadow: 0 0 3px #aaa;
 
     .button {
       width: 20px;
@@ -21,12 +21,6 @@
       border: none;
       outline: none;
       cursor: pointer;
-      border: 1px solid transparent;
-      transition: border 100ms;
-    }
-
-    .button:hover {
-      border: 1px solid black;
     }
   }
 }
