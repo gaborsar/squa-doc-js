@@ -67,7 +67,6 @@ export default class Selection {
 
   insertAt(offset, length) {
     let selection = this;
-
     const { anchorOffset, focusOffset } = selection;
 
     if (offset <= anchorOffset) {
@@ -105,13 +104,12 @@ export default class Selection {
   }
 
   apply(delta) {
-    let offset = 0;
     let selection = this;
+    let offset = 0;
 
     delta.forEach(op => {
       if (typeof op.retain === "number") {
-        const { retain: length } = op;
-        offset += length;
+        offset += op.retain;
       } else if (typeof op.insert === "string") {
         const { insert: { length } } = op;
         selection = selection.insertAt(offset, length);
@@ -121,8 +119,7 @@ export default class Selection {
         selection = selection.insertAt(offset, length);
         offset += length;
       } else if (typeof op.delete === "number") {
-        const { delete: length } = op;
-        selection = selection.deleteAt(offset, length);
+        selection = selection.deleteAt(offset, op.delete);
       }
     });
 
