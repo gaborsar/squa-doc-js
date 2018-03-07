@@ -311,7 +311,7 @@ export default class Change {
     let { document, selection } = value;
     const { anchorOffset } = selection;
 
-    const pos = document.createPosition(anchorOffset);
+    const pos = document.findPosition(anchorOffset);
 
     if (!pos) {
       return this;
@@ -348,7 +348,7 @@ export default class Change {
     let { document, selection } = value;
     const { focusOffset } = selection;
 
-    const pos = document.createPosition(focusOffset);
+    const pos = document.findPosition(focusOffset);
 
     if (!pos) {
       return this;
@@ -385,7 +385,7 @@ export default class Change {
     let { document, selection } = value;
     const { anchorOffset } = selection;
 
-    const pos = document.createPosition(anchorOffset);
+    const pos = document.findPosition(anchorOffset);
 
     if (!pos) {
       return this;
@@ -410,7 +410,7 @@ export default class Change {
     let { document, selection } = value;
     const { focusOffset } = selection;
 
-    const pos = document.createPosition(focusOffset);
+    const pos = document.findPosition(focusOffset);
 
     if (!pos) {
       return this;
@@ -482,7 +482,7 @@ export default class Change {
     if (isCollapsed) {
       const { offset } = selection;
 
-      const pos = document.createPosition(offset);
+      const pos = document.findPosition(offset);
 
       if (!pos) {
         return this;
@@ -601,7 +601,7 @@ export default class Change {
       return this;
     }
 
-    const posBefore = document.createPosition(startOffset);
+    const posBefore = document.findPosition(startOffset);
 
     if (!posBefore) {
       return this;
@@ -616,7 +616,7 @@ export default class Change {
     if (posBefore.offset > 0) {
       const { node: { style: styleBefore } } = posBefore;
 
-      const posAfter = document.createPosition(startOffset);
+      const posAfter = document.findPosition(startOffset);
 
       if (!posAfter) {
         return this;

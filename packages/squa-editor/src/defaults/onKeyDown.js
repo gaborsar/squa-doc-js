@@ -12,7 +12,7 @@ function removeListItem(change, event) {
     return false;
   }
 
-  const pos = document.createPosition(anchorOffset);
+  const pos = document.findPosition(anchorOffset);
 
   if (!pos || pos.offset !== 0) {
     return false;

@@ -7,7 +7,7 @@ function onKeyDownBackspace(change, event) {
     return false;
   }
 
-  const pos = document.createPosition(anchorOffset);
+  const pos = document.findPosition(anchorOffset);
 
   if (!pos) {
     return false;
@@ -40,7 +40,7 @@ function onKeyDownEnter(change, event) {
     return false;
   }
 
-  const pos = document.createPosition(anchorOffset);
+  const pos = document.findPosition(anchorOffset);
 
   if (!pos) {
     return false;

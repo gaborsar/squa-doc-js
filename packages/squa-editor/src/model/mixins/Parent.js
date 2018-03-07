@@ -1,10 +1,10 @@
-import Position from "../Position";
+import findPosition from "../findPosition";
 import RangeBuilder from "../RangeBuilder";
 
 const ParentMixin = superclass =>
   class extends superclass {
-    createPosition(offset, inclusive = false) {
-      return Position.create(this.children, offset, inclusive);
+    findPosition(offset, inclusive = false) {
+      return findPosition(this.children, offset, inclusive);
     }
 
     createRange(startOffset, endOffset) {

@@ -111,7 +111,7 @@ export default class Value {
     if (isCollapsed) {
       const { offset } = selection;
 
-      const blockPos = document.createPosition(offset);
+      const blockPos = document.findPosition(offset);
 
       if (blockPos) {
         const { node: block, offset: blockOffset } = blockPos;
@@ -122,7 +122,7 @@ export default class Value {
         };
 
         if (!block.isEmbed) {
-          const inlinePos = block.createPosition(blockOffset, true);
+          const inlinePos = block.findPosition(blockOffset, true);
 
           if (inlinePos) {
             attributes = {
