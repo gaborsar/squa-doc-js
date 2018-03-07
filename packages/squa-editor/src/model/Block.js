@@ -80,24 +80,29 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   normalize() {
     let node = this;
 
-    const children = [];
+    if (node.children.length !== 0) {
+      const children = [];
+      let prevChild = node.children[0];
 
-    node.children.forEach(child => {
-      if (!child.isEmbed && children.length) {
-        const prevChild = children[children.length - 1];
-
-        if (!prevChild.isEmbed && prevChild.style === child.style) {
-          children[children.length - 1] = prevChild.concat(child);
+      for (let i = 1; i < node.children.length; i++) {
+        const child = node.children[i];
+        if (
+          prevChild.isEmbed ||
+          child.isEmbed ||
+          prevChild.style !== child.style
+        ) {
+          children.push(prevChild);
+          prevChild = child;
         } else {
-          children.push(child);
+          prevChild = prevChild.concat(child);
         }
-      } else {
-        children.push(child);
       }
-    });
 
-    if (node.children.length !== children.length) {
-      node = node.setChildren(children);
+      children.push(prevChild);
+
+      if (node.children.length !== children.length) {
+        node = node.setChildren(children);
+      }
     }
 
     return node;
