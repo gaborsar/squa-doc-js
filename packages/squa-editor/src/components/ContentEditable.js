@@ -1,89 +1,90 @@
 import React, { PureComponent } from "react";
 
-const config = {
-  childList: true,
-  attributes: true,
-  characterData: true,
-  subtree: true
-};
-
-function getEventKey(event) {
-  let key = event.key;
-
-  if (key === "Spacebar") {
-    key = " ";
-  }
-
-  return key;
-}
-
 function isPotentialInputEvent(event) {
   if (event.ctrlKey === true || event.metaKey === true) {
     return false;
   }
 
-  const key = getEventKey(event);
+  let key = event.key;
+
+  // IE11 uses different keys ...
+
+  if (key === "Spacebar") {
+    key = " ";
+  }
 
   return key.length === 1;
+}
+
+function removeEventListeners(node, handlers) {
+  for (const [type, handler] of handlers) {
+    node.removeEventListener(type, handler);
+  }
+}
+
+function addEventListeners(node, handlers) {
+  for (const [type, handler] of handlers) {
+    node.addEventListener(type, handler);
+  }
 }
 
 export default class ContentEditable extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.isUpdating = false;
-    this.observer = new MutationObserver(this.handleMutations);
+    this.node = null;
   }
+
+  handleCompositionStart = event => {
+    const { onCompositionStart } = this.props;
+
+    onCompositionStart(event);
+  };
+
+  handleCompositionEnd = event => {
+    const { onCompositionEnd } = this.props;
+
+    onCompositionEnd(event);
+  };
 
   handleKeyDown = event => {
     const { onKeyDown, onBeforeInput } = this.props;
 
     onKeyDown(event);
 
-    if (event.defaultPrevented === true) {
-      return;
+    if (!event.defaultPrevented && isPotentialInputEvent(event)) {
+      onBeforeInput(event);
     }
-
-    const isInputEvent = isPotentialInputEvent(event);
-
-    if (isInputEvent === false) {
-      return;
-    }
-
-    onBeforeInput(event);
   };
 
-  handleMutations = () => {
+  handleInput = event => {
     const { onInput } = this.props;
 
-    if (this.isUpdating) {
-      return;
-    }
-
-    onInput();
+    onInput(event);
   };
 
-  setRootNode = node => {
+  editableRef = node => {
     const { editableRef } = this.props;
 
     editableRef(node);
 
-    this.observer.disconnect();
+    const handlers = [
+      ["compositionstart", this.handleCompositionStart],
+      ["compositionend", this.handleCompositionEnd],
+      ["keydown", this.handleKeyDown],
+      ["input", this.handleInput],
+      ["textinput", this.handleInput]
+    ];
 
-    if (node) {
-      this.observer.observe(node, config);
+    if (this.node) {
+      removeEventListeners(node, handlers);
+    }
+
+    this.node = node;
+
+    if (this.node) {
+      addEventListeners(node, handlers);
     }
   };
-
-  componentWillUpdate() {
-    this.isUpdating = true;
-  }
-
-  componentDidUpdate() {
-    window.requestAnimationFrame(() => {
-      this.isUpdating = false;
-    });
-  }
 
   render() {
     const {
@@ -96,16 +97,13 @@ export default class ContentEditable extends PureComponent {
       onPaste,
       onDragStart,
       onDrop,
-      onCompositionStart,
-      onCompositionEnd,
       children
     } = this.props;
     return (
       <div
-        ref={this.setRootNode}
-        className={className}
         contentEditable
         suppressContentEditableWarning
+        className={className}
         spellCheck={spellCheck}
         onFocus={onFocus}
         onBlur={onBlur}
@@ -114,9 +112,7 @@ export default class ContentEditable extends PureComponent {
         onPaste={onPaste}
         onDragStart={onDragStart}
         onDrop={onDrop}
-        onCompositionStart={onCompositionStart}
-        onCompositionEnd={onCompositionEnd}
-        onKeyDown={this.handleKeyDown}
+        ref={this.editableRef}
       >
         {children}
       </div>

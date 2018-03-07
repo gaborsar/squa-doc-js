@@ -658,15 +658,15 @@ export default class Editor extends PureComponent {
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
             onSelect={this.handleSelect}
-            onKeyDown={this.handleKeyDown}
-            onCompositionStart={this.handleCompositionStart}
-            onCompositionEnd={this.handleCompositionEnd}
-            onBeforeInput={this.handleBeforeInput}
-            onInput={this.handleInput}
             onCut={this.handleCut}
             onPaste={this.handlePaste}
             onDragStart={preventDefault}
             onDrop={preventDefault}
+            onCompositionStart={this.handleCompositionStart}
+            onCompositionEnd={this.handleCompositionEnd}
+            onKeyDown={this.handleKeyDown}
+            onBeforeInput={this.handleBeforeInput}
+            onInput={this.handleInput}
           >
             <Document
               key={document.key}
