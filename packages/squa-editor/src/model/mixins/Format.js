@@ -18,6 +18,10 @@ const FormatMixin = superclass =>
       return this.style.getMark(type);
     }
 
+    getFormat() {
+      return this.style.toObject();
+    }
+
     format() {
       throw new Error("missing method");
     }

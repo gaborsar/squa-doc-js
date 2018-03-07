@@ -62,10 +62,10 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
     const delta = new Delta();
 
     this.children.forEach(child => {
-      delta.insert(child.value, child.style.toObject());
+      delta.insert(child.value, child.getFormat());
     });
 
-    delta.insert(EOL, this.style.toObject());
+    delta.insert(EOL, this.getFormat());
 
     return delta;
   }

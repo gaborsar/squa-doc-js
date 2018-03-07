@@ -118,7 +118,7 @@ export default class Value {
 
         attributes = {
           ...attributes,
-          ...block.style.toObject()
+          ...block.getFormat()
         };
 
         if (!block.isEmbed) {
@@ -127,7 +127,7 @@ export default class Value {
           if (inlinePos) {
             attributes = {
               ...attributes,
-              ...inlinePos.node.style.toObject()
+              ...inlinePos.node.getFormat()
             };
           }
         }
