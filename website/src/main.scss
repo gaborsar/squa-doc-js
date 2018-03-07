@@ -35,10 +35,10 @@ body {
   .ed-placeholder {
     top: 20px; // 10 (editor padding) + 10 (p margin)
     left: 10px; // 10 (editor padding)
-    font-size: 19px;
-    font-weight: lighter;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
     color: #aaa;
-    line-height: 30px;
   }
 
   h1 {
@@ -63,7 +63,7 @@ body {
   }
 
   blockquote {
-    margin: 10px 100px;
+    margin: 10px 30px;
     font-family: sans-serif;
     font-size: 14px;
     font-style: italic;
