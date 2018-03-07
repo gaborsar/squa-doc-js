@@ -40,10 +40,9 @@ export default class Text extends FormatMixin(LeafMixin(Node)) {
   }
 
   format(attributes) {
-    const style = this.style.update(attributes, type =>
-      this.schema.isInlineMark(type)
+    return this.setStyle(
+      this.style.update(attributes, type => this.schema.isInlineMark(type))
     );
-    return this.setStyle(style);
   }
 
   slice(startOffset = 0, endOffset = Infinity) {
