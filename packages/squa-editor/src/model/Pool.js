@@ -1,17 +1,15 @@
 export default class Pool {
   constructor() {
-    this._values = [];
+    this.values = [];
   }
 
   recycle(value) {
-    for (const pooled of this._values) {
+    for (const pooled of this.values) {
       if (pooled.equals(value)) {
         return pooled;
       }
     }
-
-    this._values.push(value);
-
+    this.values.push(value);
     return value;
   }
 }
