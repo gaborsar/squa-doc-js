@@ -4,88 +4,102 @@ import Embed from "./Embed";
 
 export default class BlockEditor {
   constructor(block) {
-    this._block = block;
-    this._iterator = new BlockIterator(block);
-    this._nodes = [];
+    this.block = block;
+    this.iterator = new BlockIterator(block);
+    this.nodes = [];
   }
 
   retain(length) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
-      this._nodes.push(node);
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
+      this.nodes.push(node);
 
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
   }
 
   format(length, attributes) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
       node = node.format(attributes);
 
-      this._nodes.push(node);
+      this.nodes.push(node);
 
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
   }
 
-  _insertText(value, attributes) {
-    const { schema } = this._block;
+  insertText(value, attributes) {
+    const { schema } = this.block;
 
     const node = Text.create({ schema, value }).format(attributes);
 
-    this._nodes.push(node);
+    this.nodes.push(node);
 
     return this;
   }
 
-  _insertEmbed(value, attributes) {
-    const { schema } = this._block;
+  insertEmbed(value, attributes) {
+    const { schema } = this.block;
 
-    const node = Embed.create({ schema, value }).format(attributes);
+    const type = Embed.type(value);
 
-    this._nodes.push(node);
+    if (schema.isInlineEmbed(type)) {
+      const node = Embed.create({ schema, value }).format(attributes);
+
+      this.nodes.push(node);
+    }
 
     return this;
   }
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
-      return this._insertText(value, attributes);
+      return this.insertText(value, attributes);
     }
 
     if (typeof value === "object") {
-      const { schema } = this._block;
-
-      const type = Embed.type(value);
-
-      if (schema.isInlineEmbed(type)) {
-        return this._insertEmbed(value, attributes);
-      }
-
-      throw new Error(`Invalid embed type: ${type}`);
+      return this.insertEmbed(value, attributes);
     }
 
-    throw new Error(`Invalid value: ${value}`);
+    return this;
   }
 
   delete(length) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
@@ -94,7 +108,7 @@ export default class BlockEditor {
   apply(delta) {
     delta.forEach(op => {
       if (typeof op.retain === "number") {
-        if (op.attributes) {
+        if (typeof op.attributes === "object") {
           this.format(op.retain, op.attributes);
         } else {
           this.retain(op.retain);
@@ -108,11 +122,12 @@ export default class BlockEditor {
         this.delete(op.delete);
       }
     });
+
     return this;
   }
 
   build() {
     this.retain(Infinity);
-    return this._block.setChildren(this._nodes).normalize();
+    return this.block.setChildren(this.nodes).normalize();
   }
 }

@@ -6,156 +6,161 @@ import { EOL } from "../constants";
 
 export default class DocumentEditor {
   constructor(document) {
-    this._document = document;
-    this._iterator = new DocumentIterator(document);
-    this._blocks = [];
-    this._inlines = [];
+    this.document = document;
+    this.iterator = new DocumentIterator(document);
+    this.blocks = [];
+    this.inlines = [];
   }
 
-  _retainBlock(node) {
-    node = node.prependChildren(this._inlines);
+  retainBlock(node) {
+    node = node.prependChildren(this.inlines);
 
-    this._blocks.push(node);
-    this._inlines = [];
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _retainBlockEmbed(node) {
-    if (this._inlines.length) {
-      throw new Error(`Invalid embed type: ${node.type}`);
-    }
-
-    this._blocks.push(node);
+  retainBlockEmbed(node) {
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _retainInline(node) {
-    this._inlines.push(node);
+  retainInline(node) {
+    this.inlines.push(node);
+
     return this;
   }
 
   retain(length) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
       if (node.isBlock) {
         if (node.isEmbed) {
-          this._retainBlockEmbed(node);
+          this.retainBlockEmbed(node);
         } else {
-          this._retainBlock(node);
+          this.retainBlock(node);
         }
       } else {
-        this._retainInline(node);
+        this.retainInline(node);
       }
 
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
   }
 
-  _formatAndPushBlock(node, attributes) {
+  formatAndPushBlock(node, attributes) {
     node = node
       .format(attributes)
       .setChildren(node.children.map(child => child.format(attributes)));
 
-    node = node.prependChildren(this._inlines);
+    node = node.prependChildren(this.inlines);
 
-    this._blocks.push(node);
-    this._inlines = [];
-
-    return this;
-  }
-
-  _formatAndPushBlockEmbed(node, attributes) {
-    if (this._inlines.length) {
-      throw new Error(`Invalid embed type: ${node.type}`);
-    }
-
-    node = node.format(attributes);
-
-    this._blocks.push(node);
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _formatAndPushInline(node, attributes) {
+  formatAndPushBlockEmbed(node, attributes) {
     node = node.format(attributes);
 
-    this._inlines.push(node);
+    this.blocks.push(node);
+    this.inlines = [];
+
+    return this;
+  }
+
+  formatAndPushInline(node, attributes) {
+    node = node.format(attributes);
+
+    this.inlines.push(node);
 
     return this;
   }
 
   format(length, attributes) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
       if (node.isBlock) {
         if (node.isEmbed) {
-          this._formatAndPushBlockEmbed(node, attributes);
+          this.formatAndPushBlockEmbed(node, attributes);
         } else {
-          this._formatAndPushBlock(node, attributes);
+          this.formatAndPushBlock(node, attributes);
         }
       } else {
-        this._formatAndPushInline(node, attributes);
+        this.formatAndPushInline(node, attributes);
       }
 
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
   }
 
-  _insertBlock(attributes) {
-    const { _document: { schema }, _inlines: children } = this;
+  insertBlock(attributes) {
+    const { schema } = this.document;
 
-    const block = Block.create({ schema, children }).format(attributes);
+    const block = Block.create({
+      schema,
+      children: this.inlines
+    }).format(attributes);
 
-    this._blocks.push(block);
-    this._inlines = [];
+    this.blocks.push(block);
+    this.inlines = [];
 
     return this;
   }
 
-  _insertBlockEmbed(value, attributes) {
-    const { schema } = this._document;
-
-    const type = Embed.type(value);
-
-    if (this._inlines.length) {
-      throw new Error(`Invalid embed type: ${type}`);
-    }
+  insertBlockEmbed(value, attributes) {
+    const { schema } = this.document;
 
     const node = Embed.create({ schema, value }).format(attributes);
 
-    this._blocks.push(node);
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _insertText(value, attributes) {
-    const { schema } = this._document;
+  insertText(value, attributes) {
+    const { schema } = this.document;
 
     const node = Text.create({ schema, value }).format(attributes);
 
-    this._inlines.push(node);
+    this.inlines.push(node);
 
     return this;
   }
 
-  _insertInlineEmbed(value, attributes) {
-    const { schema } = this._document;
+  insertInlineEmbed(value, attributes) {
+    const { schema } = this.document;
 
     const node = Embed.create({ schema, value }).format(attributes);
 
-    this._inlines.push(node);
+    this.inlines.push(node);
 
     return this;
   }
@@ -165,47 +170,46 @@ export default class DocumentEditor {
       const lines = value.split(EOL);
       let line = lines.shift();
 
-      if (line.length) {
-        this._insertText(line, attributes);
+      if (line.length !== 0) {
+        this.insertText(line, attributes);
       }
 
-      while (lines.length) {
-        this._insertBlock(attributes);
+      while (lines.length !== 0) {
+        this.insertBlock(attributes);
+
         line = lines.shift();
 
-        if (line.length) {
-          this._insertText(line, attributes);
+        if (line.length !== 0) {
+          this.insertText(line, attributes);
         }
       }
-
-      return this;
-    }
-
-    if (typeof value === "object") {
-      const { schema } = this._document;
+    } else if (typeof value === "object") {
+      const { schema } = this.document;
       const type = Embed.type(value);
 
       if (schema.isBlockEmbed(type)) {
-        return this._insertBlockEmbed(value, attributes);
+        this.insertBlockEmbed(value, attributes);
+      } else if (schema.isInlineEmbed(type)) {
+        this.insertInlineEmbed(value, attributes);
       }
-
-      if (schema.isInlineEmbed(type)) {
-        return this._insertInlineEmbed(value, attributes);
-      }
-
-      throw new Error(`Invalid embed type: ${type}`);
     }
 
-    throw new Error(`Invalid value: ${value}`);
+    return this;
   }
 
   delete(length) {
-    let node = this._iterator.next(length);
+    let node;
 
-    while (length && node) {
+    if (length !== 0) {
+      node = this.iterator.next(length);
+    }
+
+    while (length !== 0 && node !== undefined) {
       length -= node.length;
 
-      node = this._iterator.next(length);
+      if (length !== 0) {
+        node = this.iterator.next(length);
+      }
     }
 
     return this;
@@ -214,7 +218,7 @@ export default class DocumentEditor {
   apply(delta) {
     delta.forEach(op => {
       if (typeof op.retain === "number") {
-        if (op.attributes) {
+        if (typeof op.attributes === "object") {
           this.format(op.retain, op.attributes);
         } else {
           this.retain(op.retain);
@@ -228,11 +232,12 @@ export default class DocumentEditor {
         this.delete(op.delete);
       }
     });
+
     return this;
   }
 
   build() {
     this.retain(Infinity);
-    return this._document.setChildren(this._blocks);
+    return this.document.setChildren(this.blocks);
   }
 }
