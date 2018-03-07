@@ -177,7 +177,7 @@ export default class Editor extends PureComponent {
           .selectBlockBackward()
           .delete()
           .save();
-      } else if (event.altKey) {
+      } else if (event.ctrlKey || event.altKey) {
         change
           .selectWordBackward()
           .delete()
@@ -207,7 +207,7 @@ export default class Editor extends PureComponent {
           .selectBlockForward()
           .delete()
           .save();
-      } else if (event.altKey) {
+      } else if (event.ctrlKey || event.altKey) {
         change
           .selectWordForward()
           .delete()
@@ -245,7 +245,7 @@ export default class Editor extends PureComponent {
   handleKeyDownLeft = (change, event) => {
     const { value, onChange = sink } = this.props;
 
-    if (event.metaKey || event.altKey) {
+    if (event.ctrlKey || event.metaKey || event.altKey) {
       return;
     }
 
@@ -263,7 +263,7 @@ export default class Editor extends PureComponent {
   handleKeyDownRight = (change, event) => {
     const { value, onChange = sink } = this.props;
 
-    if (event.metaKey || event.altKey) {
+    if (event.ctrlKey || event.metaKey || event.altKey) {
       return;
     }
 
@@ -327,13 +327,7 @@ export default class Editor extends PureComponent {
       return this.handleKeyDownRight(change, event);
     }
 
-    if (event.metaKey && event.key === "z") {
-      if (event.shiftKey) {
-        return this.handleKeyDownRedo(change, event);
-      } else {
-        return this.handleKeyDownUndo(change, event);
-      }
-    }
+    // undo / redo for Windows
 
     if (event.ctrlKey && event.key === "z") {
       return this.handleKeyDownUndo(change, event);
@@ -341,6 +335,16 @@ export default class Editor extends PureComponent {
 
     if (event.ctrlKey && event.key === "y") {
       return this.handleKeyDownRedo(change, event);
+    }
+
+    // undo / redo for OSX
+
+    if (event.metaKey && event.key === "z") {
+      if (event.shiftKey) {
+        return this.handleKeyDownRedo(change, event);
+      } else {
+        return this.handleKeyDownUndo(change, event);
+      }
     }
   };
 
@@ -393,7 +397,7 @@ export default class Editor extends PureComponent {
 
     let blockAfter = blockBefore.apply(diff);
 
-    if (blockBefore.length === EOL.length) {
+    if (blockBefore.isEmpty) {
       blockAfter = blockAfter.regenerateKey();
     }
 
@@ -633,6 +637,7 @@ export default class Editor extends PureComponent {
 
   render() {
     const {
+      spellCheck,
       value: { document },
       renderNode = defaultRenderNode,
       renderMark = defaultRenderMark
@@ -649,7 +654,7 @@ export default class Editor extends PureComponent {
           <ContentEditable
             editableRef={this.setRootNode}
             className="ed-editable"
-            spellCheck
+            spellCheck={spellCheck}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
             onSelect={this.handleSelect}

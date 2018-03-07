@@ -51,6 +51,7 @@ export default class App extends PureComponent {
         <div className="content">
           <Editor
             placeholder="Enter some text..."
+            spellCheck={false}
             value={value}
             onChange={this.onChange}
             renderNode={renderNode}
