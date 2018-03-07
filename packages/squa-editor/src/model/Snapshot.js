@@ -11,7 +11,6 @@ export default class Snapshot {
       selection,
       timestamp = Date.now()
     } = props;
-
     this.type = type;
     this.undoDelta = undoDelta;
     this.redoDelta = redoDelta;
@@ -44,11 +43,10 @@ export default class Snapshot {
   }
 
   concat(other) {
-    const undoDelta = other.undoDelta.compose(this.undoDelta);
-    const redoDelta = this.redoDelta.compose(other.redoDelta);
-
-    return this.setUndoDelta(undoDelta)
-      .setRedoDelta(redoDelta)
-      .setTimestamp(other.timestamp);
+    return this.merge({
+      undoDelta: other.undoDelta.compose(this.undoDelta),
+      redoDelta: this.redoDelta.compose(other.redoDelta),
+      timestamp: other.timestamp
+    });
   }
 }
