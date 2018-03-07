@@ -11,86 +11,93 @@ body {
   z-index: 2;
   display: flex;
   justify-content: space-around;
-  border-bottom: 1px solid #ccc;
-  background: white;
+  background: #eee;
+  box-shadow: 0 0 3px #aaa;
 }
 
 .content {
   z-index: 1;
   display: flex;
   justify-content: space-around;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 .ed-editor {
-  width: 1000px;
+  width: 700px;
   margin: 10px;
-  padding: 10px 30px;
-  font-family: sans-serif;
+  padding: 10px;
+  font-family: sans-sans-serif;
 
   [contenteditable] {
     outline: none;
   }
 
   .ed-placeholder {
-    top: 60px; // 10 (editor padding) + 50 (p padding)
-    left: 30px; // 30 (editor padding)
-    font-size: 19px;
-    font-weight: lighter;
+    top: 20px; // 10 (editor padding) + 10 (p margin)
+    left: 10px; // 10 (editor padding)
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
     color: #aaa;
-    line-height: 30px;
   }
 
   h1 {
-    margin: 50px 0;
-    font-size: 48px;
-    font-weight: normal;
+    margin: 20px 0;
+    font-family: sans-serif;
+    font-size: 36px;
+    font-weight: bold;
   }
 
   h2 {
-    margin: 50px 0;
-    font-size: 36px;
-    font-weight: normal;
+    margin: 20px 0;
+    font-family: sans-serif;
+    font-size: 19px;
+    font-weight: bold;
   }
 
   p {
-    margin: 50px 0;
-    font-size: 19px;
-    font-weight: lighter;
-    line-height: 30px;
+    margin: 10px 0;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
   }
 
   blockquote {
-    margin: 30px 100px;
-    font-size: 19px;
-    font-weight: lighter;
+    margin: 10px 30px;
+    font-family: sans-serif;
+    font-size: 14px;
     font-style: italic;
-    line-height: 30px;
+    line-height: 20px;
   }
 
   pre {
-    margin: 50px 0;
-    padding: 30px 40px;
-    font-size: 19px;
-    font-weight: lighter;
-    line-height: 30px;
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
     background: #eee;
     border-radius: 3px;
   }
 
   ul {
-    margin: 50px 0;
+    margin: 10px 0;
   }
 
   ol {
-    margin: 50px 0;
+    margin: 10px 0;
   }
 
   li {
-    margin: 15px 0;
-    font-size: 19px;
+    font-family: sans-serif;
+    font-size: 14px;
     font-weight: lighter;
-    line-height: 30px;
+    line-height: 20px;
+  }
+
+  figcaption {
+    font-family: sans-serif;
+    font-size: 14px;
   }
 
   b {
@@ -98,11 +105,10 @@ body {
   }
 
   .checkable {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    font-size: 19px;
+    font-family: sans-serif;
+    font-size: 14px;
     font-weight: lighter;
-    line-height: 30px;
+    line-height: 20px;
   }
 
   .checked {
