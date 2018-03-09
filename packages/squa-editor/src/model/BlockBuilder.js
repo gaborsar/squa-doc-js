@@ -9,7 +9,9 @@ export default class BlockBuilder {
   }
 
   insertText(value, attributes) {
-    const node = Text.create({ schema: this.schema, value }).format(attributes);
+    const { schema } = this;
+
+    const node = Text.create({ schema, value }).format(attributes);
 
     this.nodes.push(node);
 
@@ -17,7 +19,9 @@ export default class BlockBuilder {
   }
 
   insertEmbed(value, attributes) {
-    const node = Embed.create({ schema: this.schema, value }).format(attributes);
+    const { schema } = this;
+
+    const node = Embed.create({ schema, value }).format(attributes);
 
     this.nodes.push(node);
 
