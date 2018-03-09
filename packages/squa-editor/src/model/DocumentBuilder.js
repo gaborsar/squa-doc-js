@@ -40,18 +40,18 @@ export default class DocumentBuilder {
 
     let line = lines.shift();
 
-    if (line.length) {
+    if (line.length !== 0) {
       const node = Text.create({ schema, value: line }).format(attributes);
 
       this.inlines.push(node);
     }
 
-    while (lines.length) {
+    while (lines.length !== 0) {
       this.insertBlock(attributes);
 
       line = lines.shift();
 
-      if (line.length) {
+      if (line.length !== 0) {
         const node = Text.create({ schema, value: line }).format(attributes);
 
         this.inlines.push(node);
