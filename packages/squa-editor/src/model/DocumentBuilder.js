@@ -6,101 +6,87 @@ import { EOL } from "../constants";
 
 export default class DocumentBuilder {
   constructor(schema) {
-    this._schema = schema;
-    this._inlines = [];
-    this._blocks = [];
+    this.schema = schema;
+    this.blocks = [];
+    this.inlines = [];
   }
 
-  _insertText(value, attributes) {
-    const { _schema: schema } = this;
+  insertBlock(attributes) {
+    const node = Block.create({ schema: this.schema, children: this.inlines }).format(attributes);
 
-    const node = Text.create({ schema, value }).format(attributes);
-
-    this._inlines.push(node);
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _insertInlineEmbed(value, attributes) {
-    const { _schema: schema } = this;
+  insertBlockEmbed(value, attributes) {
+    const node = Embed.create({ schema: this.schema, value }).format(attributes);
 
-    const node = Embed.create({ schema, value }).format(attributes);
-
-    this._inlines.push(node);
+    this.blocks.push(node);
+    this.inlines = [];
 
     return this;
   }
 
-  _insertBlockEmbed(value, attributes) {
-    const { _schema: schema } = this;
+  insertText(value, attributes) {
+    const lines = value.split(EOL);
 
-    const type = Embed.type(value);
+    let line = lines.shift();
 
-    if (this._inlines.length) {
-      throw new Error(`Invalid embed type: ${type}`);
+    if (line.length) {
+      const node = Text.create({ schema: this.schema, value: line }).format(attributes);
+
+      this.inlines.push(node);
     }
 
-    const node = Embed.create({ schema, value }).format(attributes);
+    while (lines.length) {
+      this.insertBlock(attributes);
 
-    this._blocks.push(node);
+      line = lines.shift();
+
+      if (line.length) {
+        const node = Text.create({ schema: this.schema, value: line }).format(attributes);
+
+        this.inlines.push(node);
+      }
+    }
 
     return this;
   }
 
-  _insertBlock(attributes) {
-    const { _schema: schema, _inlines: children } = this;
+  insertInlineEmbed(value, attributes) {
+    const node = Embed.create({ schema: this.schema, value }).format(attributes);
 
-    const node = Block.create({ schema, children }).format(attributes);
-
-    this._blocks.push(node);
-    this._inlines = [];
+    this.inlines.push(node);
 
     return this;
   }
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
-      const lines = value.split(EOL);
-      let line = lines.shift();
-
-      if (line.length) {
-        this._insertText(line, attributes);
-      }
-
-      while (lines.length) {
-        this._insertBlock(attributes);
-        line = lines.shift();
-
-        if (line.length) {
-          this._insertText(line, attributes);
-        }
-      }
-
-      return this;
+      return this.insertText(value, attributes);
     }
 
     if (typeof value === "object") {
-      const { _schema: schema } = this;
       const type = Embed.type(value);
 
-      if (schema.isInlineEmbed(type)) {
-        return this._insertInlineEmbed(value, attributes);
+      if (this.schema.isInlineEmbed(type)) {
+        return this.insertInlineEmbed(value, attributes);
       }
 
-      if (schema.isBlockEmbed(type)) {
-        return this._insertBlockEmbed(value, attributes);
+      if (this.schema.isBlockEmbed(type)) {
+        return this.insertBlockEmbed(value, attributes);
       }
-
-      throw new Error(`Invalid embed type: ${type}`);
     }
 
-    throw new Error(`Invalid value: ${value}`);
+    return this;
   }
 
   build() {
     return Document.create({
-      schema: this._schema,
-      children: this._blocks
+      schema: this.schema,
+      children: this.blocks
     });
   }
 }
