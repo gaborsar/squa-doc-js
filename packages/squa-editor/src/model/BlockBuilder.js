@@ -34,7 +34,7 @@ export default class BlockBuilder {
     }
 
     if (typeof value === "object") {
-      const { schema: schema } = this;
+      const { schema } = this;
 
       const type = Embed.type(value);
 

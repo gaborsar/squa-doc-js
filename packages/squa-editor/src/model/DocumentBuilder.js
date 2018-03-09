@@ -12,7 +12,9 @@ export default class DocumentBuilder {
   }
 
   insertBlock(attributes) {
-    const node = Block.create({ schema: this.schema, children: this.inlines }).format(attributes);
+    const { schema, inlines: children } = this;
+
+    const node = Block.create({ schema, children }).format(attributes);
 
     this.blocks.push(node);
     this.inlines = [];
@@ -21,7 +23,9 @@ export default class DocumentBuilder {
   }
 
   insertBlockEmbed(value, attributes) {
-    const node = Embed.create({ schema: this.schema, value }).format(attributes);
+    const { schema } = this;
+
+    const node = Embed.create({ schema, value }).format(attributes);
 
     this.blocks.push(node);
     this.inlines = [];
@@ -30,12 +34,14 @@ export default class DocumentBuilder {
   }
 
   insertText(value, attributes) {
+    const { schema } = this;
+
     const lines = value.split(EOL);
 
     let line = lines.shift();
 
     if (line.length) {
-      const node = Text.create({ schema: this.schema, value: line }).format(attributes);
+      const node = Text.create({ schema, value: line }).format(attributes);
 
       this.inlines.push(node);
     }
@@ -46,7 +52,7 @@ export default class DocumentBuilder {
       line = lines.shift();
 
       if (line.length) {
-        const node = Text.create({ schema: this.schema, value: line }).format(attributes);
+        const node = Text.create({ schema, value: line }).format(attributes);
 
         this.inlines.push(node);
       }
@@ -56,7 +62,9 @@ export default class DocumentBuilder {
   }
 
   insertInlineEmbed(value, attributes) {
-    const node = Embed.create({ schema: this.schema, value }).format(attributes);
+    const { schema } = this;
+
+    const node = Embed.create({ schema, value }).format(attributes);
 
     this.inlines.push(node);
 
@@ -69,13 +77,15 @@ export default class DocumentBuilder {
     }
 
     if (typeof value === "object") {
+      const { schema } = this;
+
       const type = Embed.type(value);
 
-      if (this.schema.isInlineEmbed(type)) {
+      if (schema.isInlineEmbed(type)) {
         return this.insertInlineEmbed(value, attributes);
       }
 
-      if (this.schema.isBlockEmbed(type)) {
+      if (schema.isBlockEmbed(type)) {
         return this.insertBlockEmbed(value, attributes);
       }
     }
