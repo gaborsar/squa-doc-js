@@ -28,6 +28,7 @@
   },
   "rules": {
     "eqeqeq": "error",
+    "max-len":  ["error", 80],
     "no-console": ["error", { "allow": ["wran", "error"] }],
     "no-unused-vars": "error",
     "prefer-const": ["error", { "destructuring": "all" }],
