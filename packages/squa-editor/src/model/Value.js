@@ -22,7 +22,7 @@ export default class Value {
     const builder = new DocumentBuilder(new Schema(schema));
 
     delta.forEach(op => {
-      builder.insert(op.value, op.attributes);
+      builder.insert(op.insert, op.attributes);
     });
 
     const document = builder.build();

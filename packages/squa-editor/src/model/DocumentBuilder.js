@@ -81,12 +81,12 @@ export default class DocumentBuilder {
 
       const type = Embed.type(value);
 
-      if (schema.isInlineEmbed(type)) {
-        return this.insertInlineEmbed(value, attributes);
-      }
-
       if (schema.isBlockEmbed(type)) {
         return this.insertBlockEmbed(value, attributes);
+      }
+
+      if (schema.isInlineEmbed(type)) {
+        return this.insertInlineEmbed(value, attributes);
       }
     }
 
