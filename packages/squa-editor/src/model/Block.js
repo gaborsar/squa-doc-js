@@ -48,10 +48,7 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   }
 
   get length() {
-    return this.children.reduce(
-      (length, child) => length + child.length,
-      EOL.length
-    );
+    return this.children.reduce((length, child) => length + child.length, EOL.length);
   }
 
   get text() {
