@@ -71,10 +71,9 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   }
 
   format(attributes) {
-    const style = this.style.update(attributes, type =>
-      this.schema.isBlockMark(type)
+    return this.setStyle(
+      this.style.update(attributes, type => this.schema.isBlockMark(type))
     );
-    return this.setStyle(style);
   }
 
   normalize() {
