@@ -64,13 +64,9 @@ export default class BlockEditor {
   insertEmbed(value, attributes) {
     const { schema } = this.block;
 
-    const type = Embed.type(value);
+    const node = Embed.create({ schema, value }).format(attributes);
 
-    if (schema.isInlineEmbed(type)) {
-      const node = Embed.create({ schema, value }).format(attributes);
-
-      this.nodes.push(node);
-    }
+    this.nodes.push(node);
 
     return this;
   }
@@ -81,7 +77,13 @@ export default class BlockEditor {
     }
 
     if (typeof value === "object") {
-      return this.insertEmbed(value, attributes);
+      const { schema } = this.block;
+
+      const type = Embed.type(value);
+
+      if (schema.isInlineEmbed(type)) {
+        return this.insertEmbed(value, attributes);
+      }
     }
 
     return this;

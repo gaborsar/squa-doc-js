@@ -123,10 +123,7 @@ export default class DocumentEditor {
   insertBlock(attributes) {
     const { schema } = this.document;
 
-    const block = Block.create({
-      schema,
-      children: this.inlines
-    }).format(attributes);
+    const block = Block.create({ schema, children: this.inlines }).format(attributes);
 
     this.blocks.push(block);
     this.inlines = [];
@@ -183,14 +180,21 @@ export default class DocumentEditor {
           this.insertText(line, attributes);
         }
       }
-    } else if (typeof value === "object") {
+
+      return this;
+    }
+
+    if (typeof value === "object") {
       const { schema } = this.document;
+
       const type = Embed.type(value);
 
       if (schema.isBlockEmbed(type)) {
-        this.insertBlockEmbed(value, attributes);
-      } else if (schema.isInlineEmbed(type)) {
-        this.insertInlineEmbed(value, attributes);
+        return this.insertBlockEmbed(value, attributes);
+      }
+
+      if (schema.isInlineEmbed(type)) {
+        return this.insertInlineEmbed(value, attributes);
       }
     }
 
