@@ -145,9 +145,27 @@ export default class DocumentEditor {
   insertText(value, attributes) {
     const { schema } = this.document;
 
-    const node = Text.create({ schema, value }).format(attributes);
+    const lines = value.split(EOL);
 
-    this.inlines.push(node);
+    let line = lines.shift();
+
+    if (line.length !== 0) {
+      const node = Text.create({ schema, value: line }).format(attributes);
+
+      this.inlines.push(node);
+    }
+
+    while (lines.length !== 0) {
+      this.insertBlock(attributes);
+
+      line = lines.shift();
+
+      if (line.length !== 0) {
+        const node = Text.create({ schema, value: line }).format(attributes);
+
+        this.inlines.push(node);
+      }
+    }
 
     return this;
   }
@@ -164,24 +182,7 @@ export default class DocumentEditor {
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
-      const lines = value.split(EOL);
-      let line = lines.shift();
-
-      if (line.length !== 0) {
-        this.insertText(line, attributes);
-      }
-
-      while (lines.length !== 0) {
-        this.insertBlock(attributes);
-
-        line = lines.shift();
-
-        if (line.length !== 0) {
-          this.insertText(line, attributes);
-        }
-      }
-
-      return this;
+      return this.insertText(value, attributes);
     }
 
     if (typeof value === "object") {

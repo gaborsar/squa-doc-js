@@ -39,7 +39,7 @@ export default class BlockBuilder {
       }
     }
 
-    throw new Error(`Invalid value: ${value}`);
+    return this;
   }
 
   build() {
