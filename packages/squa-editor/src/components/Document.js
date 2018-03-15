@@ -5,17 +5,7 @@ import Block from "./Block";
 
 export default class Document extends PureComponent {
   render() {
-    const {
-      node,
-      replaceBlockByKey,
-      formatBlockByKey,
-      deleteBlockByKey,
-      replaceInlineByKey,
-      formatInlineByKey,
-      deleteInlineByKey,
-      renderNode,
-      renderMark
-    } = this.props;
+    const { node, createChange, onChange, renderNode, renderMark } = this.props;
 
     const blocks = [];
 
@@ -35,9 +25,8 @@ export default class Document extends PureComponent {
       if (child.isEmbed) {
         const defaultEmbedProps = {
           blockKey: child.key,
-          replaceBlockByKey,
-          formatBlockByKey,
-          deleteBlockByKey
+          createChange,
+          onChange
         };
 
         const embedObj = renderNode(child, defaultEmbedProps);
@@ -62,9 +51,8 @@ export default class Document extends PureComponent {
       } else {
         const defaultBlockProps = {
           blockKey: child.key,
-          replaceBlockByKey,
-          formatBlockByKey,
-          deleteBlockByKey
+          createChange,
+          onChange
         };
 
         const blockObj = renderNode(child, defaultBlockProps);
@@ -82,9 +70,8 @@ export default class Document extends PureComponent {
             BlockComponent={component}
             blockProps={props}
             blockClassName={joinClassNames(classNames)}
-            replaceInlineByKey={replaceInlineByKey}
-            formatInlineByKey={formatInlineByKey}
-            deleteInlineByKey={deleteInlineByKey}
+            createChange={createChange}
+            onChange={onChange}
             renderNode={renderNode}
             renderMark={renderMark}
           />

@@ -47,6 +47,11 @@ export default class Editor extends PureComponent {
     }
   };
 
+  createChange = () => {
+    const { value } = this.props;
+    return value.change();
+  };
+
   handlePlaceholderClick = event => {
     event.preventDefault();
     this.focus();
@@ -243,7 +248,7 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownLeft = (change, event) => {
-    const { value, onChange = sink } = this.props;
+    const { onChange = sink } = this.props;
 
     if (event.ctrlKey || event.metaKey || event.altKey) {
       return;
@@ -261,7 +266,7 @@ export default class Editor extends PureComponent {
   };
 
   handleKeyDownRight = (change, event) => {
-    const { value, onChange = sink } = this.props;
+    const { onChange = sink } = this.props;
 
     if (event.ctrlKey || event.metaKey || event.altKey) {
       return;
@@ -553,72 +558,6 @@ export default class Editor extends PureComponent {
     }
   };
 
-  replaceBlockByKey = (blockKey, newBlock) => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .replaceBlockByKey(blockKey, newBlock)
-      .save();
-
-    onChange(change);
-  };
-
-  replaceInlineByKey = (blockKey, inlineKey, newInline) => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .replaceInlineByKey(blockKey, inlineKey, newInline)
-      .save();
-
-    onChange(change);
-  };
-
-  formatBlockByKey = (blockKey, attributes) => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .formatBlockByKey(blockKey, attributes)
-      .save();
-
-    onChange(change);
-  };
-
-  formatInlineByKey = (blockKey, inlineKey, attributes) => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .formatInlineByKey(blockKey, inlineKey, attributes)
-      .save();
-
-    onChange(change);
-  };
-
-  deleteBlockByKey = blockKey => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .deleteBlockByKey(blockKey)
-      .save();
-
-    onChange(change);
-  };
-
-  deleteInlineByKey = (blockKey, inlineKey) => {
-    const { value, onChange = sink } = this.props;
-
-    const change = value
-      .change()
-      .deleteInlineByKey(blockKey, inlineKey)
-      .save();
-
-    onChange(change);
-  };
-
   componentDidUpdate() {
     this.updateSelection();
   }
@@ -639,6 +578,7 @@ export default class Editor extends PureComponent {
     const {
       spellCheck,
       value: { document },
+      onChange,
       renderNode = defaultRenderNode,
       renderMark = defaultRenderMark
     } = this.props;
@@ -671,12 +611,8 @@ export default class Editor extends PureComponent {
             <Document
               key={document.key}
               node={document}
-              replaceBlockByKey={this.replaceBlockByKey}
-              formatBlockByKey={this.formatBlockByKey}
-              deleteBlockByKey={this.deleteBlockByKey}
-              replaceInlineByKey={this.replaceInlineByKey}
-              formatInlineByKey={this.formatInlineByKey}
-              deleteInlineByKey={this.deleteInlineByKey}
+              createChange={this.createChange}
+              onChange={onChange}
               renderNode={renderNode}
               renderMark={renderMark}
             />

@@ -5,9 +5,9 @@
   "scripts": {
     "benchmark": "babel-node benchmarks/document.js",
     "build": "webpack",
-    "format": "prettier --write 'packages/*/src/**/*.js' 'benchmarks/**/*.js' 'website/src/**/*.js'",
+    "format": "prettier --write \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",
     "jest": "jest src",
-    "lint": "eslint src",
+    "lint": "eslint \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",
     "test": "npm run lint && npm run jest",
     "postinstall": "npm run build",
     "start": "http-server website/public"

@@ -6,17 +6,22 @@ import "./Checkable.scss";
 
 export default class Checkable extends PureComponent {
   handleClick = event => {
+    const { blockKey, createChange, onChange, checked } = this.props;
+
     event.preventDefault();
-    const { blockKey, formatBlockByKey, checked } = this.props;
-    formatBlockByKey(blockKey, {
+
+    const change = createChange().formatBlockByKey(blockKey, {
       checked: checked ? null : true
     });
+
+    onChange(change);
   };
 
   render() {
     const {
       blockKey, // eslint-disable-line no-unused-vars
-      formatBlockByKey, // eslint-disable-line no-unused-vars
+      createChange, // eslint-disable-line no-unused-vars
+      onChange, // eslint-disable-line no-unused-vars
       checked,
       children,
       ...otherProps
