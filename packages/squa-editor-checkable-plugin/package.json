@@ -1,6 +1,6 @@
 {
   "name": "squa-editor-checkable-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Checkable list plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",

@@ -10,9 +10,11 @@ export default class Checkable extends PureComponent {
 
     event.preventDefault();
 
-    const change = createChange().formatBlockByKey(blockKey, {
-      checked: checked ? null : true
-    });
+    const change = createChange()
+      .formatBlockByKey(blockKey, {
+        checked: checked ? null : true
+      })
+      .save();
 
     onChange(change);
   };
