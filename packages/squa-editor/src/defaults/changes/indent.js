@@ -22,7 +22,7 @@ export default function indent(change) {
   if (isCollapsed) {
     const { offset } = selection;
 
-    const pos = document.createPosition(offset);
+    const pos = document.findPosition(offset);
 
     if (pos) {
       indentBlock(change, pos.node);

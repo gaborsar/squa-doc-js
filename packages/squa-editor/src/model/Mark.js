@@ -11,19 +11,15 @@ export default class Mark {
     if (markA.type < markB.type) {
       return -1;
     }
-
     if (markA.type > markB.type) {
       return 1;
     }
-
     if (markA.value < markB.value) {
       return -1;
     }
-
     if (markA.value > markB.value) {
       return 1;
     }
-
     return 0;
   }
 

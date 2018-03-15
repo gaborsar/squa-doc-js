@@ -62,13 +62,14 @@ export default class Embed extends FormatMixin(LeafMixin(Node)) {
   }
 
   get delta() {
-    return new Delta().insert(this.value, this.style.toObject());
+    return new Delta().insert(this.value, this.getFormat());
   }
 
   format(attributes) {
-    const style = this.style.update(attributes, markType =>
-      isValidMarkType(this.schema, this.type, markType)
+    return this.setStyle(
+      this.style.update(attributes, markType =>
+        isValidMarkType(this.schema, this.type, markType)
+      )
     );
-    return this.setStyle(style);
   }
 }

@@ -1,41 +1,48 @@
 export default class BlockIterator {
   constructor(block) {
-    this._block = block;
-    this._index = 0;
-    this._offset = 0;
+    this.block = block;
+    this.index = 0;
+    this.offset = 0;
   }
 
   next(length) {
-    if (length === 0) {
+    const { children: nodes } = this.block;
+
+    // reached the end
+
+    if (this.index >= nodes.length) {
       return;
     }
 
-    const { children: nodes } = this._block;
+    const node = nodes[this.index];
 
-    if (this._index >= nodes.length) {
-      return;
-    }
+    // return the current node
 
-    const node = nodes[this._index];
-
-    if (this._offset === 0 && node.length <= length) {
-      this._index++;
+    if (this.offset === 0 && node.length <= length) {
+      this.index++;
 
       return node;
     }
 
-    if (node.length <= this._offset + length) {
-      const slice = node.slice(this._offset);
+    // return the end of the current node
 
-      this._index++;
-      this._offset = 0;
+    if (node.length <= this.offset + length) {
+      const slice = node.slice(this.offset);
+
+      this.index++;
+      this.offset = 0;
 
       return slice;
     }
 
-    const slice = node.slice(this._offset, this._offset + length);
+    // return a slice of the current node
 
-    this._offset += length;
+    const nextOffset = this.offset + length;
+
+    const slice = node.slice(this.offset, nextOffset);
+
+    this.offset = nextOffset;
+
     return slice;
   }
 }

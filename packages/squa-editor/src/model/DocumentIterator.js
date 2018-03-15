@@ -1,65 +1,77 @@
 export default class DocumentIterator {
   constructor(document) {
-    this._document = document;
-    this._blockIndex = 0;
-    this._inlineIndex = 0;
-    this._inlineOffset = 0;
+    this.document = document;
+    this.blockIndex = 0;
+    this.inlineIndex = 0;
+    this.inlineOffset = 0;
   }
 
   next(length) {
-    if (length === 0) {
+    const { children: blocks } = this.document;
+
+    // reached the end
+
+    if (this.blockIndex >= blocks.length) {
       return;
     }
 
-    const { children: blocks } = this._document;
+    const block = blocks[this.blockIndex];
 
-    if (this._blockIndex >= blocks.length) {
-      return;
-    }
-
-    const block = blocks[this._blockIndex];
+    // return the current block node
 
     if (
-      this._inlineIndex === 0 &&
-      this._inlineOffset === 0 &&
+      this.inlineIndex === 0 &&
+      this.inlineOffset === 0 &&
       block.length <= length
     ) {
-      this._blockIndex++;
+      this.blockIndex++;
+
       return block;
     }
 
     const { children: inlines } = block;
 
-    if (this._inlineIndex === inlines.length) {
+    // return the EOL of the current block node
+
+    if (this.inlineIndex === inlines.length) {
       const slice = block.empty();
 
-      this._blockIndex++;
-      this._inlineIndex = 0;
-      this._inlineOffset = 0;
+      this.blockIndex++;
+
+      this.inlineIndex = 0;
+      this.inlineOffset = 0;
 
       return slice;
     }
 
-    const inline = inlines[this._inlineIndex];
+    const inline = inlines[this.inlineIndex];
 
-    if (this._inlineOffset === 0 && inline.length <= length) {
-      this._inlineIndex++;
+    // return the current inline node
+
+    if (this.inlineOffset === 0 && inline.length <= length) {
+      this.inlineIndex++;
 
       return inline;
     }
 
-    if (inline.length <= this._inlineOffset + length) {
-      const slice = inline.slice(this._inlineOffset);
+    // return the end of the current inline node
 
-      this._inlineIndex++;
-      this._inlineOffset = 0;
+    if (inline.length <= this.inlineOffset + length) {
+      const slice = inline.slice(this.inlineOffset);
+
+      this.inlineIndex++;
+      this.inlineOffset = 0;
 
       return slice;
     }
 
-    const slice = inline.slice(this._inlineOffset, this._inlineOffset + length);
+    // return a slice of the current inline node
 
-    this._inlineOffset += length;
+    const nextInlineOffset = this.inlineOffset + length;
+
+    const slice = inline.slice(this.inlineOffset, nextInlineOffset);
+
+    this.inlineOffset = nextInlineOffset;
 
     return slice;
   }

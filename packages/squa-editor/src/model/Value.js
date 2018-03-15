@@ -22,8 +22,7 @@ export default class Value {
     const builder = new DocumentBuilder(new Schema(schema));
 
     delta.forEach(op => {
-      const { insert: value, attributes = {} } = op;
-      builder.insert(value, attributes);
+      builder.insert(op.insert, op.attributes);
     });
 
     const document = builder.build();
@@ -111,23 +110,20 @@ export default class Value {
     if (isCollapsed) {
       const { offset } = selection;
 
-      const blockPos = document.createPosition(offset);
+      const blockPos = document.findPosition(offset);
 
       if (blockPos) {
         const { node: block, offset: blockOffset } = blockPos;
 
-        attributes = {
-          ...attributes,
-          ...block.style.toObject()
-        };
+        attributes = { ...attributes, ...block.getFormat() };
 
         if (!block.isEmbed) {
-          const inlinePos = block.createPosition(blockOffset, true);
+          const inlinePos = block.findPosition(blockOffset, true);
 
           if (inlinePos) {
             attributes = {
               ...attributes,
-              ...inlinePos.node.style.toObject()
+              ...inlinePos.node.getFormat()
             };
           }
         }
@@ -156,7 +152,7 @@ export default class Value {
         }
       });
 
-      if (blockStyles.length) {
+      if (blockStyles.length !== 0) {
         let blockStyle = blockStyles.shift();
 
         blockStyles.forEach(currentStyle => {
@@ -169,7 +165,7 @@ export default class Value {
         };
       }
 
-      if (inlineStyles.length) {
+      if (inlineStyles.length !== 0) {
         let inlineStyle = inlineStyles.shift();
 
         inlineStyles.forEach(currentStyle => {

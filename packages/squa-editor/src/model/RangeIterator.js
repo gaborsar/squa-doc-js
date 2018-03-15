@@ -4,25 +4,28 @@ const sink = () => {};
 
 export default class RangeIterator {
   constructor(nodes) {
-    this._nodes = nodes;
-    this._index = 0;
-    this._offset = 0;
+    this.nodes = nodes;
+    this.index = 0;
+    this.offset = 0;
   }
 
   next(length, callback = sink) {
-    while (this._index < this._nodes.length && length) {
-      const node = this._nodes[this._index];
+    const numberOfNodes = this.nodes.length;
 
-      const sliceLength = Math.min(node.length - this._offset, length);
-      const nextOffset = this._offset + sliceLength;
+    while (this.index < numberOfNodes && length !== 0) {
+      const node = this.nodes[this.index];
+      const nodeLength = node.length;
 
-      callback(new RangeElement(node, this._offset, nextOffset));
+      const sliceLength = Math.min(nodeLength - this.offset, length);
+      const nextOffset = this.offset + sliceLength;
 
-      if (nextOffset < node.length) {
-        this._offset = nextOffset;
+      callback(new RangeElement(node, this.offset, nextOffset));
+
+      if (nextOffset < nodeLength) {
+        this.offset = nextOffset;
       } else {
-        this._index += 1;
-        this._offset = 0;
+        this.index += 1;
+        this.offset = 0;
       }
 
       length -= sliceLength;

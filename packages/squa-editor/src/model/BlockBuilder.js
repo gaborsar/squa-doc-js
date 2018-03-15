@@ -4,54 +4,52 @@ import Block from "./Block";
 
 export default class BlockBuilder {
   constructor(schema) {
-    this._schema = schema;
-    this._nodes = [];
+    this.schema = schema;
+    this.nodes = [];
   }
 
-  _insertText(value, attributes) {
-    const { _schema: schema } = this;
+  insertText(value, attributes) {
+    const { schema } = this;
 
     const node = Text.create({ schema, value }).format(attributes);
 
-    this._nodes.push(node);
+    this.nodes.push(node);
 
     return this;
   }
 
-  _insertEmbed(value, attributes) {
-    const { _schema: schema } = this;
+  insertEmbed(value, attributes) {
+    const { schema } = this;
 
     const node = Embed.create({ schema, value }).format(attributes);
 
-    this._nodes.push(node);
+    this.nodes.push(node);
 
     return this;
   }
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
-      return this._insertText(value, attributes);
+      return this.insertText(value, attributes);
     }
 
     if (typeof value === "object") {
-      const { _schema: schema } = this;
+      const { schema } = this;
 
       const type = Embed.type(value);
 
       if (schema.isInlineEmbed(type)) {
-        return this._insertEmbed(value, attributes);
+        return this.insertEmbed(value, attributes);
       }
-
-      throw new Error(`Invalid embed type: ${type}`);
     }
 
-    throw new Error(`Invalid value: ${value}`);
+    return this;
   }
 
   build() {
     return Block.create({
-      schema: this._schema,
-      children: this._nodes
+      schema: this.schema,
+      children: this.nodes
     });
   }
 }
