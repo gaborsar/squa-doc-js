@@ -2,6 +2,7 @@
 
 import Delta from "quill-delta";
 import DocumentBuilder from "../packages/squa-editor/src/model/DocumentBuilder";
+import schema from "../packages/squa-editor/src/defaults/schema"
 
 const NUMBER_OF_TESTS = 10;
 
@@ -18,7 +19,7 @@ for (let i = 0; i < 5000; i++) {
     .insert("\n");
 }
 
-const builder = new DocumentBuilder();
+const builder = new DocumentBuilder(schema);
 initialDelta.forEach(op => {
   builder.insert(op.insert, op.attributes);
 });

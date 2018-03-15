@@ -10,9 +10,8 @@ export default class Block extends PureComponent {
       BlockComponent,
       blockProps,
       blockClassName,
-      replaceInlineByKey,
-      formatInlineByKey,
-      deleteInlineByKey,
+      createChange,
+      onChange,
       renderNode,
       renderMark
     } = this.props;
@@ -50,9 +49,8 @@ export default class Block extends PureComponent {
         if (child.isEmbed) {
           const defaultEmbedProps = {
             inlineKey: key,
-            replaceInlineByKey,
-            formatInlineByKey,
-            deleteInlineByKey
+            createChange,
+            onChange
           };
 
           const embedObj = renderNode(child, defaultEmbedProps);

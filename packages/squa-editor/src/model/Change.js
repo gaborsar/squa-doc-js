@@ -272,7 +272,7 @@ export default class Change {
   selectCharacterBackward() {
     let { value } = this;
     let { selection } = value;
-    const { isCollapsed, isBackward, anchorOffset, focusOffset } = selection;
+    const { isCollapsed, isBackward, focusOffset } = selection;
 
     if ((isCollapsed || isBackward) && focusOffset === 0) {
       return this;

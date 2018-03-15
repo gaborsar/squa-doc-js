@@ -121,9 +121,9 @@ export default class DocumentEditor {
   }
 
   insertBlock(attributes) {
-    const { schema } = this.document;
+    const { document: { schema }, inlines: children } = this;
 
-    const block = Block.create({ schema, children: this.inlines }).format(attributes);
+    const block = Block.create({ schema, children }).format(attributes);
 
     this.blocks.push(block);
     this.inlines = [];
