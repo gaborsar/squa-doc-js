@@ -1,3 +1,46 @@
-.ed-embed figcaption {
+.block-image {
+  position: relative;
+  margin: 0 10px;
+  padding: 10px;
+  border: 2px solid transparent;
+  user-select: none;
+  transition: border 100ms;
+}
+
+.block-image:hover {
+  border: 2px solid #eee;
+}
+
+.block-image figcaption {
   padding: 10px 0;
+}
+
+.block-image__controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 100ms, opacity 100ms;
+}
+
+.block-image:hover .block-image__controls {
+  visibility: visible;
+  opacity: 1;
+}
+
+.block-image__controls button {
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  transition: background 100ms;
+}
+
+.block-image__controls button:hover {
+  background: #ddd;
 }
