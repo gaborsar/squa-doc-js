@@ -585,9 +585,10 @@ export default class Editor extends PureComponent {
   }
 
   renderPlaceholder() {
-    const { value: { document: { isEmpty } }, placeholder } = this.props;
+    const { value, placeholder } = this.props;
+    const { document } = value;
 
-    if (isEmpty && placeholder) {
+    if (value.mode === EDITOR_MODE_EDIT && placeholder && document.isEmpty) {
       return (
         <span className="ed-placeholder" onClick={this.handlePlaceholderClick}>
           {placeholder}
