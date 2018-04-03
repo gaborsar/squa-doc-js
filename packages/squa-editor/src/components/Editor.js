@@ -170,6 +170,24 @@ export default class Editor extends PureComponent {
     }
   }
 
+  handleCompositionKeyDownEnter = event => {
+    const { value, onChange = sink } = this.props;
+
+    event.preventDefault();
+
+    const change = value.change().setMode(EDITOR_MODE_EDIT);
+
+    onChange(change);
+  };
+
+  handleCompositionKeyDown = event => {
+    // missing IME composition end event fix
+
+    if (event.key === "Enter") {
+      return this.handleCompositionKeyDownEnter(event);
+    }
+  };
+
   handleKeyDownBackspace = (change, event) => {
     const { value, onChange = sink } = this.props;
     const { selection: { isCollapsed } } = value;
@@ -305,6 +323,10 @@ export default class Editor extends PureComponent {
 
   handleKeyDown = event => {
     const { value, onKeyDown = defaultOnKeyDown, onChange = sink } = this.props;
+
+    if (value.mode === EDITOR_MODE_COMPOSITION) {
+      return this.handleCompositionKeyDown(event);
+    }
 
     const change = value.change();
 
