@@ -7,7 +7,7 @@ import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
 describe("Change", () => {
   test("history", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
 
     const change = value
       .change()
@@ -46,13 +46,13 @@ describe("Change", () => {
   });
 
   test("setMode()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
     const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
     expect(change.value.mode).toBe(EDITOR_MODE_COMPOSITION);
   });
 
   test("moveCursorLeft()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
     const change = value
       .change()
       .select(3, 3)
@@ -74,7 +74,7 @@ describe("Change", () => {
   });
 
   test("select()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
     const change = value.change().select(3, 6);
     expect(change.value.selection.anchorOffset).toBe(3);
     expect(change.value.selection.focusOffset).toBe(6);
@@ -92,7 +92,7 @@ describe("Change", () => {
   });
 
   test("collapse()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
 
     const change = value
       .change()
@@ -104,7 +104,7 @@ describe("Change", () => {
   });
 
   test("collapseToStart()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
 
     const change = value
       .change()
@@ -116,7 +116,7 @@ describe("Change", () => {
   });
 
   test("collapseToEnd()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
 
     const change = value
       .change()
@@ -129,7 +129,7 @@ describe("Change", () => {
 
   describe("collapseToLeft()", () => {
     test("forward", () => {
-      const value = Value.fromJSON();
+      const value = Value.createEmpty();
 
       const change = value
         .change()
@@ -141,7 +141,7 @@ describe("Change", () => {
     });
 
     test("backward", () => {
-      const value = Value.fromJSON();
+      const value = Value.createEmpty();
 
       const change = value
         .change()
@@ -155,7 +155,7 @@ describe("Change", () => {
 
   describe("collapseToRight()", () => {
     test("forward", () => {
-      const value = Value.fromJSON();
+      const value = Value.createEmpty();
 
       const change = value
         .change()
@@ -167,7 +167,7 @@ describe("Change", () => {
     });
 
     test("backward", () => {
-      const value = Value.fromJSON();
+      const value = Value.createEmpty();
 
       const change = value
         .change()
@@ -180,7 +180,7 @@ describe("Change", () => {
   });
 
   test("selectCharacterBackward()", () => {
-    const value = Value.fromJSON();
+    const value = Value.createEmpty();
 
     const change = value
       .change()
