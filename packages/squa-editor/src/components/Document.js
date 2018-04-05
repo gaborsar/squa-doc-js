@@ -5,9 +5,18 @@ import Block from "./Block";
 
 export default class Document extends PureComponent {
   render() {
-    const { node, createChange, onChange, renderNode, renderMark } = this.props;
+    const {
+      node,
+      startOffset,
+      endOffset,
+      createChange,
+      onChange,
+      renderNode,
+      renderMark
+    } = this.props;
 
     const blocks = [];
+    let offset = 0;
 
     node.children.forEach(child => {
       const classNames = [];
@@ -22,20 +31,41 @@ export default class Document extends PureComponent {
         }
       });
 
-      if (child.isEmbed) {
-        const defaultEmbedProps = {
-          blockKey: child.key,
-          createChange,
-          onChange
-        };
+      const { length: childLength } = child;
 
-        const embedObj = renderNode(child, defaultEmbedProps);
+      const childStartOffset = Math.min(
+        Math.max(startOffset - offset, 0),
+        childLength
+      );
+
+      const childEndOffset = Math.min(
+        Math.max(endOffset - offset, 0),
+        childLength
+      );
+
+      const isChildSelected = childStartOffset < childEndOffset;
+
+      const defaultProps = {
+        isSelected: isChildSelected,
+        blockKey: child.key,
+        createChange,
+        onChange
+      };
+
+      offset += childLength;
+
+      if (child.isEmbed) {
+        const embedObj = renderNode(child, defaultProps);
 
         if (!embedObj) {
           throw new Error(`Invalid embed: ${child.type}`);
         }
 
-        const { component, props } = embedObj;
+        const { component, props: { className, ...props } = {} } = embedObj;
+
+        if (className) {
+          classNames.push(className);
+        }
 
         const element = (
           <Embed
@@ -49,24 +79,24 @@ export default class Document extends PureComponent {
 
         blocks.push({ key: child.key, element });
       } else {
-        const defaultBlockProps = {
-          blockKey: child.key,
-          createChange,
-          onChange
-        };
-
-        const blockObj = renderNode(child, defaultBlockProps);
+        const blockObj = renderNode(child, defaultProps);
 
         if (!blockObj) {
           throw new Error(`Invalid block: ${child.type}`);
         }
 
-        const { wrapper, component, props } = blockObj;
+        const { wrapper, component, props: { className, ...props } = {} } = blockObj;
+
+        if (className) {
+          classNames.push(className);
+        }
 
         const element = (
           <Block
             key={child.key}
             node={child}
+            startOffset={childStartOffset}
+            endOffset={childEndOffset}
             BlockComponent={component}
             blockProps={props}
             blockClassName={joinClassNames(classNames)}

@@ -7,6 +7,8 @@ export default class Block extends PureComponent {
   render() {
     const {
       node,
+      startOffset,
+      endOffset,
       BlockComponent,
       blockProps,
       blockClassName,
@@ -21,6 +23,8 @@ export default class Block extends PureComponent {
     if (node.isEmpty) {
       children.push(<br data-ignore />);
     } else {
+      let offset = 0;
+
       node.children.forEach(child => {
         const { key } = child;
 
@@ -46,20 +50,41 @@ export default class Block extends PureComponent {
 
         let element;
 
+        const { length: childLength } = child;
+
+        const childStartOffset = Math.min(
+          Math.max(startOffset - offset, 0),
+          childLength
+        );
+
+        const childEndOffset = Math.min(
+          Math.max(endOffset - offset, 0),
+          childLength
+        );
+
+        const isChildSelected = childStartOffset < childEndOffset;
+
+        offset += childLength;
+
         if (child.isEmbed) {
-          const defaultEmbedProps = {
+          const defaultProps = {
+            isSelected: isChildSelected,
             inlineKey: key,
             createChange,
             onChange
           };
 
-          const embedObj = renderNode(child, defaultEmbedProps);
+          const embedObj = renderNode(child, defaultProps);
 
           if (!embedObj) {
             throw new Error(`Invalid embed: ${child.type}`);
           }
 
-          const { component, props } = embedObj;
+          const { component, props: { className, ...props } = {} } = embedObj;
+
+          if (className) {
+            classNames.push(className);
+          }
 
           element = (
             <Embed
