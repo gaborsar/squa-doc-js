@@ -85,7 +85,11 @@ export default class Document extends PureComponent {
           throw new Error(`Invalid block: ${child.type}`);
         }
 
-        const { wrapper, component, props: { className, ...props } = {} } = blockObj;
+        const {
+          wrapper,
+          component,
+          props: { className, ...props } = {}
+        } = blockObj;
 
         if (className) {
           classNames.push(className);

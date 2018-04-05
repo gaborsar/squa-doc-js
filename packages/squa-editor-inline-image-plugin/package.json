@@ -1,6 +1,6 @@
 {
   "name": "squa-editor-inline-image-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Inline image plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",

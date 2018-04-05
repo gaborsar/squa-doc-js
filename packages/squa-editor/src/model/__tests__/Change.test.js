@@ -619,6 +619,41 @@ describe("Change", () => {
     expect(change.value.selection.focusOffset).toBe(3);
   });
 
+  test("selectBlockByKey()", () => {
+    const value = Value.fromDelta({
+      contents: new Delta()
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+    });
+
+    const block = value.document.children[1];
+
+    const change = value.change().selectBlockByKey(block.key);
+
+    expect(change.value.selection.anchorOffset).toBe(4);
+    expect(change.value.selection.focusOffset).toBe(8);
+  });
+
+  test("selectInlineByKey()", () => {
+    const value = Value.fromDelta({
+      contents: new Delta()
+        .insert("aaa\n")
+        .insert("bbb")
+        .insert("ccc", { bold: true })
+        .insert("ddd\n")
+        .insert("eee\n")
+    });
+
+    const block = value.document.children[1];
+    const inline = block.children[1];
+
+    const change = value.change().selectInlineByKey(block.key, inline.key);
+
+    expect(change.value.selection.anchorOffset).toBe(7);
+    expect(change.value.selection.focusOffset).toBe(10);
+  });
+
   test("replaceBlockByKey()", () => {
     const value = Value.fromDelta({
       contents: new Delta()

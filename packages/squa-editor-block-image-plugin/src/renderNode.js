@@ -1,5 +1,5 @@
 import BlockImage from "./BlockImage";
-import joinClassNames from "classnames"
+import joinClassNames from "classnames";
 
 export default function renderNode(node, defaultProps) {
   if (node.type === "block-image") {
@@ -16,8 +16,7 @@ export default function renderNode(node, defaultProps) {
         src: node.value[node.type],
         alt: node.getMark("alt"),
         caption: node.getMark("caption")
-      },
-
+      }
     };
   }
 }

@@ -2,6 +2,16 @@ import React, { PureComponent } from "react";
 import "./BlockImage.css";
 
 export default class BlockImage extends PureComponent {
+  handleClick = () => {
+    const { blockKey, createChange, onChange } = this.props;
+
+    const change = createChange()
+      .selectBlockByKey(blockKey)
+      .save();
+
+    onChange(change);
+  };
+
   handleDeleteClick = () => {
     const { blockKey, createChange, onChange } = this.props;
 
@@ -23,7 +33,7 @@ export default class BlockImage extends PureComponent {
       ...otherProps
     } = this.props;
     return (
-      <figure {...otherProps}>
+      <figure {...otherProps} onClick={this.handleClick}>
         <img src={src} alt={alt} />
         <figcaption>{caption}</figcaption>
         <div className="block-image__controls">
