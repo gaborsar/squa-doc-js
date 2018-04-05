@@ -2,6 +2,7 @@ import Delta from "quill-delta";
 import Value from "../Value";
 import combineSchemas from "../../plugins/combineSchemas";
 import defaultSchema from "../../defaults/schema";
+import blockImageSchema from "../../../../squa-editor-block-image-plugin/src/schema";
 import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/src/schema";
 import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
@@ -51,37 +52,218 @@ describe("Change", () => {
     expect(change.value.mode).toBe(EDITOR_MODE_COMPOSITION);
   });
 
-  test("moveCursorLeft()", () => {
-    const value = Value.createEmpty();
-    const change = value
-      .change()
-      .select(3, 3)
-      .moveCursorLeft();
-    expect(change.value.selection.anchorOffset).toBe(2);
-    expect(change.value.selection.focusOffset).toBe(2);
+  describe("moveCursorLeft()", () => {
+    test("collapse to left", () => {
+      const value = Value.fromDelta({
+        contents: new Delta().insert("aaabbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(3, 6)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(3);
+    });
+
+    test("collapse to left and move to left", () => {
+      const schema = combineSchemas([defaultSchema, blockImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(4, 5)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(3);
+    });
+
+    test("collapse to left and selection previous embed block node", () => {
+      const schema = combineSchemas([defaultSchema, blockImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert({ "block-image": "bar" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(5, 6)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(5);
+      expect(change.value.selection.focusOffset).toBe(4);
+    });
+
+    test("move cursor to left", () => {
+      const value = Value.fromDelta({
+        contents: new Delta().insert("aaabbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(3, 3)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(2);
+      expect(change.value.selection.focusOffset).toBe(2);
+    });
+
+    test("select previous embed block node", () => {
+      const schema = combineSchemas([defaultSchema, blockImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(5, 5)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(5);
+      expect(change.value.selection.focusOffset).toBe(4);
+    });
+
+    test("select previous embed inline node", () => {
+      const schema = combineSchemas([defaultSchema, inlineImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa")
+          .insert({ "inline-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(4, 4)
+        .moveCursorLeft();
+
+      expect(change.value.selection.anchorOffset).toBe(4);
+      expect(change.value.selection.focusOffset).toBe(3);
+    });
   });
 
-  test("moveCursorRight()", () => {
-    const value = Value.fromJSON({
-      contents: new Delta().insert("aaabbb\n")
+  describe("moveCursorRight()", () => {
+    test("collapse to right", () => {
+      const value = Value.fromDelta({
+        contents: new Delta().insert("aaabbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(0, 3)
+        .moveCursorRight();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(3);
     });
-    const change = value
-      .change()
-      .select(3, 3)
-      .moveCursorRight();
-    expect(change.value.selection.anchorOffset).toBe(4);
-    expect(change.value.selection.focusOffset).toBe(4);
+
+    test("move to right", () => {
+      const value = Value.fromDelta({
+        contents: new Delta().insert("aaabbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(3, 3)
+        .moveCursorRight();
+
+      expect(change.value.selection.anchorOffset).toBe(4);
+      expect(change.value.selection.focusOffset).toBe(4);
+    });
+
+    test("move to right and select next embed block node", () => {
+      const schema = combineSchemas([defaultSchema, blockImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(3, 3)
+        .moveCursorRight();
+
+      expect(change.value.selection.anchorOffset).toBe(4);
+      expect(change.value.selection.focusOffset).toBe(5);
+    });
+
+    test("select next embed block node", () => {
+      const schema = combineSchemas([defaultSchema, blockImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa\n")
+          .insert({ "block-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(4, 4)
+        .moveCursorRight();
+
+      expect(change.value.selection.anchorOffset).toBe(4);
+      expect(change.value.selection.focusOffset).toBe(5);
+    });
+
+    test("select next embed inline node", () => {
+      const schema = combineSchemas([defaultSchema, inlineImageSchema]);
+
+      const value = Value.fromDelta({
+        schema,
+        contents: new Delta()
+          .insert("aaa")
+          .insert({ "inline-image": "foo" })
+          .insert("bbb\n")
+      });
+
+      const change = value
+        .change()
+        .select(3, 3)
+        .moveCursorRight();
+
+      expect(change.value.selection.anchorOffset).toBe(3);
+      expect(change.value.selection.focusOffset).toBe(4);
+    });
   });
 
   test("select()", () => {
     const value = Value.createEmpty();
+
     const change = value.change().select(3, 6);
+
     expect(change.value.selection.anchorOffset).toBe(3);
     expect(change.value.selection.focusOffset).toBe(6);
   });
 
   test("selectAll()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaa\nbbb\n")
     });
 
@@ -192,7 +374,7 @@ describe("Change", () => {
   });
 
   test("selectCharacterForward()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\n")
     });
 
@@ -207,7 +389,7 @@ describe("Change", () => {
 
   describe("selectWordBackward()", () => {
     test("select a word", () => {
-      const value = Value.fromJSON({
+      const value = Value.fromDelta({
         contents: new Delta().insert("aaa bbb \n")
       });
 
@@ -221,7 +403,7 @@ describe("Change", () => {
     });
 
     test("select the first word", () => {
-      const value = Value.fromJSON({
+      const value = Value.fromDelta({
         contents: new Delta().insert("aaa bbb\n")
       });
 
@@ -237,7 +419,7 @@ describe("Change", () => {
 
   describe("selectWordForward()", () => {
     test("select a word", () => {
-      const value = Value.fromJSON({
+      const value = Value.fromDelta({
         contents: new Delta().insert("aaa bbb ccc\n")
       });
 
@@ -251,7 +433,7 @@ describe("Change", () => {
     });
 
     test("select the last word", () => {
-      const value = Value.fromJSON({
+      const value = Value.fromDelta({
         contents: new Delta().insert("aaa bbb\n")
       });
 
@@ -266,7 +448,7 @@ describe("Change", () => {
   });
 
   test("selectBlockBackward()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\n").insert("cccddd\n")
     });
 
@@ -280,7 +462,7 @@ describe("Change", () => {
   });
 
   test("selectBlockForward()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\n")
     });
 
@@ -294,7 +476,7 @@ describe("Change", () => {
   });
 
   test("replaceBlock()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaa\n")
     });
 
@@ -309,7 +491,7 @@ describe("Change", () => {
   });
 
   test("format()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
@@ -330,7 +512,7 @@ describe("Change", () => {
   });
 
   test("formatBlock()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
@@ -349,7 +531,7 @@ describe("Change", () => {
   });
 
   test("formatInline()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\ncccddd\n")
     });
 
@@ -370,7 +552,7 @@ describe("Change", () => {
   });
 
   test("insertText()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\n")
     });
 
@@ -393,7 +575,7 @@ describe("Change", () => {
   test("insertEmbed()", () => {
     const schema = combineSchemas([defaultSchema, inlineImageSchema]);
 
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       schema,
       contents: new Delta().insert("aaabbb\n")
     });
@@ -415,7 +597,7 @@ describe("Change", () => {
   });
 
   test("delete()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaabbb")
         .insert("\n", { type: "heading-one" })
@@ -438,7 +620,7 @@ describe("Change", () => {
   });
 
   test("replaceBlockByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
@@ -459,7 +641,7 @@ describe("Change", () => {
   });
 
   test("replaceInlineByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
@@ -484,7 +666,7 @@ describe("Change", () => {
   });
 
   test("formatBlockByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
@@ -507,7 +689,7 @@ describe("Change", () => {
   });
 
   test("formatInlineByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
@@ -531,7 +713,7 @@ describe("Change", () => {
   });
 
   test("deleteBlockByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
@@ -548,7 +730,7 @@ describe("Change", () => {
   });
 
   test("deleteInlineByKey()", () => {
-    const value = Value.fromJSON({
+    const value = Value.fromDelta({
       contents: new Delta()
         .insert("aaa\n")
         .insert("bbb\n")
