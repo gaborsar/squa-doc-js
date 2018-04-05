@@ -737,6 +737,54 @@ export default class Change {
     return this;
   }
 
+  selectBlockByKey(blockKey) {
+    const { value: { document: { children: blockNodes } } } = this;
+
+    let offset = 0;
+
+    for (const blockNode of blockNodes) {
+      const nextOffset = offset + blockNode.length;
+
+      if (blockNode.key === blockKey) {
+        return this.select(offset, nextOffset);
+      }
+
+      offset = nextOffset;
+    }
+
+    return this;
+  }
+
+  selectInlineByKey(blockKey, inlineKey) {
+    const { value: { document: { children: blockNodes } } } = this;
+
+    let blockOffset = 0;
+
+    for (const blockNode of blockNodes) {
+      const nextBlockOffset = blockOffset + blockNode.length;
+
+      if (!blockNode.isEmbed && blockNode.key === blockKey) {
+        const { children: inlineNodes } = blockNode;
+
+        let inlineOffset = blockOffset;
+
+        for (const inlineNode of inlineNodes) {
+          const nextInlineOffset = inlineOffset + inlineNode.length;
+
+          if (inlineNode.key === inlineKey) {
+            return this.select(inlineOffset, nextInlineOffset);
+          }
+
+          inlineOffset = nextInlineOffset;
+        }
+      }
+
+      blockOffset = nextBlockOffset;
+    }
+
+    return this;
+  }
+
   replaceBlockByKey(blockKey, newBlock) {
     let { value } = this;
     let { document } = value;

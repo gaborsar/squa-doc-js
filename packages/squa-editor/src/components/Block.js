@@ -26,8 +26,6 @@ export default class Block extends PureComponent {
       let offset = 0;
 
       node.children.forEach(child => {
-        const { key } = child;
-
         const markObjects = [];
 
         child.style.marks.forEach(mark => {
@@ -69,7 +67,8 @@ export default class Block extends PureComponent {
         if (child.isEmbed) {
           const defaultProps = {
             isSelected: isChildSelected,
-            inlineKey: key,
+            blockKey: node.key,
+            inlineKey: child.key,
             createChange,
             onChange
           };

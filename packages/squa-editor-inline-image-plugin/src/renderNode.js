@@ -3,10 +3,20 @@ import joinClassNames from "classnames";
 
 export default function renderNode(node, defaultProps) {
   if (node.type === "inline-image") {
-    const { isSelected } = defaultProps;
+    const {
+      isSelected,
+      blockKey,
+      inlineKey,
+      createChange,
+      onChange
+    } = defaultProps;
     return {
       component: InlineImage,
       props: {
+        blockKey,
+        inlineKey,
+        createChange,
+        onChange,
         className: joinClassNames("inline-image", {
           "inline-image--selected": isSelected
         }),
