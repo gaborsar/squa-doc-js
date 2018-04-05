@@ -139,17 +139,79 @@ export default class Change {
 
   moveCursorLeft() {
     let { value } = this;
-    let { selection } = value;
-    const { isCollapsed, anchorOffset } = selection;
+    let { document, selection } = value;
+    const { isCollapsed } = selection;
 
     if (isCollapsed) {
+      const { anchorOffset } = selection;
+
       if (anchorOffset === 0) {
         return this;
       }
 
-      selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+      const blockPos = document.findPosition(anchorOffset);
+
+      if (!blockPos) {
+        return this;
+      }
+
+      const { node: blockNode, offset: blockOffset } = blockPos;
+
+      if (blockOffset === 0) {
+        const prevBlockNode = document.getPreviousSibling(blockNode);
+
+        if (!prevBlockNode) {
+          return this;
+        }
+
+        if (prevBlockNode.isEmbed) {
+          selection = selection.setFocusOffset(anchorOffset - 1);
+        } else {
+          selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+        }
+      } else {
+        const inlinePos = blockNode.findPosition(blockOffset, true);
+
+        if (!inlinePos) {
+          return this;
+        }
+
+        const { node: inlineNode } = inlinePos;
+
+        if (inlineNode.isEmbed) {
+          selection = selection.setFocusOffset(anchorOffset - 1);
+        } else {
+          selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+        }
+      }
     } else {
       selection = selection.collapseToLeft();
+
+      const { anchorOffset } = selection;
+
+      if (anchorOffset === 0) {
+        return this;
+      }
+
+      const blockPos = document.findPosition(anchorOffset);
+
+      if (!blockPos) {
+        return this;
+      }
+
+      const { node: blockNode } = blockPos;
+
+      if (blockNode.isEmbed) {
+        const prevBlockNode = document.getPreviousSibling(blockNode);
+
+        if (prevBlockNode) {
+          if (prevBlockNode.isEmbed) {
+            selection = selection.setFocusOffset(anchorOffset - 1);
+          } else {
+            selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
+          }
+        }
+      }
     }
 
     value = value.setSelection(selection);
@@ -162,14 +224,50 @@ export default class Change {
   moveCursorRight() {
     let { value } = this;
     let { document, selection } = value;
-    const { isCollapsed, anchorOffset } = selection;
+    const { isCollapsed } = selection;
 
     if (isCollapsed) {
-      if (anchorOffset >= document.length - 1) {
+      const { anchorOffset } = selection;
+
+      const blockPos = document.findPosition(anchorOffset);
+
+      if (!blockPos) {
         return this;
       }
 
-      selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
+      const { node: blockNode, offset: blockOffset } = blockPos;
+
+      if (blockNode.isEmbed) {
+        selection = selection.setFocusOffset(anchorOffset + 1);
+      } else if (blockOffset === blockNode.length - 1) {
+        const nextBlockNode = document.getNextSibling(blockNode);
+
+        if (!nextBlockNode) {
+          return this;
+        }
+
+        if (nextBlockNode.isEmbed) {
+          selection = selection
+            .setAnchorOffset(anchorOffset + 1)
+            .setFocusOffset(anchorOffset + 2);
+        } else {
+          selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
+        }
+      } else {
+        const inlinePos = blockNode.findPosition(blockOffset);
+
+        if (!inlinePos) {
+          return this;
+        }
+
+        const { node: inlineNode } = inlinePos;
+
+        if (inlineNode.isEmbed) {
+          selection = selection.setFocusOffset(anchorOffset + 1);
+        } else {
+          selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
+        }
+      }
     } else {
       selection = selection.collapseToRight();
     }
