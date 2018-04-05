@@ -90,6 +90,7 @@ export default class ContentEditable extends PureComponent {
     const {
       className,
       spellCheck,
+      disabled,
       onFocus,
       onBlur,
       onSelect,
@@ -101,7 +102,7 @@ export default class ContentEditable extends PureComponent {
     } = this.props;
     return (
       <div
-        contentEditable
+        contentEditable={!disabled}
         suppressContentEditableWarning
         className={className}
         spellCheck={spellCheck}
