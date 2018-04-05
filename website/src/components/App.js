@@ -29,7 +29,7 @@ export default class App extends PureComponent {
     super(props);
     const { initialContents } = props;
     this.state = {
-      value: Value.fromJSON({
+      value: Value.fromDelta({
         schema,
         contents: initialContents
       })

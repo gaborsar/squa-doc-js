@@ -26,7 +26,7 @@ import Delta from "quill-delta";
 import { Value, Editor } from "squa-editor";
 
 const contents = new Delta().insert("Hello world!\n");
-const value = Value.fromJSON({ contents });
+const value = Value.fromDelta({ contents });
 
 class App extends PureComponent {
   constructor(props) {
