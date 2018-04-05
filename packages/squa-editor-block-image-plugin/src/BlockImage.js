@@ -12,8 +12,10 @@ export default class BlockImage extends PureComponent {
     onChange(change);
   };
 
-  handleDeleteClick = () => {
+  handleDeleteClick = event => {
     const { blockKey, createChange, onChange } = this.props;
+
+    event.stopPropagation();
 
     const change = createChange()
       .deleteBlockByKey(blockKey)
