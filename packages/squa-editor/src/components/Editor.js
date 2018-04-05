@@ -599,7 +599,8 @@ export default class Editor extends PureComponent {
 
   render() {
     const {
-      spellCheck,
+      disabled = false,
+      spellCheck = true,
       value: { document },
       onChange,
       renderNode = defaultRenderNode,
@@ -617,6 +618,7 @@ export default class Editor extends PureComponent {
           <ContentEditable
             editableRef={this.setRootNode}
             className="ed-editable"
+            disabled={disabled}
             spellCheck={spellCheck}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
