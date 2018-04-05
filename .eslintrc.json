@@ -28,6 +28,7 @@
   },
   "rules": {
     "eqeqeq": "error",
+    "linebreak-style": ["error", "unix"],
     "no-console": ["error", { "allow": ["wran", "error"] }],
     "no-unused-vars": "error",
     "prefer-const": ["error", { "destructuring": "all" }],

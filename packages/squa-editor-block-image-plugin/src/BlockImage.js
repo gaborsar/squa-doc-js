@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import joinClassNames from "classnames";
 import "./BlockImage.css";
 
 export default class BlockImage extends PureComponent {
@@ -15,7 +14,6 @@ export default class BlockImage extends PureComponent {
 
   render() {
     const {
-      className,
       src,
       alt,
       caption,
@@ -25,10 +23,7 @@ export default class BlockImage extends PureComponent {
       ...otherProps
     } = this.props;
     return (
-      <figure
-        {...otherProps}
-        className={joinClassNames(className, "block-image")}
-      >
+      <figure {...otherProps}>
         <img src={src} alt={alt} />
         <figcaption>{caption}</figcaption>
         <div className="block-image__controls">

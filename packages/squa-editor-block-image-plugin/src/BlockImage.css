@@ -3,11 +3,17 @@
   margin: 0 10px;
   padding: 10px;
   border: 2px solid transparent;
+  user-select: none;
   transition: border 100ms;
 }
 
 .block-image:hover {
   border: 2px solid #eee;
+}
+
+.block-image--selected,
+.block-image--selected:hover {
+  border: 2px solid lightblue;
 }
 
 .block-image figcaption {
@@ -24,7 +30,8 @@
   transition: visibility 100ms, opacity 100ms;
 }
 
-.block-image:hover .block-image__controls {
+.block-image:hover .block-image__controls,
+.block-image--selected .block-image__controls {
   visibility: visible;
   opacity: 1;
 }

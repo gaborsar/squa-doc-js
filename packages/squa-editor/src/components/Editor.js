@@ -601,7 +601,7 @@ export default class Editor extends PureComponent {
     const {
       disabled = false,
       spellCheck = true,
-      value: { document },
+      value: { document, selection: { startOffset, endOffset } },
       onChange,
       renderNode = defaultRenderNode,
       renderMark = defaultRenderMark
@@ -636,6 +636,8 @@ export default class Editor extends PureComponent {
             <Document
               key={document.key}
               node={document}
+              startOffset={startOffset}
+              endOffset={endOffset}
               createChange={this.createChange}
               onChange={onChange}
               renderNode={renderNode}
