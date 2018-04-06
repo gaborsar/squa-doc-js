@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "squa-editor-packages",
+  "name": "squa-doc-js-packages",
   "license": "GNU LGPLv3",
   "scripts": {
     "benchmark": "babel-node benchmarks/document.js",

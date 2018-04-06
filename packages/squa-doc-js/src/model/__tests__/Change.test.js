@@ -2,8 +2,8 @@ import Delta from "quill-delta";
 import Value from "../Value";
 import combineSchemas from "../../plugins/combineSchemas";
 import defaultSchema from "../../defaults/schema";
-import blockImageSchema from "../../../../squa-editor-block-image-plugin/src/schema";
-import inlineImageSchema from "../../../../squa-editor-inline-image-plugin/src/schema";
+import blockImageSchema from "../../../../squa-doc-js-block-image-plugin/src/schema";
+import inlineImageSchema from "../../../../squa-doc-js-inline-image-plugin/src/schema";
 import { EDITOR_MODE_COMPOSITION } from "../../constants";
 
 describe("Change", () => {

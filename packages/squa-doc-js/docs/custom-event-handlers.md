@@ -23,7 +23,7 @@ onKeyDown: (change: Change, event: KeyboardEvent) => boolean;
 ```jsx
 import React, { PureComponent } from "react";
 import Delta from "quill-delta";
-import { Value, Editor } from "squa-editor";
+import { Value, Editor } from "squa-doc-js";
 
 function onKeyDown(change, event) {
   // ctrl + m = Enter

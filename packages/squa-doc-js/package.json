@@ -1,17 +1,19 @@
 {
-  "name": "squa-editor-outline-plugin",
+  "name": "squa-doc-js",
   "version": "0.0.1",
-  "description": "Outline plugin for SquaEditor",
+  "description": "A rich text editor for React",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaborsar/squa-editor"
+    "url": "https://github.com/gaborsar/squa-doc-js"
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
+    "lodash": "^4.17.4",
     "react-dom": "^16.0.0",
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "quill-delta": "^3.5.0"
   }
 }

@@ -1,13 +1,13 @@
 {
-  "name": "squa-editor-inline-image-plugin",
-  "version": "0.0.4",
-  "description": "Inline image plugin for SquaEditor",
+  "name": "squa-doc-js-outline-plugin",
+  "version": "0.0.1",
+  "description": "Outline plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaborsar/squa-editor"
+    "url": "https://github.com/gaborsar/squa-doc-js"
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
