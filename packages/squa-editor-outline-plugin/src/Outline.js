@@ -1,6 +1,5 @@
 import React, { PureComponent } from "react";
 import createId from "./createId";
-import "./Outline.css";
 
 export default class Outline extends PureComponent {
   render() {
