@@ -1,13 +1,13 @@
 {
-  "name": "squa-editor-checkable-plugin",
-  "version": "0.0.4",
+  "name": "squa-doc-js-checkable-plugin",
+  "version": "0.0.1",
   "description": "Checkable list plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaborsar/squa-editor"
+    "url": "https://github.com/gaborsar/squa-doc-js"
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {

@@ -1,13 +1,13 @@
 {
-  "name": "squa-editor-block-image-plugin",
-  "version": "0.0.6",
+  "name": "squa-doc-js-block-image-plugin",
+  "version": "0.0.1",
   "description": "Block image plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaborsar/squa-editor"
+    "url": "https://github.com/gaborsar/squa-doc-js"
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {

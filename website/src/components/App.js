@@ -4,14 +4,14 @@ import {
   Editor,
   combinePlugins,
   defaultPlugin
-} from "../../../packages/squa-editor/src";
-import { blockImagePlugin } from "../../../packages/squa-editor-block-image-plugin/src";
-import { inlineImagePlugin } from "../../../packages/squa-editor-inline-image-plugin/src";
-import { checkablePlugin } from "../../../packages/squa-editor-checkable-plugin/src";
+} from "../../../packages/squa-doc-js/src";
+import { blockImagePlugin } from "../../../packages/squa-doc-js-block-image-plugin/src";
+import { inlineImagePlugin } from "../../../packages/squa-doc-js-inline-image-plugin/src";
+import { checkablePlugin } from "../../../packages/squa-doc-js-checkable-plugin/src";
 import {
   outlinePlugin,
   Outline
-} from "../../../packages/squa-editor-outline-plugin/src";
+} from "../../../packages/squa-doc-js-outline-plugin/src";
 import Menu from "./Menu";
 
 const {

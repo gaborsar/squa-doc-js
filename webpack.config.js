@@ -1,10 +1,10 @@
 "use strict";
 
 const webpack = require("webpack");
-const SquaEditor = require("./packages/squa-editor/package.json");
-const BlockImagePlugin = require("./packages/squa-editor-block-image-plugin/package.json");
-const InlineImagePlugin = require("./packages/squa-editor-inline-image-plugin/package.json");
-const CheckablePlugin = require("./packages/squa-editor-checkable-plugin/package.json");
+const SquaEditor = require("./packages/squa-doc-js/package.json");
+const BlockImagePlugin = require("./packages/squa-doc-js-block-image-plugin/package.json");
+const InlineImagePlugin = require("./packages/squa-doc-js-inline-image-plugin/package.json");
+const CheckablePlugin = require("./packages/squa-doc-js-checkable-plugin/package.json");
 
 function genericFactory(config) {
   return {

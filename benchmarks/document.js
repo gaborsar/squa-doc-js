@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
 import Delta from "quill-delta";
-import DocumentBuilder from "../packages/squa-editor/src/model/DocumentBuilder";
-import schema from "../packages/squa-editor/src/defaults/schema";
+import DocumentBuilder from "../packages/squa-doc-js/src/model/DocumentBuilder";
+import schema from "../packages/squa-doc-js/src/defaults/schema";
 
 const NUMBER_OF_TESTS = 10;
 

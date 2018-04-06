@@ -24,7 +24,7 @@ import BlockTypeButton from "./BlockTypeButton";
 import ToggleButton from "./ToggleButton";
 import ColorMenu from "./ColorMenu";
 import LinkButton from "./LinkButton";
-import { indent, outdent } from "../../../packages/squa-editor/src";
+import { indent, outdent } from "../../../packages/squa-doc-js/src";
 import "./Menu.scss";
 
 export default class Menu extends PureComponent {

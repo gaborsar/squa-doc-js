@@ -15,7 +15,7 @@ npm install --save quill-delta
 Then, you can install the editor:
 
 ```
-npm install --save squa-editor
+npm install --save squa-doc-js
 ```
 
 ## Quickstart
@@ -23,7 +23,7 @@ npm install --save squa-editor
 ```jsx
 import React, { PureComponent } from "react";
 import Delta from "quill-delta";
-import { Value, Editor } from "squa-editor";
+import { Value, Editor } from "squa-doc-js";
 
 const contents = new Delta().insert("Hello world!\n");
 const value = Value.fromDelta({ contents });
@@ -45,7 +45,7 @@ class App extends PureComponent {
 }
 ```
 
-You can find more examples in the [documentation](packages/squa-editor/README.md).
+You can find more examples in the [documentation](packages/squa-doc-js/README.md).
 
 ## Licence
 
