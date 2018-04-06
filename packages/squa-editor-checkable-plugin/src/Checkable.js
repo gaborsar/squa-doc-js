@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faCheckSquare from "@fortawesome/fontawesome-free-solid/faCheckSquare";
-import faSquare from "@fortawesome/fontawesome-free-solid/faSquare";
+import faSquare from "@fortawesome/fontawesome-free-regular/faSquare";
 import "./Checkable.scss";
 
 export default class Checkable extends PureComponent {
