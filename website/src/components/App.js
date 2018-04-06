@@ -5,9 +5,13 @@ import {
   combinePlugins,
   defaultPlugin
 } from "../../../packages/squa-editor/src";
-import blockImagePlugin from "../../../packages/squa-editor-block-image-plugin/src";
-import inlineImagePlugin from "../../../packages/squa-editor-inline-image-plugin/src";
-import checkablePlugin from "../../../packages/squa-editor-checkable-plugin/src";
+import { blockImagePlugin } from "../../../packages/squa-editor-block-image-plugin/src";
+import { inlineImagePlugin } from "../../../packages/squa-editor-inline-image-plugin/src";
+import { checkablePlugin } from "../../../packages/squa-editor-checkable-plugin/src";
+import {
+  outlinePlugin,
+  Outline
+} from "../../../packages/squa-editor-outline-plugin/src";
 import Menu from "./Menu";
 
 const {
@@ -21,6 +25,7 @@ const {
   blockImagePlugin,
   inlineImagePlugin,
   checkablePlugin,
+  outlinePlugin,
   defaultPlugin
 ]);
 
@@ -45,21 +50,26 @@ export default class App extends PureComponent {
     const { value } = this.state;
     return (
       <div className="app">
-        <div className="header">
+        <div className="menu-container">
           <Menu value={value} onChange={this.onChange} />
         </div>
-        <div className="content">
-          <Editor
-            placeholder="Enter some text..."
-            spellCheck={false}
-            value={value}
-            onChange={this.onChange}
-            renderNode={renderNode}
-            renderMark={renderMark}
-            tokenizeNode={tokenizeNode}
-            tokenizeClassName={tokenizeClassName}
-            onKeyDown={onKeyDown}
-          />
+        <div className="main">
+          <div className="outline-container">
+            <Outline value={value} />
+          </div>
+          <div className="editor-container">
+            <Editor
+              placeholder="Enter some text..."
+              spellCheck={false}
+              value={value}
+              onChange={this.onChange}
+              renderNode={renderNode}
+              renderMark={renderMark}
+              tokenizeNode={tokenizeNode}
+              tokenizeClassName={tokenizeClassName}
+              onKeyDown={onKeyDown}
+            />
+          </div>
         </div>
       </div>
     );
