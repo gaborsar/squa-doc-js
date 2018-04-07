@@ -1,4 +1,4 @@
-# SquaEditor
+# SquaDoc.js
 
 A rich text editor for [React](https://github.com/facebook/react), built around [Quill's Delta](https://github.com/quilljs/delta) to provide collaborative capabilities.
 
