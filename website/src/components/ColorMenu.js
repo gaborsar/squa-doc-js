@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faPaintBrush from "@fortawesome/fontawesome-free-solid/faPaintBrush";
+import SimpleButton from "./SimpleButton";
 import ColorButton from "./ColorButton";
 import "./ColorMenu.scss";
 
@@ -33,17 +34,17 @@ export default class ColorMenu extends PureComponent {
     const { format } = this.props;
     const { isOpen } = this.state;
     return (
-      <div className="color-menu">
-        <div className="color-menu__header">
-          <button className="button" onMouseDown={this.handleToggleClick}>
+      <div className="ColorMenu">
+        <div className="ColorMenu-header">
+          <SimpleButton onClick={this.handleToggleClick}>
             <FontAwesomeIcon
               icon={faPaintBrush}
               style={{ color: format.color }}
             />
-          </button>
+          </SimpleButton>
         </div>
         {isOpen && (
-          <div className="color-menu__body">
+          <div className="ColorMenu-body">
             <ColorButton color={null} onClick={this.handleColorClick} />
             <ColorButton color="silver" onClick={this.handleColorClick} />
             <ColorButton color="gray" onClick={this.handleColorClick} />

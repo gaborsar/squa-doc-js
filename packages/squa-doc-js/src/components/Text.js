@@ -43,7 +43,7 @@ export default class Text extends Component {
         key={this.forceFlag ? "A" : "B"}
         data-text
         data-key={node.key}
-        className={joinClassNames("ed-text", textClassName)}
+        className={joinClassNames("SquaDocJs-text", textClassName)}
       >
         {node.text}
       </span>

@@ -16,8 +16,7 @@ import defaultOnKeyDown from "../defaults/onKeyDown";
 import defaultTokenizeNode from "../defaults/tokenizeNode";
 import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
-
-import "./Editor.css";
+import "./Editor.scss";
 
 const sink = () => {};
 
@@ -590,7 +589,10 @@ export default class Editor extends PureComponent {
 
     if (value.mode === EDITOR_MODE_EDIT && placeholder && document.isEmpty) {
       return (
-        <span className="ed-placeholder" onClick={this.handlePlaceholderClick}>
+        <span
+          className="SquaDocJs-placeholder"
+          onClick={this.handlePlaceholderClick}
+        >
           {placeholder}
         </span>
       );
@@ -609,15 +611,15 @@ export default class Editor extends PureComponent {
     const { isFocused } = this.state;
     return (
       <div
-        className={joinClassNames("ed-editor", {
-          "ed-editor--focused": isFocused
+        className={joinClassNames("SquaDocJs-editor", {
+          "SquaDocJs-editor--focused": isFocused
         })}
       >
         <ErrorBoundary>
           {this.renderPlaceholder()}
           <ContentEditable
             editableRef={this.setRootNode}
-            className="ed-editable"
+            className="SquaDocJs-editable"
             disabled={disabled}
             spellCheck={spellCheck}
             onFocus={this.handleFocus}

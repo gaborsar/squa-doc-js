@@ -1,13 +1,13 @@
-.inline-image {
+.InlineImage {
   display: inline-block;
   padding: 1px;
   user-select: none;
+
+  img {
+    margin: 0;
+  }
 }
 
-.inline-image--selected {
+.InlineImage-selected {
   background-color: lightblue;
-}
-
-.inline-image img {
-  margin: 0;
 }

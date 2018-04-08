@@ -1,4 +1,4 @@
-const exp = /^ed-(\w+)-(\w+)$/;
+const exp = /^SquaDocJs-(\w+)-(\w+)$/;
 
 export default function tokenizeClassName(className) {
   const tokens = [];

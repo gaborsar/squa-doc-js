@@ -1,30 +1,32 @@
-.checkable {
+.Checkable .checkbox {
+  display: inline;
+  margin-right: 10px;
+  color: #555;
+  cursor: pointer;
+}
+
+// Indentation
+
+.Checkable {
   margin-left: 27px;
+}
 
-  &.ed-indent-1 {
-    margin-left: 57px;
-  }
+.Checkable.SquaDocJs-indent-1 {
+  margin-left: 57px;
+}
 
-  &.ed-indent-2 {
-    margin-left: 87px;
-  }
+.Checkable.SquaDocJs-indent-2 {
+  margin-left: 87px;
+}
 
-  &.ed-indent-3 {
-    margin-left: 117px;
-  }
+.Checkable.SquaDocJs-indent-3 {
+  margin-left: 117px;
+}
 
-  &.ed-indent-4 {
-    margin-left: 147px;
-  }
+.Checkable.SquaDocJs-indent-4 {
+  margin-left: 147px;
+}
 
-  &.ed-indent-5 {
-    margin-left: 177px;
-  }
-
-  .checkbox {
-    display: inline;
-    margin-right: 10px;
-    color: #555;
-    cursor: pointer;
-  }
+.Checkable.SquaDocJs-indent-5 {
+  margin-left: 177px;
 }

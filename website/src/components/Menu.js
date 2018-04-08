@@ -28,19 +28,19 @@ import { indent, outdent } from "../../../packages/squa-doc-js/src";
 import "./Menu.scss";
 
 export default class Menu extends PureComponent {
-  undo = () => {
+  handleUndoClick = () => {
     const { value, onChange } = this.props;
     const change = value.change().undo();
     onChange(change);
   };
 
-  redo = () => {
+  handleRedoClick = () => {
     const { value, onChange } = this.props;
     const change = value.change().redo();
     onChange(change);
   };
 
-  formatBlock = attributes => {
+  handleBlockFormatClick = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
@@ -49,7 +49,7 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  formatInline = attributes => {
+  handleInlineFormatClick = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
@@ -58,7 +58,7 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  indent = () => {
+  handleIndentClick = () => {
     const { value, onChange } = this.props;
     const change = value
       .change()
@@ -67,7 +67,7 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  outdent = () => {
+  handleOutdentClick = () => {
     const { value, onChange } = this.props;
     const change = value
       .change()
@@ -78,23 +78,40 @@ export default class Menu extends PureComponent {
 
   render() {
     const { value } = this.props;
+
     const { canUndo, canRedo } = value;
     const format = value.getFormat();
+
+    const canIndent =
+      format.type === "unordered-list-item" ||
+      format.type === "ordered-list-item" ||
+      format.type === "checkable";
+
     return (
-      <div className="menu">
-        <SimpleButton format={format} onClick={this.undo} disabled={!canUndo}>
+      <div className="Menu">
+        <SimpleButton
+          format={format}
+          onClick={this.handleUndoClick}
+          disabled={!canUndo}
+        >
           <FontAwesomeIcon icon={faUndo} />
         </SimpleButton>
-        <SimpleButton format={format} onClick={this.redo} disabled={!canRedo}>
+        <SimpleButton
+          format={format}
+          onClick={this.handleRedoClick}
+          disabled={!canRedo}
+        >
           <FontAwesomeIcon icon={faRedo} />
         </SimpleButton>
-        <span className="separator" />
+
+        <span className="Menu-separator" />
+
         <BlockTypeButton
           format={format}
           type="heading-one"
           resetIndent
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faHeading} />1
         </BlockTypeButton>
@@ -103,7 +120,7 @@ export default class Menu extends PureComponent {
           type="heading-two"
           resetIndent
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faHeading} />2
         </BlockTypeButton>
@@ -112,7 +129,7 @@ export default class Menu extends PureComponent {
           type="blockquote"
           resetIndent
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faQuoteRight} />
         </BlockTypeButton>
@@ -121,16 +138,18 @@ export default class Menu extends PureComponent {
           type="code"
           resetIndent
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faCode} />
         </BlockTypeButton>
-        <span className="separator" />
+
+        <span className="Menu-separator" />
+
         <BlockTypeButton
           format={format}
           type="unordered-list-item"
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faListUl} />
         </BlockTypeButton>
@@ -138,23 +157,25 @@ export default class Menu extends PureComponent {
           format={format}
           type="ordered-list-item"
           resetChecked
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faListOl} />
         </BlockTypeButton>
         <BlockTypeButton
           format={format}
           type="checkable"
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faCheckSquare} />
         </BlockTypeButton>
-        <span className="separator" />
+
+        <span className="Menu-separator" />
+
         <ToggleButton
           format={format}
           type="align"
           value="left"
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faAlignLeft} />
         </ToggleButton>
@@ -162,7 +183,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="center"
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faAlignCenter} />
         </ToggleButton>
@@ -170,7 +191,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="right"
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faAlignRight} />
         </ToggleButton>
@@ -178,23 +199,35 @@ export default class Menu extends PureComponent {
           format={format}
           type="align"
           value="justify"
-          onClick={this.formatBlock}
+          onClick={this.handleBlockFormatClick}
         >
           <FontAwesomeIcon icon={faAlignJustify} />
         </ToggleButton>
-        <span className="separator" />
-        <SimpleButton format={format} onClick={this.outdent}>
+
+        <span className="Menu-separator" />
+
+        <SimpleButton
+          format={format}
+          onClick={this.handleOutdentClick}
+          disabled={!canIndent}
+        >
           <FontAwesomeIcon icon={faOutdent} />
         </SimpleButton>
-        <SimpleButton format={format} onClick={this.indent}>
+        <SimpleButton
+          format={format}
+          onClick={this.handleIndentClick}
+          disabled={!canIndent}
+        >
           <FontAwesomeIcon icon={faIndent} />
         </SimpleButton>
-        <span className="separator" />
+
+        <span className="Menu-separator" />
+
         <ToggleButton
           format={format}
           type="bold"
           value={true}
-          onClick={this.formatInline}
+          onClick={this.handleInlineFormatClick}
         >
           <FontAwesomeIcon icon={faBold} />
         </ToggleButton>
@@ -202,7 +235,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="italic"
           value={true}
-          onClick={this.formatInline}
+          onClick={this.handleInlineFormatClick}
         >
           <FontAwesomeIcon icon={faItalic} />
         </ToggleButton>
@@ -210,7 +243,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="underline"
           value={true}
-          onClick={this.formatInline}
+          onClick={this.handleInlineFormatClick}
         >
           <FontAwesomeIcon icon={faUnderline} />
         </ToggleButton>
@@ -218,7 +251,7 @@ export default class Menu extends PureComponent {
           format={format}
           type="strikethrough"
           value={true}
-          onClick={this.formatInline}
+          onClick={this.handleInlineFormatClick}
         >
           <FontAwesomeIcon icon={faStrikethrough} />
         </ToggleButton>
@@ -226,13 +259,16 @@ export default class Menu extends PureComponent {
           format={format}
           type="code"
           value={true}
-          onClick={this.formatInline}
+          onClick={this.handleInlineFormatClick}
         >
           <FontAwesomeIcon icon={faCode} />
         </ToggleButton>
-        <ColorMenu format={format} onClick={this.formatInline} />
-        <span className="separator" />
-        <LinkButton format={format} onClick={this.formatInline}>
+
+        <ColorMenu format={format} onClick={this.handleInlineFormatClick} />
+
+        <span className="Menu-separator" />
+
+        <LinkButton format={format} onClick={this.handleInlineFormatClick}>
           <FontAwesomeIcon icon={faLink} />
         </LinkButton>
       </div>

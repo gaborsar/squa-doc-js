@@ -11,7 +11,9 @@ export default class BlockTypeButton extends PureComponent {
 
     if (format.type === type) {
       attributes = {
-        type: null
+        type: null,
+        indent: null,
+        checked: null
       };
     } else {
       attributes = { type };
@@ -39,8 +41,8 @@ export default class BlockTypeButton extends PureComponent {
     return (
       <button
         type="button"
-        className={classNames("button", {
-          "button--active": format.type === type
+        className={classNames("Menu-button", {
+          "Menu-button-active": format.type === type
         })}
         onMouseDown={this.handleMouseDown}
         disabled={disabled}

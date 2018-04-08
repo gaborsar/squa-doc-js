@@ -1,7 +1,7 @@
-.color-menu {
+.ColorMenu {
   position: relative;
 
-  .color-menu__body {
+  .ColorMenu-body {
     z-index: 3;
     position: absolute;
     top: 40px;
@@ -13,7 +13,7 @@
     background: #eee;
     box-shadow: 0 0 3px #aaa;
 
-    .button {
+    .Menu-button {
       width: 20px;
       height: 20px;
       margin: 0 5px 5px 0;

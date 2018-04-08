@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import classNames from "classnames";
+import joinClassNames from "classnames";
 
 export default class LinkButton extends PureComponent {
   onMouseDownCallback = () => {
@@ -19,8 +19,8 @@ export default class LinkButton extends PureComponent {
     return (
       <button
         type="button"
-        className={classNames("button", {
-          "button--active": format.link
+        className={joinClassNames("Menu-button", {
+          "Menu-button-active": format.link
         })}
         onMouseDown={this.handleMouseDown}
       >

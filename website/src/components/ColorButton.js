@@ -12,7 +12,7 @@ export default class ColorButton extends PureComponent {
     return (
       <button
         type="button"
-        className="button"
+        className="Menu-button"
         style={{ background: color || "black" }}
         onMouseDown={this.handleMouseDown}
       />

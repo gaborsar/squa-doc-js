@@ -2,7 +2,7 @@ export default function tokenizeNode(className) {
   const tokens = [];
 
   switch (className) {
-    case "checkable":
+    case "Checkable":
       tokens.push({
         type: "block-node",
         payload: {
@@ -11,7 +11,7 @@ export default function tokenizeNode(className) {
       });
       break;
 
-    case "checked":
+    case "Checkable-checked":
       tokens.push({
         type: "block-style",
         payload: {

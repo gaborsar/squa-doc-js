@@ -5,7 +5,7 @@ export default function renderMark(mark) {
     case "anchor":
     case "color":
       return {
-        className: `ed-${mark.type}-${mark.value}`
+        className: `SquaDocJs-${mark.type}-${mark.value}`
       };
 
     case "link":

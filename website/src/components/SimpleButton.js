@@ -13,7 +13,7 @@ export default class SimpleButton extends PureComponent {
       <button
         type="button"
         disabled={disabled}
-        className="button"
+        className="Menu-button"
         onMouseDown={this.handleMouseDown}
       >
         {children}
