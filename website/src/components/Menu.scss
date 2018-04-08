@@ -1,8 +1,16 @@
-.menu {
+.Menu {
   display: flex;
   align-items: center;
+  margin-left: 300px;
 
-  .button {
+  .Menu-separator {
+    width: 0;
+    height: 12px;
+    border-right: 1px solid #ccc;
+    margin: 0 3px;
+  }
+
+  .Menu-button {
     width: 30px;
     height: 30px;
     margin: 0;
@@ -18,22 +26,15 @@
     transition: color 100ms;
   }
 
-  .button:hover {
+  .Menu-button:hover {
     color: black;
   }
 
-  .button:disabled {
+  .Menu-button:disabled {
     color: #ddd;
   }
 
-  .button--active {
+  .Menu-button-active {
     color: blue;
-  }
-
-  .separator {
-    width: 0;
-    height: 12px;
-    border-right: 1px solid #ccc;
-    margin: 0 3px;
   }
 }

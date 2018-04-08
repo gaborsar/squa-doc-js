@@ -10,8 +10,8 @@ export default function renderNode(node, defaultProps) {
         blockKey,
         createChange,
         onChange,
-        className: joinClassNames("block-image", {
-          "block-image--selected": isSelected
+        className: joinClassNames("BlockImage", {
+          "BlockImage-selected": isSelected
         }),
         src: node.value[node.type],
         alt: node.getMark("alt"),

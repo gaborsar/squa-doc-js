@@ -1,85 +1,10 @@
-body {
-  margin: 0;
-  padding: 0;
-}
-
-// Menu
-
-.menu-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  display: flex;
-  background: #eee;
-  box-shadow: 0 0 3px #aaa;
-}
-
-.menu {
-  margin-left: 340px;
-}
-
-// Outline
-
-.outline-container {
-  position: fixed;
-  top: 30px;
-  bottom: 0;
-  left: 0;
-  border-right: 1px solid #eee;
-}
-
-.outline {
-  width: 340px;
-  font-family: sans-serif;
-  font-weight: bold;
-}
-
-.outline__title {
-  padding: 20px;
-  color: black;
-  font-size: 16px;
-  font-weight: bold;
-  border-bottom: 1px solid #eee;
-}
-
-.outline__link {
-  display: block;
-  width: 300px;
-  padding: 10px 20px;
-  color: black;
-  font-size: 14px;
-  text-decoration: none;
-  transition: background 100ms;
-}
-
-.outline__link:hover {
-  background: #eee;
-}
-
-// Editor
-
-.editor-container {
-  position: fixed;
-  top: 30px;
-  right: 0;
-  bottom: 0;
-  left: 340px;
-  overflow: auto;
-  display: flex;
-}
-
-.ed-editor {
+.SquaDocJs-editor {
   width: 900px;
   margin: 10px;
   padding: 10px;
   font-family: sans-sans-serif;
 
-  [contenteditable] {
-    outline: none;
-  }
-
-  .ed-placeholder {
+  .SquaDocJs-placeholder {
     top: 20px; // 10 (editor padding) + 10 (p margin)
     left: 10px; // 10 (editor padding)
     font-family: sans-serif;
@@ -87,6 +12,8 @@ body {
     line-height: 20px;
     color: #aaa;
   }
+
+  // Typography
 
   h1 {
     margin: 20px 0;
@@ -150,15 +77,70 @@ body {
     font-weight: bold;
   }
 
-  .checkable {
+  .Checkable {
     font-family: sans-serif;
     font-size: 14px;
     line-height: 20px;
   }
+
+  // Numbering
+
+  h1 {
+    counter-increment: editor-h1;
+
+    &:before {
+      content: counter(editor-h1) ". ";
+    }
+  }
+
+  h2 {
+    counter-increment: editor-h2;
+
+    &:before {
+      content: counter(editor-h1) "." counter(editor-h2) ". ";
+    }
+  }
+
+  h3 {
+    counter-increment: editor-h3;
+
+    &:before {
+      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        ". ";
+    }
+  }
+
+  h4 {
+    counter-increment: editor-h4;
+
+    &:before {
+      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) ". ";
+    }
+  }
+
+  h5 {
+    counter-increment: editor-h5;
+
+    &:before {
+      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) "." counter(editor-h5) ". ";
+    }
+  }
+
+  h6 {
+    counter-increment: editor-h6;
+
+    &:before {
+      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) "." counter(editor-h5) "." counter(editor-h6)
+        ". ";
+    }
+  }
 }
 
-.ed-editor--focused {
-  .ed-placeholder {
+.SquaDocJs-editor--focused {
+  .SquaDocJs-placeholder {
     color: #eee;
   }
 }

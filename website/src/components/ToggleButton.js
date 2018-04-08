@@ -15,8 +15,8 @@ export default class ToggleButton extends PureComponent {
     return (
       <button
         type="button"
-        className={classNames("button", {
-          "button--active": format[type] === value
+        className={classNames("Menu-button", {
+          "Menu-button-active": format[type] === value
         })}
         onMouseDown={this.handleMouseDown}
         disabled={disabled}

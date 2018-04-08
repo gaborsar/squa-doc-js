@@ -154,7 +154,7 @@ export default class Document extends PureComponent {
     }
 
     return (
-      <div className="ed-document" data-key={node.key}>
+      <div className="SquaDocJs-document" data-key={node.key}>
         {children}
       </div>
     );

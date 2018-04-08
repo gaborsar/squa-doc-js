@@ -49,15 +49,15 @@ export default class App extends PureComponent {
   render() {
     const { value } = this.state;
     return (
-      <div className="app">
-        <div className="menu-container">
+      <div className="App">
+        <div className="App-header">
           <Menu value={value} onChange={this.onChange} />
         </div>
-        <div className="main">
-          <div className="outline-container">
+        <div className="App-content">
+          <div className="App-outline">
             <Outline value={value} />
           </div>
-          <div className="editor-container">
+          <div className="App-editor">
             <Editor
               placeholder="Enter some text..."
               spellCheck={false}

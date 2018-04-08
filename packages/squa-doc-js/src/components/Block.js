@@ -121,7 +121,7 @@ export default class Block extends PureComponent {
         {...blockProps}
         data-block
         data-key={node.key}
-        className={joinClassNames("ed-block", blockClassName)}
+        className={joinClassNames("SquaDocJs-block", blockClassName)}
       >
         {children}
       </BlockComponent>

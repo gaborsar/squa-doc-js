@@ -1,0 +1,255 @@
+// Editor
+
+[contenteditable] {
+  outline: none;
+}
+
+.SquaDocJs-editor {
+  position: relative;
+}
+
+.SquaDocJs-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+// Error boundary
+
+.SquaDocJs-error {
+  color: red;
+}
+
+// Document
+
+.SquaDocJs-document {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  // Unordered lists
+
+  ul {
+    padding: 0;
+
+    li {
+      list-style-type: none;
+    }
+  }
+
+  // Unordered lists / Indentation
+
+  ul {
+    li {
+      margin-left: 45px;
+
+      &:before {
+        content: "\25CF";
+        display: inline-block;
+        min-width: 40px;
+        margin-right: 5px;
+        margin-left: -45px;
+        text-align: right;
+      }
+    }
+
+    li.SquaDocJs-indent-1 {
+      margin-left: 75px;
+
+      &:before {
+        content: "\25CB";
+      }
+    }
+
+    li.SquaDocJs-indent-2 {
+      margin-left: 105px;
+
+      &:before {
+        content: "\25A0";
+      }
+    }
+
+    li.SquaDocJs-indent-3 {
+      margin-left: 135px;
+
+      &:before {
+        content: "\25C6";
+      }
+    }
+
+    li.SquaDocJs-indent-4 {
+      margin-left: 165px;
+
+      &:before {
+        content: "\25C6";
+      }
+    }
+
+    li.SquaDocJs-indent-5 {
+      margin-left: 195px;
+
+      &:before {
+        content: "\25C6";
+      }
+    }
+  }
+
+  // Ordered lists
+
+  ol {
+    padding: 0;
+
+    li {
+      list-style-type: none;
+    }
+  }
+
+  // Ordered lists / Indentation
+
+  ol {
+    li {
+      margin-left: 45px;
+      counter-reset: li-1 li-2 li-3 li-4 li-5;
+      counter-increment: li-0;
+
+      &:before {
+        content: counter(li-0) ".";
+        display: inline-block;
+        min-width: 40px;
+        margin-right: 5px;
+        margin-left: -45px;
+        text-align: right;
+      }
+    }
+
+    li.SquaDocJs-indent-1 {
+      margin-left: 75px;
+      counter-reset: li-2 li-3 li-4 li-5;
+      counter-increment: li-1;
+
+      &:before {
+        content: counter(li-1) ".";
+      }
+    }
+
+    li.SquaDocJs-indent-2 {
+      margin-left: 105px;
+      counter-reset: li-3 li-4 li-5;
+      counter-increment: li-2;
+
+      &:before {
+        content: counter(li-2) ".";
+      }
+    }
+
+    li.SquaDocJs-indent-3 {
+      margin-left: 135px;
+      counter-reset: li-4 li-5;
+      counter-increment: li-3;
+
+      &:before {
+        content: counter(li-3) ".";
+      }
+    }
+
+    li.SquaDocJs-indent-4 {
+      margin-left: 165px;
+      counter-reset: li-5;
+      counter-increment: li-4;
+
+      &:before {
+        content: counter(li-4) ".";
+      }
+    }
+
+    li.SquaDocJs-indent-5 {
+      margin-left: 195px;
+      counter-increment: li-5;
+
+      &:before {
+        content: counter(li-5) ".";
+      }
+    }
+  }
+
+  // Alignment
+
+  .SquaDocJs-align-left {
+    text-align: left;
+  }
+
+  .SquaDocJs-align-right {
+    text-align: right;
+  }
+
+  .SquaDocJs-align-center {
+    text-align: center;
+  }
+
+  .SquaDocJs-align-justify {
+    text-align: justify;
+  }
+
+  // Colors
+
+  .SquaDocJs-color-silver {
+    color: silver;
+  }
+
+  .SquaDocJs-color-gray {
+    color: gray;
+  }
+
+  .SquaDocJs-color-maroon {
+    color: maroon;
+  }
+
+  .SquaDocJs-color-red {
+    color: red;
+  }
+
+  .SquaDocJs-color-purple {
+    color: purple;
+  }
+
+  .SquaDocJs-color-fuchsia {
+    color: fuchsia;
+  }
+
+  .SquaDocJs-color-green {
+    color: green;
+  }
+
+  .SquaDocJs-color-lime {
+    color: lime;
+  }
+
+  .SquaDocJs-color-olive {
+    color: olive;
+  }
+
+  .SquaDocJs-color-yellow {
+    color: yellow;
+  }
+
+  .SquaDocJs-color-navy {
+    color: navy;
+  }
+
+  .SquaDocJs-color-blue {
+    color: blue;
+  }
+
+  .SquaDocJs-color-teal {
+    color: teal;
+  }
+
+  .SquaDocJs-color-aqua {
+    color: aqua;
+  }
+
+  // Embeds
+
+  .SquaDocJs-embed {
+    max-width: 100%;
+  }
+}

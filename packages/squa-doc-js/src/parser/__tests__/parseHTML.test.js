@@ -194,7 +194,7 @@ describe("parseHTML()", () => {
 
   test("color", () => {
     const actual = parseHTML(
-      '<span class="ed-color-red">aaa</span>',
+      '<span class="SquaDocJs-color-red">aaa</span>',
       tokenizeNode,
       tokenizeClassName
     );
@@ -204,7 +204,7 @@ describe("parseHTML()", () => {
 
   test("align", () => {
     const actual = parseHTML(
-      '<p class="ed-align-left"></p>',
+      '<p class="SquaDocJs-align-left"></p>',
       tokenizeNode,
       tokenizeClassName
     );
@@ -217,7 +217,7 @@ describe("parseHTML()", () => {
 
   test("indent", () => {
     const actual = parseHTML(
-      '<p class="ed-indent-1"></p>',
+      '<p class="SquaDocJs-indent-1"></p>',
       tokenizeNode,
       tokenizeClassName
     );
@@ -227,7 +227,7 @@ describe("parseHTML()", () => {
 
   test("anchor", () => {
     const actual = parseHTML(
-      '<span class="ed-anchor-foo">aaa</span>',
+      '<span class="SquaDocJs-anchor-foo">aaa</span>',
       tokenizeNode,
       tokenizeClassName
     );

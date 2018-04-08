@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import "./InlineImage.css";
+import "./InlineImage.scss";
 
 export default class InlineImage extends PureComponent {
   handleClick = () => {

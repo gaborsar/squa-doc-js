@@ -9,7 +9,7 @@ export default class Embed extends PureComponent {
         {...embedProps}
         data-embed
         data-key={node.key}
-        className={joinClassNames("ed-embed", embedClassName)}
+        className={joinClassNames("SquaDocJs-embed", embedClassName)}
         contentEditable={false}
       />
     );

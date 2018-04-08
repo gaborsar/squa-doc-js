@@ -17,8 +17,8 @@ export default function renderNode(node, defaultProps) {
         inlineKey,
         createChange,
         onChange,
-        className: joinClassNames("inline-image", {
-          "inline-image--selected": isSelected
+        className: joinClassNames("InlineImage", {
+          "InlineImage-selected": isSelected
         }),
         src: node.value[node.type],
         alt: node.getMark("alt")

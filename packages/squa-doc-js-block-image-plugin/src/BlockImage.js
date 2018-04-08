@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import "./BlockImage.css";
+import "./BlockImage.scss";
 
 export default class BlockImage extends PureComponent {
   handleClick = () => {
@@ -38,7 +38,7 @@ export default class BlockImage extends PureComponent {
       <figure {...otherProps} onClick={this.handleClick}>
         <img src={src} alt={alt} />
         <figcaption>{caption}</figcaption>
-        <div className="block-image__controls">
+        <div className="BlockImage-controls">
           <button onClick={this.handleDeleteClick}>Delete</button>
         </div>
       </figure>

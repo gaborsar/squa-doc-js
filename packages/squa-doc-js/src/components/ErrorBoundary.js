@@ -15,7 +15,7 @@ export default class ErrorBoundary extends PureComponent {
 
   render() {
     if (this.state.hasError) {
-      return <h1 className="ed-error">Something went wrong!</h1>;
+      return <h1 className="SquaDocJs-error">Something went wrong!</h1>;
     } else {
       return this.props.children;
     }
