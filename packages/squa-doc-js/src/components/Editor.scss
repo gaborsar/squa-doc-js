@@ -171,6 +171,13 @@
     }
   }
 
+  // Code
+
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
   // Alignment
 
   .SquaDocJs-align-left {

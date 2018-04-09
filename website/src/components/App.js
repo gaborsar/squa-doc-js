@@ -50,26 +50,22 @@ export default class App extends PureComponent {
     const { value } = this.state;
     return (
       <div className="App">
-        <div className="App-header">
-          <Menu value={value} onChange={this.onChange} />
+        <div className="App-outline">
+          <Outline value={value} />
         </div>
-        <div className="App-content">
-          <div className="App-outline">
-            <Outline value={value} />
-          </div>
-          <div className="App-editor">
-            <Editor
-              placeholder="Enter some text..."
-              spellCheck={false}
-              value={value}
-              onChange={this.onChange}
-              renderNode={renderNode}
-              renderMark={renderMark}
-              tokenizeNode={tokenizeNode}
-              tokenizeClassName={tokenizeClassName}
-              onKeyDown={onKeyDown}
-            />
-          </div>
+        <div className="App-editor">
+          <Menu value={value} onChange={this.onChange} />
+          <Editor
+            placeholder="Enter some text..."
+            spellCheck={false}
+            value={value}
+            onChange={this.onChange}
+            renderNode={renderNode}
+            renderMark={renderMark}
+            tokenizeNode={tokenizeNode}
+            tokenizeClassName={tokenizeClassName}
+            onKeyDown={onKeyDown}
+          />
         </div>
       </div>
     );
