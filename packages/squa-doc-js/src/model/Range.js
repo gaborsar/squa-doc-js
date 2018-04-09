@@ -6,4 +6,8 @@ export default class Range {
   forEach(callback) {
     return this.elements.forEach(callback);
   }
+
+  map(callback) {
+    return this.elements.map(callback);
+  }
 }
