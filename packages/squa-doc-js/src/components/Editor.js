@@ -380,7 +380,13 @@ export default class Editor extends PureComponent {
       tokenizeClassName = defaultTokenizeClassName
     } = this.props;
     const { value } = change;
-    const { document, inlineStyleOverride } = value;
+    const {
+      document,
+      selection: { isCollapsed, startOffset, endOffset },
+      inlineStyleOverride
+    } = value;
+
+    // get DOM details
 
     const nativeSelection = window.getSelection();
 
@@ -405,26 +411,64 @@ export default class Editor extends PureComponent {
       return;
     }
 
-    const blockBefore = document.getChildByKey(
-      blockNode.getAttribute("data-key")
-    );
-
-    if (!blockBefore) {
-      return;
-    }
-
     const delta = parseNode(blockNode, tokenizeNode, tokenizeClassName);
 
-    const diff = blockBefore.delta.diff(delta);
+    if (isCollapsed) {
+      const pos = document.findPosition(startOffset);
 
-    if (inlineStyleOverride) {
-      optimizeInsertDelta(diff, inlineStyleOverride);
-    }
+      if (!pos) {
+        return;
+      }
 
-    let blockAfter = blockBefore.apply(diff);
+      const { node: blockBefore } = pos;
 
-    if (blockBefore.isEmpty) {
-      blockAfter = blockAfter.regenerateKey();
+      // apply changes the selected block
+
+      const diff = blockBefore.delta.diff(delta);
+
+      if (inlineStyleOverride) {
+        optimizeInsertDelta(diff, inlineStyleOverride);
+      }
+
+      let blockAfter = blockBefore.apply(diff);
+
+      if (blockBefore.isEmpty) {
+        blockAfter = blockAfter.regenerateKey();
+      }
+
+      change.replaceBlock(blockAfter, blockBefore);
+    } else {
+      const modelRange = document.createRange(startOffset, endOffset);
+
+      const blocks = modelRange.map(el => el.node);
+
+      // reset the document key
+
+      change.regenerateKey();
+
+      // apply changes the the first selected block
+
+      const blockBefore = blocks.shift();
+
+      const diff = blockBefore.delta.diff(delta);
+
+      if (inlineStyleOverride) {
+        optimizeInsertDelta(diff, inlineStyleOverride);
+      }
+
+      let blockAfter = blockBefore.apply(diff);
+
+      if (blockBefore.isEmpty) {
+        blockAfter = blockAfter.regenerateKey();
+      }
+
+      change.replaceBlock(blockAfter, blockBefore);
+
+      // delete every other selected block
+
+      blocks.forEach(block => {
+        change.deleteBlock(block);
+      });
     }
 
     const editorRange = getRange(
@@ -435,10 +479,9 @@ export default class Editor extends PureComponent {
       focusOffset
     );
 
-    change
-      .replaceBlock(blockAfter, blockBefore)
-      .select(editorRange.anchorOffset, editorRange.focusOffset)
-      .save("input");
+    change.select(editorRange.anchorOffset, editorRange.focusOffset);
+
+    change.save("input");
   };
 
   handleCompositionStart = () => {
@@ -475,7 +518,6 @@ export default class Editor extends PureComponent {
       .change()
       .delete()
       .save();
-
     onChange(change);
   };
 

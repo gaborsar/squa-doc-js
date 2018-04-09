@@ -490,6 +490,20 @@ describe("Change", () => {
     expect(change.value.contents).toEqual(expectedContents);
   });
 
+  test("deleteBlock()", () => {
+    const value = Value.fromDelta({
+      contents: new Delta().insert("aaa\n\bbb\nccc\n")
+    });
+
+    const block = value.document.children[1];
+
+    const change = value.change().deleteBlock(block);
+
+    const expectedContents = new Delta().insert("aaa\nccc\n");
+
+    expect(change.value.contents).toEqual(expectedContents);
+  });
+
   test("format()", () => {
     const value = Value.fromDelta({
       contents: new Delta().insert("aaabbb\ncccddd\n")

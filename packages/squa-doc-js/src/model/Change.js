@@ -555,6 +555,18 @@ export default class Change {
     return this;
   }
 
+  deleteBlock(block) {
+    let { value } = this;
+    let { document } = value;
+
+    document = document.removeChild(block);
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
   format(attributes) {
     let { value } = this;
     let { document, selection } = value;
