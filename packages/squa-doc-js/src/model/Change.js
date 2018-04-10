@@ -127,6 +127,19 @@ export default class Change {
     return this;
   }
 
+  apply(delta) {
+    let { value } = this;
+    let { document } = value;
+
+    document = document.apply(delta);
+
+    value = value.setDocument(document);
+
+    this.value = value;
+
+    return this;
+  }
+
   setMode(mode) {
     let { value } = this;
 

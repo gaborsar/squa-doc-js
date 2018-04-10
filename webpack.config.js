@@ -6,15 +6,22 @@ const BlockImagePlugin = require("./packages/squa-doc-js-block-image-plugin/pack
 const InlineImagePlugin = require("./packages/squa-doc-js-inline-image-plugin/package.json");
 const CheckablePlugin = require("./packages/squa-doc-js-checkable-plugin/package.json");
 
+const env = process.env.NODE_ENV || "production";
+
+const plugins = [
+  new webpack.DefinePlugin({
+    "process.env.NODE_ENV": JSON.stringify(env)
+  })
+];
+
+if (env !== "development") {
+  plugins.push(new webpack.optimize.UglifyJsPlugin());
+}
+
 function genericFactory(config) {
   return {
     ...config,
-    plugins: [
-      new webpack.DefinePlugin({
-        "process.env.NODE_ENV": JSON.stringify("production")
-      }),
-      new webpack.optimize.UglifyJsPlugin()
-    ],
+    plugins,
     module: {
       loaders: [
         {
