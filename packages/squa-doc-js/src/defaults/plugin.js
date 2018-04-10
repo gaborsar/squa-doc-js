@@ -4,6 +4,7 @@ import renderMark from "./renderMark";
 import tokenizeNode from "./tokenizeNode";
 import tokenizeClassName from "./tokenizeClassName";
 import onKeyDown from "./onKeyDown";
+import afterInput from "./afterInput";
 
 export default {
   schema,
@@ -11,5 +12,6 @@ export default {
   renderMark,
   tokenizeNode,
   tokenizeClassName,
-  onKeyDown
+  onKeyDown,
+  afterInput
 };

@@ -16,6 +16,7 @@ import defaultRenderMark from "../defaults/renderMark";
 import defaultOnKeyDown from "../defaults/onKeyDown";
 import defaultTokenizeNode from "../defaults/tokenizeNode";
 import defaultTokenizeClassName from "../defaults/tokenizeClassName";
+import defaultAfterInput from "../defaults/afterInput";
 import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
 import "./Editor.scss";
 
@@ -431,7 +432,8 @@ export default class Editor extends PureComponent {
   afterInputDefault = change => {
     const {
       tokenizeNode = defaultTokenizeNode,
-      tokenizeClassName = defaultTokenizeClassName
+      tokenizeClassName = defaultTokenizeClassName,
+      afterInput = defaultAfterInput
     } = this.props;
     const { value } = change;
     const { document, selection, inlineStyleOverride } = value;
@@ -537,6 +539,8 @@ export default class Editor extends PureComponent {
     change.select(editorRange.anchorOffset, editorRange.focusOffset);
 
     change.save("input");
+
+    afterInput(change);
   };
 
   afterInput = change => {

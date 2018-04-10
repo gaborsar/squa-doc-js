@@ -1,13 +1,13 @@
 function outdentBlock(change, block) {
-  let indent = block.getMark("indent");
+  let depth = block.getMark("indent");
 
-  if (!indent) {
+  if (!depth) {
     return;
   }
 
-  indent = indent - 1 || null;
+  depth = depth - 1 || null;
 
-  const newBlock = block.format({ indent });
+  const newBlock = block.format({ depth });
 
   change.replaceBlock(newBlock, block);
 }

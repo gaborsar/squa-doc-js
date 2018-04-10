@@ -33,9 +33,15 @@ function removeListItem(change, event) {
 
   event.preventDefault();
 
-  const newBlock = block.format({
-    type: null
-  });
+  let newBlock;
+
+  const depth = block.getMark("indent");
+
+  if (depth) {
+    newBlock = block.format({ indent: depth - 1 });
+  } else {
+    newBlock = block.format({ type: null, indent: null });
+  }
 
   change.replaceBlock(newBlock, block).save();
 
