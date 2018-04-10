@@ -114,4 +114,20 @@ describe("combinePlugins", () => {
     expect(handlers[1]).toHaveBeenCalledTimes(2);
     expect(handlers[2]).toHaveBeenCalledTimes(1);
   });
+
+  test("afterInput()", () => {
+    const hooks = [jest.fn(), jest.fn(), jest.fn()];
+
+    const { afterInput } = combinePlugins([
+      { afterInput: hooks[0] },
+      { afterInput: hooks[1] },
+      { afterInput: hooks[2] }
+    ]);
+
+    afterInput("a");
+
+    expect(hooks[0]).toHaveBeenCalledWith("a");
+    expect(hooks[1]).toHaveBeenCalledWith("a");
+    expect(hooks[2]).toHaveBeenCalledWith("a");
+  });
 });
