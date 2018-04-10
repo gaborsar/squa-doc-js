@@ -7,7 +7,7 @@ function outdentBlock(change, block) {
 
   depth = depth - 1 || null;
 
-  const newBlock = block.format({ depth });
+  const newBlock = block.format({ indent: depth });
 
   change.replaceBlock(newBlock, block);
 }
