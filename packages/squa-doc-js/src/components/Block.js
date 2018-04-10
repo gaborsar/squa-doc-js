@@ -21,7 +21,7 @@ export default class Block extends PureComponent {
     const children = [];
 
     if (node.isEmpty) {
-      children.push(<br data-ignore />);
+      children.push(<br key="br" data-ignore />);
     } else {
       let offset = 0;
 
@@ -108,7 +108,11 @@ export default class Block extends PureComponent {
           const { component: MarkComponent, props: markProps } = markObj;
 
           if (MarkComponent) {
-            element = <MarkComponent {...markProps}>{element}</MarkComponent>;
+            element = (
+              <MarkComponent key={child.key} {...markProps}>
+                {element}
+              </MarkComponent>
+            );
           }
         });
 

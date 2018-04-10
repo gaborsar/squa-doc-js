@@ -5,6 +5,7 @@
   "scripts": {
     "benchmark": "babel-node benchmarks/document.js",
     "build": "webpack",
+    "build:dev": "NODE_ENV=development npm run build",
     "format": "prettier --write \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",
     "jest": "jest src",
     "lint": "eslint \"*.js\" \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",

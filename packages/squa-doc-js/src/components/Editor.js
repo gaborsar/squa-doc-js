@@ -8,6 +8,7 @@ import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
+import isMobile from "./utils/isMobile";
 import optimizeInsertDelta from "./utils/optimizeInsertDelta";
 import optimizeFragmentDelta from "./utils/optimizeFragmentDelta";
 import defaultRenderNode from "../defaults/renderNode";
@@ -374,17 +375,67 @@ export default class Editor extends PureComponent {
     }
   };
 
-  afterInput = change => {
+  afterInputMobile = change => {
     const {
       tokenizeNode = defaultTokenizeNode,
       tokenizeClassName = defaultTokenizeClassName
     } = this.props;
     const { value } = change;
+    const { document } = value;
+
+    // get DOM details
+
+    const nativeSelection = window.getSelection();
+
+    if (!nativeSelection) {
+      return;
+    }
+
     const {
-      document,
-      selection: { isCollapsed, startOffset, endOffset },
-      inlineStyleOverride
-    } = value;
+      anchorNode,
+      anchorOffset,
+      focusNode,
+      focusOffset
+    } = nativeSelection;
+
+    if (!anchorNode || !focusNode) {
+      return;
+    }
+
+    // get the new content
+
+    const delta = parseNode(this.rootNode, tokenizeNode, tokenizeClassName);
+
+    const diff = document.delta.diff(delta);
+
+    // get the new selection
+
+    const editorRange = getRange(
+      this.rootNode,
+      anchorNode,
+      anchorOffset,
+      focusNode,
+      focusOffset
+    );
+
+    // regenerating the key here is a bit slow,
+    // but I do not have any better idea for the moment
+
+    change
+      .apply(diff)
+      .regenerateKey()
+      .select(editorRange.anchorOffset, editorRange.focusOffset)
+      .save();
+  };
+
+  afterInputDefault = change => {
+    const {
+      tokenizeNode = defaultTokenizeNode,
+      tokenizeClassName = defaultTokenizeClassName
+    } = this.props;
+    const { value } = change;
+    const { document, selection, inlineStyleOverride } = value;
+    const { isCollapsed } = selection;
 
     // get DOM details
 
@@ -414,7 +465,9 @@ export default class Editor extends PureComponent {
     const delta = parseNode(blockNode, tokenizeNode, tokenizeClassName);
 
     if (isCollapsed) {
-      const pos = document.findPosition(startOffset);
+      const { offset } = selection;
+
+      const pos = document.findPosition(offset);
 
       if (!pos) {
         return;
@@ -438,6 +491,8 @@ export default class Editor extends PureComponent {
 
       change.replaceBlock(blockAfter, blockBefore);
     } else {
+      const { startOffset, endOffset } = selection;
+
       const modelRange = document.createRange(startOffset, endOffset);
 
       const blocks = modelRange.map(el => el.node);
@@ -484,6 +539,14 @@ export default class Editor extends PureComponent {
     change.save("input");
   };
 
+  afterInput = change => {
+    if (isMobile()) {
+      this.afterInputMobile(change);
+    } else {
+      this.afterInputDefault(change);
+    }
+  };
+
   handleCompositionStart = () => {
     const { value, onChange = sink } = this.props;
 
@@ -499,25 +562,6 @@ export default class Editor extends PureComponent {
 
     this.afterInput(change);
 
-    onChange(change);
-  };
-
-  handleBeforeInput = () => {
-    const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
-
-    if (value.mode === EDITOR_MODE_COMPOSITION) {
-      return;
-    }
-
-    if (isCollapsed) {
-      return;
-    }
-
-    const change = value
-      .change()
-      .delete()
-      .save();
     onChange(change);
   };
 
@@ -674,7 +718,6 @@ export default class Editor extends PureComponent {
             onCompositionStart={this.handleCompositionStart}
             onCompositionEnd={this.handleCompositionEnd}
             onKeyDown={this.handleKeyDown}
-            onBeforeInput={this.handleBeforeInput}
             onInput={this.handleInput}
           >
             <Document
