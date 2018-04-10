@@ -155,30 +155,30 @@ export default class Change {
         return this;
       }
 
-      const { node: blockNode, offset: blockOffset } = blockPos;
+      const { node: block, offset: blockOffset } = blockPos;
 
       if (blockOffset === 0) {
-        const prevBlockNode = document.getPreviousSibling(blockNode);
+        const prevBlock = document.getPreviousSibling(block);
 
-        if (!prevBlockNode) {
+        if (!prevBlock) {
           return this;
         }
 
-        if (prevBlockNode.isEmbed) {
+        if (prevBlock.isEmbed) {
           selection = selection.setFocusOffset(anchorOffset - 1);
         } else {
           selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
         }
       } else {
-        const inlinePos = blockNode.findPosition(blockOffset, true);
+        const inlinePos = block.findPosition(blockOffset, true);
 
         if (!inlinePos) {
           return this;
         }
 
-        const { node: inlineNode } = inlinePos;
+        const { node: inline } = inlinePos;
 
-        if (inlineNode.isEmbed) {
+        if (inline.isEmbed) {
           selection = selection.setFocusOffset(anchorOffset - 1);
         } else {
           selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
@@ -199,13 +199,13 @@ export default class Change {
         return this;
       }
 
-      const { node: blockNode } = blockPos;
+      const { node: block } = blockPos;
 
-      if (blockNode.isEmbed) {
-        const prevBlockNode = document.getPreviousSibling(blockNode);
+      if (block.isEmbed) {
+        const prevBlock = document.getPreviousSibling(block);
 
-        if (prevBlockNode) {
-          if (prevBlockNode.isEmbed) {
+        if (prevBlock) {
+          if (prevBlock.isEmbed) {
             selection = selection.setFocusOffset(anchorOffset - 1);
           } else {
             selection = selection.setAnchorOffset(anchorOffset - 1).collapse();
@@ -235,18 +235,18 @@ export default class Change {
         return this;
       }
 
-      const { node: blockNode, offset: blockOffset } = blockPos;
+      const { node: block, offset: blockOffset } = blockPos;
 
-      if (blockNode.isEmbed) {
+      if (block.isEmbed) {
         selection = selection.setFocusOffset(anchorOffset + 1);
-      } else if (blockOffset === blockNode.length - 1) {
-        const nextBlockNode = document.getNextSibling(blockNode);
+      } else if (blockOffset === block.length - 1) {
+        const nextBlock = document.getNextSibling(block);
 
-        if (!nextBlockNode) {
+        if (!nextBlock) {
           return this;
         }
 
-        if (nextBlockNode.isEmbed) {
+        if (nextBlock.isEmbed) {
           selection = selection
             .setAnchorOffset(anchorOffset + 1)
             .setFocusOffset(anchorOffset + 2);
@@ -254,15 +254,15 @@ export default class Change {
           selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
         }
       } else {
-        const inlinePos = blockNode.findPosition(blockOffset);
+        const inlinePos = block.findPosition(blockOffset);
 
         if (!inlinePos) {
           return this;
         }
 
-        const { node: inlineNode } = inlinePos;
+        const { node: inline } = inlinePos;
 
-        if (inlineNode.isEmbed) {
+        if (inline.isEmbed) {
           selection = selection.setFocusOffset(anchorOffset + 1);
         } else {
           selection = selection.setAnchorOffset(anchorOffset + 1).collapse();
@@ -635,12 +635,16 @@ export default class Change {
       const range = document.createRange(startOffset, endOffset);
 
       range.forEach(el => {
-        const { node: block, startOffset, endOffset } = el;
+        const {
+          node: block,
+          startOffset: blockStartOffset,
+          endOffset: blockEndOffset
+        } = el;
 
         if (!block.isEmbed) {
           const newBlock = block.formatAt(
-            startOffset,
-            Math.min(endOffset, block.length - EOL.length),
+            blockStartOffset,
+            Math.min(blockEndOffset, block.length - EOL.length),
             attributes
           );
 
@@ -750,14 +754,14 @@ export default class Change {
   }
 
   selectBlockByKey(blockKey) {
-    const { value: { document: { children: blockNodes } } } = this;
+    const { value: { document: { children: blocks } } } = this;
 
     let offset = 0;
 
-    for (const blockNode of blockNodes) {
-      const nextOffset = offset + blockNode.length;
+    for (const block of blocks) {
+      const nextOffset = offset + block.length;
 
-      if (blockNode.key === blockKey) {
+      if (block.key === blockKey) {
         return this.select(offset, nextOffset);
       }
 
@@ -768,22 +772,22 @@ export default class Change {
   }
 
   selectInlineByKey(blockKey, inlineKey) {
-    const { value: { document: { children: blockNodes } } } = this;
+    const { value: { document: { children: blocks } } } = this;
 
     let blockOffset = 0;
 
-    for (const blockNode of blockNodes) {
-      const nextBlockOffset = blockOffset + blockNode.length;
+    for (const block of blocks) {
+      const nextBlockOffset = blockOffset + block.length;
 
-      if (!blockNode.isEmbed && blockNode.key === blockKey) {
-        const { children: inlineNodes } = blockNode;
+      if (!block.isEmbed && block.key === blockKey) {
+        const { children: inlines } = block;
 
         let inlineOffset = blockOffset;
 
-        for (const inlineNode of inlineNodes) {
-          const nextInlineOffset = inlineOffset + inlineNode.length;
+        for (const inline of inlines) {
+          const nextInlineOffset = inlineOffset + inline.length;
 
-          if (inlineNode.key === inlineKey) {
+          if (inline.key === inlineKey) {
             return this.select(inlineOffset, nextInlineOffset);
           }
 

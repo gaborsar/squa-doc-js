@@ -13,8 +13,8 @@ export default class RangeBuilder {
   }
 
   keep(length) {
-    this.iterator.next(length, element => {
-      this.elements.push(element);
+    this.iterator.next(length, el => {
+      this.elements.push(el);
     });
     return this;
   }

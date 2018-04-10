@@ -79,6 +79,97 @@ describe("Value", () => {
     expect(actual).toEqual(expected);
   });
 
+  describe("getSelectedBlocks()", () => {
+    test("at offset", () => {
+      const document = new DocumentBuilder(new Schema(defaultSchema))
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build();
+
+      const selection = Selection.create({
+        anchorOffset: 5,
+        focusOffset: 5
+      });
+
+      const value = Value.create({ document, selection });
+
+      const actualBlocks = value.getSelectedBlocks();
+
+      const expectedBlocks = [document.children[1]];
+
+      expect(actualBlocks).toEqual(expectedBlocks);
+    });
+
+    test("at range", () => {
+      const document = new DocumentBuilder(new Schema(defaultSchema))
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build();
+
+      const selection = Selection.create({
+        anchorOffset: 5,
+        focusOffset: 9
+      });
+
+      const value = Value.create({ document, selection });
+
+      const actualBlocks = value.getSelectedBlocks();
+
+      const expectedBlocks = [document.children[1], document.children[2]];
+
+      expect(actualBlocks).toEqual(expectedBlocks);
+    });
+  });
+
+  describe("getSelectedInlines()", () => {
+    test("at offset", () => {
+      const document = new DocumentBuilder(new Schema(defaultSchema))
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build();
+
+      const selection = Selection.create({
+        anchorOffset: 5,
+        focusOffset: 5
+      });
+
+      const value = Value.create({ document, selection });
+
+      const actualInlines = value.getSelectedInlines();
+
+      const expectedInlines = [document.children[1].children[0]];
+
+      expect(actualInlines).toEqual(expectedInlines);
+    });
+
+    test("at range", () => {
+      const document = new DocumentBuilder(new Schema(defaultSchema))
+        .insert("aaa\n")
+        .insert("bbb\n")
+        .insert("ccc\n")
+        .build();
+
+      const selection = Selection.create({
+        anchorOffset: 5,
+        focusOffset: 9
+      });
+
+      const value = Value.create({ document, selection });
+
+      const actualInlines = value.getSelectedInlines();
+
+      const expectedInlines = [
+        document.children[1].children[0],
+        document.children[2].children[0]
+      ];
+
+      expect(actualInlines).toEqual(expectedInlines);
+    });
+  });
+
   describe("getFormat()", () => {
     test("at offset", () => {
       const document = new DocumentBuilder(new Schema(defaultSchema))

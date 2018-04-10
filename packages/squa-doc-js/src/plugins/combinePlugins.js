@@ -14,12 +14,12 @@ const properties = [
 
 export default function combinePlugins(plugins) {
   return properties.reduce((plugin, { name, combiner }) => {
-    const properties = plugins
-      .filter(plugin => plugin.hasOwnProperty(name))
-      .map(plugin => plugin[name]);
+    const currentProperties = plugins
+      .filter(currentPlugin => currentPlugin.hasOwnProperty(name))
+      .map(currentPlugin => currentPlugin[name]);
     return {
       ...plugin,
-      [name]: combiner(properties)
+      [name]: combiner(currentProperties)
     };
   }, {});
 }

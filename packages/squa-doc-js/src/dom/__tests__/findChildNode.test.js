@@ -23,7 +23,7 @@ describe("findChildNode()", () => {
     const text = document.createTextNode("aaa");
     span.appendChild(text);
 
-    const child = findChildNode(div, child => child === text);
+    const child = findChildNode(div, currentNode => currentNode === text);
     expect(child).toBe(text);
   });
 });

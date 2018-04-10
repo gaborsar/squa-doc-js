@@ -1,15 +1,15 @@
 const INDENT_MAX = 5;
 
 function indentBlock(change, block) {
-  let indent = block.getMark("indent");
+  let depth = block.getMark("indent");
 
-  if (indent === INDENT_MAX) {
+  if (depth === INDENT_MAX) {
     return;
   }
 
-  indent = (indent || 0) + 1;
+  depth = (depth || 0) + 1;
 
-  const newBlock = block.format({ indent });
+  const newBlock = block.format({ indent: depth });
 
   change.replaceBlock(newBlock, block);
 }

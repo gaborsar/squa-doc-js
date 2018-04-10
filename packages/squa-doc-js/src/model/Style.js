@@ -38,7 +38,7 @@ export default class Style {
   }
 
   getMark(type) {
-    const mark = this.marks.find(mark => mark.type === type);
+    const mark = this.marks.find(currentMark => currentMark.type === type);
 
     if (mark) {
       return mark.value;
