@@ -30,6 +30,7 @@
     "eqeqeq": "error",
     "linebreak-style": ["error", "unix"],
     "no-console": ["error", { "allow": ["wran", "error"] }],
+    "no-shadow": "error",
     "no-unused-vars": "error",
     "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-template": "error",

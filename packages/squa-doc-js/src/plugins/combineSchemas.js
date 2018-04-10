@@ -1,4 +1,4 @@
-const methods = [
+const methodNames = [
   "isBlockEmbed",
   "isInlineEmbed",
   "isBlockMark",
@@ -11,10 +11,10 @@ function combineMethods(methods) {
 }
 
 export default function combineSchemas(schemas) {
-  return methods.reduce((schema, name) => {
+  return methodNames.reduce((schema, name) => {
     const methods = schemas
-      .filter(schema => schema.hasOwnProperty(name))
-      .map(schema => schema[name]);
+      .filter(currentSchema => currentSchema.hasOwnProperty(name))
+      .map(currentSchema => currentSchema[name]);
     return {
       ...schema,
       [name]: combineMethods(methods)

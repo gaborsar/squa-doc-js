@@ -94,9 +94,8 @@ export default class DocumentBuilder {
   }
 
   build() {
-    return Document.create({
-      schema: this.schema,
-      children: this.blocks
-    });
+    const { schema, blocks: children } = this;
+
+    return Document.create({ schema, children });
   }
 }

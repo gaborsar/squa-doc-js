@@ -140,6 +140,86 @@ export default class Value {
     return this.merge({ inlineStyleOverride });
   }
 
+  getSelectedBlocks() {
+    const { document, selection } = this;
+    const { isCollapsed } = selection;
+
+    const blocks = [];
+
+    if (isCollapsed) {
+      const { offset } = selection;
+
+      const pos = document.findPosition(offset);
+
+      if (pos) {
+        blocks.push(pos.node);
+      }
+    } else {
+      const { startOffset, endOffset } = selection;
+
+      const range = document.createRange(startOffset, endOffset);
+
+      range.forEach(el => {
+        blocks.push(el.node);
+      });
+    }
+
+    return blocks;
+  }
+
+  getSelectedInlines() {
+    const { document, selection } = this;
+    const { isCollapsed } = selection;
+
+    const inlines = [];
+
+    if (isCollapsed) {
+      const { offset } = selection;
+
+      const blockPos = document.findPosition(offset);
+
+      if (blockPos) {
+        const { node: block } = blockPos;
+
+        if (!block.isEmbed) {
+          const { offset: blockOffset } = blockPos;
+
+          const inlinePos = block.findPosition(blockOffset, true);
+
+          if (inlinePos) {
+            inlines.push(inlinePos.node);
+          }
+        }
+      }
+    } else {
+      const { startOffset, endOffset } = selection;
+
+      const blockRange = document.createRange(startOffset, endOffset);
+
+      blockRange.forEach(blockEl => {
+        const { node: block } = blockEl;
+
+        if (!block.isEmbed) {
+          const {
+            startOffset: blockStartOffset,
+            endOffset: blockEndOffset
+          } = blockEl;
+
+          const inlineRange = block.createRange(
+            blockStartOffset,
+            blockEndOffset
+          );
+
+          inlineRange.forEach(inlineEl => {
+            inlines.push(inlineEl.node);
+          });
+        }
+      });
+    }
+
+    return inlines;
+  }
+
   getFormat() {
     const { document, selection, inlineStyleOverride } = this;
     const { isCollapsed } = selection;
@@ -173,20 +253,26 @@ export default class Value {
       const blockStyles = [];
       const inlineStyles = [];
 
-      const range = document.createRange(startOffset, endOffset);
+      const blockRange = document.createRange(startOffset, endOffset);
 
-      range.forEach(el => {
-        const { node: block } = el;
+      blockRange.forEach(blockEl => {
+        const { node: block } = blockEl;
 
         blockStyles.push(block.style);
 
         if (!block.isEmbed) {
-          const { startOffset, endOffset } = el;
+          const {
+            startOffset: blockStartOffset,
+            endOffset: blockEndOffset
+          } = blockEl;
 
-          const range = block.createRange(startOffset, endOffset);
+          const inlineRange = block.createRange(
+            blockStartOffset,
+            blockEndOffset
+          );
 
-          range.forEach(el => {
-            inlineStyles.push(el.node.style);
+          inlineRange.forEach(inlineEl => {
+            inlineStyles.push(inlineEl.node.style);
           });
         }
       });
