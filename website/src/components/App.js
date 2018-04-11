@@ -20,7 +20,8 @@ const {
   renderMark,
   tokenizeNode,
   tokenizeClassName,
-  onKeyDown
+  onKeyDown,
+  afterInput
 } = combinePlugins([
   blockImagePlugin,
   inlineImagePlugin,
@@ -65,6 +66,7 @@ export default class App extends PureComponent {
             tokenizeNode={tokenizeNode}
             tokenizeClassName={tokenizeClassName}
             onKeyDown={onKeyDown}
+            afterInput={afterInput}
           />
         </div>
       </div>
