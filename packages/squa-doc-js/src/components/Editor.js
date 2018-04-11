@@ -432,8 +432,7 @@ export default class Editor extends PureComponent {
   afterInputDefault = change => {
     const {
       tokenizeNode = defaultTokenizeNode,
-      tokenizeClassName = defaultTokenizeClassName,
-      afterInput = defaultAfterInput
+      tokenizeClassName = defaultTokenizeClassName
     } = this.props;
     const { value } = change;
     const { document, selection, inlineStyleOverride } = value;
@@ -539,16 +538,18 @@ export default class Editor extends PureComponent {
     change.select(editorRange.anchorOffset, editorRange.focusOffset);
 
     change.save("input");
-
-    afterInput(change);
   };
 
   afterInput = change => {
+    const { afterInput = defaultAfterInput } = this.props;
+
     if (isMobile()) {
       this.afterInputMobile(change);
     } else {
       this.afterInputDefault(change);
     }
+
+    afterInput(change);
   };
 
   handleCompositionStart = () => {
