@@ -8,22 +8,20 @@ const CheckablePlugin = require("./packages/squa-doc-js-checkable-plugin/package
 
 const env = process.env.NODE_ENV || "production";
 
-const plugins = [
-  new webpack.DefinePlugin({
-    "process.env.NODE_ENV": JSON.stringify(env)
-  })
-];
-
-if (env !== "development") {
-  plugins.push(new webpack.optimize.UglifyJsPlugin());
-}
-
 function genericFactory(config) {
   return {
     ...config,
-    plugins,
+    mode: env,
+    stats: {
+      warnings: env === "development"
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify(env)
+      })
+    ],
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.js$/,
           exclude: /node_modules/,
@@ -91,6 +89,12 @@ function packageFactory({ name, main }) {
         commonjs2: "react",
         commonjs: "react",
         amd: "react"
+      },
+      "react-dom": {
+        root: "ReactDOM",
+        commonjs2: "react-dom",
+        commonjs: "react-dom",
+        amd: "react-dom"
       }
     }
   });
