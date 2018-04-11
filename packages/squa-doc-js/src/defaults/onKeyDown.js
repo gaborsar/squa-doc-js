@@ -3,7 +3,7 @@ import outdent from "./changes/outdent";
 import toggleBold from "./changes/toggleBold";
 import toggleItalic from "./changes/toggleItalic";
 
-function removeListItem(change, event) {
+function onKeyDownBackspace(change, event) {
   const { value } = change;
   const { document, selection } = value;
   const { isCollapsed, anchorOffset } = selection;
@@ -14,7 +14,7 @@ function removeListItem(change, event) {
 
   const pos = document.findPosition(anchorOffset);
 
-  if (!pos || pos.offset !== 0) {
+  if (!pos) {
     return false;
   }
 
@@ -48,7 +48,52 @@ function removeListItem(change, event) {
   return true;
 }
 
-function onIndent(change, event) {
+function onKeyDownEnter(change, event) {
+  const { value } = change;
+  const { document, selection } = value;
+  const { isCollapsed, anchorOffset } = selection;
+
+  if (!isCollapsed) {
+    return false;
+  }
+
+  const pos = document.findPosition(anchorOffset);
+
+  if (!pos) {
+    return false;
+  }
+
+  const { node: block } = pos;
+
+  if (block.isEmbed || !block.isEmpty || !block.type) {
+    return false;
+  }
+
+  event.preventDefault();
+
+  let newBlock;
+
+  if (
+    block.type === "unordered-list-item" ||
+    block.type === "ordered-list-item"
+  ) {
+    const depth = block.getMark("indent");
+
+    if (depth) {
+      newBlock = block.format({ indent: depth - 1 });
+    } else {
+      newBlock = block.format({ type: null, indent: null });
+    }
+  } else {
+    newBlock = block.format({ type: null });
+  }
+
+  change.replaceBlock(newBlock, block).save();
+
+  return true;
+}
+
+function onKeyDownIndent(change, event) {
   event.preventDefault();
 
   change.call(indent).save();
@@ -56,7 +101,7 @@ function onIndent(change, event) {
   return true;
 }
 
-function onOutdent(change, event) {
+function onKeyDownOutdent(change, event) {
   event.preventDefault();
 
   change.call(outdent).save();
@@ -64,7 +109,7 @@ function onOutdent(change, event) {
   return true;
 }
 
-function onToggleBold(change, event) {
+function onKeyDownToggleBold(change, event) {
   event.preventDefault();
 
   change.call(toggleBold).save();
@@ -72,7 +117,7 @@ function onToggleBold(change, event) {
   return true;
 }
 
-function onToggleItalic(change, event) {
+function onKeyDownToggleItalic(change, event) {
   event.preventDefault();
 
   change.call(toggleItalic).save();
@@ -82,27 +127,27 @@ function onToggleItalic(change, event) {
 
 export default function onKeyDown(change, event) {
   if (event.key === "Backspace") {
-    return removeListItem(change, event);
+    return onKeyDownBackspace(change, event);
   }
 
   if (event.key === "Enter") {
-    return removeListItem(change, event);
+    return onKeyDownEnter(change, event);
   }
 
   if (event.key === "Tab") {
     if (event.shiftKey) {
-      return onOutdent(change, event);
+      return onKeyDownOutdent(change, event);
     } else {
-      return onIndent(change, event);
+      return onKeyDownIndent(change, event);
     }
   }
 
   if ((event.metaKey || event.ctrlKey) && event.key === "b") {
-    return onToggleBold(change, event);
+    return onKeyDownToggleBold(change, event);
   }
 
   if ((event.metaKey || event.ctrlKey) && event.key === "i") {
-    return onToggleItalic(change, event);
+    return onKeyDownToggleItalic(change, event);
   }
 
   return false;
