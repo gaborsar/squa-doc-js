@@ -1,6 +1,6 @@
 {
   "name": "squa-doc-js-outline-plugin",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Outline plugin for SquaEditor",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
@@ -11,7 +11,7 @@
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
-    "react-dom": "^16.0.0",
-    "react": "^16.0.0"
+    "react-dom": "16.3.1",
+    "react": "16.3.1"
   }
 }
