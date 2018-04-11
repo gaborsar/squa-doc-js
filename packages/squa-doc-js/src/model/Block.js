@@ -5,7 +5,31 @@ import BlockEditor from "./BlockEditor";
 import ParentMixin from "./mixins/Parent";
 import FormatMixin from "./mixins/Format";
 import EditMixin from "./mixins/Edit";
+import cache from "./utils/cache";
 import { EOL } from "../constants";
+
+function getLength(node) {
+  return node.children.reduce(
+    (length, child) => length + child.length,
+    EOL.length
+  );
+}
+
+function getText(node) {
+  return node.children.reduce((text, child) => text + child.text, "") + EOL;
+}
+
+function getDelta(node) {
+  const delta = new Delta();
+
+  node.children.forEach(child => {
+    delta.insert(child.value, child.getFormat());
+  });
+
+  delta.insert(EOL, node.getFormat());
+
+  return delta;
+}
 
 export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   static create(props = {}) {
@@ -14,9 +38,15 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
 
   constructor(props = {}) {
     const { schema, key, style = Style.create(), children = [] } = props;
+
     super(schema, key);
+
     this.style = style;
     this.children = children;
+
+    this._length = null;
+    this._text = null;
+    this._delta = null;
   }
 
   merge(props) {
@@ -48,26 +78,15 @@ export default class Block extends EditMixin(FormatMixin(ParentMixin(Node))) {
   }
 
   get length() {
-    return this.children.reduce(
-      (length, child) => length + child.length,
-      EOL.length
-    );
+    return cache(this, "_length", getLength);
   }
 
   get text() {
-    return this.children.reduce((text, child) => text + child.text, "") + EOL;
+    return cache(this, "_text", getText);
   }
 
   get delta() {
-    const delta = new Delta();
-
-    this.children.forEach(child => {
-      delta.insert(child.value, child.getFormat());
-    });
-
-    delta.insert(EOL, this.getFormat());
-
-    return delta;
+    return cache(this, "_delta", getDelta);
   }
 
   format(attributes) {

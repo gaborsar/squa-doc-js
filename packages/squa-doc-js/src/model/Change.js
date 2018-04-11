@@ -21,11 +21,8 @@ export default class Change {
       return this;
     }
 
-    const { delta: prevDelta } = prevDocument;
-    const { delta } = document;
-
-    const undoDelta = delta.diff(prevDelta);
-    const redoDelta = prevDelta.diff(delta);
+    const undoDelta = document.diff(prevDocument);
+    const redoDelta = prevDocument.diff(document);
 
     let snapshot = Snapshot.create({ type, undoDelta, redoDelta, selection });
 
