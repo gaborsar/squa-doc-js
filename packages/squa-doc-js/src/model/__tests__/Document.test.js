@@ -55,6 +55,22 @@ function randomDelta() {
   return delta;
 }
 
+function randomDocument() {
+  const delta = randomDelta();
+
+  const schema = new Schema(
+    combineSchemas([defaultSchema, blockImageSchema, inlineImageSchema])
+  );
+
+  const builder = new DocumentBuilder(schema);
+
+  delta.forEach(op => {
+    builder.insert(op.insert, op.attributes);
+  });
+
+  return builder.build();
+}
+
 describe("Document", () => {
   test("apply()", () => {
     for (let i = 0; i < 100; i++) {
@@ -75,6 +91,20 @@ describe("Document", () => {
       const { delta: documentDelta } = document;
 
       expect(documentDelta).toEqual(eventualDelta);
+    }
+  });
+
+  test("diff()", () => {
+    for (let i = 0; i < 100; i++) {
+      const initialDocument = randomDocument();
+      const eventualDocument = randomDocument();
+
+      const changeDelta = initialDocument.diff(eventualDocument);
+
+      const { delta: actualDelta } = initialDocument.apply(changeDelta);
+      const { delta: expectedDelta } = eventualDocument;
+
+      expect(actualDelta).toEqual(expectedDelta);
     }
   });
 });

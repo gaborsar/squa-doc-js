@@ -55,3 +55,11 @@ for (let i = 0; i < NUMBER_OF_TESTS; i++) {
 const time4 = Date.now();
 
 console.log(`time to diff: ${(time4 - time3) / NUMBER_OF_TESTS / 1000}`);
+
+const time5 = Date.now();
+for (let i = 0; i < NUMBER_OF_TESTS; i++) {
+  updatedDocument.diff(initialDocument);
+}
+const time6 = Date.now();
+
+console.log(`time to fast diff: ${(time6 - time5) / NUMBER_OF_TESTS / 1000}`);
