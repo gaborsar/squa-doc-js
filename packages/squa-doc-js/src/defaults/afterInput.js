@@ -1,54 +1,26 @@
+import formatWithMarkdown from "./changes/formatWithMarkdown";
+
 const blockMatchers = [
-  { expr: /^\s*\*\s+$/, type: "unordered-list-item" },
-  { expr: /^\s*1[.)]\s+$/, type: "ordered-list-item" },
-  { expr: /^\s*```$/, type: "code" },
-  { expr: /^\s*>\s+$/, type: "blockquote" }
+  { expr: /^\s*#\s$/, type: "heading-one" },
+  { expr: /^\s*#{2}\s$/, type: "heading-two" },
+  { expr: /^\s*#{3}\s$/, type: "heading-three" },
+  { expr: /^\s*#{4}\s$/, type: "heading-four" },
+  { expr: /^\s*#{5}\s$/, type: "heading-five" },
+  { expr: /^\s*#{6}\s$/, type: "heading-six" },
+  { expr: /^\s*\*\s$/, type: "unordered-list-item" },
+  { expr: /^\s*1[.)]\s$/, type: "ordered-list-item" },
+  { expr: /^\s*```\s$/, type: "code" },
+  { expr: /^\s*>\s$/, type: "blockquote" }
+];
+
+const inlineMatchers = [
+  { expr: /(\*{2})(.+)(\*{2})\s$/, type: "bold" },
+  { expr: /(_{2})(.+)(_{2})\s$/, type: "bold" },
+  { expr: /(\*)(.+)(\*)\s$/, type: "italic" },
+  { expr: /(_)(.+)(_)\s$/, type: "italic" },
+  { expr: /(`)(.+)(`)\s$/, type: "code" }
 ];
 
 export default function afterInput(change) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed } = selection;
-
-  if (!isCollapsed) {
-    return;
-  }
-
-  const { offset } = selection;
-
-  const pos = document.findPosition(offset);
-
-  if (!pos) {
-    return;
-  }
-
-  const { node: block, offset: blockOffset } = pos;
-
-  if (block.isEmbed) {
-    return;
-  }
-
-  const { text } = block;
-  const leftText = text.slice(0, blockOffset);
-
-  let newBlock = block;
-  let newOffset = offset;
-
-  if (!newBlock.type || newBlock.type === "paragraph") {
-    for (const { expr, type } of blockMatchers) {
-      if (expr.test(leftText)) {
-        const [{ length }] = leftText.match(expr);
-
-        newBlock = newBlock.deleteAt(0, length).format({ type });
-        newOffset -= length;
-      }
-    }
-  }
-
-  if (newBlock !== block) {
-    change
-      .replaceBlock(newBlock, block)
-      .select(newOffset, newOffset)
-      .save();
-  }
+  formatWithMarkdown(change, { blockMatchers, inlineMatchers });
 }
