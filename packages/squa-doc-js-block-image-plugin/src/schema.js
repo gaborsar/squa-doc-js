@@ -1,12 +1,12 @@
 const marks = ["alt", "caption"];
 
 const schema = {
-  isBlockEmbed(embedType) {
-    return embedType === "block-image";
+  isBlockEmbed(name) {
+    return name === "block-image";
   },
 
-  isEmbedMark(embedType, markType) {
-    return embedType === "block-image" && marks.indexOf(markType) !== -1;
+  isBlockEmbedMark(embedName, markName) {
+    return embedName === "block-image" && marks.indexOf(markName) !== -1;
   }
 };
 

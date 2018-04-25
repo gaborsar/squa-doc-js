@@ -1,6 +1,6 @@
 {
   "name": "squa-doc-js",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "A rich text editor for React",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
@@ -11,9 +11,11 @@
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
-    "lodash": "4.17.5",
-    "react-dom": "16.3.1",
-    "react": "16.3.1",
+    "lodash": "4.17.10",
     "quill-delta": "3.6.2"
+  },
+  "peerDependencies": {
+    "react-dom": "16.4.1",
+    "react": "16.4.1"
   }
 }

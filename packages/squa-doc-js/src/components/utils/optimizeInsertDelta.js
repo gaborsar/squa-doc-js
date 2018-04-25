@@ -1,4 +1,4 @@
-export default function optimiseInsertDelta(delta, attributes) {
+export default function optimizeInsertDelta(delta, attributes) {
   delta.forEach(op => {
     if (typeof op.insert === "string") {
       if (op.attributes) {

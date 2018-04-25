@@ -1,27 +1,18 @@
 import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
-import Embed from "./Embed";
 import Block from "./Block";
+import { isBlockEmbedNode } from "../model/Predicates";
 
 export default class Document extends PureComponent {
   render() {
-    const {
-      node,
-      startOffset,
-      endOffset,
-      createChange,
-      onChange,
-      renderNode,
-      renderMark
-    } = this.props;
+    const { node, createChange, onChange, renderNode, renderMark } = this.props;
 
     const blocks = [];
-    let offset = 0;
 
-    node.children.forEach(child => {
+    node.getChildren().forEach(child => {
       const classNames = [];
 
-      child.style.marks.forEach(mark => {
+      child.getMarks().forEach(mark => {
         const markObj = renderMark(mark) || {};
 
         const { className: markClassName } = markObj;
@@ -31,76 +22,40 @@ export default class Document extends PureComponent {
         }
       });
 
-      const { length: childLength } = child;
-
-      const childStartOffset = Math.min(
-        Math.max(startOffset - offset, 0),
-        childLength
-      );
-
-      const childEndOffset = Math.min(
-        Math.max(endOffset - offset, 0),
-        childLength
-      );
-
-      const isChildSelected = childStartOffset < childEndOffset;
-
-      const defaultProps = {
-        isSelected: isChildSelected,
-        blockKey: child.key,
-        createChange,
-        onChange
-      };
-
-      offset += childLength;
-
-      if (child.isEmbed) {
-        const embedObj = renderNode(child, defaultProps);
+      if (isBlockEmbedNode(child)) {
+        const embedObj = renderNode(child, { createChange, onChange });
 
         if (!embedObj) {
-          throw new Error(`Invalid embed: ${child.type}`);
+          throw new Error(`Invalid embed: ${child.getNodeType()}`);
         }
 
-        const { component, props: { className, ...props } = {} } = embedObj;
-
-        if (className) {
-          classNames.push(className);
-        }
+        const { component: EmbedComponent, props: embedProps = {} } = embedObj;
 
         const element = (
-          <Embed
-            key={child.key}
-            node={child}
-            EmbedComponent={component}
-            embedProps={props}
-            embedClassName={joinClassNames(classNames)}
+          <EmbedComponent
+            {...embedProps}
+            key={child.getKey()}
+            data-embed
+            data-key={child.getKey()}
+            contentEditable={false}
+            className={joinClassNames("SquaDocJs-embed", classNames)}
           />
         );
 
-        blocks.push({ key: child.key, element });
+        blocks.push({ key: child.getKey(), element });
       } else {
-        const blockObj = renderNode(child, defaultProps);
+        const blockObj = renderNode(child, { createChange, onChange });
 
         if (!blockObj) {
-          throw new Error(`Invalid block: ${child.type}`);
+          throw new Error(`Invalid block: ${child.getNodeType()}`);
         }
 
-        const {
-          wrapper,
-          component,
-          props: { className, ...props } = {}
-        } = blockObj;
-
-        if (className) {
-          classNames.push(className);
-        }
+        const { wrapper, component, props } = blockObj;
 
         const element = (
           <Block
-            key={child.key}
+            key={child.getKey()}
             node={child}
-            startOffset={childStartOffset}
-            endOffset={childEndOffset}
             BlockComponent={component}
             blockProps={props}
             blockClassName={joinClassNames(classNames)}
@@ -111,7 +66,7 @@ export default class Document extends PureComponent {
           />
         );
 
-        blocks.push({ wrapper, key: child.key, element });
+        blocks.push({ wrapper, key: child.getKey(), element });
       }
     });
 
@@ -153,10 +108,6 @@ export default class Document extends PureComponent {
       renderWrapper();
     }
 
-    return (
-      <div className="SquaDocJs-document" data-key={node.key}>
-        {children}
-      </div>
-    );
+    return <div className="SquaDocJs-document">{children}</div>;
   }
 }

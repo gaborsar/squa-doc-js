@@ -1,4 +1,4 @@
-export default function tokenizeNode(className) {
+export default function tokenizeClassName(className) {
   const tokens = [];
 
   switch (className) {

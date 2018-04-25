@@ -1,11 +1,5 @@
-export default function toggleItalic(change) {
-  const { value } = change;
+import createToggleInlineAttribute from "./createToggleInlineAttribute";
 
-  const format = value.getFormat();
+const toggleItalic = createToggleInlineAttribute("italic");
 
-  change
-    .formatInline({
-      italic: format.italic ? null : true
-    })
-    .save();
-}
+export default toggleItalic;

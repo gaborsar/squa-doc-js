@@ -1,85 +1,79 @@
+import Mark, { compareMarks } from "./Mark";
 import Pool from "./Pool";
-import Mark from "./Mark";
 
 const pool = new Pool();
-
-const alwaysTrue = () => true;
 
 export default class Style {
   static create(props = {}) {
     return pool.recycle(new Style(props));
   }
 
-  constructor(props = {}) {
-    const { marks = [] } = props;
-    this.marks = marks;
+  constructor({ marks = [] } = {}) {
+    this.marks = marks.sort(compareMarks);
   }
 
   merge(props) {
     return Style.create({ ...this, ...props });
   }
 
-  toObject() {
-    const attributes = {};
-
-    this.marks.forEach(mark => {
-      attributes[mark.type] = mark.value;
-    });
-
-    return attributes;
+  getMarks() {
+    return this.marks;
   }
 
   setMarks(marks) {
     return this.merge({ marks });
   }
 
-  hasMark(type) {
-    return this.marks.some(mark => mark.type === type);
+  isEmpty() {
+    return this.marks.length === 0;
   }
 
-  getMark(type) {
-    const mark = this.marks.find(currentMark => currentMark.type === type);
-
-    if (mark) {
-      return mark.value;
-    }
+  hasAttribute(name) {
+    return this.marks.some(mark => mark.getName() === name);
   }
 
-  update(attributes, predicate = alwaysTrue) {
-    let marks = this.marks;
+  getAttribute(name) {
+    const mark = this.marks.find(currentMark => currentMark.getName() === name);
 
-    for (const [type, value] of Object.entries(attributes)) {
-      if (predicate(type)) {
-        marks = marks.filter(mark => mark.type !== type);
-
-        if (value !== null) {
-          marks = marks.concat(Mark.create({ type, value }));
-        }
-      }
+    if (mark === undefined) {
+      return null;
     }
 
-    marks.sort(Mark.compare);
+    return mark.getValue();
+  }
+
+  setAttribute(name, value) {
+    let marks = this.marks.filter(mark => mark.getName() !== name);
+
+    if (value !== null) {
+      marks = marks.concat(Mark.create({ name, value }));
+    }
 
     return this.setMarks(marks);
   }
 
-  equals(other) {
-    if (this.marks.length !== other.marks.length) {
-      return false;
-    }
+  getAttributes() {
+    const attributes = {};
 
-    for (let i = 0, l = this.marks.length; i < l; i++) {
-      if (this.marks[i] !== other.marks[i]) {
-        return false;
-      }
-    }
+    this.marks.forEach(mark => {
+      attributes[mark.getName()] = mark.getValue();
+    });
 
-    return true;
+    return attributes;
+  }
+
+  setAttributes(attributes, isValidMark) {
+    return Object.keys(attributes)
+      .filter(isValidMark)
+      .reduce(
+        (style, name) => style.setAttribute(name, attributes[name]),
+        this
+      );
   }
 
   intersect(other) {
     return this.setMarks(
-      this.marks.filter(mark => mark.value === other.getMark(mark.type))
+      this.marks.filter(mark => other.marks.indexOf(mark) !== -1)
     );
   }
 }

@@ -1,1 +1,1 @@
-export { default as blockImagePlugin } from "./plugin";
+export { default as Plugin } from "./Plugin";

@@ -1,36 +1,20 @@
 import Delta from "quill-delta";
-import DocumentBuilder from "../DocumentBuilder";
-import Schema from "../Schema";
-import Selection from "../Selection";
 import Value from "../Value";
-import defaultSchema from "../../defaults/schema";
 import tokenizeNode from "../../defaults/tokenizeNode";
 import tokenizeClassName from "../../defaults/tokenizeClassName";
 
 describe("Value", () => {
-  test("fromDelta()", () => {
-    const { delta: actual } = Value.fromDelta({
-      schema: defaultSchema,
-      contents: new Delta()
-        .insert("aaa")
-        .insert("\n", { type: "heading-one" })
-        .insert("bbb")
-        .insert("\n", { type: "paragraph" })
-    });
-    const { delta: expected } = Value.create({
-      document: new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa")
-        .insert("\n", { type: "heading-one" })
-        .insert("bbb")
-        .insert("\n", { type: "paragraph" })
-        .build()
-    });
-    expect(actual).toEqual(expected);
+  test("create a value from a delta", () => {
+    const delta = new Delta()
+      .insert("aaa")
+      .insert("\n", { type: "heading-one" })
+      .insert("bbb")
+      .insert("\n", { type: "paragraph" });
+    expect(Value.fromDelta({ delta }).toDelta()).toEqual(delta);
   });
 
-  test("fromJSON()", () => {
-    const { delta: actual } = Value.fromDelta({
-      schema: defaultSchema,
+  test("create a value form JSON", () => {
+    const actual = Value.fromJSON({
       contents: [
         { insert: "aaa" },
         { insert: "\n", attributes: { type: "heading-one" } },
@@ -38,172 +22,85 @@ describe("Value", () => {
         { insert: "\n", attributes: { type: "paragraph" } }
       ]
     });
-    const { delta: expected } = Value.create({
-      document: new DocumentBuilder(new Schema(defaultSchema))
+    const expected = Value.fromDelta({
+      delta: new Delta()
         .insert("aaa")
         .insert("\n", { type: "heading-one" })
         .insert("bbb")
         .insert("\n", { type: "paragraph" })
-        .build()
     });
-    expect(actual).toEqual(expected);
+    expect(actual.toDelta()).toEqual(expected.toDelta());
   });
 
-  test("fromHTML", () => {
-    const { delta: actual } = Value.fromHTML({
-      schema: defaultSchema,
+  test("create a value from HTML", () => {
+    const actual = Value.fromHTML({
       contents: "<div><h1>aaa</h1><p>bbb</p></div>",
       tokenizeNode,
       tokenizeClassName
     });
-    const { delta: expected } = Value.create({
-      document: new DocumentBuilder(new Schema(defaultSchema))
+    const expected = Value.fromDelta({
+      delta: new Delta()
         .insert("aaa")
         .insert("\n", { type: "heading-one" })
         .insert("bbb")
         .insert("\n", { type: "paragraph" })
-        .build()
     });
-    expect(actual).toEqual(expected);
+    expect(actual.toDelta()).toEqual(expected.toDelta());
   });
 
-  test("createEmpty", () => {
-    const { delta: actual } = Value.createEmpty({
-      schema: defaultSchema
+  test("create an empty value", () => {
+    const actual = Value.createEmpty();
+    const expected = Value.fromDelta({
+      delta: new Delta().insert("\n")
     });
-    const { delta: expected } = Value.create({
-      document: new DocumentBuilder(new Schema(defaultSchema))
-        .insert("\n")
-        .build()
-    });
-    expect(actual).toEqual(expected);
+    expect(actual.toDelta()).toEqual(expected.toDelta());
   });
 
-  describe("getSelectedBlocks()", () => {
-    test("at offset", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa\n")
-        .insert("bbb\n")
-        .insert("ccc\n")
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 5,
-        focusOffset: 5
-      });
-
-      const value = Value.create({ document, selection });
-
-      const actualBlocks = value.getSelectedBlocks();
-
-      const expectedBlocks = [document.children[1]];
-
-      expect(actualBlocks).toEqual(expectedBlocks);
-    });
-
-    test("at range", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa\n")
-        .insert("bbb\n")
-        .insert("ccc\n")
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 5,
-        focusOffset: 9
-      });
-
-      const value = Value.create({ document, selection });
-
-      const actualBlocks = value.getSelectedBlocks();
-
-      const expectedBlocks = [document.children[1], document.children[2]];
-
-      expect(actualBlocks).toEqual(expectedBlocks);
-    });
+  test("get the current block attributes at an ofset", () => {
+    const value = Value.createEmpty()
+      .change()
+      .insertText("\n", { align: "left" })
+      .select(0, 0)
+      .getValue();
+    expect(value.getBlockAttributes()).toEqual({ align: "left" });
   });
 
-  describe("getSelectedInlines()", () => {
-    test("at offset", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa\n")
-        .insert("bbb\n")
-        .insert("ccc\n")
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 5,
-        focusOffset: 5
-      });
-
-      const value = Value.create({ document, selection });
-
-      const actualInlines = value.getSelectedInlines();
-
-      const expectedInlines = [document.children[1].children[0]];
-
-      expect(actualInlines).toEqual(expectedInlines);
-    });
-
-    test("at range", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa\n")
-        .insert("bbb\n")
-        .insert("ccc\n")
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 5,
-        focusOffset: 9
-      });
-
-      const value = Value.create({ document, selection });
-
-      const actualInlines = value.getSelectedInlines();
-
-      const expectedInlines = [
-        document.children[1].children[0],
-        document.children[2].children[0]
-      ];
-
-      expect(actualInlines).toEqual(expectedInlines);
-    });
+  test("get the current block attributes at a range", () => {
+    const value = Value.createEmpty()
+      .change()
+      .insertText("\n", { align: "left", indent: 0 })
+      .insertText("\n", { align: "left", indent: 1 })
+      .select(0, 2)
+      .getValue();
+    expect(value.getBlockAttributes()).toEqual({ align: "left" });
   });
 
-  describe("getFormat()", () => {
-    test("at offset", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaa", { bold: true })
-        .insert("bbb", { italic: true })
-        .insert("\n", { align: "left" })
-        .build();
+  test("get the current inline attributes at an ofset", () => {
+    const value = Value.createEmpty()
+      .change()
+      .insertText("aaa", { bold: true })
+      .insertText("bbb", { italic: true })
+      .select(3, 0)
+      .getValue();
+    expect(value.getInlineAttributes()).toEqual({ bold: true });
+  });
 
-      const selection = Selection.create({
-        anchorOffset: 3,
-        focusOffset: 3
-      });
+  test("get the current inline attributes at a range", () => {
+    const value = Value.createEmpty()
+      .change()
+      .insertText("aaa", { bold: true })
+      .select(0, 3)
+      .getValue();
+    expect(value.getInlineAttributes()).toEqual({ bold: true });
+  });
 
-      const value = Value.create({ document, selection });
-
-      expect(value.getFormat()).toEqual({ align: "left", bold: true });
-    });
-
-    test("at range", () => {
-      const document = new DocumentBuilder(new Schema(defaultSchema))
-        .insert("aaabbb", { bold: true, italic: true })
-        .insert("\n", { align: "left", indent: 1 })
-        .insert("cccddd", { bold: true })
-        .insert("\n", { align: "left" })
-        .build();
-
-      const selection = Selection.create({
-        anchorOffset: 3,
-        focusOffset: 10
-      });
-
-      const value = Value.create({ document, selection });
-
-      expect(value.getFormat()).toEqual({ align: "left", bold: true });
-    });
+  test("get the current attributes", () => {
+    const value = Value.createEmpty()
+      .change()
+      .insertText("aaa", { bold: true })
+      .insertText("\n", { align: "left" })
+      .select(0, 3)
+      .getValue();
+    expect(value.getAttributes()).toEqual({ bold: true, align: "left" });
   });
 });

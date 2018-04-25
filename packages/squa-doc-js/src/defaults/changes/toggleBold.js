@@ -1,11 +1,5 @@
-export default function toggleBold(change) {
-  const { value } = change;
+import createToggleInlineAttribute from "./createToggleInlineAttribute";
 
-  const format = value.getFormat();
+const toggleBold = createToggleInlineAttribute("bold");
 
-  change
-    .formatInline({
-      bold: format.bold ? null : true
-    })
-    .save();
-}
+export default toggleBold;

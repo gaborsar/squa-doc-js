@@ -16,7 +16,7 @@ export default class Text extends Component {
       return true;
     }
 
-    const { node: { value: nextValue } } = nextProps;
+    const nextValue = nextProps.node.getValue();
 
     // eslint-disable-next-line react/no-find-dom-node
     const node = findDOMNode(this);
@@ -41,11 +41,9 @@ export default class Text extends Component {
     return (
       <span
         key={this.forceFlag ? "A" : "B"}
-        data-text
-        data-key={node.key}
         className={joinClassNames("SquaDocJs-text", textClassName)}
       >
-        {node.text}
+        {node.getValue()}
       </span>
     );
   }

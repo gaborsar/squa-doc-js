@@ -1,30 +1,30 @@
 import React, { PureComponent } from "react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faCheckSquare from "@fortawesome/fontawesome-free-solid/faCheckSquare";
-import faSquare from "@fortawesome/fontawesome-free-regular/faSquare";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
 import "./Checkable.scss";
 
 export default class Checkable extends PureComponent {
   handleClick = event => {
-    const { blockKey, createChange, onChange, checked } = this.props;
-
+    const {
+      internal: { node, createChange, onChange }
+    } = this.props;
     event.preventDefault();
-
-    const change = createChange()
-      .formatBlockByKey(blockKey, {
-        checked: checked ? null : true
-      })
-      .save();
-
-    onChange(change);
+    onChange(
+      createChange()
+        .replaceNode(
+          node.setAttribute(
+            "checked",
+            node.getAttribute("checked") ? null : true
+          ),
+          node
+        )
+        .save()
+    );
   };
 
   render() {
     const {
-      blockKey, // eslint-disable-line no-unused-vars
-      createChange, // eslint-disable-line no-unused-vars
-      onChange, // eslint-disable-line no-unused-vars
-      checked,
+      internal: { node },
       children,
       ...otherProps
     } = this.props;
@@ -35,7 +35,9 @@ export default class Checkable extends PureComponent {
           contentEditable={false}
           onMouseDown={this.handleClick}
         >
-          <FontAwesomeIcon icon={checked ? faCheckSquare : faSquare} />
+          <FontAwesomeIcon
+            icon={node.getAttribute("checked") ? faCheckSquare : faSquare}
+          />
         </span>
         {children}
       </div>

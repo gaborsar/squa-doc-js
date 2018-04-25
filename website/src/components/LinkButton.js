@@ -3,9 +3,9 @@ import joinClassNames from "classnames";
 
 export default class LinkButton extends PureComponent {
   onMouseDownCallback = () => {
-    const { onClick, format } = this.props;
+    const { onClick, attributes } = this.props;
     onClick({
-      link: format.link ? null : prompt("Enter link.")
+      link: attributes.link ? null : prompt("Enter link.")
     });
   };
 
@@ -15,12 +15,12 @@ export default class LinkButton extends PureComponent {
   };
 
   render() {
-    const { format, children } = this.props;
+    const { attributes, children } = this.props;
     return (
       <button
         type="button"
         className={joinClassNames("Menu-button", {
-          "Menu-button-active": format.link
+          "Menu-button-active": attributes.link
         })}
         onMouseDown={this.handleMouseDown}
       >

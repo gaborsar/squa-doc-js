@@ -7,7 +7,7 @@ export default function tokenizeNode(node) {
 
     if (img && img.nodeName === "IMG" && img.hasAttribute("src")) {
       tokens.push({
-        type: "block-embed",
+        type: "block-embed-node",
         payload: {
           "block-image": img.getAttribute("src")
         }

@@ -5,13 +5,34 @@ import combineHandlers from "./combineHandlers";
 import combineHooks from "./combineHooks";
 
 const properties = [
-  { name: "schema", combiner: combineSchemas },
-  { name: "renderNode", combiner: combineRenderers },
-  { name: "renderMark", combiner: combineRenderers },
-  { name: "tokenizeNode", combiner: combineTokenizers },
-  { name: "tokenizeClassName", combiner: combineTokenizers },
-  { name: "onKeyDown", combiner: combineHandlers },
-  { name: "afterInput", combiner: combineHooks }
+  {
+    name: "schema",
+    combiner: combineSchemas
+  },
+  {
+    name: "renderNode",
+    combiner: combineRenderers
+  },
+  {
+    name: "renderMark",
+    combiner: combineRenderers
+  },
+  {
+    name: "tokenizeNode",
+    combiner: combineTokenizers
+  },
+  {
+    name: "tokenizeClassName",
+    combiner: combineTokenizers
+  },
+  {
+    name: "onKeyDown",
+    combiner: combineHandlers
+  },
+  {
+    name: "afterInput",
+    combiner: combineHooks
+  }
 ];
 
 export default function combinePlugins(plugins) {

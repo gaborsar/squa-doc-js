@@ -1,9 +1,54 @@
 import Delta from "quill-delta";
+import SpecialCharacter from "../../model/SpecialCharacter";
 import parseHTML from "../parseHTML";
 import tokenizeNode from "../../defaults/tokenizeNode";
 import tokenizeClassName from "../../defaults/tokenizeClassName";
 
 describe("parseHTML()", () => {
+  test("table", () => {
+    // ╔════════════════╦════════╗
+    // ║ first          ║        ║
+    // ╠═══════╦════════╣ second ║
+    // ║ third ║ fourth ║        ║
+    // ╚═══════╩════════╩════════╝
+    const actual = parseHTML(
+      "<table>" +
+        "<thead>" +
+        "<tr>" +
+        '<th colspan="2"><p>first</p></th>' +
+        '<th rowspan="2"><p>second</p></th>' +
+        "</tr>" +
+        "</thead>" +
+        "<tbody>" +
+        "<tr>" +
+        "<th><p>third</p></th>" +
+        "<th><p>fourth</p></th>" +
+        "</tr>" +
+        "</tbody>" +
+        "</table>",
+      tokenizeNode,
+      tokenizeClassName
+    );
+    const expected = new Delta()
+      .insert(SpecialCharacter.TableStart)
+      .insert(SpecialCharacter.TableRowStart)
+      .insert(SpecialCharacter.TableCellStart, { colspan: 2 })
+      .insert("first")
+      .insert(SpecialCharacter.BlockEnd, { type: "paragraph" })
+      .insert(SpecialCharacter.TableCellStart, { rowspan: 2 })
+      .insert("second")
+      .insert(SpecialCharacter.BlockEnd, { type: "paragraph" })
+      .insert(SpecialCharacter.TableRowStart)
+      .insert(SpecialCharacter.TableCellStart)
+      .insert("third")
+      .insert(SpecialCharacter.BlockEnd, { type: "paragraph" })
+      .insert(SpecialCharacter.TableCellStart)
+      .insert("fourth")
+      .insert(SpecialCharacter.BlockEnd, { type: "paragraph" })
+      .insert(SpecialCharacter.TableEnd);
+    expect(actual).toEqual(expected);
+  });
+
   test("unordered-list", () => {
     const actual = parseHTML(
       "<ul>" +
@@ -16,11 +61,11 @@ describe("parseHTML()", () => {
     );
     const expected = new Delta()
       .insert("first")
-      .insert("\n", { type: "unordered-list-item" })
+      .insert(SpecialCharacter.BlockEnd, { type: "unordered-list-item" })
       .insert("second")
-      .insert("\n", { type: "unordered-list-item" })
+      .insert(SpecialCharacter.BlockEnd, { type: "unordered-list-item" })
       .insert("third")
-      .insert("\n", { type: "unordered-list-item" });
+      .insert(SpecialCharacter.BlockEnd, { type: "unordered-list-item" });
     expect(actual).toEqual(expected);
   });
 
@@ -36,11 +81,11 @@ describe("parseHTML()", () => {
     );
     const expected = new Delta()
       .insert("first")
-      .insert("\n", { type: "ordered-list-item" })
+      .insert(SpecialCharacter.BlockEnd, { type: "ordered-list-item" })
       .insert("second")
-      .insert("\n", { type: "ordered-list-item" })
+      .insert(SpecialCharacter.BlockEnd, { type: "ordered-list-item" })
       .insert("third")
-      .insert("\n", { type: "ordered-list-item" });
+      .insert(SpecialCharacter.BlockEnd, { type: "ordered-list-item" });
     expect(actual).toEqual(expected);
   });
 
@@ -52,11 +97,11 @@ describe("parseHTML()", () => {
     );
     const expected = new Delta()
       .insert("first")
-      .insert("\n", { type: "code" })
+      .insert(SpecialCharacter.BlockEnd, { type: "code" })
       .insert("second")
-      .insert("\n", { type: "code" })
+      .insert(SpecialCharacter.BlockEnd, { type: "code" })
       .insert("third")
-      .insert("\n", { type: "code" });
+      .insert(SpecialCharacter.BlockEnd, { type: "code" });
     expect(actual).toEqual(expected);
   });
 
@@ -72,11 +117,11 @@ describe("parseHTML()", () => {
     );
     const expected = new Delta()
       .insert("first")
-      .insert("\n", { type: "code" })
+      .insert(SpecialCharacter.BlockEnd, { type: "code" })
       .insert("second")
-      .insert("\n", { type: "code" })
+      .insert(SpecialCharacter.BlockEnd, { type: "code" })
       .insert("third")
-      .insert("\n", { type: "code" });
+      .insert(SpecialCharacter.BlockEnd, { type: "code" });
     expect(actual).toEqual(expected);
   });
 
@@ -84,7 +129,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h1>aaa</h1>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-one" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-one" });
     expect(actual).toEqual(expected);
   });
 
@@ -92,7 +137,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h2>aaa</h2>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-two" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-two" });
     expect(actual).toEqual(expected);
   });
 
@@ -100,7 +145,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h3>aaa</h3>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-three" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-three" });
     expect(actual).toEqual(expected);
   });
 
@@ -108,7 +153,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h4>aaa</h4>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-four" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-four" });
     expect(actual).toEqual(expected);
   });
 
@@ -116,7 +161,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h5>aaa</h5>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-five" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-five" });
     expect(actual).toEqual(expected);
   });
 
@@ -124,7 +169,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<h6>aaa</h6>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "heading-six" });
+      .insert(SpecialCharacter.BlockEnd, { type: "heading-six" });
     expect(actual).toEqual(expected);
   });
 
@@ -132,7 +177,7 @@ describe("parseHTML()", () => {
     const actual = parseHTML("<p>aaa</p>", tokenizeNode, tokenizeClassName);
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "paragraph" });
+      .insert(SpecialCharacter.BlockEnd, { type: "paragraph" });
     expect(actual).toEqual(expected);
   });
 
@@ -144,7 +189,7 @@ describe("parseHTML()", () => {
     );
     const expected = new Delta()
       .insert("aaa")
-      .insert("\n", { type: "blockquote" });
+      .insert(SpecialCharacter.BlockEnd, { type: "blockquote" });
     expect(actual).toEqual(expected);
   });
 
@@ -208,7 +253,7 @@ describe("parseHTML()", () => {
       tokenizeNode,
       tokenizeClassName
     );
-    const expected = new Delta().insert("\n", {
+    const expected = new Delta().insert(SpecialCharacter.BlockEnd, {
       type: "paragraph",
       align: "left"
     });
@@ -221,7 +266,10 @@ describe("parseHTML()", () => {
       tokenizeNode,
       tokenizeClassName
     );
-    const expected = new Delta().insert("\n", { type: "paragraph", indent: 1 });
+    const expected = new Delta().insert(SpecialCharacter.BlockEnd, {
+      type: "paragraph",
+      indent: 1
+    });
     expect(actual).toEqual(expected);
   });
 

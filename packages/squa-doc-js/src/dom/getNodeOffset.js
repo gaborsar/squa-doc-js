@@ -3,14 +3,15 @@ import isEmbedNode from "./isEmbedNode";
 import getNodeLength from "./getNodeLength";
 
 export default function getNodeOffset(parentNode, node) {
+  let currentNode = node;
   let offset = 0;
-  while (node !== parentNode) {
-    if (node.previousSibling) {
-      node = node.previousSibling;
-      offset += getNodeLength(node);
+  while (currentNode !== parentNode) {
+    if (currentNode.previousSibling) {
+      currentNode = currentNode.previousSibling;
+      offset += getNodeLength(currentNode);
     } else {
-      node = node.parentNode;
-      if (isIgnoredNode(node) || isEmbedNode(node)) {
+      currentNode = currentNode.parentNode;
+      if (isIgnoredNode(currentNode) || isEmbedNode(currentNode)) {
         offset = 0;
       }
     }

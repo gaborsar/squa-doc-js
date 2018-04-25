@@ -1,5 +1,5 @@
 export default function renderNode(node) {
-  switch (node.type) {
+  switch (node.getAttribute("type")) {
     case "heading-one":
       return {
         component: "h1"

@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faPaintBrush from "@fortawesome/fontawesome-free-solid/faPaintBrush";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaintBrush } from "@fortawesome/free-solid-svg-icons";
 import SimpleButton from "./SimpleButton";
 import ColorButton from "./ColorButton";
 import "./ColorMenu.scss";
@@ -30,7 +30,7 @@ export default class ColorMenu extends PureComponent {
   };
 
   render() {
-    const { format } = this.props;
+    const { attributes } = this.props;
     const { isOpen } = this.state;
     return (
       <div className="ColorMenu">
@@ -38,7 +38,7 @@ export default class ColorMenu extends PureComponent {
           <SimpleButton onClick={this.handleToggleClick}>
             <FontAwesomeIcon
               icon={faPaintBrush}
-              style={{ color: format.color }}
+              style={{ color: attributes.color }}
             />
           </SimpleButton>
         </div>

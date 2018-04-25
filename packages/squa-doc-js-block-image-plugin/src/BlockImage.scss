@@ -3,6 +3,7 @@
   margin: 0 10px;
   padding: 10px;
   border: 2px solid transparent;
+  text-align: center;
   user-select: none;
   transition: border 100ms;
 
@@ -47,17 +48,4 @@
     visibility: visible;
     opacity: 1;
   }
-}
-
-.BlockImage-selected {
-  border: 2px solid lightblue;
-
-  .BlockImage-controls {
-    visibility: visible;
-    opacity: 1;
-  }
-}
-
-.BlockImage-selected:hover {
-  border: 2px solid lightblue;
 }

@@ -1,1 +1,1 @@
-export { default as inlineImagePlugin } from "./plugin";
+export { default as Plugin } from "./Plugin";

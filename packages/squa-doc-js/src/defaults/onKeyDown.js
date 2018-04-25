@@ -1,71 +1,75 @@
+import { isBlockNode } from "../model/Predicates";
 import indent from "./changes/indent";
 import outdent from "./changes/outdent";
 import toggleBold from "./changes/toggleBold";
 import toggleItalic from "./changes/toggleItalic";
 
 function onKeyDownBackspace(change, event) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed, anchorOffset } = selection;
+  const value = change.getValue();
 
-  if (!isCollapsed) {
+  const document = value.getDocument();
+  const selection = value.getSelection();
+
+  if (!selection.isCollapsed()) {
     return false;
   }
 
-  const pos = document.findPosition(anchorOffset);
+  const pos = document.findChildAtOffset(selection.getOffset(), isBlockNode);
 
-  if (!pos) {
+  if (pos === null) {
     return false;
   }
 
-  const { node: block } = pos;
+  const block = pos.getNode();
 
-  if (block.isEmbed || !block.isEmpty) {
+  if (!block.isEmpty()) {
     return false;
   }
 
-  if (
-    block.type !== "unordered-list-item" &&
-    block.type !== "ordered-list-item"
-  ) {
+  const type = block.getAttribute("type");
+
+  if (type !== "unordered-list-item" && type !== "ordered-list-item") {
     return false;
   }
 
   event.preventDefault();
 
-  let newBlock;
+  const depth = block.getAttribute("indent") || 0;
+  const newBlock =
+    depth > 0
+      ? block.setAttribute("indent", depth - 1 || null)
+      : block.setAttribute("type", null);
 
-  const depth = block.getMark("indent");
-
-  if (depth) {
-    newBlock = block.format({ indent: depth - 1 });
-  } else {
-    newBlock = block.format({ type: null, indent: null });
-  }
-
-  change.replaceBlock(newBlock, block).save();
+  change.replaceNode(newBlock, block).save();
 
   return true;
 }
 
 function onKeyDownEnter(change, event) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed, anchorOffset } = selection;
+  const value = change.getValue();
 
-  if (!isCollapsed) {
+  const document = value.getDocument();
+  const selection = value.getSelection();
+
+  if (!selection.isCollapsed()) {
     return false;
   }
 
-  const pos = document.findPosition(anchorOffset);
+  const pos = document.findChildAtOffset(selection.getOffset(), isBlockNode);
 
-  if (!pos) {
+  if (pos === null) {
     return false;
   }
 
-  const { node: block } = pos;
+  const block = pos.getNode();
 
-  if (block.isEmbed || !block.isEmpty || !block.type) {
+  if (!block.isEmpty()) {
+    return false;
+  }
+
+  const type = block.getAttribute("type");
+
+  if (type === null) {
     return false;
   }
 
@@ -73,22 +77,17 @@ function onKeyDownEnter(change, event) {
 
   let newBlock;
 
-  if (
-    block.type === "unordered-list-item" ||
-    block.type === "ordered-list-item"
-  ) {
-    const depth = block.getMark("indent");
-
-    if (depth) {
-      newBlock = block.format({ indent: depth - 1 });
-    } else {
-      newBlock = block.format({ type: null, indent: null });
-    }
+  if (type === "unordered-list-item" || type === "ordered-list-item") {
+    const depth = block.getAttribute("indent") || 0;
+    newBlock =
+      depth > 0
+        ? block.setAttribute("indent", depth - 1 || null)
+        : block.setAttribute("type", null);
   } else {
-    newBlock = block.format({ type: null });
+    newBlock = block.setAttribute("type", null);
   }
 
-  change.replaceBlock(newBlock, block).save();
+  change.replaceNode(newBlock, block).save();
 
   return true;
 }

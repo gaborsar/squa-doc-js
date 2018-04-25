@@ -1,101 +1,292 @@
-import Text from "./Text";
-import Embed from "./Embed";
-import Block from "./Block";
-import Document from "./Document";
-import { EOL } from "../constants";
+import SpecialCharacter from "./SpecialCharacter";
+import { createKey } from "./Keys";
+import {
+  isTableNode,
+  isTableStartNode,
+  isTableEndNode,
+  isTableCellNode,
+  isTableCellStartNode,
+  isTableRowNode,
+  isTableRowStartNode,
+  isBlockNode,
+  isBlockEndNode,
+  isBlockEmbedNode,
+  isTextNode,
+  isInlineEmbedNode,
+  isTableStartCharacter,
+  isTableEndCharacter,
+  isTableRowStartCharacter,
+  isTableCellStartCharacter,
+  isBlockEndCharacter
+} from "./Predicates";
 
 export default class DocumentBuilder {
-  constructor(schema) {
+  constructor({ schema, key = createKey(), children = [] }) {
     this.schema = schema;
-    this.blocks = [];
-    this.inlines = [];
+    this.key = key;
+    this.children = children;
+    this.tableBuilder = null;
+    this.blockBuilder = null;
   }
 
-  insertBlock(attributes) {
-    const { schema, inlines: children } = this;
-
-    const node = Block.create({ schema, children }).format(attributes);
-
-    this.blocks.push(node);
-    this.inlines = [];
-
-    return this;
-  }
-
-  insertBlockEmbed(value, attributes) {
-    const { schema } = this;
-
-    const node = Embed.create({ schema, value }).format(attributes);
-
-    this.blocks.push(node);
-    this.inlines = [];
-
-    return this;
-  }
-
-  insertText(value, attributes) {
-    const { schema } = this;
-
-    const lines = value.split(EOL);
-
-    let line = lines.shift();
-
-    if (line.length !== 0) {
-      const node = Text.create({ schema, value: line }).format(attributes);
-
-      this.inlines.push(node);
+  appendTable(node) {
+    if (this.tableBuilder !== null) {
+      throw new Error();
     }
+    if (this.blockBuilder !== null) {
+      throw new Error();
+    }
+    this.children.push(node);
+    return this;
+  }
 
-    while (lines.length !== 0) {
-      this.insertBlock(attributes);
+  appendTableStart(node) {
+    if (this.tableBuilder !== null) {
+      throw new Error();
+    }
+    if (this.blockBuilder !== null) {
+      throw new Error();
+    }
+    const { key, style } = node;
+    this.tableBuilder = this.schema.createTableBuilder({ key, style });
+    return this;
+  }
 
-      line = lines.shift();
+  appendTableEnd() {
+    if (this.tableBuilder === null) {
+      throw new Error();
+    }
+    this.children.push(this.tableBuilder.build());
+    this.tableBuilder = null;
+    return this;
+  }
 
-      if (line.length !== 0) {
-        const node = Text.create({ schema, value: line }).format(attributes);
+  appendTableRow(node) {
+    if (this.tableBuilder === null) {
+      throw new Error();
+    }
+    this.tableBuilder.appendTableRow(node);
+    return this;
+  }
 
-        this.inlines.push(node);
+  appendTableRowStart(node) {
+    if (this.tableBuilder === null) {
+      throw new Error();
+    }
+    this.tableBuilder.appendTableRowStart(node);
+    return this;
+  }
+
+  appendTableCell(node) {
+    if (this.tableBuilder === null) {
+      throw new Error();
+    }
+    this.tableBuilder.appendTableCell(node);
+    return this;
+  }
+
+  appendTableCellStart(node) {
+    if (this.tableBuilder === null) {
+      throw new Error();
+    }
+    this.tableBuilder.appendTableCellStart(node);
+    return this;
+  }
+
+  appendBlock(node) {
+    if (this.tableBuilder !== null) {
+      this.tableBuilder.appendBlock(node);
+    } else if (this.blockBuilder === null) {
+      this.children.push(node);
+    } else {
+      this.children.push(this.blockBuilder.build().concat(node));
+      this.blockBuilder = null;
+    }
+    return this;
+  }
+
+  appendBlockEnd(node) {
+    if (this.tableBuilder !== null) {
+      this.tableBuilder.appendBlockEnd(node);
+    } else {
+      const { key, style } = node;
+      if (this.blockBuilder === null) {
+        this.children.push(this.schema.createBlock({ key, style }));
+      } else {
+        this.children.push(this.blockBuilder.build().merge({ key, style }));
+        this.blockBuilder = null;
       }
     }
-
     return this;
   }
 
-  insertInlineEmbed(value, attributes) {
-    const { schema } = this;
-
-    const node = Embed.create({ schema, value }).format(attributes);
-
-    this.inlines.push(node);
-
+  appendBlockEmbed(node) {
+    if (this.tableBuilder !== null) {
+      throw new Error();
+    }
+    if (this.blockBuilder !== null) {
+      throw new Error();
+    }
+    this.children.push(node);
     return this;
+  }
+
+  appendText(node) {
+    if (this.tableBuilder !== null) {
+      this.tableBuilder.appendText(node);
+    } else {
+      if (this.blockBuilder === null) {
+        this.blockBuilder = this.schema.createBlockBuilder();
+      }
+      this.blockBuilder.appendText(node);
+    }
+    return this;
+  }
+
+  appendInlineEmbed(node) {
+    if (this.tableBuilder !== null) {
+      this.tableBuilder.appendInlineEmbed(node);
+    } else {
+      if (this.blockBuilder === null) {
+        this.blockBuilder = this.schema.createBlockBuilder();
+      }
+      this.blockBuilder.appendInlineEmbed(node);
+    }
+    return this;
+  }
+
+  append(node) {
+    if (isTableNode(node)) {
+      return this.appendTable(node);
+    }
+    if (isTableStartNode(node)) {
+      return this.appendTableStart(node);
+    }
+    if (isTableEndNode(node)) {
+      return this.appendTableEnd(node);
+    }
+    if (isTableCellNode(node)) {
+      return this.appendTableCell(node);
+    }
+    if (isTableCellStartNode(node)) {
+      return this.appendTableCellStart(node);
+    }
+    if (isTableRowNode(node)) {
+      return this.appendTableRow(node);
+    }
+    if (isTableRowStartNode(node)) {
+      return this.appendTableRowStart(node);
+    }
+    if (isBlockNode(node)) {
+      return this.appendBlock(node);
+    }
+    if (isBlockEndNode(node)) {
+      return this.appendBlockEnd(node);
+    }
+    if (isBlockEmbedNode(node)) {
+      return this.appendBlockEmbed(node);
+    }
+    if (isTextNode(node)) {
+      return this.appendText(node);
+    }
+    if (isInlineEmbedNode(node)) {
+      return this.appendInlineEmbed(node);
+    }
+    throw new Error();
+  }
+
+  insertTableStart(attributes = {}) {
+    const node = this.schema.createTableStart().setAttributes(attributes);
+    return this.appendTableStart(node);
+  }
+
+  insertTableEnd() {
+    return this.appendTableEnd();
+  }
+
+  insertTableRowStart(attributes = {}) {
+    const node = this.schema.createTableRowStart().setAttributes(attributes);
+    return this.appendTableRowStart(node);
+  }
+
+  insertTableCellStart(attributes = {}) {
+    return this.appendTableCellStart(
+      this.schema.createTableCellStart().setAttributes(attributes)
+    );
+  }
+
+  insertBlockEnd(attributes = {}) {
+    return this.appendBlockEnd(
+      this.schema.createBlockEnd().setAttributes(attributes)
+    );
+  }
+
+  insertBlockEmbed(name, value, attributes = {}) {
+    return this.appendBlockEmbed(
+      this.schema.createBlockEmbed({ name, value }).setAttributes(attributes)
+    );
+  }
+
+  insertText(value, attributes = {}) {
+    return this.appendText(
+      this.schema.createText({ value }).setAttributes(attributes)
+    );
+  }
+
+  insertInlineEmbed(name, value, attributes = {}) {
+    return this.appendInlineEmbed(
+      this.schema.createInlineEmbed({ name, value }).setAttributes(attributes)
+    );
+  }
+
+  insertString(value, attributes = {}) {
+    value.split(SpecialCharacter.SplitExpression).forEach(slice => {
+      if (isTableStartCharacter(slice)) {
+        this.insertTableStart(attributes);
+      } else if (isTableEndCharacter(slice)) {
+        this.insertTableEnd();
+      } else if (isTableRowStartCharacter(slice)) {
+        this.insertTableRowStart(attributes);
+      } else if (isTableCellStartCharacter(slice)) {
+        this.insertTableCellStart(attributes);
+      } else if (isBlockEndCharacter(slice)) {
+        this.insertBlockEnd(attributes);
+      } else if (slice.length !== 0) {
+        this.insertText(slice, attributes);
+      }
+    });
+    return this;
+  }
+
+  insertObject(value, attributes = {}) {
+    const [name] = Object.keys(value);
+    if (this.schema.isBlockEmbed(name)) {
+      return this.insertBlockEmbed(name, value[name], attributes);
+    }
+    if (this.schema.isInlineEmbed(name)) {
+      return this.insertInlineEmbed(name, value[name], attributes);
+    }
+    throw new Error();
   }
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
-      return this.insertText(value, attributes);
+      return this.insertString(value, attributes);
     }
-
-    if (typeof value === "object") {
-      const { schema } = this;
-
-      const type = Embed.type(value);
-
-      if (schema.isBlockEmbed(type)) {
-        return this.insertBlockEmbed(value, attributes);
-      }
-
-      if (schema.isInlineEmbed(type)) {
-        return this.insertInlineEmbed(value, attributes);
-      }
+    if (typeof value === "object" && value !== null) {
+      return this.insertObject(value, attributes);
     }
-
-    return this;
+    throw new Error();
   }
 
   build() {
-    const { schema, blocks: children } = this;
-
-    return Document.create({ schema, children });
+    if (this.tableBuilder !== null) {
+      throw new Error();
+    }
+    if (this.blockBuilder !== null) {
+      throw new Error();
+    }
+    const { key, children } = this;
+    return this.schema.createDocument({ key, children });
   }
 }

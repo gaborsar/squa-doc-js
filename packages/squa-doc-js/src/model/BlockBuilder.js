@@ -1,54 +1,72 @@
-import Text from "./Text";
-import Embed from "./Embed";
-import Block from "./Block";
+import Style from "./Style";
+import { createKey } from "./Keys";
+import { isTextNode, isInlineEmbedNode } from "./Predicates";
 
 export default class BlockBuilder {
-  constructor(schema) {
+  constructor({
+    schema,
+    key = createKey(),
+    style = Style.create(),
+    children = []
+  }) {
     this.schema = schema;
-    this.nodes = [];
+    this.key = key;
+    this.style = style;
+    this.children = children;
   }
 
-  insertText(value, attributes) {
-    const { schema } = this;
-
-    const node = Text.create({ schema, value }).format(attributes);
-
-    this.nodes.push(node);
-
+  appendText(node) {
+    this.children.push(node);
     return this;
   }
 
-  insertEmbed(value, attributes) {
-    const { schema } = this;
-
-    const node = Embed.create({ schema, value }).format(attributes);
-
-    this.nodes.push(node);
-
+  appendInlineEmbed(node) {
+    this.children.push(node);
     return this;
+  }
+
+  append(node) {
+    if (isTextNode(node)) {
+      return this.appendText(node);
+    }
+    if (isInlineEmbedNode(node)) {
+      return this.appendInlineEmbed(node);
+    }
+    throw new Error();
+  }
+
+  insertText(value, attributes = {}) {
+    return this.appendText(
+      this.schema.createText({ value }).setAttributes(attributes)
+    );
+  }
+
+  insertInlineEmbed(name, value, attributes = {}) {
+    return this.appendInlineEmbed(
+      this.schema.createInlineEmbed({ name, value }).setAttributes(attributes)
+    );
+  }
+
+  insertObject(value, attributes = {}) {
+    const [name] = Object.keys(value);
+    if (this.schema.isInlineEmbed(name)) {
+      return this.insertInlineEmbed(name, value[name], attributes);
+    }
+    throw new Error();
   }
 
   insert(value, attributes = {}) {
     if (typeof value === "string") {
       return this.insertText(value, attributes);
     }
-
-    if (typeof value === "object") {
-      const { schema } = this;
-
-      const type = Embed.type(value);
-
-      if (schema.isInlineEmbed(type)) {
-        return this.insertEmbed(value, attributes);
-      }
+    if (typeof value === "object" && value !== null) {
+      return this.insertObject(value, attributes);
     }
-
-    return this;
+    throw new Error();
   }
 
   build() {
-    const { schema, nodes: children } = this;
-
-    return Block.create({ schema, children });
+    const { schema, key, style, children } = this;
+    return schema.createBlock({ key, style, children });
   }
 }

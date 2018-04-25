@@ -1,39 +1,30 @@
-const INDENT_MAX = 5;
+import { isBlockNode } from "../../model/Predicates";
 
-function indentBlock(change, block) {
-  let depth = block.getMark("indent");
+const MAX_DEPTH = 5;
 
-  if (depth === INDENT_MAX) {
-    return;
-  }
-
-  depth = (depth || 0) + 1;
-
-  const newBlock = block.format({ indent: depth });
-
-  change.replaceBlock(newBlock, block);
+function indentNode(node) {
+  const depth = node.getAttribute("indent") || 0;
+  return depth < MAX_DEPTH ? node.setAttribute("indent", depth + 1) : node;
 }
 
 export default function indent(change) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed } = selection;
+  const value = change.getValue();
 
-  if (isCollapsed) {
-    const { offset } = selection;
+  const document = value.getDocument();
+  const selection = value.getSelection();
 
-    const pos = document.findPosition(offset);
+  const newDocument = selection.isCollapsed()
+    ? document.updateDescendantAtOffset(
+        selection.getOffset(),
+        isBlockNode,
+        indentNode
+      )
+    : document.updateDescendantsAtRange(
+        selection.getOffset(),
+        selection.getLength(),
+        isBlockNode,
+        indentNode
+      );
 
-    if (pos) {
-      indentBlock(change, pos.node);
-    }
-  } else {
-    const { startOffset, endOffset } = selection;
-
-    const range = document.createRange(startOffset, endOffset);
-
-    range.forEach(el => {
-      indentBlock(change, el.node);
-    });
-  }
+  change.setValue(value.setDocument(newDocument));
 }

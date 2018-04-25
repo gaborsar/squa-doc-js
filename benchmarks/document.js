@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 
 import Delta from "quill-delta";
-import DocumentBuilder from "../packages/squa-doc-js/src/model/DocumentBuilder";
-import schema from "../packages/squa-doc-js/src/defaults/schema";
+import Value from "../packages/squa-doc-js/src/model/value";
 
 const NUMBER_OF_TESTS = 10;
 
@@ -19,16 +18,11 @@ for (let i = 0; i < 5000; i++) {
     .insert("\n");
 }
 
-const builder = new DocumentBuilder(schema);
-initialDelta.forEach(op => {
-  builder.insert(op.insert, op.attributes);
-});
+const initialDocument = Value.fromDelta({ delta: initialDelta }).getDocument();
 
-const initialDocument = builder.build();
+console.log(`document length: ${initialDocument.getLength()}`);
 
-console.log(`document length: ${initialDocument.length}`);
-
-const changeOffset = initialDocument.length - 60;
+const changeOffset = initialDocument.getLength() - 60;
 
 const changeDelta = new Delta()
   .retain(changeOffset)
@@ -50,7 +44,7 @@ const updatedDocument = initialDocument.apply(changeDelta);
 
 const time3 = Date.now();
 for (let i = 0; i < NUMBER_OF_TESTS; i++) {
-  updatedDocument.delta.diff(initialDocument.delta, changeOffset);
+  updatedDocument.getDelta().diff(initialDocument.getDelta(), changeOffset);
 }
 const time4 = Date.now();
 

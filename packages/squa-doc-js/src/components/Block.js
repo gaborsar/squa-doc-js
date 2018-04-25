@@ -1,14 +1,12 @@
 import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
 import Text from "./Text";
-import Embed from "./Embed";
+import { isInlineEmbedNode } from "../model/Predicates";
 
 export default class Block extends PureComponent {
   render() {
     const {
       node,
-      startOffset,
-      endOffset,
       BlockComponent,
       blockProps,
       blockClassName,
@@ -20,15 +18,13 @@ export default class Block extends PureComponent {
 
     const children = [];
 
-    if (node.isEmpty) {
+    if (node.isEmpty()) {
       children.push(<br key="br" data-ignore />);
     } else {
-      let offset = 0;
-
-      node.children.forEach(child => {
+      node.getChildren().forEach(child => {
         const markObjects = [];
 
-        child.style.marks.forEach(mark => {
+        child.getMarks().forEach(mark => {
           const markObj = renderMark(mark);
 
           if (markObj) {
@@ -48,56 +44,32 @@ export default class Block extends PureComponent {
 
         let element;
 
-        const { length: childLength } = child;
-
-        const childStartOffset = Math.min(
-          Math.max(startOffset - offset, 0),
-          childLength
-        );
-
-        const childEndOffset = Math.min(
-          Math.max(endOffset - offset, 0),
-          childLength
-        );
-
-        const isChildSelected = childStartOffset < childEndOffset;
-
-        offset += childLength;
-
-        if (child.isEmbed) {
-          const defaultProps = {
-            isSelected: isChildSelected,
-            blockKey: node.key,
-            inlineKey: child.key,
-            createChange,
-            onChange
-          };
-
-          const embedObj = renderNode(child, defaultProps);
+        if (isInlineEmbedNode(child)) {
+          const embedObj = renderNode(child, { createChange, onChange });
 
           if (!embedObj) {
-            throw new Error(`Invalid embed: ${child.type}`);
+            throw new Error(`Invalid embed: ${child.getNodeType()}`);
           }
 
-          const { component, props: { className, ...props } = {} } = embedObj;
-
-          if (className) {
-            classNames.push(className);
-          }
+          const {
+            component: EmbedComponent,
+            props: embedProps = {}
+          } = embedObj;
 
           element = (
-            <Embed
-              key={child.key}
-              node={child}
-              EmbedComponent={component}
-              embedProps={props}
-              embedClassName={joinClassNames(classNames)}
+            <EmbedComponent
+              {...embedProps}
+              key={child.getKey()}
+              data-embed
+              data-key={child.getKey()}
+              contentEditable={false}
+              className={joinClassNames("SquaDocJs-embed", classNames)}
             />
           );
         } else {
           element = (
             <Text
-              key={child.key}
+              key={child.getKey()}
               node={child}
               textClassName={joinClassNames(classNames)}
             />
@@ -109,7 +81,7 @@ export default class Block extends PureComponent {
 
           if (MarkComponent) {
             element = (
-              <MarkComponent key={child.key} {...markProps}>
+              <MarkComponent {...markProps} key={child.getKey()}>
                 {element}
               </MarkComponent>
             );
@@ -124,7 +96,7 @@ export default class Block extends PureComponent {
       <BlockComponent
         {...blockProps}
         data-block
-        data-key={node.key}
+        data-key={node.getKey()}
         className={joinClassNames("SquaDocJs-block", blockClassName)}
       >
         {children}

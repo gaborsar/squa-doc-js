@@ -6,14 +6,6 @@ Inspired by [Draft.js](https://github.com/facebook/draft-js), [Quill](https://gi
 
 ## Installation
 
-First, you have to install [Quill's Delta](https://github.com/quilljs/delta):
-
-```
-npm install --save quill-delta
-```
-
-Then, you can install the editor:
-
 ```
 npm install --save squa-doc-js
 ```
@@ -22,11 +14,12 @@ npm install --save squa-doc-js
 
 ```jsx
 import React, { PureComponent } from "react";
-import Delta from "quill-delta";
 import { Value, Editor } from "squa-doc-js";
 
-const contents = new Delta().insert("Hello world!\n");
-const value = Value.fromDelta({ contents });
+const value = Value.createEmpty()
+  .change()
+  .insertText("Hello world!")
+  .getValue();
 
 class App extends PureComponent {
   constructor(props) {
@@ -34,18 +27,15 @@ class App extends PureComponent {
     this.state = { value };
   }
 
-  onChange = ({ value }) => {
-    this.setState({ value });
+  onChange = change => {
+    this.setState({ value: change.getValue() });
   };
 
   render() {
-    const { value } = this.state;
-    return <Editor value={value} onChange={this.onChange} />;
+    return <Editor value={this.state.value} onChange={this.onChange} />;
   }
 }
 ```
-
-You can find more examples in the [documentation](packages/squa-doc-js/README.md).
 
 ## Licence
 

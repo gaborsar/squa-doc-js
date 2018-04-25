@@ -1,7 +1,7 @@
 {
   "name": "squa-doc-js-inline-image-plugin",
-  "version": "0.4.5",
-  "description": "Inline image plugin for SquaEditor",
+  "version": "0.5.0",
+  "description": "Inline image plugin for SquaDoc.js",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
@@ -10,8 +10,8 @@
     "url": "https://github.com/gaborsar/squa-doc-js"
   },
   "keywords": ["rich", "text", "editor"],
-  "dependencies": {
-    "react-dom": "16.3.1",
-    "react": "16.3.1"
+  "peerDependencies": {
+    "react-dom": "16.4.1",
+    "react": "16.4.1"
   }
 }

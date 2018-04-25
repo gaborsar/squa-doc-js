@@ -1,43 +1,33 @@
 import React, { PureComponent } from "react";
+import joinClassNames from "classnames";
 import "./BlockImage.scss";
 
 export default class BlockImage extends PureComponent {
-  handleClick = () => {
-    const { blockKey, createChange, onChange } = this.props;
-
-    const change = createChange()
-      .selectBlockByKey(blockKey)
-      .save();
-
-    onChange(change);
-  };
-
   handleDeleteClick = event => {
-    const { blockKey, createChange, onChange } = this.props;
-
+    const {
+      internals: { node, createChange, onChange }
+    } = this.props;
     event.stopPropagation();
-
-    const change = createChange()
-      .deleteBlockByKey(blockKey)
-      .save();
-
-    onChange(change);
+    onChange(
+      createChange()
+        .removeNode(node)
+        .save()
+    );
   };
 
   render() {
     const {
-      src,
-      alt,
-      caption,
-      blockKey, // eslint-disable-line no-unused-vars
-      createChange, // eslint-disable-line no-unused-vars
-      onChange, // eslint-disable-line no-unused-vars
+      internals: { node },
+      className,
       ...otherProps
     } = this.props;
     return (
-      <figure {...otherProps} onClick={this.handleClick}>
-        <img src={src} alt={alt} />
-        <figcaption>{caption}</figcaption>
+      <figure
+        {...otherProps}
+        className={joinClassNames(className, "BlockImage")}
+      >
+        <img src={node.getValue()} alt={node.getAttribute("alt")} />
+        <figcaption>{node.getAttribute("caption")}</figcaption>
         <div className="BlockImage-controls">
           <button onClick={this.handleDeleteClick}>Delete</button>
         </div>

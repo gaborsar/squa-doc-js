@@ -1,16 +1,13 @@
-export default class Snapshot {
-  static create(props) {
-    return new Snapshot(props);
-  }
+const MAX_DELAY = 1000;
 
-  constructor(props) {
-    const {
-      type = "",
-      undoDelta,
-      redoDelta,
-      selection,
-      timestamp = Date.now()
-    } = props;
+export default class Snapshot {
+  constructor({
+    type = "",
+    undoDelta,
+    redoDelta,
+    selection,
+    timestamp = Date.now()
+  }) {
     this.type = type;
     this.undoDelta = undoDelta;
     this.redoDelta = redoDelta;
@@ -19,7 +16,31 @@ export default class Snapshot {
   }
 
   merge(props) {
-    return Snapshot.create({ ...this, ...props });
+    return new Snapshot({ ...this, ...props });
+  }
+
+  hasType() {
+    return this.type !== "";
+  }
+
+  getType() {
+    return this.type;
+  }
+
+  getUndoDelta() {
+    return this.undoDelta;
+  }
+
+  getRedoDelta() {
+    return this.redoDelta;
+  }
+
+  getSelection() {
+    return this.selection;
+  }
+
+  getTimestamp() {
+    return this.timestamp;
   }
 
   setType(type) {
@@ -42,7 +63,13 @@ export default class Snapshot {
     return this.merge({ timestamp });
   }
 
-  concat(other) {
+  canCompose(other) {
+    return (
+      this.type === other.type && this.timestamp - other.timestamp < MAX_DELAY
+    );
+  }
+
+  compose(other) {
     return this.merge({
       undoDelta: other.undoDelta.compose(this.undoDelta),
       redoDelta: this.redoDelta.compose(other.redoDelta),

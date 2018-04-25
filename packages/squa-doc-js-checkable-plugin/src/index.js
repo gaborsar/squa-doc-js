@@ -1,1 +1,1 @@
-export { default as checkablePlugin } from "./plugin";
+export { default as Plugin } from "./Plugin";

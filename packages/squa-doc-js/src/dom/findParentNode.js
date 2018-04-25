@@ -1,6 +1,7 @@
 export default function findParentNode(node, predicate) {
-  while (node && !predicate(node)) {
-    node = node.parentNode;
+  let currentNode = node;
+  while (currentNode && !predicate(currentNode)) {
+    currentNode = currentNode.parentNode;
   }
-  return node;
+  return currentNode;
 }

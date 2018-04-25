@@ -2,6 +2,41 @@ export default function tokenizeNode(node, context) {
   const tokens = [];
 
   switch (node.nodeName) {
+    case "TABLE":
+      tokens.push({
+        type: "table-node"
+      });
+      break;
+
+    case "TR":
+      tokens.push({
+        type: "table-row-node"
+      });
+      break;
+
+    case "TH":
+    case "TD":
+      tokens.push({
+        type: "table-cell-node"
+      });
+      if (node.hasAttribute("colspan")) {
+        tokens.push({
+          type: "table-cell-style",
+          payload: {
+            colspan: parseInt(node.getAttribute("colspan"), 10)
+          }
+        });
+      }
+      if (node.hasAttribute("rowspan")) {
+        tokens.push({
+          type: "table-cell-style",
+          payload: {
+            rowspan: parseInt(node.getAttribute("rowspan"), 10)
+          }
+        });
+      }
+      break;
+
     case "UL":
       tokens.push({
         type: "wrapper-node",
@@ -102,14 +137,18 @@ export default function tokenizeNode(node, context) {
       break;
 
     case "LI":
-      if (
-        context.wrapper.type === "unordered-list" ||
-        context.wrapper.type === "ordered-list"
-      ) {
+      if (context.wrapper.type === "unordered-list") {
         tokens.push({
           type: "block-node",
           payload: {
-            type: `${context.wrapper.type}-item`
+            type: "unordered-list-item"
+          }
+        });
+      } else if (context.wrapper.type === "ordered-list") {
+        tokens.push({
+          type: "block-node",
+          payload: {
+            type: "ordered-list-item"
           }
         });
       }

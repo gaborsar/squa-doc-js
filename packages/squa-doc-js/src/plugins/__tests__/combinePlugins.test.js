@@ -3,7 +3,9 @@ import combinePlugins from "../combinePlugins";
 describe("combinePlugins", () => {
   describe("schema", () => {
     test("isBlockEmbed()", () => {
-      const { schema: { isBlockEmbed } } = combinePlugins([
+      const {
+        schema: { isBlockEmbed }
+      } = combinePlugins([
         { schema: { isBlockEmbed: v => v === "a" } },
         { schema: { isBlockEmbed: v => v === "b" } }
       ]);
@@ -13,7 +15,9 @@ describe("combinePlugins", () => {
     });
 
     test("isInlineEmbed()", () => {
-      const { schema: { isInlineEmbed } } = combinePlugins([
+      const {
+        schema: { isInlineEmbed }
+      } = combinePlugins([
         { schema: { isInlineEmbed: v => v === "a" } },
         { schema: { isInlineEmbed: v => v === "b" } }
       ]);
@@ -22,8 +26,46 @@ describe("combinePlugins", () => {
       expect(isInlineEmbed("c")).toBe(false);
     });
 
+    test("isTableMark()", () => {
+      const {
+        schema: { isTableMark }
+      } = combinePlugins([
+        { schema: { isTableMark: v => v === "a" } },
+        { schema: { isTableMark: v => v === "b" } }
+      ]);
+      expect(isTableMark("a")).toBe(true);
+      expect(isTableMark("b")).toBe(true);
+      expect(isTableMark("c")).toBe(false);
+    });
+
+    test("isTableRowMark()", () => {
+      const {
+        schema: { isTableRowMark }
+      } = combinePlugins([
+        { schema: { isTableRowMark: v => v === "a" } },
+        { schema: { isTableRowMark: v => v === "b" } }
+      ]);
+      expect(isTableRowMark("a")).toBe(true);
+      expect(isTableRowMark("b")).toBe(true);
+      expect(isTableRowMark("c")).toBe(false);
+    });
+
+    test("isTableCellMark()", () => {
+      const {
+        schema: { isTableCellMark }
+      } = combinePlugins([
+        { schema: { isTableCellMark: v => v === "a" } },
+        { schema: { isTableCellMark: v => v === "b" } }
+      ]);
+      expect(isTableCellMark("a")).toBe(true);
+      expect(isTableCellMark("b")).toBe(true);
+      expect(isTableCellMark("c")).toBe(false);
+    });
+
     test("isBlockMark()", () => {
-      const { schema: { isBlockMark } } = combinePlugins([
+      const {
+        schema: { isBlockMark }
+      } = combinePlugins([
         { schema: { isBlockMark: v => v === "a" } },
         { schema: { isBlockMark: v => v === "b" } }
       ]);
@@ -32,24 +74,40 @@ describe("combinePlugins", () => {
       expect(isBlockMark("c")).toBe(false);
     });
 
-    test("isInlineMark()", () => {
-      const { schema: { isInlineMark } } = combinePlugins([
-        { schema: { isInlineMark: v => v === "a" } },
-        { schema: { isInlineMark: v => v === "b" } }
+    test("isBlockEmbedMark()", () => {
+      const {
+        schema: { isBlockEmbedMark }
+      } = combinePlugins([
+        { schema: { isBlockEmbedMark: v => v === "a" } },
+        { schema: { isBlockEmbedMark: v => v === "b" } }
       ]);
-      expect(isInlineMark("a")).toBe(true);
-      expect(isInlineMark("b")).toBe(true);
-      expect(isInlineMark("c")).toBe(false);
+      expect(isBlockEmbedMark("a")).toBe(true);
+      expect(isBlockEmbedMark("b")).toBe(true);
+      expect(isBlockEmbedMark("c")).toBe(false);
     });
 
-    test("isEmbedMark()", () => {
-      const { schema: { isEmbedMark } } = combinePlugins([
-        { schema: { isEmbedMark: v => v === "a" } },
-        { schema: { isEmbedMark: v => v === "b" } }
+    test("isTextMark()", () => {
+      const {
+        schema: { isTextMark }
+      } = combinePlugins([
+        { schema: { isTextMark: v => v === "a" } },
+        { schema: { isTextMark: v => v === "b" } }
       ]);
-      expect(isEmbedMark("a")).toBe(true);
-      expect(isEmbedMark("b")).toBe(true);
-      expect(isEmbedMark("c")).toBe(false);
+      expect(isTextMark("a")).toBe(true);
+      expect(isTextMark("b")).toBe(true);
+      expect(isTextMark("c")).toBe(false);
+    });
+
+    test("isInlineEmbedMark()", () => {
+      const {
+        schema: { isInlineEmbedMark }
+      } = combinePlugins([
+        { schema: { isInlineEmbedMark: v => v === "a" } },
+        { schema: { isInlineEmbedMark: v => v === "b" } }
+      ]);
+      expect(isInlineEmbedMark("a")).toBe(true);
+      expect(isInlineEmbedMark("b")).toBe(true);
+      expect(isInlineEmbedMark("c")).toBe(false);
     });
   });
 
