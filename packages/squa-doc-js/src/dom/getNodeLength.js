@@ -1,6 +1,9 @@
 import isTextNode from "./isTextNode";
 import isElementNode from "./isElementNode";
 import isIgnoredNode from "./isIgnoredNode";
+import isTableNode from "./isTableNode";
+import isTableRowNode from "./isTableRowNode";
+import isTableCellNode from "./isTableCellNode";
 import isBlockNode from "./isBlockNode";
 import isEmbedNode from "./isEmbedNode";
 import isLineBreakNode from "./isLineBreakNode";
@@ -25,7 +28,16 @@ export default function getNodeLength(node) {
 
     let length = 0;
 
-    if (isBlockNode(node)) {
+    if (isTableNode(node)) {
+      // compensate for the start and end characters of table nodes
+      length += 2;
+    } else if (
+      isTableRowNode(node) ||
+      isTableCellNode(node) ||
+      isBlockNode(node)
+    ) {
+      // compensate for the start character of tabel row and table cell,
+      // or the end character of block nodes
       length += 1;
     }
 
