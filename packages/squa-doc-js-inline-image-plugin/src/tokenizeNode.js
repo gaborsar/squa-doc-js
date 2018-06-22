@@ -3,7 +3,7 @@ export default function tokenizeNode(node) {
 
   if (node.nodeName === "IMG" && node.hasAttribute("src")) {
     tokens.push({
-      type: "inline-embed",
+      type: "inline-embed-node",
       payload: {
         "inline-image": node.getAttribute("src")
       }

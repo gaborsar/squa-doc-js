@@ -35,6 +35,10 @@ export default class List {
     return new List(this.items.slice(0, -1));
   }
 
+  map(fn) {
+    return this.items.map(fn);
+  }
+
   reduce(fn, initialValue) {
     return this.items.reduce(fn, initialValue);
   }
