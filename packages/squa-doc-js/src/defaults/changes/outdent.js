@@ -1,37 +1,28 @@
-function outdentBlock(change, block) {
-  let depth = block.getMark("indent");
+import { isBlockNode } from "../../model/Predicates";
 
-  if (!depth) {
-    return;
-  }
-
-  depth = depth - 1 || null;
-
-  const newBlock = block.format({ indent: depth });
-
-  change.replaceBlock(newBlock, block);
+function outdentNode(node) {
+  const depth = node.getAttribute("indent") || 0;
+  return depth > 0 ? node.setAttribute("indent", depth - 1 || null) : node;
 }
 
 export default function outdent(change) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed } = selection;
+  const value = change.getValue();
 
-  if (isCollapsed) {
-    const { offset } = selection;
+  const document = value.getDocument();
+  const selection = value.getSelection();
 
-    const pos = document.findPosition(offset);
+  const newDocument = selection.isCollapsed()
+    ? document.updateDescendantAtOffset(
+        selection.getOffset(),
+        isBlockNode,
+        outdentNode
+      )
+    : document.updateDescendantsAtRange(
+        selection.getOffset(),
+        selection.getLength(),
+        isBlockNode,
+        outdentNode
+      );
 
-    if (pos) {
-      outdentBlock(change, pos.node);
-    }
-  } else {
-    const { startOffset, endOffset } = selection;
-
-    const range = document.createRange(startOffset, endOffset);
-
-    range.forEach(el => {
-      outdentBlock(change, el.node);
-    });
-  }
+  change.setValue(value.setDocument(newDocument));
 }

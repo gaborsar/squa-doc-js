@@ -1,30 +1,45 @@
-import Style from "../Style";
+const FormatMixin = {
+  getStyle() {
+    return this.style;
+  },
 
-const FormatMixin = superclass =>
-  class extends superclass {
-    setStyle(style = Style.create()) {
-      return this.merge({ style });
-    }
+  setStyle(style) {
+    return this.merge({ style });
+  },
 
-    clearStyle() {
-      return this.setStyle();
-    }
+  getMarks() {
+    return this.style.getMarks();
+  },
 
-    hasMark(type) {
-      return this.style.hasMark(type);
-    }
+  setMarks(marks) {
+    return this.setStyle(this.style.setMarks(marks));
+  },
 
-    getMark(type) {
-      return this.style.getMark(type);
-    }
+  isPristine() {
+    return this.style.isEmpty();
+  },
 
-    getFormat() {
-      return this.style.toObject();
-    }
+  hasAttribute(name) {
+    return this.style.hasAttribute(name);
+  },
 
-    format() {
-      throw new Error("missing method");
-    }
-  };
+  getAttribute(name) {
+    return this.style.getAttribute(name);
+  },
+
+  setAttribute(name, value) {
+    return this.setStyle(this.style.setAttribute(name, value));
+  },
+
+  getAttributes() {
+    return this.style.getAttributes();
+  },
+
+  setAttributes(attributes) {
+    return this.setStyle(
+      this.style.setAttributes(attributes, this.isValidMark.bind(this))
+    );
+  }
+};
 
 export default FormatMixin;

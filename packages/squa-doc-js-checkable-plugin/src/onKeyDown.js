@@ -1,21 +1,25 @@
 function onKeyDownBackspace(change, event) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed, anchorOffset } = selection;
+  const value = change.getValue();
 
-  if (!isCollapsed) {
+  const document = value.getDocument();
+  const selection = value.getSelection();
+
+  if (!selection.isCollapsed()) {
     return false;
   }
 
-  const pos = document.findPosition(anchorOffset);
+  const pos = document.findChildAtOffset(
+    selection.getOffset(),
+    node => node.getNodeType() === "block"
+  );
 
-  if (!pos) {
+  if (pos === null) {
     return false;
   }
 
-  const { node: block } = pos;
+  const block = pos.getNode();
 
-  if (block.isEmbed || !block.isEmpty || block.type !== "checkable") {
+  if (!block.isEmpty() || block.getAttribute("type") !== "checkable") {
     return false;
   }
 
@@ -23,58 +27,62 @@ function onKeyDownBackspace(change, event) {
 
   let newBlock;
 
-  const depth = block.getMark("indent");
+  const depth = block.getAttribute("indent");
 
   if (depth) {
-    newBlock = block.format({ indent: depth - 1 });
+    newBlock = block.setAttributes({ indent: depth - 1 });
   } else {
-    newBlock = block.format({ type: null, indent: null });
+    newBlock = block.setAttributes({ type: null, indent: null });
   }
 
-  change.replaceBlock(newBlock, block).save();
+  change.replaceNode(newBlock, block).save();
 
   return true;
 }
 
 function onKeyDownEnter(change, event) {
-  const { value } = change;
-  const { document, selection } = value;
-  const { isCollapsed, anchorOffset } = selection;
+  const value = change.getValue();
 
-  if (!isCollapsed) {
+  const document = value.getDocument();
+  const selection = value.getSelection();
+
+  if (!selection.isCollapsed()) {
     return false;
   }
 
-  const pos = document.findPosition(anchorOffset);
+  const pos = document.findChildAtOffset(
+    selection.getOffset(),
+    node => node.getNodeType() === "block"
+  );
 
-  if (!pos) {
+  if (pos === null) {
     return false;
   }
 
-  const { node: block } = pos;
+  const block = pos.getNode();
 
-  if (block.isEmbed || block.type !== "checkable") {
+  if (block.getAttribute("type") !== "checkable") {
     return false;
   }
 
   event.preventDefault();
 
-  if (block.isEmpty) {
+  if (block.isEmpty()) {
     let newBlock;
 
-    const depth = block.getMark("indent");
+    const depth = block.getAttribute("indent");
 
     if (depth) {
-      newBlock = block.format({ indent: depth - 1 });
+      newBlock = block.setAttributes({ indent: depth - 1 });
     } else {
-      newBlock = block.format({ type: null, indent: null });
+      newBlock = block.setAttributes({ type: null, indent: null });
     }
 
-    change.replaceBlock(newBlock, block).save();
+    change.replaceNode(newBlock, block).save();
   } else {
     change
-      .insertText("\n", block.style.toObject())
-      .formatBlock({ checked: null })
+      .insertText("\n", block.getAttributes())
+      .setBlockAttributes({ checked: null })
       .save();
   }
 

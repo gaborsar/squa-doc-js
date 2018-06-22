@@ -1,7 +1,21 @@
-import { formatWithMarkdown } from "../../squa-doc-js/src";
+import { createTranslateMarkdown } from "squa-doc-js";
 
-const blockMatchers = [{ expr: /^\s*\[\]\s$/, type: "checkable" }];
+const afterInput = createTranslateMarkdown({
+  lineMatchers: [
+    {
+      expr: /^\s*\[\s?\]\s$/,
+      attributes: {
+        type: "checkable"
+      }
+    },
+    {
+      expr: /^\s*\[x\]\s$/,
+      attributes: {
+        type: "checkable",
+        checked: true
+      }
+    }
+  ]
+});
 
-export default function afterInput(change) {
-  formatWithMarkdown(change, { blockMatchers });
-}
+export default afterInput;

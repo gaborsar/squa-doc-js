@@ -1,26 +1,104 @@
-import formatWithMarkdown from "./changes/formatWithMarkdown";
+import createTranslateMarkdown from "./changes/createTranslateMarkdown";
 
-const blockMatchers = [
-  { expr: /^\s*#\s$/, type: "heading-one" },
-  { expr: /^\s*#{2}\s$/, type: "heading-two" },
-  { expr: /^\s*#{3}\s$/, type: "heading-three" },
-  { expr: /^\s*#{4}\s$/, type: "heading-four" },
-  { expr: /^\s*#{5}\s$/, type: "heading-five" },
-  { expr: /^\s*#{6}\s$/, type: "heading-six" },
-  { expr: /^\s*\*\s$/, type: "unordered-list-item" },
-  { expr: /^\s*1[.)]\s$/, type: "ordered-list-item" },
-  { expr: /^\s*```\s$/, type: "code" },
-  { expr: /^\s*>\s$/, type: "blockquote" }
+const lineMatchers = [
+  {
+    expr: /^\s*#\s$/,
+    attributes: {
+      type: "heading-one"
+    }
+  },
+  {
+    expr: /^\s*#{2}\s$/,
+    attributes: {
+      type: "heading-two"
+    }
+  },
+  {
+    expr: /^\s*#{3}\s$/,
+    attributes: {
+      type: "heading-three"
+    }
+  },
+  {
+    expr: /^\s*#{4}\s$/,
+    attributes: {
+      type: "heading-four"
+    }
+  },
+  {
+    expr: /^\s*#{5}\s$/,
+    attributes: {
+      type: "heading-five"
+    }
+  },
+  {
+    expr: /^\s*#{6}\s$/,
+    attributes: {
+      type: "heading-six"
+    }
+  },
+  {
+    expr: /^\s*\*\s$/,
+    attributes: {
+      type: "unordered-list-item"
+    }
+  },
+  {
+    expr: /^\s*1[.)]\s$/,
+    attributes: {
+      type: "ordered-list-item"
+    }
+  },
+  {
+    expr: /^\s*```\s$/,
+    attributes: {
+      type: "code"
+    }
+  },
+  {
+    expr: /^\s*>\s$/,
+    attributes: {
+      type: "blockquote"
+    }
+  }
 ];
 
-const inlineMatchers = [
-  { expr: /(\*{2})(.+)(\*{2})\s$/, type: "bold" },
-  { expr: /(_{2})(.+)(_{2})\s$/, type: "bold" },
-  { expr: /(\*)(.+)(\*)\s$/, type: "italic" },
-  { expr: /(_)(.+)(_)\s$/, type: "italic" },
-  { expr: /(`)(.+)(`)\s$/, type: "code" }
+const textMatchers = [
+  {
+    expr: /(\*{2})(.+)(\*{2})\s$/,
+    attributes: {
+      bold: true
+    }
+  },
+  {
+    expr: /(_{2})(.+)(_{2})\s$/,
+    attributes: {
+      bold: true
+    }
+  },
+  {
+    expr: /(\*)(.+)(\*)\s$/,
+    attributes: {
+      italic: true
+    }
+  },
+  {
+    expr: /(_)(.+)(_)\s$/,
+    attributes: {
+      italic: true
+    }
+  },
+  {
+    expr: /(`)(.+)(`)\s$/,
+    attributes: {
+      code: true
+    }
+  }
 ];
 
-export default function afterInput(change) {
-  formatWithMarkdown(change, { blockMatchers, inlineMatchers });
-}
+const afterInput = createTranslateMarkdown({
+  lineMatchers,
+  textMatchers
+});
+
+export default afterInput;

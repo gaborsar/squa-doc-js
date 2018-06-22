@@ -1,105 +1,90 @@
 import Delta from "quill-delta";
-import { isEqual } from "lodash/fp";
-import Node from "./Node";
-import DocumentEditor from "./DocumentEditor";
+import NodeMixin from "./mixins/Node";
 import ParentMixin from "./mixins/Parent";
-import EditMixin from "./mixins/Edit";
-import cache from "./utils/cache";
+import EditableMixin from "./mixins/Editable";
+import ListIterator from "./iterators/ListIterator";
+import Editor from "./Editor";
+import findPosition from "./traversal/findPosition";
+import createRange from "./traversal/createRange";
+import { createKey } from "./Keys";
+import { isBlockNode } from "./Predicates";
+import { addLength, concatText, concatDelta } from "./Reducers";
 
-function getLength(node) {
-  return node.children.reduce((length, child) => length + child.length, 0);
-}
-
-function getDelta(node) {
-  let delta = new Delta();
-
-  node.children.forEach(child => {
-    delta = delta.concat(child.delta);
-  });
-
-  return delta;
-}
-
-export default class Document extends EditMixin(ParentMixin(Node)) {
-  static create(props = {}) {
-    return new Document(props);
-  }
-
-  constructor(props = {}) {
-    const { schema, key, children = [] } = props;
-
-    super(schema, key);
-
+class Document {
+  constructor({ schema, key = createKey(), children = [] }) {
+    this.schema = schema;
+    this.key = key;
     this.children = children;
-
-    this._length = null;
-    this._delta = null;
   }
 
-  merge(props) {
-    return Document.create({ ...this, ...props });
+  // Getters
+
+  getNodeType() {
+    return "document";
   }
 
-  get isEmpty() {
-    if (this.children.length !== 1) {
+  getLength() {
+    return this.children.reduce(addLength, 0);
+  }
+
+  getText() {
+    return this.children.reduce(concatText, "");
+  }
+
+  getDelta() {
+    return this.children.reduce(concatDelta, new Delta());
+  }
+
+  isPristine() {
+    const { children } = this;
+
+    if (children.length !== 1) {
       return false;
     }
 
-    const child = this.children[0];
+    const child = children[0];
 
-    return child.isEmpty && child.isPristine;
+    return isBlockNode(child) && child.isEmpty() && child.isPristine();
   }
 
-  get length() {
-    return cache(this, "_length", getLength);
+  // Node mixin methods
+
+  merge(props) {
+    return new Document({ ...this, ...props });
   }
 
-  get delta() {
-    return cache(this, "_delta", getDelta);
+  // Editable mixin methods
+
+  iterator() {
+    return new ListIterator(this.children);
   }
 
   edit() {
-    return new DocumentEditor(this);
+    const { schema, key } = this;
+
+    const iterator = this.iterator();
+    const builder = schema.createDocumentBuilder({ key });
+
+    return new Editor(iterator, builder);
   }
+
+  // Parent mixin methods
+
+  findChildAtOffset(offset) {
+    return findPosition(this.children, offset, false);
+  }
+
+  findChildrenAtRange(offset, length) {
+    return createRange(this.children, offset, length);
+  }
+
+  // Own methods
 
   diff(other) {
-    const { children: blocksA } = this;
-    const { children: blocksB } = other;
-
-    let startIndex = 0;
-    let retainLength = 0;
-
-    let { length: endIndexA } = blocksA;
-    let { length: endIndexB } = blocksB;
-
-    while (
-      startIndex < endIndexA &&
-      startIndex < endIndexB &&
-      isEqual(blocksA[startIndex], blocksB[startIndex])
-    ) {
-      retainLength += blocksA[startIndex].length;
-      startIndex++;
-    }
-
-    while (
-      startIndex < endIndexA &&
-      startIndex < endIndexB &&
-      isEqual(blocksA[endIndexA - 1], blocksB[endIndexB - 1])
-    ) {
-      endIndexA--;
-      endIndexB--;
-    }
-
-    let deltaA = new Delta();
-    for (let i = startIndex; i < endIndexA; i++) {
-      deltaA = deltaA.concat(blocksA[i].delta);
-    }
-
-    let deltaB = new Delta();
-    for (let i = startIndex; i < endIndexB; i++) {
-      deltaB = deltaB.concat(blocksB[i].delta);
-    }
-
-    return new Delta().retain(retainLength).concat(deltaA.diff(deltaB));
+    return this.getDelta().diff(other.getDelta());
   }
 }
+
+Object.assign(Document.prototype, NodeMixin, EditableMixin, ParentMixin);
+
+export default Document;

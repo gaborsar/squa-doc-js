@@ -1,7 +1,10 @@
 import Delta from "quill-delta";
-import { EOL } from "../constants";
+import SpecialCharacter from "../model/SpecialCharacter";
 
 const defaultContext = {
+  table: {},
+  row: {},
+  cell: {},
   wrapper: {},
   block: {},
   inline: {}
@@ -11,8 +14,9 @@ export default function parseNode(
   node,
   tokenizeNode,
   tokenizeClassName,
-  context = defaultContext
+  parentContext = defaultContext
 ) {
+  let context = parentContext;
   let delta = new Delta();
 
   if (node.nodeType === Node.TEXT_NODE) {
@@ -23,24 +27,38 @@ export default function parseNode(
   ) {
     let tokens = tokenizeNode(node, context);
 
-    if (node.classList) {
-      for (let i = 0; i < node.classList.length; i++) {
-        const className = node.classList.item(i);
-
-        tokens = tokens.concat(tokenizeClassName(className, context));
+    if (node.classList !== undefined) {
+      for (let i = 0, l = node.classList.length; i < l; i++) {
+        tokens = tokens.concat(
+          tokenizeClassName(node.classList.item(i), context)
+        );
       }
     }
 
+    let isTable = false;
+    let isRow = false;
+    let isCell = false;
     let isBlock = false;
     let isBlockEmbed = false;
     let isInlineEmbed = false;
-
     let embedValue;
 
     for (const token of tokens) {
       const { type, payload } = token;
 
       switch (type) {
+        case "table-node":
+          isTable = true;
+          break;
+
+        case "table-row-node":
+          isRow = true;
+          break;
+
+        case "table-cell-node":
+          isCell = true;
+          break;
+
         case "wrapper-node":
           context = {
             ...context,
@@ -62,14 +80,44 @@ export default function parseNode(
           };
           break;
 
-        case "block-embed":
+        case "block-embed-node":
           isBlockEmbed = true;
           embedValue = payload;
           break;
 
-        case "inline-embed":
+        case "inline-embed-node":
           isInlineEmbed = true;
           embedValue = payload;
+          break;
+
+        case "table-style":
+          context = {
+            ...context,
+            table: {
+              ...context.table,
+              ...payload
+            }
+          };
+          break;
+
+        case "table-row-style":
+          context = {
+            ...context,
+            row: {
+              ...context.row,
+              ...payload
+            }
+          };
+          break;
+
+        case "table-cell-style":
+          context = {
+            ...context,
+            cell: {
+              ...context.cell,
+              ...payload
+            }
+          };
           break;
 
         case "block-style":
@@ -94,6 +142,14 @@ export default function parseNode(
       }
     }
 
+    if (isTable) {
+      delta.insert(SpecialCharacter.TableStart, context.table);
+    } else if (isRow) {
+      delta.insert(SpecialCharacter.TableRowStart, context.row);
+    } else if (isCell) {
+      delta.insert(SpecialCharacter.TableCellStart, context.cell);
+    }
+
     if (isBlockEmbed) {
       delta.insert(embedValue, context.block);
     } else if (isInlineEmbed) {
@@ -104,9 +160,12 @@ export default function parseNode(
           parseNode(child, tokenizeNode, tokenizeClassName, context)
         );
       }
-      if (isBlock) {
-        delta.insert(EOL, context.block);
-      }
+    }
+
+    if (isTable) {
+      delta.insert(SpecialCharacter.TableEnd);
+    } else if (isBlock) {
+      delta.insert(SpecialCharacter.BlockEnd, context.block);
     }
   }
 

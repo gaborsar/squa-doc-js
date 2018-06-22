@@ -1,30 +1,32 @@
 import React, { PureComponent } from "react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faUndo from "@fortawesome/fontawesome-free-solid/faUndo";
-import faRedo from "@fortawesome/fontawesome-free-solid/faRedo";
-import faHeading from "@fortawesome/fontawesome-free-solid/faHeading";
-import faQuoteRight from "@fortawesome/fontawesome-free-solid/faQuoteRight";
-import faCode from "@fortawesome/fontawesome-free-solid/faCode";
-import faListUl from "@fortawesome/fontawesome-free-solid/faListUl";
-import faListOl from "@fortawesome/fontawesome-free-solid/faListOl";
-import faCheckSquare from "@fortawesome/fontawesome-free-solid/faCheckSquare";
-import faAlignLeft from "@fortawesome/fontawesome-free-solid/faAlignLeft";
-import faAlignCenter from "@fortawesome/fontawesome-free-solid/faAlignCenter";
-import faAlignRight from "@fortawesome/fontawesome-free-solid/faAlignRight";
-import faAlignJustify from "@fortawesome/fontawesome-free-solid/faAlignJustify";
-import faIndent from "@fortawesome/fontawesome-free-solid/faIndent";
-import faOutdent from "@fortawesome/fontawesome-free-solid/faOutdent";
-import faBold from "@fortawesome/fontawesome-free-solid/faBold";
-import faItalic from "@fortawesome/fontawesome-free-solid/faItalic";
-import faUnderline from "@fortawesome/fontawesome-free-solid/faUnderline";
-import faStrikethrough from "@fortawesome/fontawesome-free-solid/faStrikethrough";
-import faLink from "@fortawesome/fontawesome-free-solid/faLink";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUndo,
+  faRedo,
+  faHeading,
+  faQuoteRight,
+  faCode,
+  faListUl,
+  faListOl,
+  faCheckSquare,
+  faAlignLeft,
+  faAlignCenter,
+  faAlignRight,
+  faAlignJustify,
+  faIndent,
+  faOutdent,
+  faBold,
+  faItalic,
+  faUnderline,
+  faStrikethrough,
+  faLink
+} from "@fortawesome/free-solid-svg-icons";
+import { indent, outdent } from "squa-doc-js";
 import SimpleButton from "./SimpleButton";
 import BlockTypeButton from "./BlockTypeButton";
 import ToggleButton from "./ToggleButton";
 import ColorMenu from "./ColorMenu";
 import LinkButton from "./LinkButton";
-import { indent, outdent } from "../../../packages/squa-doc-js/src";
 import "./Menu.scss";
 
 export default class Menu extends PureComponent {
@@ -40,20 +42,20 @@ export default class Menu extends PureComponent {
     onChange(change);
   };
 
-  handleBlockFormatClick = attributes => {
+  handleBlockButtonClick = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
-      .formatBlock(attributes)
+      .setBlockAttributes(attributes)
       .save();
     onChange(change);
   };
 
-  handleInlineFormatClick = attributes => {
+  handleInlineButtonClick = attributes => {
     const { value, onChange } = this.props;
     const change = value
       .change()
-      .formatInline(attributes)
+      .setInlineAttributes(attributes)
       .save();
     onChange(change);
   };
@@ -79,66 +81,60 @@ export default class Menu extends PureComponent {
   render() {
     const { value } = this.props;
 
-    const { canUndo, canRedo } = value;
-    const format = value.getFormat();
+    const canUndo = value.canUndo();
+    const canRedo = value.canRedo();
+
+    const attributes = value.getAttributes();
 
     const canIndent =
-      format.type === "unordered-list-item" ||
-      format.type === "ordered-list-item" ||
-      format.type === "checkable";
+      attributes.type === "unordered-list-item" ||
+      attributes.type === "ordered-list-item" ||
+      attributes.type === "checkable";
 
     return (
       <div className="Menu">
-        <SimpleButton
-          format={format}
-          onClick={this.handleUndoClick}
-          disabled={!canUndo}
-        >
+        <SimpleButton onClick={this.handleUndoClick} disabled={!canUndo}>
           <FontAwesomeIcon icon={faUndo} />
         </SimpleButton>
-        <SimpleButton
-          format={format}
-          onClick={this.handleRedoClick}
-          disabled={!canRedo}
-        >
+        <SimpleButton onClick={this.handleRedoClick} disabled={!canRedo}>
           <FontAwesomeIcon icon={faRedo} />
         </SimpleButton>
 
         <span className="Menu-separator" />
 
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="heading-one"
           resetIndent
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faHeading} />1
         </BlockTypeButton>
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="heading-two"
           resetIndent
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faHeading} />2
         </BlockTypeButton>
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="blockquote"
           resetIndent
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faQuoteRight} />
         </BlockTypeButton>
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="code"
           resetIndent
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faCode} />
         </BlockTypeButton>
@@ -146,25 +142,25 @@ export default class Menu extends PureComponent {
         <span className="Menu-separator" />
 
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="unordered-list-item"
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faListUl} />
         </BlockTypeButton>
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="ordered-list-item"
           resetChecked
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faListOl} />
         </BlockTypeButton>
         <BlockTypeButton
-          format={format}
+          attributes={attributes}
           type="checkable"
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faCheckSquare} />
         </BlockTypeButton>
@@ -172,103 +168,101 @@ export default class Menu extends PureComponent {
         <span className="Menu-separator" />
 
         <ToggleButton
-          format={format}
-          type="align"
+          attributes={attributes}
+          name="align"
           value="left"
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faAlignLeft} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="align"
+          attributes={attributes}
+          name="align"
           value="center"
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faAlignCenter} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="align"
+          attributes={attributes}
+          name="align"
           value="right"
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faAlignRight} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="align"
+          attributes={attributes}
+          name="align"
           value="justify"
-          onClick={this.handleBlockFormatClick}
+          onClick={this.handleBlockButtonClick}
         >
           <FontAwesomeIcon icon={faAlignJustify} />
         </ToggleButton>
 
         <span className="Menu-separator" />
 
-        <SimpleButton
-          format={format}
-          onClick={this.handleOutdentClick}
-          disabled={!canIndent}
-        >
+        <SimpleButton onClick={this.handleOutdentClick} disabled={!canIndent}>
           <FontAwesomeIcon icon={faOutdent} />
         </SimpleButton>
-        <SimpleButton
-          format={format}
-          onClick={this.handleIndentClick}
-          disabled={!canIndent}
-        >
+        <SimpleButton onClick={this.handleIndentClick} disabled={!canIndent}>
           <FontAwesomeIcon icon={faIndent} />
         </SimpleButton>
 
         <span className="Menu-separator" />
 
         <ToggleButton
-          format={format}
-          type="bold"
+          attributes={attributes}
+          name="bold"
           value={true}
-          onClick={this.handleInlineFormatClick}
+          onClick={this.handleInlineButtonClick}
         >
           <FontAwesomeIcon icon={faBold} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="italic"
+          attributes={attributes}
+          name="italic"
           value={true}
-          onClick={this.handleInlineFormatClick}
+          onClick={this.handleInlineButtonClick}
         >
           <FontAwesomeIcon icon={faItalic} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="underline"
+          attributes={attributes}
+          name="underline"
           value={true}
-          onClick={this.handleInlineFormatClick}
+          onClick={this.handleInlineButtonClick}
         >
           <FontAwesomeIcon icon={faUnderline} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="strikethrough"
+          attributes={attributes}
+          name="strikethrough"
           value={true}
-          onClick={this.handleInlineFormatClick}
+          onClick={this.handleInlineButtonClick}
         >
           <FontAwesomeIcon icon={faStrikethrough} />
         </ToggleButton>
         <ToggleButton
-          format={format}
-          type="code"
+          attributes={attributes}
+          name="code"
           value={true}
-          onClick={this.handleInlineFormatClick}
+          onClick={this.handleInlineButtonClick}
         >
           <FontAwesomeIcon icon={faCode} />
         </ToggleButton>
 
-        <ColorMenu format={format} onClick={this.handleInlineFormatClick} />
+        <ColorMenu
+          attributes={attributes}
+          onClick={this.handleInlineButtonClick}
+        />
 
         <span className="Menu-separator" />
 
-        <LinkButton format={format} onClick={this.handleInlineFormatClick}>
+        <LinkButton
+          attributes={attributes}
+          onClick={this.handleInlineButtonClick}
+        >
           <FontAwesomeIcon icon={faLink} />
         </LinkButton>
       </div>

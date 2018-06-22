@@ -1,23 +1,31 @@
 import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
+
+import SpecialCharacter from "../model/SpecialCharacter";
+import { isBlockNode, isBlockOrBlockEmbedNode } from "../model/Predicates";
+
 import ErrorBoundary from "./ErrorBoundary";
 import ContentEditable from "./ContentEditable";
 import Document from "./Document";
+
 import getRange from "../dom/getRange";
 import getNativeRange from "../dom/getNativeRange";
 import findBlockParentNode from "../dom/findBlockParentNode";
+
 import parseNode from "../parser/parseNode";
 import parseHTML from "../parser/parseHTML";
+
 import isMobile from "./utils/isMobile";
 import optimizeInsertDelta from "./utils/optimizeInsertDelta";
 import optimizeFragmentDelta from "./utils/optimizeFragmentDelta";
+
 import defaultRenderNode from "../defaults/renderNode";
 import defaultRenderMark from "../defaults/renderMark";
 import defaultOnKeyDown from "../defaults/onKeyDown";
 import defaultTokenizeNode from "../defaults/tokenizeNode";
 import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import defaultAfterInput from "../defaults/afterInput";
-import { EOL, EDITOR_MODE_EDIT, EDITOR_MODE_COMPOSITION } from "../constants";
+
 import "./Editor.scss";
 
 const sink = () => {};
@@ -68,9 +76,8 @@ export default class Editor extends PureComponent {
 
   handleSelect = () => {
     const { value, onChange = sink } = this.props;
-    const { selection: editorSelection } = value;
 
-    if (value.mode === EDITOR_MODE_COMPOSITION) {
+    if (value.isComposing()) {
       return;
     }
 
@@ -96,16 +103,21 @@ export default class Editor extends PureComponent {
       nativeSelection.focusOffset
     );
 
+    const editorSelection = value.getSelection();
+
     if (
-      editorSelection.anchorOffset === editorRange.anchorOffset &&
-      editorSelection.focusOffset === editorRange.focusOffset
+      editorSelection.getAnchorOffset() === editorRange.anchorOffset &&
+      editorSelection.getFocusOffset() === editorRange.focusOffset
     ) {
       return;
     }
 
     const change = value.change();
 
-    change.select(editorRange.anchorOffset, editorRange.focusOffset);
+    change.select(
+      editorRange.anchorOffset,
+      editorRange.focusOffset - editorRange.anchorOffset
+    );
 
     onChange(change);
   };
@@ -116,13 +128,13 @@ export default class Editor extends PureComponent {
     }
 
     const { value } = this.props;
-    const { selection: editorSelection } = value;
-    const { isBackward } = editorSelection;
+
+    const editorSelection = value.getSelection();
 
     const domRange = getNativeRange(
       this.rootNode,
-      editorSelection.anchorOffset,
-      editorSelection.focusOffset
+      editorSelection.getAnchorOffset(),
+      editorSelection.getFocusOffset()
     );
 
     const nativeSelection = window.getSelection();
@@ -130,7 +142,6 @@ export default class Editor extends PureComponent {
     if (!nativeSelection) {
       return;
     }
-
     if (
       domRange.anchorNode === nativeSelection.anchorNode &&
       domRange.anchorOffset === nativeSelection.anchorOffset &&
@@ -158,7 +169,7 @@ export default class Editor extends PureComponent {
     } else {
       const nativeRange = document.createRange();
 
-      if (isBackward) {
+      if (editorSelection.isBackward()) {
         nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
         nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
       } else {
@@ -176,9 +187,7 @@ export default class Editor extends PureComponent {
 
     event.preventDefault();
 
-    const change = value.change().setMode(EDITOR_MODE_EDIT);
-
-    onChange(change);
+    onChange(value.change().stopComposing());
   };
 
   handleCompositionKeyDown = event => {
@@ -191,11 +200,10 @@ export default class Editor extends PureComponent {
 
   handleKeyDownBackspace = (change, event) => {
     const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (isCollapsed) {
+    if (value.getSelection().isCollapsed()) {
       if (event.metaKey) {
         change
           .selectBlockBackward()
@@ -221,11 +229,10 @@ export default class Editor extends PureComponent {
 
   handleKeyDownDelete = (change, event) => {
     const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (isCollapsed) {
+    if (value.getSelection().isCollapsed()) {
       if (event.metaKey) {
         change
           .selectBlockForward()
@@ -251,53 +258,16 @@ export default class Editor extends PureComponent {
 
   handleKeyDownEnter = (change, event) => {
     const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
-    if (!isCollapsed) {
+    if (!value.getSelection().isCollapsed()) {
       change.delete();
     }
 
-    const format = value.getFormat();
-
-    change.insertText(EOL, format).save();
-
-    onChange(change);
-  };
-
-  handleKeyDownLeft = (change, event) => {
-    const { onChange = sink } = this.props;
-
-    if (event.ctrlKey || event.metaKey || event.altKey) {
-      return;
-    }
-
-    event.preventDefault();
-
-    if (event.shiftKey) {
-      change.selectCharacterBackward();
-    } else {
-      change.moveCursorLeft();
-    }
-
-    onChange(change);
-  };
-
-  handleKeyDownRight = (change, event) => {
-    const { onChange = sink } = this.props;
-
-    if (event.ctrlKey || event.metaKey || event.altKey) {
-      return;
-    }
-
-    event.preventDefault();
-
-    if (event.shiftKey) {
-      change.selectCharacterForward();
-    } else {
-      change.moveCursorRight();
-    }
+    change
+      .insertText(SpecialCharacter.BlockEnd, value.getBlockAttributes())
+      .save();
 
     onChange(change);
   };
@@ -325,7 +295,7 @@ export default class Editor extends PureComponent {
   handleKeyDown = event => {
     const { value, onKeyDown = defaultOnKeyDown, onChange = sink } = this.props;
 
-    if (value.mode === EDITOR_MODE_COMPOSITION) {
+    if (value.isComposing()) {
       return this.handleCompositionKeyDown(event);
     }
 
@@ -345,14 +315,6 @@ export default class Editor extends PureComponent {
 
     if (event.key === "Enter") {
       return this.handleKeyDownEnter(change, event);
-    }
-
-    if (event.key === "ArrowLeft") {
-      return this.handleKeyDownLeft(change, event);
-    }
-
-    if (event.key === "ArrowRight") {
-      return this.handleKeyDownRight(change, event);
     }
 
     // undo / redo for Windows
@@ -381,8 +343,6 @@ export default class Editor extends PureComponent {
       tokenizeNode = defaultTokenizeNode,
       tokenizeClassName = defaultTokenizeClassName
     } = this.props;
-    const { value } = change;
-    const { document } = value;
 
     // get DOM details
 
@@ -407,7 +367,10 @@ export default class Editor extends PureComponent {
 
     const delta = parseNode(this.rootNode, tokenizeNode, tokenizeClassName);
 
-    const diff = document.delta.diff(delta);
+    const diff = change
+      .getValue()
+      .toDelta()
+      .diff(delta);
 
     // get the new selection
 
@@ -425,7 +388,10 @@ export default class Editor extends PureComponent {
     change
       .apply(diff)
       .regenerateKey()
-      .select(editorRange.anchorOffset, editorRange.focusOffset)
+      .select(
+        editorRange.anchorOffset,
+        editorRange.focusOffset - editorRange.anchorOffset
+      )
       .save();
   };
 
@@ -434,9 +400,6 @@ export default class Editor extends PureComponent {
       tokenizeNode = defaultTokenizeNode,
       tokenizeClassName = defaultTokenizeClassName
     } = this.props;
-    const { value } = change;
-    const { document, selection, inlineStyleOverride } = value;
-    const { isCollapsed } = selection;
 
     // get DOM details
 
@@ -465,65 +428,75 @@ export default class Editor extends PureComponent {
 
     const delta = parseNode(blockNode, tokenizeNode, tokenizeClassName);
 
-    if (isCollapsed) {
-      const { offset } = selection;
+    const value = change.getValue();
 
-      const pos = document.findPosition(offset);
+    const document = value.getDocument();
+    const selection = value.getSelection();
 
-      if (!pos) {
+    if (selection.isCollapsed()) {
+      const pos = document.findChildAtOffset(
+        selection.getOffset(),
+        isBlockNode
+      );
+
+      if (pos === null) {
         return;
       }
 
-      const { node: blockBefore } = pos;
+      const blockBefore = pos.getNode();
 
       // apply changes the selected block
 
-      const diff = blockBefore.delta.diff(delta);
+      const diff = blockBefore.getDelta().diff(delta);
 
-      if (inlineStyleOverride) {
-        optimizeInsertDelta(diff, inlineStyleOverride);
+      if (value.hasInlineStyleOverride()) {
+        optimizeInsertDelta(diff, value.getInlineStyleOverride());
       }
 
       let blockAfter = blockBefore.apply(diff);
 
-      if (blockBefore.isEmpty) {
+      if (blockBefore.isEmpty()) {
         blockAfter = blockAfter.regenerateKey();
       }
 
-      change.replaceBlock(blockAfter, blockBefore);
+      change.replaceNode(blockAfter, blockBefore);
     } else {
-      const { startOffset, endOffset } = selection;
-
-      const modelRange = document.createRange(startOffset, endOffset);
-
-      const blocks = modelRange.map(el => el.node);
-
       // reset the document key
 
       change.regenerateKey();
+
+      // find the selected blocks
+
+      const modelRange = document.findChildrenAtRange(
+        selection.getOffset(),
+        selection.getLength(),
+        isBlockOrBlockEmbedNode
+      );
+
+      const blocks = modelRange.map(item => item.getNode());
 
       // apply changes the the first selected block
 
       const blockBefore = blocks.shift();
 
-      const diff = blockBefore.delta.diff(delta);
+      const diff = blockBefore.getDelta().diff(delta);
 
-      if (inlineStyleOverride) {
-        optimizeInsertDelta(diff, inlineStyleOverride);
+      if (value.hasInlineStyleOverride()) {
+        optimizeInsertDelta(diff, value.getInlineStyleOverride());
       }
 
       let blockAfter = blockBefore.apply(diff);
 
-      if (blockBefore.isEmpty) {
+      if (blockBefore.isEmpty()) {
         blockAfter = blockAfter.regenerateKey();
       }
 
-      change.replaceBlock(blockAfter, blockBefore);
+      change.replaceNode(blockAfter, blockBefore);
 
       // delete every other selected block
 
       blocks.forEach(block => {
-        change.deleteBlock(block);
+        change.removeNode(block);
       });
     }
 
@@ -535,7 +508,10 @@ export default class Editor extends PureComponent {
       focusOffset
     );
 
-    change.select(editorRange.anchorOffset, editorRange.focusOffset);
+    change.select(
+      editorRange.anchorOffset,
+      editorRange.focusOffset - editorRange.anchorOffset
+    );
 
     change.save("input");
   };
@@ -555,7 +531,7 @@ export default class Editor extends PureComponent {
   handleCompositionStart = () => {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
+    const change = value.change().startComposing();
 
     onChange(change);
   };
@@ -563,7 +539,7 @@ export default class Editor extends PureComponent {
   handleCompositionEnd = () => {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(EDITOR_MODE_EDIT);
+    const change = value.change().stopComposing();
 
     this.afterInput(change);
 
@@ -573,7 +549,7 @@ export default class Editor extends PureComponent {
   handleInput = () => {
     const { value, onChange = sink } = this.props;
 
-    if (value.mode === EDITOR_MODE_COMPOSITION) {
+    if (value.isComposing()) {
       return;
     }
 
@@ -589,7 +565,7 @@ export default class Editor extends PureComponent {
 
     const change = value
       .change()
-      .setMode(EDITOR_MODE_EDIT)
+      .stopComposing()
       .regenerateKey()
       .delete()
       .save();
@@ -600,7 +576,7 @@ export default class Editor extends PureComponent {
   handleCut = () => {
     const { value, onChange = sink } = this.props;
 
-    const change = value.change().setMode(EDITOR_MODE_COMPOSITION);
+    const change = value.change().startComposing();
 
     onChange(change);
 
@@ -609,12 +585,10 @@ export default class Editor extends PureComponent {
 
   handlePasteHTML = (change, event) => {
     const {
-      value,
       tokenizeNode = defaultTokenizeNode,
       tokenizeClassName = defaultTokenizeClassName,
       onChange = sink
     } = this.props;
-    const { selection: { isCollapsed } } = value;
 
     event.preventDefault();
 
@@ -624,7 +598,12 @@ export default class Editor extends PureComponent {
 
     optimizeFragmentDelta(fragment);
 
-    if (!isCollapsed) {
+    if (
+      !change
+        .getValue()
+        .getSelection()
+        .isCollapsed()
+    ) {
       change.delete();
     }
 
@@ -634,20 +613,22 @@ export default class Editor extends PureComponent {
   };
 
   handlePasteText = (change, event) => {
-    const { value, onChange = sink } = this.props;
-    const { selection: { isCollapsed } } = value;
+    const { onChange = sink } = this.props;
 
     event.preventDefault();
 
-    const data = event.clipboardData.getData("text/plain");
+    const value = change.getValue();
 
-    if (!isCollapsed) {
+    if (!value.getSelection().isCollapsed()) {
       change.delete();
     }
 
-    const format = value.getFormat();
-
-    change.insertText(data, format).save();
+    change
+      .insertText(
+        event.clipboardData.getData("text/plain"),
+        value.getInlineAttributes()
+      )
+      .save();
 
     onChange(change);
   };
@@ -676,9 +657,8 @@ export default class Editor extends PureComponent {
 
   renderPlaceholder() {
     const { value, placeholder } = this.props;
-    const { document } = value;
 
-    if (value.mode === EDITOR_MODE_EDIT && placeholder && document.isEmpty) {
+    if (placeholder && value.isEditing() && value.getDocument().isPristine()) {
       return (
         <span
           className="SquaDocJs-placeholder"
@@ -694,12 +674,13 @@ export default class Editor extends PureComponent {
     const {
       disabled = false,
       spellCheck = true,
-      value: { document, selection: { startOffset, endOffset } },
+      value,
       onChange,
       renderNode = defaultRenderNode,
       renderMark = defaultRenderMark
     } = this.props;
     const { isFocused } = this.state;
+    const document = value.getDocument();
     return (
       <div
         className={joinClassNames("SquaDocJs-editor", {
@@ -726,10 +707,8 @@ export default class Editor extends PureComponent {
             onInput={this.handleInput}
           >
             <Document
-              key={document.key}
+              key={document.getKey()}
               node={document}
-              startOffset={startOffset}
-              endOffset={endOffset}
               createChange={this.createChange}
               onChange={onChange}
               renderNode={renderNode}

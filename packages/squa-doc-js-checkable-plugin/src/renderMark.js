@@ -1,10 +1,10 @@
 export default function renderMark(mark) {
-  if (mark.type === "type" && mark.value === "checkable") {
+  if (mark.getName() === "type" && mark.getValue() === "checkable") {
     return {
       className: "Checkable"
     };
   }
-  if (mark.type === "checked") {
+  if (mark.getName() === "checked") {
     return {
       className: "Checkable-checked"
     };

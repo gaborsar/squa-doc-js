@@ -1,23 +1,28 @@
+const tableCellMarks = ["colspan", "rowspan"];
 const blockMarks = ["type", "align", "indent"];
 
 const inlineMarks = [
-  "link",
   "anchor",
+  "link",
+  "color",
   "bold",
   "italic",
   "underline",
   "strikethrough",
-  "code",
-  "color"
+  "code"
 ];
 
 const schema = {
-  isBlockMark(markType) {
-    return blockMarks.indexOf(markType) !== -1;
+  isTableCellMark(name) {
+    return tableCellMarks.indexOf(name) !== -1;
   },
 
-  isInlineMark(markType) {
-    return inlineMarks.indexOf(markType) !== -1;
+  isBlockMark(name) {
+    return blockMarks.indexOf(name) !== -1;
+  },
+
+  isTextMark(name) {
+    return inlineMarks.indexOf(name) !== -1;
   }
 };
 

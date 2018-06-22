@@ -1,110 +1,66 @@
-import Delta from "quill-delta";
-import { random } from "lodash/fp";
 import Schema from "../Schema";
-import DocumentBuilder from "../DocumentBuilder";
 import combineSchemas from "../../plugins/combineSchemas";
 import defaultSchema from "../../defaults/schema";
-import blockImageSchema from "../../../../squa-doc-js-block-image-plugin/src/schema";
-import inlineImageSchema from "../../../../squa-doc-js-inline-image-plugin/src/schema";
+import { randomDocumentDelta } from "../__gens__/randomDelta";
 
-const insertInlineOperations = [
-  { insert: "aaa" },
-  { insert: "aaa", attributes: { link: "http://foo.bar" } },
-  { insert: "aaa", attributes: { anchor: "foo" } },
-  { insert: "aaa", attributes: { bold: true } },
-  { insert: "aaa", attributes: { italic: true } },
-  { insert: "aaa", attributes: { underline: true } },
-  { insert: "aaa", attributes: { code: true } },
-  { insert: { "inline-image": "a" } },
-  { insert: { "inline-image": "a" }, attributes: { link: "foo" } },
-  { insert: { "inline-image": "a" }, attributes: { alt: "foo" } }
-];
-
-const insertBlockOperations = [
-  { insert: "\n" },
-  { insert: "\n", attributes: { type: "foo" } },
-  { insert: "\n", attributes: { align: "left" } },
-  { insert: "\n", attributes: { indent: 1 } }
-];
-
-const insertBlockEmbedOperations = [
-  { insert: { "block-image": "a" } },
-  { insert: { "block-image": "a" }, attributes: { align: "left" } },
-  { insert: { "block-image": "a" }, attributes: { caption: "foo" } },
-  { insert: { "block-image": "a" }, attributes: { alt: "foo" } }
-];
-
-function randomElement(list) {
-  return list[random(0, list.length - 1)];
-}
-
-function randomDelta() {
-  const delta = new Delta();
-  for (let i = 0; i < random(0, 100); i++) {
-    for (let j = 0; j < random(0, 10); j++) {
-      for (let k = 0; k < random(0, 10); k++) {
-        delta.push(randomElement(insertInlineOperations));
-      }
-      delta.push(randomElement(insertBlockOperations));
-    }
-    for (let j = 0; j < random(0, 10); j++) {
-      delta.push(randomElement(insertBlockEmbedOperations));
-    }
+const customSchema = {
+  isBlockEmbed(name) {
+    return name === "block-embed";
+  },
+  isInlineEmbed(name) {
+    return name === "inline-embed";
+  },
+  isTableMark(name) {
+    return name === "table-mark";
+  },
+  isTableRowMark(name) {
+    return name === "table-row-mark";
+  },
+  isTableCellMark(name) {
+    return name === "table-cell-mark";
+  },
+  isBlockEmbedMark(embedName, markName) {
+    return embedName === "block-embed" && markName === "block-embed-mark";
+  },
+  isInlineEmbedMark(embedName, markName) {
+    return embedName === "inline-embed" && markName === "inline-embed-mark";
   }
-  delta.insert("\n");
-  return delta;
-}
+};
 
-function randomDocument() {
-  const delta = randomDelta();
+const schema = new Schema(combineSchemas([defaultSchema, customSchema]));
 
-  const schema = new Schema(
-    combineSchemas([defaultSchema, blockImageSchema, inlineImageSchema])
-  );
-
-  const builder = new DocumentBuilder(schema);
-
+function createDocument(delta) {
+  const builder = schema.createDocumentBuilder();
   delta.forEach(op => {
     builder.insert(op.insert, op.attributes);
   });
-
   return builder.build();
 }
 
 describe("Document", () => {
-  test("apply()", () => {
+  test("create a document from a delta", () => {
     for (let i = 0; i < 100; i++) {
-      const initialDelta = randomDelta();
-      const eventualDelta = randomDelta();
-      const changeDelta = initialDelta.diff(eventualDelta);
-
-      const schema = new Schema(
-        combineSchemas([defaultSchema, blockImageSchema, inlineImageSchema])
-      );
-
-      const builder = new DocumentBuilder(schema);
-      initialDelta.forEach(op => {
-        builder.insert(op.insert, op.attributes);
-      });
-
-      const document = builder.build().apply(changeDelta);
-      const { delta: documentDelta } = document;
-
-      expect(documentDelta).toEqual(eventualDelta);
+      const delta = randomDocumentDelta();
+      const document = createDocument(delta);
+      expect(document.getDelta()).toEqual(delta);
     }
   });
 
-  test("diff()", () => {
+  test("apply a delta to a document", () => {
     for (let i = 0; i < 100; i++) {
-      const initialDocument = randomDocument();
-      const eventualDocument = randomDocument();
+      const deltaA = randomDocumentDelta();
+      const deltaB = randomDocumentDelta();
+      const document = createDocument(deltaA).apply(deltaA.diff(deltaB));
+      expect(document.getDelta()).toEqual(deltaB);
+    }
+  });
 
-      const changeDelta = initialDocument.diff(eventualDocument);
-
-      const { delta: actualDelta } = initialDocument.apply(changeDelta);
-      const { delta: expectedDelta } = eventualDocument;
-
-      expect(actualDelta).toEqual(expectedDelta);
+  test("get the diff of two documents", () => {
+    for (let i = 0; i < 100; i++) {
+      const documentA = createDocument(randomDocumentDelta());
+      const documentB = createDocument(randomDocumentDelta());
+      const documentC = documentA.apply(documentA.diff(documentB));
+      expect(documentB.getDelta()).toEqual(documentC.getDelta());
     }
   });
 });

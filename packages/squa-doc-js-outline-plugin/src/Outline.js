@@ -4,18 +4,24 @@ import "./Outline.scss";
 
 export default class Outline extends PureComponent {
   render() {
-    const { value: { document: { children: blocks } } } = this.props;
     return (
       <div className="Outline">
-        {blocks
-          .filter(block => block.type && block.type.startsWith("heading-"))
-          .map(block => (
+        {this.props.value
+          .getDocument()
+          .getChildren()
+          .filter(
+            node =>
+              node.getNodeType() === "block" &&
+              node.hasAttribute("type") &&
+              node.getAttribute("type").startsWith("heading-")
+          )
+          .map(node => (
             <a
-              key={block.key}
-              className={`Outline-${block.type}`}
-              href={`#${createId(block.text)}`}
+              key={node.getKey()}
+              className={`Outline-${node.getAttribute("type")}`}
+              href={`#${createId(node.getText())}`}
             >
-              {block.text}
+              {node.getText()}
             </a>
           ))}
       </div>

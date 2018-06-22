@@ -1,128 +1,71 @@
 export default class Selection {
-  static create(props = {}) {
-    return new Selection(props);
-  }
-
-  constructor(props = {}) {
-    const { anchorOffset = 0, focusOffset = 0 } = props;
+  constructor({ anchorOffset = 0, focusOffset = 0 } = {}) {
     this.anchorOffset = anchorOffset;
     this.focusOffset = focusOffset;
   }
 
   merge(props) {
-    return Selection.create({ ...this, ...props });
+    return new Selection({ ...this, ...props });
   }
 
-  get isCollapsed() {
-    return this.focusOffset === this.anchorOffset;
+  // Getters
+
+  getAnchorOffset() {
+    return this.anchorOffset;
   }
 
-  get isBackward() {
-    return this.focusOffset < this.anchorOffset;
+  getFocusOffset() {
+    return this.focusOffset;
   }
 
-  get startOffset() {
-    return this.isBackward ? this.focusOffset : this.anchorOffset;
+  isCollapsed() {
+    return this.anchorOffset === this.focusOffset;
   }
 
-  get endOffset() {
-    return this.isBackward ? this.anchorOffset : this.focusOffset;
+  isBackward() {
+    return this.anchorOffset > this.focusOffset;
   }
 
-  get offset() {
-    return this.startOffset;
+  getOffset() {
+    return Math.min(this.anchorOffset, this.focusOffset);
   }
 
-  get length() {
-    return this.endOffset - this.startOffset;
+  getLength() {
+    return Math.abs(this.focusOffset - this.anchorOffset);
   }
 
-  setAnchorOffset(anchorOffset = 0) {
+  // Setters
+
+  setAnchorOffset(anchorOffset) {
     return this.merge({ anchorOffset });
   }
 
-  setFocusOffset(focusOffset = 0) {
+  setFocusOffset(focusOffset) {
     return this.merge({ focusOffset });
   }
+
+  // Transformations
 
   collapse() {
     return this.setFocusOffset(this.anchorOffset);
   }
 
-  collapseToStart() {
-    return this.setFocusOffset(this.anchorOffset);
-  }
-
-  collapseToEnd() {
-    return this.setAnchorOffset(this.focusOffset);
-  }
-
   collapseToLeft() {
-    return this.isBackward ? this.collapseToEnd() : this.collapseToStart();
+    return this.isBackward()
+      ? this.setAnchorOffset(this.focusOffset)
+      : this.setFocusOffset(this.anchorOffset);
   }
 
   collapseToRight() {
-    return this.isBackward ? this.collapseToStart() : this.collapseToEnd();
-  }
-
-  insertAt(offset, length) {
-    let selection = this;
-    const { anchorOffset, focusOffset } = selection;
-
-    if (offset <= anchorOffset) {
-      selection = selection.setAnchorOffset(anchorOffset + length);
-    }
-
-    if (offset <= focusOffset) {
-      selection = selection.setFocusOffset(focusOffset + length);
-    }
-
-    return selection;
-  }
-
-  deleteAt(offset, length) {
-    let selection = this;
-    const { anchorOffset, focusOffset } = selection;
-
-    if (offset < anchorOffset) {
-      if (offset + length <= anchorOffset) {
-        selection = selection.setAnchorOffset(anchorOffset - length);
-      } else {
-        selection = selection.setAnchorOffset(offset);
-      }
-    }
-
-    if (offset < focusOffset) {
-      if (offset + length <= focusOffset) {
-        selection = selection.setFocusOffset(focusOffset - length);
-      } else {
-        selection = selection.setFocusOffset(offset);
-      }
-    }
-
-    return selection;
+    return this.isBackward()
+      ? this.setFocusOffset(this.anchorOffset)
+      : this.setAnchorOffset(this.focusOffset);
   }
 
   apply(delta) {
-    let selection = this;
-    let offset = 0;
-
-    delta.forEach(op => {
-      if (typeof op.retain === "number") {
-        offset += op.retain;
-      } else if (typeof op.insert === "string") {
-        const { insert: { length } } = op;
-        selection = selection.insertAt(offset, length);
-        offset += length;
-      } else if (typeof op.insert === "object") {
-        const length = 1;
-        selection = selection.insertAt(offset, length);
-        offset += length;
-      } else if (typeof op.delete === "number") {
-        selection = selection.deleteAt(offset, op.delete);
-      }
+    return this.merge({
+      anchorOffset: delta.transformPosition(this.anchorOffset),
+      focusOffset: delta.transformPosition(this.focusOffset)
     });
-
-    return selection;
   }
 }

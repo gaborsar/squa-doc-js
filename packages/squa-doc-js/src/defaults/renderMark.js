@@ -1,18 +1,18 @@
 export default function renderMark(mark) {
-  switch (mark.type) {
+  switch (mark.getName()) {
     case "align":
     case "indent":
     case "anchor":
     case "color":
       return {
-        className: `SquaDocJs-${mark.type}-${mark.value}`
+        className: `SquaDocJs-${mark.getName()}-${mark.getValue()}`
       };
 
     case "link":
       return {
         component: "a",
         props: {
-          href: mark.value
+          href: mark.getValue()
         }
       };
 

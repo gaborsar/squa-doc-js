@@ -3,15 +3,12 @@ import {
   Value,
   Editor,
   combinePlugins,
-  defaultPlugin
-} from "../../../packages/squa-doc-js/src";
-import { blockImagePlugin } from "../../../packages/squa-doc-js-block-image-plugin/src";
-import { inlineImagePlugin } from "../../../packages/squa-doc-js-inline-image-plugin/src";
-import { checkablePlugin } from "../../../packages/squa-doc-js-checkable-plugin/src";
-import {
-  outlinePlugin,
-  Outline
-} from "../../../packages/squa-doc-js-outline-plugin/src";
+  Plugin as DefaultPlugin
+} from "squa-doc-js";
+import { Plugin as BlockImagePlugin } from "squa-doc-js-block-image-plugin";
+import { Plugin as InlineImagePlugin } from "squa-doc-js-inline-image-plugin";
+import { Plugin as CheckablePlugin } from "squa-doc-js-checkable-plugin";
+import { Plugin as OutlinePlugin, Outline } from "squa-doc-js-outline-plugin";
 import Menu from "./Menu";
 
 const {
@@ -23,11 +20,11 @@ const {
   onKeyDown,
   afterInput
 } = combinePlugins([
-  blockImagePlugin,
-  inlineImagePlugin,
-  checkablePlugin,
-  outlinePlugin,
-  defaultPlugin
+  BlockImagePlugin,
+  InlineImagePlugin,
+  CheckablePlugin,
+  OutlinePlugin,
+  DefaultPlugin
 ]);
 
 export default class App extends PureComponent {
@@ -37,7 +34,7 @@ export default class App extends PureComponent {
     this.state = {
       value: Value.fromDelta({
         schema,
-        contents: initialContents
+        delta: initialContents
       })
     };
   }

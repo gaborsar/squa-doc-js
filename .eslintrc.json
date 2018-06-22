@@ -15,7 +15,7 @@
     },
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": ["react", "prettier"],
   "globals": {
     "jest": true,
     "describe": true,
@@ -30,10 +30,13 @@
     "eqeqeq": "error",
     "linebreak-style": ["error", "unix"],
     "no-console": ["error", { "allow": ["wran", "error"] }],
+    "no-control-regex": "off",
+    "no-param-reassign": "error",
     "no-shadow": "error",
     "no-unused-vars": "error",
     "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-template": "error",
+    "prettier/prettier": "error",
     "radix": "error",
     "react/prop-types": "off"
   }

@@ -1,12 +1,12 @@
 import createId from "./createId";
 
 export default function renderNode(node) {
-  switch (node.type) {
+  switch (node.getAttribute("type")) {
     case "heading-one":
       return {
         component: "h1",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
 
@@ -14,7 +14,7 @@ export default function renderNode(node) {
       return {
         component: "h2",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
 
@@ -22,7 +22,7 @@ export default function renderNode(node) {
       return {
         component: "h3",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
 
@@ -30,7 +30,7 @@ export default function renderNode(node) {
       return {
         component: "h4",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
 
@@ -38,7 +38,7 @@ export default function renderNode(node) {
       return {
         component: "h5",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
 
@@ -46,7 +46,7 @@ export default function renderNode(node) {
       return {
         component: "h6",
         props: {
-          id: createId(node.text)
+          id: createId(node.getText())
         }
       };
   }

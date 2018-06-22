@@ -1,15 +1,17 @@
+import { isEqual } from "lodash";
+
 export default class Pool {
-  constructor() {
-    this.values = [];
+  constructor(items = []) {
+    this.items = items;
   }
 
-  recycle(value) {
-    for (const pooled of this.values) {
-      if (pooled.equals(value)) {
-        return pooled;
+  recycle(item) {
+    for (const pooledItem of this.items) {
+      if (isEqual(pooledItem, item)) {
+        return pooledItem;
       }
     }
-    this.values.push(value);
-    return value;
+    this.items.push(item);
+    return item;
   }
 }

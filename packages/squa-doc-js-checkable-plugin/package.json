@@ -1,7 +1,7 @@
 {
   "name": "squa-doc-js-checkable-plugin",
-  "version": "0.4.5",
-  "description": "Checkable list plugin for SquaEditor",
+  "version": "0.5.0",
+  "description": "Checkable list plugin for SquaDoc.js",
   "author": "Gabor Sar",
   "license": "GNU LGPLv3",
   "main": "lib/index.js",
@@ -11,11 +11,13 @@
   },
   "keywords": ["rich", "text", "editor"],
   "dependencies": {
-    "@fortawesome/fontawesome": "1.1.5",
-    "@fortawesome/fontawesome-free-regular": "5.0.10",
-    "@fortawesome/fontawesome-free-solid": "5.0.10",
-    "@fortawesome/react-fontawesome": "0.0.18",
-    "react-dom": "16.3.1",
-    "react": "16.3.1"
+    "@fortawesome/fontawesome": "1.1.8",
+    "@fortawesome/fontawesome-svg-core": "^1.2.0",
+    "@fortawesome/free-solid-svg-icons": "^5.1.0",
+    "@fortawesome/react-fontawesome": "0.1.0"
+  },
+  "peerDependencies": {
+    "react-dom": "16.4.1",
+    "react": "16.4.1"
   }
 }

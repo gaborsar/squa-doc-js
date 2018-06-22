@@ -1,5 +1,5 @@
 export default function combineHooks(hooks) {
   return (...args) => {
-    hooks.forEach(hook => hook(...args));
+    return hooks.forEach(hook => hook(...args));
   };
 }

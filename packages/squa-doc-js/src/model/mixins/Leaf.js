@@ -1,8 +1,11 @@
-const LeafMixin = superclass =>
-  class extends superclass {
-    setValue(value) {
-      return this.merge({ value });
-    }
-  };
+const LeafMixin = {
+  getValue() {
+    return this.value;
+  },
+
+  setValue(value) {
+    return this.merge({ value });
+  }
+};
 
 export default LeafMixin;

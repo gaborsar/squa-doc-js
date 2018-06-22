@@ -3,46 +3,32 @@ import classNames from "classnames";
 
 export default class BlockTypeButton extends PureComponent {
   handleMouseDown = event => {
-    const { format, type, resetIndent, resetChecked, onClick } = this.props;
-
+    const { attributes, type, resetIndent, resetChecked, onClick } = this.props;
     event.preventDefault();
-
-    let attributes;
-
-    if (format.type === type) {
-      attributes = {
-        type: null,
-        indent: null,
-        checked: null
-      };
-    } else {
-      attributes = { type };
-
-      if (resetIndent) {
-        attributes = {
-          ...attributes,
-          indent: null
-        };
-      }
-
+    if (attributes.type === type) {
+      onClick({ type: null, indent: null, checked: null });
+    } else if (resetIndent) {
       if (resetChecked) {
-        attributes = {
-          ...attributes,
-          checked: null
-        };
+        onClick({ type, indent: null, checked: null });
+      } else {
+        onClick({ type, indent: null });
+      }
+    } else {
+      if (resetChecked) {
+        onClick({ type, checked: null });
+      } else {
+        onClick({ type });
       }
     }
-
-    onClick(attributes);
   };
 
   render() {
-    const { format, type, disabled, children } = this.props;
+    const { attributes, type, disabled, children } = this.props;
     return (
       <button
         type="button"
         className={classNames("Menu-button", {
-          "Menu-button-active": format.type === type
+          "Menu-button-active": attributes.type === type
         })}
         onMouseDown={this.handleMouseDown}
         disabled={disabled}

@@ -1,14 +1,18 @@
 const methodNames = [
   "isBlockEmbed",
   "isInlineEmbed",
+  "isTableMark",
+  "isTableRowMark",
+  "isTableCellMark",
   "isBlockMark",
-  "isInlineMark",
-  "isEmbedMark"
+  "isBlockEmbedMark",
+  "isTextMark",
+  "isInlineEmbedMark"
 ];
 
-function combineMethods(methods) {
-  return (...args) => methods.some(method => method(...args));
-}
+const combineMethods = methods => (...args) => {
+  return methods.some(method => method(...args));
+};
 
 export default function combineSchemas(schemas) {
   return methodNames.reduce((schema, name) => {

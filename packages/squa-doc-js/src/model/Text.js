@@ -1,63 +1,62 @@
-import Style from "./Style";
-import Node from "./Node";
-import LeafMixin from "./mixins/Leaf";
+import Delta from "quill-delta";
+import NodeMixin from "./mixins/Node";
 import FormatMixin from "./mixins/Format";
+import LeafMixin from "./mixins/Leaf";
+import TextIterator from "./iterators/TextIterator";
+import Style from "./Style";
+import { createKey } from "./Keys";
 
-export default class Text extends FormatMixin(LeafMixin(Node)) {
-  static create(props = {}) {
-    return new Text(props);
-  }
-
-  constructor(props = {}) {
-    const { schema, key, style = Style.create(), value = "" } = props;
-    super(schema, key);
+class Text {
+  constructor({ schema, key = createKey(), style = Style.create(), value }) {
+    this.schema = schema;
+    this.key = key;
     this.style = style;
     this.value = value;
   }
 
-  merge(props) {
-    return Text.create({ ...this, ...props });
+  // Getters
+
+  getNodeType() {
+    return "text";
   }
 
-  get isEmbed() {
-    return false;
-  }
-
-  get isBlock() {
-    return false;
-  }
-
-  get isInline() {
-    return true;
-  }
-
-  get length() {
+  getLength() {
     return this.value.length;
   }
 
-  get text() {
+  getText() {
     return this.value;
   }
 
-  format(attributes) {
-    return this.setStyle(
-      this.style.update(attributes, type => this.schema.isInlineMark(type))
-    );
+  getDelta() {
+    return new Delta().insert(this.value, this.getAttributes());
   }
 
-  slice(startOffset = 0, endOffset = Infinity) {
-    let node = this;
+  // Node mixin methods
 
-    if (endOffset < node.length) {
-      node = node.regenerateKey();
-    }
-
-    node = node.setValue(node.value.slice(startOffset, endOffset));
-
-    return node;
+  merge(props) {
+    return new Text({ ...this, ...props });
   }
 
-  concat(other) {
-    return this.setValue(this.value + other.value);
+  // Editable mixin methods (required by Document and Block)
+
+  iterator() {
+    return new TextIterator(this);
+  }
+
+  // Format mixin methods
+
+  isValidMark(name) {
+    return this.schema.isTextMark(name);
+  }
+
+  // Own methods
+
+  slice(start, end) {
+    return this.regenerateKey().setValue(this.value.slice(start, end));
   }
 }
+
+Object.assign(Text.prototype, NodeMixin, FormatMixin, LeafMixin);
+
+export default Text;

@@ -1,79 +1,60 @@
 import Delta from "quill-delta";
+import SpecialCharacter from "./SpecialCharacter";
 import Schema from "./Schema";
-import Document from "./Document";
-import DocumentBuilder from "./DocumentBuilder";
 import Selection from "./Selection";
 import Change from "./Change";
+import List from "./List";
 import parseHTML from "../parser/parseHTML";
 import defaultSchema from "../defaults/schema";
-import { EOL, EDITOR_MODE_EDIT } from "../constants";
+import { isBlockOrBlockEmbedNode, isTextOrInlineEmbedNode } from "./Predicates";
 
 export default class Value {
-  static create(props = {}) {
-    return new Value(props);
-  }
+  static fromDelta({ schema = defaultSchema, delta }) {
+    const builder = new Schema(schema).createDocumentBuilder();
 
-  static fromDelta(props = {}) {
-    const { schema = defaultSchema, contents } = props;
-
-    const builder = new DocumentBuilder(new Schema(schema));
-
-    contents.forEach(op => {
+    delta.forEach(op => {
       builder.insert(op.insert, op.attributes);
     });
 
-    const document = builder.build();
-
-    return Value.create({ document });
-  }
-
-  static fromJSON(props = {}) {
-    const { schema = defaultSchema, contents } = props;
-
-    const delta = new Delta(contents);
-
-    return Value.fromDelta({
-      schema,
-      contents: delta
+    return new Value({
+      document: builder.build()
     });
   }
 
-  static fromHTML(props = {}) {
-    const {
-      schema = defaultSchema,
-      contents,
-      tokenizeNode,
-      tokenizeClassName
-    } = props;
-
-    const delta = parseHTML(contents, tokenizeNode, tokenizeClassName);
-
+  static fromJSON({ schema = defaultSchema, contents }) {
     return Value.fromDelta({
       schema,
-      contents: delta
+      delta: new Delta(contents)
     });
   }
 
-  static createEmpty(props = {}) {
-    const { schema = defaultSchema } = props;
-
-    const delta = new Delta().insert(EOL);
-
+  static fromHTML({
+    schema = defaultSchema,
+    contents,
+    tokenizeNode,
+    tokenizeClassName
+  }) {
     return Value.fromDelta({
       schema,
-      contents: delta
+      delta: parseHTML(contents, tokenizeNode, tokenizeClassName)
     });
   }
 
-  constructor(props = {}) {
-    const {
-      mode = EDITOR_MODE_EDIT,
-      document = Document.create(),
-      selection = Selection.create(),
-      undoStack = [],
-      redoStack = [],
-      inlineStyleOverride = null
-    } = props;
+  static createEmpty({ schema = defaultSchema } = {}) {
+    return Value.fromDelta({
+      schema,
+      delta: new Delta().insert(SpecialCharacter.BlockEnd)
+    });
+  }
+
+  constructor({
+    mode = "edit",
+    document,
+    selection = new Selection(),
+    undoStack = new List(),
+    redoStack = new List(),
+    inlineStyleOverride = null
+  }) {
     this.mode = mode;
     this.document = document;
     this.selection = selection;
@@ -83,56 +64,74 @@ export default class Value {
   }
 
   merge(props) {
-    return Value.create({ ...this, ...props });
+    return new Value({ ...this, ...props });
   }
 
-  get canUndo() {
-    return !!this.undoStack.length;
+  // Getters
+
+  getMode() {
+    return this.mode;
   }
 
-  get canRedo() {
-    return !!this.redoStack.length;
+  getDocument() {
+    return this.document;
   }
 
-  get hasInlineStyleOverride() {
-    return !!this.inlineStyleOverride;
+  getSelection() {
+    return this.selection;
   }
 
-  get delta() {
-    return this.document.delta;
+  getUndoStack() {
+    return this.undoStack;
   }
 
-  get contents() {
-    return this.delta;
+  getRedoStack() {
+    return this.redoStack;
   }
 
-  change() {
-    return new Change(this);
+  getInlineStyleOverride() {
+    return this.inlineStyleOverride;
   }
 
-  setDocument(document = Document.create()) {
-    return this.merge({
-      document,
-      inlineStyleOverride: null
-    });
+  isComposing() {
+    return this.mode === "compose";
   }
 
-  setSelection(selection = Selection.create()) {
-    return this.merge({
-      selection,
-      inlineStyleOverride: null
-    });
+  isEditing() {
+    return this.mode === "edit";
   }
 
-  setMode(mode = EDITOR_MODE_EDIT) {
+  canUndo() {
+    return !this.undoStack.isEmpty();
+  }
+
+  canRedo() {
+    return !this.redoStack.isEmpty();
+  }
+
+  hasInlineStyleOverride() {
+    return this.inlineStyleOverride !== null;
+  }
+
+  // Setters
+
+  setMode(mode) {
     return this.merge({ mode });
   }
 
-  setUndoStack(undoStack = []) {
+  setDocument(document) {
+    return this.merge({ document });
+  }
+
+  setSelection(selection) {
+    return this.merge({ selection });
+  }
+
+  setUndoStack(undoStack) {
     return this.merge({ undoStack });
   }
 
-  setRedoStack(redoStack = []) {
+  setRedoStack(redoStack) {
     return this.merge({ redoStack });
   }
 
@@ -140,175 +139,56 @@ export default class Value {
     return this.merge({ inlineStyleOverride });
   }
 
-  getSelectedBlocks() {
-    const { document, selection } = this;
-    const { isCollapsed } = selection;
+  // Coversions
 
-    const blocks = [];
-
-    if (isCollapsed) {
-      const { offset } = selection;
-
-      const pos = document.findPosition(offset);
-
-      if (pos) {
-        blocks.push(pos.node);
-      }
-    } else {
-      const { startOffset, endOffset } = selection;
-
-      const range = document.createRange(startOffset, endOffset);
-
-      range.forEach(el => {
-        blocks.push(el.node);
-      });
-    }
-
-    return blocks;
+  toDelta() {
+    return this.document.getDelta();
   }
 
-  getSelectedInlines() {
-    const { document, selection } = this;
-    const { isCollapsed } = selection;
-
-    const inlines = [];
-
-    if (isCollapsed) {
-      const { offset } = selection;
-
-      const blockPos = document.findPosition(offset);
-
-      if (blockPos) {
-        const { node: block } = blockPos;
-
-        if (!block.isEmbed) {
-          const { offset: blockOffset } = blockPos;
-
-          const inlinePos = block.findPosition(blockOffset, true);
-
-          if (inlinePos) {
-            inlines.push(inlinePos.node);
-          }
-        }
-      }
-    } else {
-      const { startOffset, endOffset } = selection;
-
-      const blockRange = document.createRange(startOffset, endOffset);
-
-      blockRange.forEach(blockEl => {
-        const { node: block } = blockEl;
-
-        if (!block.isEmbed) {
-          const {
-            startOffset: blockStartOffset,
-            endOffset: blockEndOffset
-          } = blockEl;
-
-          const inlineRange = block.createRange(
-            blockStartOffset,
-            blockEndOffset
-          );
-
-          inlineRange.forEach(inlineEl => {
-            inlines.push(inlineEl.node);
-          });
-        }
-      });
-    }
-
-    return inlines;
+  toJSON() {
+    return this.document.getDelta().ops;
   }
 
-  getFormat() {
+  change() {
+    return new Change(this);
+  }
+
+  getBlockAttributes() {
+    const { document, selection } = this;
+
+    return selection.isCollapsed()
+      ? document.getAttributesAtOffset(
+          selection.getOffset(),
+          isBlockOrBlockEmbedNode
+        )
+      : document.getAttributesAtRange(
+          selection.getOffset(),
+          selection.getLength(),
+          isBlockOrBlockEmbedNode
+        );
+  }
+
+  getInlineAttributes() {
     const { document, selection, inlineStyleOverride } = this;
-    const { isCollapsed } = selection;
 
-    let attributes = {};
+    return selection.isCollapsed()
+      ? document.getAttributesAtOffset(
+          selection.getOffset(),
+          isTextOrInlineEmbedNode,
+          inlineStyleOverride
+        )
+      : document.getAttributesAtRange(
+          selection.getOffset(),
+          selection.getLength(),
+          isTextOrInlineEmbedNode,
+          inlineStyleOverride
+        );
+  }
 
-    if (isCollapsed) {
-      const { offset } = selection;
-
-      const blockPos = document.findPosition(offset);
-
-      if (blockPos) {
-        const { node: block, offset: blockOffset } = blockPos;
-
-        attributes = { ...attributes, ...block.getFormat() };
-
-        if (!block.isEmbed) {
-          const inlinePos = block.findPosition(blockOffset, true);
-
-          if (inlinePos) {
-            attributes = {
-              ...attributes,
-              ...inlinePos.node.getFormat()
-            };
-          }
-        }
-      }
-    } else {
-      const { startOffset, endOffset } = selection;
-
-      const blockStyles = [];
-      const inlineStyles = [];
-
-      const blockRange = document.createRange(startOffset, endOffset);
-
-      blockRange.forEach(blockEl => {
-        const { node: block } = blockEl;
-
-        blockStyles.push(block.style);
-
-        if (!block.isEmbed) {
-          const {
-            startOffset: blockStartOffset,
-            endOffset: blockEndOffset
-          } = blockEl;
-
-          const inlineRange = block.createRange(
-            blockStartOffset,
-            blockEndOffset
-          );
-
-          inlineRange.forEach(inlineEl => {
-            inlineStyles.push(inlineEl.node.style);
-          });
-        }
-      });
-
-      if (blockStyles.length !== 0) {
-        let blockStyle = blockStyles.shift();
-
-        blockStyles.forEach(currentStyle => {
-          blockStyle = blockStyle.intersect(currentStyle);
-        });
-
-        attributes = {
-          ...attributes,
-          ...blockStyle.toObject()
-        };
-      }
-
-      if (inlineStyles.length !== 0) {
-        let inlineStyle = inlineStyles.shift();
-
-        inlineStyles.forEach(currentStyle => {
-          inlineStyle = inlineStyle.intersect(currentStyle);
-        });
-
-        attributes = {
-          ...attributes,
-          ...inlineStyle.toObject()
-        };
-      }
-    }
-
-    attributes = {
-      ...attributes,
-      ...inlineStyleOverride
+  getAttributes() {
+    return {
+      ...this.getBlockAttributes(),
+      ...this.getInlineAttributes()
     };
-
-    return attributes;
   }
 }
