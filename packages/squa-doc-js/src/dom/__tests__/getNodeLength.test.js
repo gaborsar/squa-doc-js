@@ -19,6 +19,39 @@ describe("getNodeLength()", () => {
     expect(length).toBe(0);
   });
 
+  test("table node", () => {
+    const table = document.createElement("div");
+    table.setAttribute("data-table", "true");
+
+    const text = document.createTextNode("aaa");
+    table.appendChild(text);
+
+    const length = getNodeLength(table);
+    expect(length).toBe(5);
+  });
+
+  test("table row node", () => {
+    const row = document.createElement("div");
+    row.setAttribute("data-table-row", "true");
+
+    const text = document.createTextNode("aaa");
+    row.appendChild(text);
+
+    const length = getNodeLength(row);
+    expect(length).toBe(4);
+  });
+
+  test("table cell node", () => {
+    const cell = document.createElement("div");
+    cell.setAttribute("data-table-cell", "true");
+
+    const text = document.createTextNode("aaa");
+    cell.appendChild(text);
+
+    const length = getNodeLength(cell);
+    expect(length).toBe(4);
+  });
+
   test("wrapper node", () => {
     const wrapper = document.createElement("div");
     wrapper.setAttribute("data-wrapper", "true");
