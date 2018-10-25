@@ -1,661 +1,585 @@
 import Delta from "quill-delta";
+import EditorMode from "./EditorMode";
 import Snapshot from "./Snapshot";
 import {
-  isTableNode,
-  isBlockNode,
-  isBlockOrBlockEmbedNode
+    isTableNode,
+    isBlockNode,
+    isBlockLevelNode,
+    isTablePartNode
 } from "./Predicates";
-import { setAttributes, setAttributesAt } from "./Updaters";
 
 export default class Change {
-  constructor(value) {
-    this.prevValue = value;
-    this.value = value;
-  }
-
-  // Getters
-
-  getPrevValue() {
-    return this.prevValue;
-  }
-
-  getValue() {
-    return this.value;
-  }
-
-  // Setters
-
-  setPrevValue(prevValue) {
-    this.prevValue = prevValue;
-    return this;
-  }
-
-  setValue(value) {
-    this.value = value;
-    return this;
-  }
-
-  // Changes
-
-  call(fn) {
-    fn(this);
-    return this;
-  }
-
-  // History
-
-  save(type = "") {
-    let { prevValue, value } = this;
-
-    const prevDocument = prevValue.getDocument();
-    const prevSelection = prevValue.getSelection();
-
-    const document = value.getDocument();
-
-    let undoStack = value.getUndoStack();
-    let redoStack = value.getRedoStack();
-
-    const undoDelta = document.diff(prevDocument);
-    const redoDelta = prevDocument.diff(document);
-
-    let snapshot = new Snapshot({
-      type,
-      undoDelta,
-      redoDelta,
-      selection: prevSelection
-    });
-
-    if (snapshot.hasType() && !undoStack.isEmpty()) {
-      const lastSnapshot = undoStack.last();
-
-      if (lastSnapshot.canCompose(snapshot)) {
-        snapshot = lastSnapshot.compose(snapshot);
-        undoStack = undoStack.init();
-      }
+    constructor(value) {
+        this.prevValue = value;
+        this.value = value;
     }
 
-    undoStack = undoStack.push(snapshot);
-    redoStack = redoStack.clear();
-
-    value = value.setUndoStack(undoStack).setRedoStack(redoStack);
-
-    this.prevValue = value;
-    this.value = value;
-
-    return this;
-  }
-
-  undo() {
-    let { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    let undoStack = value.getUndoStack();
-    let redoStack = value.getRedoStack();
-
-    if (undoStack.isEmpty()) {
-      return this;
+    getValue() {
+        return this.value;
     }
 
-    const undoSnapshot = undoStack.last();
-
-    const undoDelta = undoSnapshot.getUndoDelta();
-    const nextSelection = undoSnapshot.getSelection();
-    const nextDocument = document.apply(undoDelta);
-
-    const redoSnapshot = undoSnapshot.setSelection(selection);
-
-    undoStack = undoStack.init();
-    redoStack = redoStack.push(redoSnapshot);
-
-    value = value
-      .setDocument(nextDocument)
-      .setSelection(nextSelection)
-      .setUndoStack(undoStack)
-      .setRedoStack(redoStack);
-
-    this.prevValue = value;
-    this.value = value;
-
-    return this;
-  }
-
-  redo() {
-    let { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    let undoStack = value.getUndoStack();
-    let redoStack = value.getRedoStack();
-
-    if (redoStack.isEmpty()) {
-      return this;
-    }
-
-    const redoSnapshot = redoStack.last();
-
-    const redoDelta = redoSnapshot.getRedoDelta();
-    const nextSelection = redoSnapshot.getSelection();
-    const nextDocument = document.apply(redoDelta);
-
-    const undoSnapshot = redoSnapshot.setSelection(selection);
-
-    undoStack = undoStack.push(undoSnapshot);
-    redoStack = redoStack.init();
-
-    value = value
-      .setDocument(nextDocument)
-      .setSelection(nextSelection)
-      .setUndoStack(undoStack)
-      .setRedoStack(redoStack);
-
-    this.prevValue = value;
-    this.value = value;
-
-    return this;
-  }
-
-  // Deltas
-
-  apply(delta) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const newDocument = document.apply(delta);
-    const newSelection = selection.apply(delta);
-
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
-
-    return this;
-  }
-
-  // Editor mode
-
-  startComposing() {
-    const { value } = this;
-
-    this.value = value.setMode("compose");
-
-    return this;
-  }
-
-  stopComposing() {
-    const { value } = this;
-
-    this.value = value.setMode("edit");
-
-    return this;
-  }
-
-  // Document
-
-  regenerateKey() {
-    const { value } = this;
-
-    this.value = value.setDocument(value.getDocument().regenerateKey());
-
-    return this;
-  }
-
-  // Selection
-
-  select(offset, length) {
-    const { value } = this;
-
-    const selection = value.getSelection();
-    const newSelection = selection
-      .setAnchorOffset(offset)
-      .setFocusOffset(offset + length);
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  selectAll() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const length = document.getLength();
-
-    return this.select(0, length);
-  }
-
-  collapse() {
-    const { value } = this;
-
-    const selection = value.getSelection();
-    const newSelection = selection.collapse();
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  collapseToLeft() {
-    const { value } = this;
-
-    const selection = value.getSelection();
-    const newSelection = selection.collapseToLeft();
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  collapseToRight() {
-    const { value } = this;
-
-    const selection = value.getSelection();
-    const newSelection = selection.collapseToRight();
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  selectCharacterBackward() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const focusOffset = selection.getFocusOffset();
-
-    const pos = document.findDescendantAtOffset(focusOffset, isBlockNode);
-
-    if (pos === null) {
-      return this;
-    }
-
-    const block = pos.getNode();
-    const offset = pos.getOffset();
-
-    if (offset === 0) {
-      const previousSibling = document.findPreviousDescendant(block);
-
-      if (previousSibling === null) {
+    setValue(value) {
+        this.value = value;
         return this;
-      }
+    }
 
-      if (isTableNode(previousSibling)) {
+    call(fn) {
+        fn(this);
         return this;
-      }
     }
 
-    const newSelection = selection.setFocusOffset(focusOffset - 1);
+    save(type = "") {
+        const { prevValue, value } = this;
+        const { document: prevDocument, selection: prevSelection } = prevValue;
+        const { document, undoStack, redoStack } = value;
 
-    this.value = value.setSelection(newSelection);
+        const undoDelta = document.diff(prevDocument);
+        const redoDelta = prevDocument.diff(document);
 
-    return this;
-  }
+        let snapshot = new Snapshot({
+            type,
+            undoDelta,
+            redoDelta,
+            selection: prevSelection
+        });
 
-  selectCharacterForward() {
-    const { value } = this;
+        let nextUndoStack = undoStack;
 
-    const document = value.getDocument();
-    const selection = value.getSelection();
+        if (snapshot.hasType() && !nextUndoStack.isEmpty()) {
+            const lastSnapshot = nextUndoStack.last();
 
-    const focusOffset = selection.getFocusOffset();
+            if (lastSnapshot.canCompose(snapshot)) {
+                snapshot = lastSnapshot.compose(snapshot);
+                nextUndoStack = nextUndoStack.init();
+            }
+        }
 
-    const pos = document.findDescendantAtOffset(focusOffset, isBlockNode);
+        nextUndoStack = nextUndoStack.push(snapshot);
 
-    if (pos === null) {
-      return this;
-    }
+        const nextValue = value
+            .setUndoStack(nextUndoStack)
+            .setRedoStack(redoStack.clear());
 
-    const block = pos.getNode();
-    const offset = pos.getOffset();
+        this.prevValue = nextValue;
+        this.value = nextValue;
 
-    if (offset === block.getLength() - 1) {
-      const nextSibling = document.findNextDescendant(block);
-
-      if (nextSibling === null) {
         return this;
-      }
+    }
 
-      if (isTableNode(nextSibling)) {
+    undo() {
+        const { value } = this;
+        const { document, selection, undoStack, redoStack } = value;
+
+        if (undoStack.isEmpty()) {
+            return this;
+        }
+
+        const undoSnapshot = undoStack.last();
+        const redoSnapshot = undoSnapshot.setSelection(selection);
+
+        const nextDocument = document.apply(undoSnapshot.undoDelta);
+        const nextSelection = undoSnapshot.selection;
+
+        const nextUndoStack = undoStack.init();
+        const nextRedoStack = redoStack.push(redoSnapshot);
+
+        const nextValue = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection)
+            .setUndoStack(nextUndoStack)
+            .setRedoStack(nextRedoStack);
+
+        this.prevValue = nextValue;
+        this.value = nextValue;
+
         return this;
-      }
     }
 
-    const newSelection = selection.setFocusOffset(focusOffset + 1);
+    redo() {
+        const { value } = this;
+        const { document, selection, undoStack, redoStack } = value;
 
-    this.value = value.setSelection(newSelection);
+        if (redoStack.isEmpty()) {
+            return this;
+        }
 
-    return this;
-  }
+        const redoSnapshot = redoStack.last();
+        const undoSnapshot = redoSnapshot.setSelection(selection);
 
-  selectWordBackward() {
-    const { value } = this;
+        const nextDocument = document.apply(redoSnapshot.redoDelta);
+        const nextSelection = redoSnapshot.selection;
 
-    const document = value.getDocument();
-    const selection = value.getSelection();
+        const nextUndoStack = undoStack.push(undoSnapshot);
+        const nextRedoStack = redoStack.init();
 
-    const focusOffset = selection.getFocusOffset();
+        const nextValue = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection)
+            .setUndoStack(nextUndoStack)
+            .setRedoStack(nextRedoStack);
 
-    const pos = document.findDescendantAtOffset(focusOffset, isBlockNode);
+        this.prevValue = nextValue;
+        this.value = nextValue;
 
-    if (pos === null) {
-      return this;
+        return this;
     }
 
-    const block = pos.getNode();
-    const offset = pos.getOffset();
+    apply(delta) {
+        const { value } = this;
+        const { document, selection } = value;
 
-    const text = block.getText();
+        const nextDocument = document.apply(delta);
+        const nextSelection = selection.apply(delta);
 
-    if (offset === 0) {
-      return this;
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
     }
 
-    let length = 0;
+    startComposing() {
+        const { value } = this;
 
-    while (/\W/.test(text[offset - length - 1]) && offset - length > 0) {
-      length += 1;
+        this.value = value.setMode(EditorMode.Compose);
+
+        return this;
     }
 
-    while (/\w/.test(text[offset - length - 1]) && offset - length > 0) {
-      length += 1;
+    stopComposing() {
+        const { value } = this;
+
+        this.value = value.setMode(EditorMode.Edit);
+
+        return this;
     }
 
-    if (length === 0) {
-      return this;
+    regenerateKey() {
+        const { value } = this;
+        const { document } = value;
+
+        this.value = value.setDocument(document.regenerateKey());
+
+        return this;
     }
 
-    const newSelection = selection.setFocusOffset(focusOffset - length);
+    select(offset, length) {
+        const { value } = this;
+        const { selection } = value;
 
-    this.value = value.setSelection(newSelection);
+        const nextSelection = selection
+            .setAnchorOffset(offset)
+            .setFocusOffset(offset + length);
 
-    return this;
-  }
+        this.value = value.setSelection(nextSelection);
 
-  selectWordForward() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const focusOffset = selection.getFocusOffset();
-
-    const pos = document.findDescendantAtOffset(focusOffset, isBlockNode);
-
-    if (pos === null) {
-      return this;
+        return this;
     }
 
-    const block = pos.getNode();
-    const offset = pos.getOffset();
-
-    const text = block.getText();
-
-    if (offset >= text.length - 1) {
-      return this;
+    selectAll() {
+        return this.select(0, this.value.document.length);
     }
 
-    let length = 0;
+    collapse() {
+        const { value } = this;
+        const { selection } = value;
 
-    while (/\W/.test(text[offset + length]) && offset + length < text.length) {
-      length += 1;
+        const nextSelection = selection.collapse();
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
     }
 
-    while (/\w/.test(text[offset + length]) && offset + length < text.length) {
-      length += 1;
+    collapseToLeft() {
+        const { value } = this;
+        const { selection } = value;
+
+        const nextSelection = selection.collapseToLeft();
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
     }
 
-    if (length === 0) {
-      return this;
+    collapseToRight() {
+        const { value } = this;
+        const { selection } = value;
+
+        const nextSelection = selection.collapseToRight();
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
     }
 
-    const newSelection = selection.setFocusOffset(focusOffset + length);
+    selectCharacterBackward() {
+        const { value } = this;
+        const { document, selection } = value;
 
-    this.value = value.setSelection(newSelection);
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
 
-    return this;
-  }
+        if (pos.offset === 0) {
+            const prevNode = document.findPreviousDescendant(pos.node);
+            if (prevNode === null) {
+                return this;
+            }
+            if (isTableNode(prevNode)) {
+                return this;
+            }
+        }
 
-  selectBlockBackward() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const anchorOffset = selection.getAnchorOffset();
-
-    const pos = document.findDescendantAtOffset(anchorOffset, isBlockNode);
-
-    if (pos === null) {
-      return this;
-    }
-
-    const offset = pos.getOffset();
-
-    const newSelection = selection.setFocusOffset(anchorOffset - offset);
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  selectBlockForward() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const anchorOffset = selection.getAnchorOffset();
-
-    const pos = document.findDescendantAtOffset(anchorOffset, isBlockNode);
-
-    if (pos === null) {
-      return this;
-    }
-
-    const block = pos.getNode();
-    const offset = pos.getOffset();
-
-    const length = block.getLength();
-
-    if (offset >= length - 1) {
-      return this;
-    }
-
-    const newSelection = selection.setFocusOffset(
-      anchorOffset + length - 1 - offset
-    );
-
-    this.value = value.setSelection(newSelection);
-
-    return this;
-  }
-
-  // Edits by the current selection
-
-  delete() {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const offset = selection.getOffset();
-    const length = selection.getLength();
-
-    const delta = new Delta().retain(offset).delete(length);
-
-    const posBefore = document.findDescendantAtOffset(offset, isBlockNode);
-
-    let newDocument = document.apply(delta);
-
-    if (posBefore !== null) {
-      const posAfter = newDocument.findDescendantAtOffset(offset, isBlockNode);
-
-      if (posAfter !== null) {
-        const block = posAfter
-          .getNode()
-          .setStyle(posBefore.getNode().getStyle());
-
-        newDocument = newDocument.replaceDescendantByKey(block.getKey(), block);
-      }
-    }
-
-    const newSelection = selection.apply(delta);
-
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
-
-    return this;
-  }
-
-  insertText(text, attributes) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-    const inlineStyleOverride = value.getInlineStyleOverride();
-
-    const delta = new Delta()
-      .retain(selection.getOffset())
-      .insert(text, { ...attributes, ...inlineStyleOverride });
-
-    const newDocument = document.apply(delta);
-    const newSelection = selection.apply(delta);
-
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
-
-    return this;
-  }
-
-  insertEmbed(data, attributes) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const delta = new Delta()
-      .retain(selection.getOffset())
-      .insert(data, attributes);
-
-    const newDocument = document.apply(delta);
-    const newSelection = selection.apply(delta);
-
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
-
-    return this;
-  }
-
-  insertFragment(fragment) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const delta = new Delta().retain(selection.getOffset()).concat(fragment);
-    const newDocument = document.apply(delta);
-    const newSelection = selection.apply(delta);
-
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
-
-    return this;
-  }
-
-  setAttributes(attributes) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const delta = new Delta()
-      .retain(selection.getOffset())
-      .retain(selection.getLength(), attributes);
-
-    const newDocument = document.apply(delta);
-
-    this.value = value.setDocument(newDocument);
-
-    return this;
-  }
-
-  setBlockAttributes(attributes) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    const newDocument = selection.isCollapsed()
-      ? document.updateDescendantAtOffset(
-          selection.getOffset(),
-          isBlockOrBlockEmbedNode,
-          setAttributes(attributes)
-        )
-      : document.updateDescendantsAtRange(
-          selection.getOffset(),
-          selection.getLength(),
-          isBlockOrBlockEmbedNode,
-          setAttributes(attributes)
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset - 1
         );
 
-    this.value = value.setDocument(newDocument);
+        this.value = value.setSelection(nextSelection);
 
-    return this;
-  }
-
-  setInlineAttributes(attributes) {
-    const { value } = this;
-
-    const document = value.getDocument();
-    const selection = value.getSelection();
-
-    if (selection.isCollapsed()) {
-      return this.setValue(value.setInlineStyleOverride(attributes));
+        return this;
     }
 
-    const newDocument = document.updateDescendantsAtRange(
-      selection.getOffset(),
-      selection.getLength(),
-      isBlockNode,
-      setAttributesAt(attributes)
-    );
+    selectCharacterForward() {
+        const { value } = this;
+        const { document, selection } = value;
 
-    this.value = value.setDocument(newDocument);
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
 
-    return this;
-  }
+        if (pos.offset === pos.node.length - 1) {
+            const nextNode = document.findNextDescendant(pos.node);
+            if (nextNode === null) {
+                return this;
+            }
+            if (isTableNode(nextNode)) {
+                return this;
+            }
+        }
 
-  // Edits by reference
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset + 1
+        );
 
-  removeNode(node) {
-    const { value } = this;
+        this.value = value.setSelection(nextSelection);
 
-    const document = value.getDocument();
-    const selection = value.getSelection();
+        return this;
+    }
 
-    const newDocument = document.removeDescendantByKey(node.getKey());
-    const delta = document.diff(newDocument);
-    const newSelection = selection.apply(delta);
+    selectWordBackward() {
+        const { value } = this;
+        const { document, selection } = value;
 
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
+        if (pos.offset === 0) {
+            return this;
+        }
 
-    return this;
-  }
+        const { text } = pos.node;
+        let length = 0;
 
-  replaceNode(node, referenceNode) {
-    const { value } = this;
+        while (
+            /\W/.test(text[pos.offset - length - 1]) &&
+            pos.offset - length > 0
+        ) {
+            length += 1;
+        }
+        while (
+            /\w/.test(text[pos.offset - length - 1]) &&
+            pos.offset - length > 0
+        ) {
+            length += 1;
+        }
 
-    const document = value.getDocument();
-    const selection = value.getSelection();
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset - length
+        );
 
-    const newDocument = document.replaceDescendantByKey(
-      referenceNode.getKey(),
-      node
-    );
-    const delta = document.diff(newDocument);
-    const newSelection = selection.apply(delta);
+        this.value = value.setSelection(nextSelection);
 
-    this.value = value.setDocument(newDocument).setSelection(newSelection);
+        return this;
+    }
 
-    return this;
-  }
+    selectWordForward() {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
+        if (pos.offset === pos.node.length - 1) {
+            return this;
+        }
+
+        const { text } = pos.node;
+        let length = 0;
+
+        while (
+            /\W/.test(text[pos.offset + length]) &&
+            pos.offset + length < text.length
+        ) {
+            length += 1;
+        }
+        while (
+            /\w/.test(text[pos.offset + length]) &&
+            pos.offset + length < text.length
+        ) {
+            length += 1;
+        }
+
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset + length
+        );
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
+    }
+
+    selectBlockBackward() {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
+        if (pos.offset === 0) {
+            return this;
+        }
+
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset - pos.offset
+        );
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
+    }
+
+    selectBlockForward() {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const pos = document.findDescendantAtOffset(
+            selection.focusOffset,
+            isBlockNode
+        );
+        if (pos === null) {
+            return this;
+        }
+        if (pos.offset === pos.node.length - 1) {
+            return this;
+        }
+
+        const nextSelection = selection.setFocusOffset(
+            selection.focusOffset - pos.offset + pos.node.length - 1
+        );
+
+        this.value = value.setSelection(nextSelection);
+
+        return this;
+    }
+
+    insertText(text, attributes) {
+        const { value } = this;
+        const { document, selection, inlineStyleOverride } = value;
+
+        const delta = new Delta().retain(selection.offset).insert(text, {
+            ...attributes,
+            ...inlineStyleOverride
+        });
+
+        const nextDocument = document.apply(delta);
+        const nextSelection = selection.collapseToLeft().apply(delta);
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
+
+    insertEmbed(data, attributes) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const delta = new Delta()
+            .retain(selection.offset)
+            .insert(data, attributes);
+
+        const nextDocument = document.apply(delta);
+        const nextSelection = selection.collapseToLeft().apply(delta);
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
+
+    insertFragment(fragment) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const delta = new Delta().retain(selection.offset).concat(fragment);
+
+        const nextDocument = document.apply(delta);
+        const nextSelection = selection.collapseToLeft().apply(delta);
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
+
+    setAttributes(attributes) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const nextDocument = document
+            .editor()
+            .retain(selection.offset)
+            .retain(selection.length, attributes)
+            .build();
+
+        this.value = value.setDocument(nextDocument);
+
+        return this;
+    }
+
+    setBlockAttributes(attributes) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const nextDocument = selection.isCollapsed()
+            ? document.updateDescendantAtOffset(
+                  selection.offset,
+                  isBlockLevelNode,
+                  node => node.setAttributes(attributes)
+              )
+            : document.updateDescendantsAtRange(
+                  selection.offset,
+                  selection.length,
+                  isBlockLevelNode,
+                  node => node.setAttributes(attributes)
+              );
+
+        this.value = value.setDocument(nextDocument);
+
+        return this;
+    }
+
+    setInlineAttributes(attributes) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        if (selection.isCollapsed()) {
+            this.value = value.setInlineStyleOverride(attributes);
+        } else {
+            const nextDocument = document.updateDescendantsAtRange(
+                selection.offset,
+                selection.length,
+                isBlockNode,
+                (node, offset, length) =>
+                    node
+                        .editor()
+                        .retain(offset)
+                        .retain(length, attributes)
+                        .retain(Infinity)
+                        .build()
+            );
+
+            this.value = value.setDocument(nextDocument);
+        }
+
+        return this;
+    }
+
+    delete() {
+        const { value } = this;
+        const { document, selection } = value;
+
+        let nextDocument = document
+            .editor()
+            .retain(selection.offset)
+            .filter(selection.length, isTablePartNode)
+            .build();
+
+        const pos = document.findDescendantAtOffset(
+            selection.offset,
+            isBlockNode
+        );
+        if (pos !== null) {
+            nextDocument = nextDocument.updateDescendantAtOffset(
+                selection.offset,
+                isBlockNode,
+                node => node.setStyle(pos.node.style)
+            );
+        }
+
+        const nextSelection = selection.collapseToLeft();
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
+
+    removeNode(node) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const nextDocument = document.removeDescendantByKey(node.key);
+        const delta = document.diff(nextDocument);
+        const nextSelection = selection.apply(delta);
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
+
+    replaceNode(node, referenceNode) {
+        const { value } = this;
+        const { document, selection } = value;
+
+        const nextDocument = document.replaceDescendantByKey(
+            referenceNode.key,
+            node
+        );
+        const delta = document.diff(nextDocument);
+        const nextSelection = selection.apply(delta);
+
+        this.value = value
+            .setDocument(nextDocument)
+            .setSelection(nextSelection);
+
+        return this;
+    }
 }

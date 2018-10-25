@@ -1,71 +1,77 @@
 export default class Selection {
-  constructor({ anchorOffset = 0, focusOffset = 0 } = {}) {
-    this.anchorOffset = anchorOffset;
-    this.focusOffset = focusOffset;
-  }
+    constructor({ anchorOffset = 0, focusOffset = 0 } = {}) {
+        this.anchorOffset = anchorOffset;
+        this.focusOffset = focusOffset;
+    }
 
-  merge(props) {
-    return new Selection({ ...this, ...props });
-  }
+    merge(props) {
+        return new Selection({ ...this, ...props });
+    }
 
-  // Getters
+    get offset() {
+        return Math.min(this.anchorOffset, this.focusOffset);
+    }
 
-  getAnchorOffset() {
-    return this.anchorOffset;
-  }
+    get length() {
+        return Math.abs(this.focusOffset - this.anchorOffset);
+    }
 
-  getFocusOffset() {
-    return this.focusOffset;
-  }
+    getAnchorOffset() {
+        return this.anchorOffset;
+    }
 
-  isCollapsed() {
-    return this.anchorOffset === this.focusOffset;
-  }
+    getFocusOffset() {
+        return this.focusOffset;
+    }
 
-  isBackward() {
-    return this.anchorOffset > this.focusOffset;
-  }
+    getOffset() {
+        return this.offset;
+    }
 
-  getOffset() {
-    return Math.min(this.anchorOffset, this.focusOffset);
-  }
+    getLength() {
+        return this.length;
+    }
 
-  getLength() {
-    return Math.abs(this.focusOffset - this.anchorOffset);
-  }
+    isCollapsed() {
+        return this.anchorOffset === this.focusOffset;
+    }
 
-  // Setters
+    isExpanded() {
+        return this.anchorOffset !== this.focusOffset;
+    }
 
-  setAnchorOffset(anchorOffset) {
-    return this.merge({ anchorOffset });
-  }
+    isBackward() {
+        return this.anchorOffset > this.focusOffset;
+    }
 
-  setFocusOffset(focusOffset) {
-    return this.merge({ focusOffset });
-  }
+    setAnchorOffset(anchorOffset) {
+        return this.merge({ anchorOffset });
+    }
 
-  // Transformations
+    setFocusOffset(focusOffset) {
+        return this.merge({ focusOffset });
+    }
 
-  collapse() {
-    return this.setFocusOffset(this.anchorOffset);
-  }
+    collapse() {
+        return this.setFocusOffset(this.anchorOffset);
+    }
 
-  collapseToLeft() {
-    return this.isBackward()
-      ? this.setAnchorOffset(this.focusOffset)
-      : this.setFocusOffset(this.anchorOffset);
-  }
+    collapseToLeft() {
+        return this.isBackward()
+            ? this.setAnchorOffset(this.focusOffset)
+            : this.setFocusOffset(this.anchorOffset);
+    }
 
-  collapseToRight() {
-    return this.isBackward()
-      ? this.setFocusOffset(this.anchorOffset)
-      : this.setAnchorOffset(this.focusOffset);
-  }
+    collapseToRight() {
+        return this.isBackward()
+            ? this.setFocusOffset(this.anchorOffset)
+            : this.setAnchorOffset(this.focusOffset);
+    }
 
-  apply(delta) {
-    return this.merge({
-      anchorOffset: delta.transformPosition(this.anchorOffset),
-      focusOffset: delta.transformPosition(this.focusOffset)
-    });
-  }
+    apply(delta) {
+        return this.merge({
+            anchorOffset: delta.transformPosition(this.anchorOffset),
+            focusOffset: delta.transformPosition(this.focusOffset)
+        });
+    }
 }

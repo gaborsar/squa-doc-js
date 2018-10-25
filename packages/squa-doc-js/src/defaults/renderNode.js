@@ -1,61 +1,84 @@
+import {
+    isTableNode,
+    isRowNode,
+    isCellNode,
+    isBlockNode
+} from "../model/Predicates";
+import TableWithBody from "../components/TableWithBody";
+
 export default function renderNode(node) {
-  switch (node.getAttribute("type")) {
-    case "heading-one":
-      return {
-        component: "h1"
-      };
+    if (isTableNode(node)) {
+        return { component: TableWithBody };
+    }
+    if (isRowNode(node)) {
+        return { component: "tr" };
+    }
+    if (isCellNode(node)) {
+        return { component: "td" };
+    }
+    if (isBlockNode(node)) {
+        return renderBlockNode(node);
+    }
+}
 
-    case "heading-two":
-      return {
-        component: "h2"
-      };
+function renderBlockNode(node) {
+    switch (node.getAttribute("type")) {
+        case "heading-one":
+            return {
+                component: "h1"
+            };
 
-    case "heading-three":
-      return {
-        component: "h3"
-      };
+        case "heading-two":
+            return {
+                component: "h2"
+            };
 
-    case "heading-four":
-      return {
-        component: "h4"
-      };
+        case "heading-three":
+            return {
+                component: "h3"
+            };
 
-    case "heading-five":
-      return {
-        component: "h5"
-      };
+        case "heading-four":
+            return {
+                component: "h4"
+            };
 
-    case "heading-six":
-      return {
-        component: "h6"
-      };
+        case "heading-five":
+            return {
+                component: "h5"
+            };
 
-    case "blockquote":
-      return {
-        component: "blockquote"
-      };
+        case "heading-six":
+            return {
+                component: "h6"
+            };
 
-    case "unordered-list-item":
-      return {
-        wrapper: "ul",
-        component: "li"
-      };
+        case "blockquote":
+            return {
+                component: "blockquote"
+            };
 
-    case "ordered-list-item":
-      return {
-        wrapper: "ol",
-        component: "li"
-      };
+        case "unordered-list-item":
+            return {
+                wrapper: "ul",
+                component: "li"
+            };
 
-    case "code":
-      return {
-        wrapper: "pre",
-        component: "div"
-      };
+        case "ordered-list-item":
+            return {
+                wrapper: "ol",
+                component: "li"
+            };
 
-    default:
-      return {
-        component: "p"
-      };
-  }
+        case "code":
+            return {
+                wrapper: "pre",
+                component: "div"
+            };
+
+        default:
+            return {
+                component: "p"
+            };
+    }
 }

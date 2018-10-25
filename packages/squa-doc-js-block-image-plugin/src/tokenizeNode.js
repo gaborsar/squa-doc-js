@@ -1,37 +1,39 @@
+import { TokenType } from "squa-doc-js";
+
 export default function tokenizeNode(node) {
-  const tokens = [];
+    const tokens = [];
 
-  if (node.nodeName === "FIGURE") {
-    const img = node.childNodes[0];
-    const figcaption = node.childNodes[1];
+    if (node.nodeName === "FIGURE") {
+        const img = node.childNodes[0];
+        const figcaption = node.childNodes[1];
 
-    if (img && img.nodeName === "IMG" && img.hasAttribute("src")) {
-      tokens.push({
-        type: "block-embed-node",
-        payload: {
-          "block-image": img.getAttribute("src")
+        if (img && img.nodeName === "IMG" && img.hasAttribute("src")) {
+            tokens.push({
+                type: TokenType.BlockEmbedNode,
+                payload: {
+                    "block-image": img.getAttribute("src")
+                }
+            });
+
+            if (img.hasAttribute("alt")) {
+                tokens.push({
+                    type: TokenType.BlockStyle,
+                    payload: {
+                        alt: img.getAttribute("alt")
+                    }
+                });
+            }
+
+            if (figcaption) {
+                tokens.push({
+                    type: TokenType.BlockStyle,
+                    payload: {
+                        caption: figcaption.textContent
+                    }
+                });
+            }
         }
-      });
-
-      if (img.hasAttribute("alt")) {
-        tokens.push({
-          type: "block-style",
-          payload: {
-            alt: img.getAttribute("alt")
-          }
-        });
-      }
-
-      if (figcaption) {
-        tokens.push({
-          type: "block-style",
-          payload: {
-            caption: figcaption.textContent
-          }
-        });
-      }
     }
-  }
 
-  return tokens;
+    return tokens;
 }

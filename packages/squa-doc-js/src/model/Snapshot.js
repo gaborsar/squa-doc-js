@@ -1,79 +1,80 @@
 const MAX_DELAY = 1000;
 
 export default class Snapshot {
-  constructor({
-    type = "",
-    undoDelta,
-    redoDelta,
-    selection,
-    timestamp = Date.now()
-  }) {
-    this.type = type;
-    this.undoDelta = undoDelta;
-    this.redoDelta = redoDelta;
-    this.selection = selection;
-    this.timestamp = timestamp;
-  }
+    constructor({
+        type,
+        undoDelta,
+        redoDelta,
+        selection,
+        timestamp = Date.now()
+    }) {
+        this.type = type;
+        this.undoDelta = undoDelta;
+        this.redoDelta = redoDelta;
+        this.selection = selection;
+        this.timestamp = timestamp;
+    }
 
-  merge(props) {
-    return new Snapshot({ ...this, ...props });
-  }
+    merge(props) {
+        return new Snapshot({ ...this, ...props });
+    }
 
-  hasType() {
-    return this.type !== "";
-  }
+    hasType() {
+        return !!this.type;
+    }
 
-  getType() {
-    return this.type;
-  }
+    getType() {
+        return this.type;
+    }
 
-  getUndoDelta() {
-    return this.undoDelta;
-  }
+    getUndoDelta() {
+        return this.undoDelta;
+    }
 
-  getRedoDelta() {
-    return this.redoDelta;
-  }
+    getRedoDelta() {
+        return this.redoDelta;
+    }
 
-  getSelection() {
-    return this.selection;
-  }
+    getSelection() {
+        return this.selection;
+    }
 
-  getTimestamp() {
-    return this.timestamp;
-  }
+    getTimestamp() {
+        return this.timestamp;
+    }
 
-  setType(type) {
-    return this.merge({ type });
-  }
+    setType(type) {
+        return this.merge({ type });
+    }
 
-  setUndoDelta(undoDelta) {
-    return this.merge({ undoDelta });
-  }
+    setUndoDelta(undoDelta) {
+        return this.merge({ undoDelta });
+    }
 
-  setRedoDelta(redoDelta) {
-    return this.merge({ redoDelta });
-  }
+    setRedoDelta(redoDelta) {
+        return this.merge({ redoDelta });
+    }
 
-  setSelection(selection) {
-    return this.merge({ selection });
-  }
+    setSelection(selection) {
+        return this.merge({ selection });
+    }
 
-  setTimestamp(timestamp) {
-    return this.merge({ timestamp });
-  }
+    setTimestamp(timestamp) {
+        return this.merge({ timestamp });
+    }
 
-  canCompose(other) {
-    return (
-      this.type === other.type && this.timestamp - other.timestamp < MAX_DELAY
-    );
-  }
+    canCompose(other) {
+        return (
+            this.type === other.type &&
+            other.timestamp - this.timestamp < MAX_DELAY
+        );
+    }
 
-  compose(other) {
-    return this.merge({
-      undoDelta: other.undoDelta.compose(this.undoDelta),
-      redoDelta: this.redoDelta.compose(other.redoDelta),
-      timestamp: other.timestamp
-    });
-  }
+    compose(other) {
+        return this.merge({
+            undoDelta: other.undoDelta.compose(this.undoDelta),
+            redoDelta: this.redoDelta.compose(other.redoDelta),
+            timestamp: other.timestamp
+        });
+    }
 }

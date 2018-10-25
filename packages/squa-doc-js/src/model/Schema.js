@@ -1,149 +1,187 @@
 import DocumentBuilder from "./DocumentBuilder";
 import TableBuilder from "./TableBuilder";
-import TableRowBuilder from "./TableRowBuilder";
-import TableCellBuilder from "./TableCellBuilder";
+import RowBuilder from "./RowBuilder";
+import CellBuilder from "./CellBuilder";
 import BlockBuilder from "./BlockBuilder";
 import Document from "./Document";
 import Table from "./Table";
 import TableStart from "./TableStart";
 import TableEnd from "./TableEnd";
-import TableRow from "./TableRow";
-import TableRowStart from "./TableRowStart";
-import TableCell from "./TableCell";
-import TableCellStart from "./TableCellStart";
+import Row from "./Row";
+import RowStart from "./RowStart";
+import Cell from "./Cell";
+import CellStart from "./CellStart";
 import Block from "./Block";
 import BlockEnd from "./BlockEnd";
 import BlockEmbed from "./BlockEmbed";
 import Text from "./Text";
 import InlineEmbed from "./InlineEmbed";
+import Style from "./Style";
+import createKey from "./createKey";
 
 const alwaysFalse = () => false;
 
 export default class Schema {
-  constructor(config = {}) {
-    this.config = config;
-  }
+    constructor(config = {}) {
+        this.config = config;
+    }
 
-  // Validators
+    isBlockEmbed(name) {
+        const { isBlockEmbed = alwaysFalse } = this.config;
+        return isBlockEmbed(name);
+    }
 
-  isBlockEmbed(name) {
-    const { isBlockEmbed = alwaysFalse } = this.config;
-    return isBlockEmbed(name);
-  }
+    isInlineEmbed(name) {
+        const { isInlineEmbed = alwaysFalse } = this.config;
+        return isInlineEmbed(name);
+    }
 
-  isInlineEmbed(name) {
-    const { isInlineEmbed = alwaysFalse } = this.config;
-    return isInlineEmbed(name);
-  }
+    isTableMark(name) {
+        const { isTableMark = alwaysFalse } = this.config;
+        return isTableMark(name);
+    }
 
-  isTableMark(name) {
-    const { isTableMark = alwaysFalse } = this.config;
-    return isTableMark(name);
-  }
+    isRowMark(name) {
+        const { isRowMark = alwaysFalse } = this.config;
+        return isRowMark(name);
+    }
 
-  isTableRowMark(name) {
-    const { isTableRowMark = alwaysFalse } = this.config;
-    return isTableRowMark(name);
-  }
+    isCellMark(name) {
+        const { isCellMark = alwaysFalse } = this.config;
+        return isCellMark(name);
+    }
 
-  isTableCellMark(name) {
-    const { isTableCellMark = alwaysFalse } = this.config;
-    return isTableCellMark(name);
-  }
+    isBlockMark(name) {
+        const { isBlockMark = alwaysFalse } = this.config;
+        return isBlockMark(name);
+    }
 
-  isBlockMark(name) {
-    const { isBlockMark = alwaysFalse } = this.config;
-    return isBlockMark(name);
-  }
+    isBlockEmbedMark(embedName, markName) {
+        const { isBlockEmbedMark = alwaysFalse } = this.config;
+        return isBlockEmbedMark(embedName, markName);
+    }
 
-  isBlockEmbedMark(embedName, markName) {
-    const { isBlockEmbedMark = alwaysFalse } = this.config;
-    return isBlockEmbedMark(embedName, markName);
-  }
+    isTextMark(name) {
+        const { isTextMark = alwaysFalse } = this.config;
+        return isTextMark(name);
+    }
 
-  isTextMark(name) {
-    const { isTextMark = alwaysFalse } = this.config;
-    return isTextMark(name);
-  }
+    isInlineEmbedMark(embedName, markName) {
+        const { isInlineEmbedMark = alwaysFalse } = this.config;
+        return isInlineEmbedMark(embedName, markName);
+    }
 
-  isInlineEmbedMark(embedName, markName) {
-    const { isInlineEmbedMark = alwaysFalse } = this.config;
-    return isInlineEmbedMark(embedName, markName);
-  }
+    createDocumentBuilder({ key = createKey(), children = [] } = {}) {
+        return new DocumentBuilder(this, key, children);
+    }
 
-  // Builder factories
+    createTableBuilder({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new TableBuilder(this, key, style, children);
+    }
 
-  createDocumentBuilder(props = {}) {
-    return new DocumentBuilder({ schema: this, ...props });
-  }
+    createRowBuilder({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new RowBuilder(this, key, style, children);
+    }
 
-  createTableBuilder(props = {}) {
-    return new TableBuilder({ schema: this, ...props });
-  }
+    createCellBuilder({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new CellBuilder(this, key, style, children);
+    }
 
-  createTableRowBuilder(props = {}) {
-    return new TableRowBuilder({ schema: this, ...props });
-  }
+    createBlockBuilder({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new BlockBuilder(this, key, style, children);
+    }
 
-  createTableCellBuilder(props = {}) {
-    return new TableCellBuilder({ schema: this, ...props });
-  }
+    createDocument({ key = createKey(), children = [] } = {}) {
+        return new Document(this, key, children).optimize();
+    }
 
-  createBlockBuilder(props = {}) {
-    return new BlockBuilder({ schema: this, ...props });
-  }
+    createTable({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new Table(this, key, style, children).optimize();
+    }
 
-  // Node factories
+    createTableStart({ key = createKey(), style = Style.create() } = {}) {
+        return new TableStart(this, key, style);
+    }
 
-  createDocument(props = {}) {
-    return new Document({ schema: this, ...props });
-  }
+    createTableEnd() {
+        return new TableEnd();
+    }
 
-  createTable(props = {}) {
-    return new Table({ schema: this, ...props });
-  }
+    createRow({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new Row(this, key, style, children).optimize();
+    }
 
-  createTableStart(props = {}) {
-    return new TableStart({ schema: this, ...props });
-  }
+    createRowStart({ key = createKey(), style = Style.create() } = {}) {
+        return new RowStart(this, key, style);
+    }
 
-  createTableEnd() {
-    return new TableEnd();
-  }
+    createCell({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new Cell(this, key, style, children).optimize();
+    }
 
-  createTableRow(props = {}) {
-    return new TableRow({ schema: this, ...props });
-  }
+    createCellStart({ key = createKey(), style = Style.create() } = {}) {
+        return new CellStart(this, key, style);
+    }
 
-  createTableRowStart(props = {}) {
-    return new TableRowStart({ schema: this, ...props });
-  }
+    createBlock({
+        key = createKey(),
+        style = Style.create(),
+        children = []
+    } = {}) {
+        return new Block(this, key, style, children).optimize();
+    }
 
-  createTableCell(props = {}) {
-    return new TableCell({ schema: this, ...props });
-  }
+    createBlockEnd({ key = createKey(), style = Style.create() } = {}) {
+        return new BlockEnd(this, key, style);
+    }
 
-  createTableCellStart(props = {}) {
-    return new TableCellStart({ schema: this, ...props });
-  }
+    createBlockEmbed({
+        key = createKey(),
+        style = Style.create(),
+        name,
+        value
+    }) {
+        return new BlockEmbed(this, key, style, name, value);
+    }
 
-  createBlock(props = {}) {
-    return new Block({ schema: this, ...props });
-  }
+    createText({ key = createKey(), style = Style.create(), value } = {}) {
+        return new Text(this, key, style, value);
+    }
 
-  createBlockEnd(props = {}) {
-    return new BlockEnd({ schema: this, ...props });
-  }
-
-  createBlockEmbed(props = {}) {
-    return new BlockEmbed({ schema: this, ...props });
-  }
-
-  createText(props = {}) {
-    return new Text({ schema: this, ...props });
-  }
-
-  createInlineEmbed(props = {}) {
-    return new InlineEmbed({ schema: this, ...props });
-  }
+    createInlineEmbed({
+        key = createKey(),
+        style = Style.create(),
+        name,
+        value
+    }) {
+        return new InlineEmbed(this, key, style, name, value);
+    }
 }

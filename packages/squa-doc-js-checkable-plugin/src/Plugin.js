@@ -6,12 +6,12 @@ import onKeyDown from "./onKeyDown";
 import afterInput from "./afterInput";
 
 const Plugin = {
-  schema,
-  renderNode,
-  renderMark,
-  tokenizeClassName,
-  onKeyDown,
-  afterInput
+    schema,
+    renderNode,
+    renderMark,
+    tokenizeClassName,
+    onKeyDown,
+    afterInput
 };
 
 export default Plugin;

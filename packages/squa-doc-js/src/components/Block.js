@@ -1,106 +1,100 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import joinClassNames from "classnames";
+
+import { isTextNode, isInlineEmbedNode } from "../model/Predicates";
 import Text from "./Text";
-import { isInlineEmbedNode } from "../model/Predicates";
 
-export default class Block extends PureComponent {
-  render() {
-    const {
-      node,
-      BlockComponent,
-      blockProps,
-      blockClassName,
-      createChange,
-      onChange,
-      renderNode,
-      renderMark
-    } = this.props;
-
-    const children = [];
-
-    if (node.isEmpty()) {
-      children.push(<br key="br" data-ignore />);
-    } else {
-      node.getChildren().forEach(child => {
-        const markObjects = [];
-
-        child.getMarks().forEach(mark => {
-          const markObj = renderMark(mark);
-
-          if (markObj) {
-            markObjects.push(markObj);
-          }
-        });
-
-        const classNames = [];
-
-        markObjects.forEach(markObj => {
-          const { className: markClassName } = markObj;
-
-          if (markClassName) {
-            classNames.push(markClassName);
-          }
-        });
-
-        let element;
-
-        if (isInlineEmbedNode(child)) {
-          const embedObj = renderNode(child, { createChange, onChange });
-
-          if (!embedObj) {
-            throw new Error(`Invalid embed: ${child.getNodeType()}`);
-          }
-
-          const {
-            component: EmbedComponent,
-            props: embedProps = {}
-          } = embedObj;
-
-          element = (
-            <EmbedComponent
-              {...embedProps}
-              key={child.getKey()}
-              data-embed
-              data-key={child.getKey()}
-              contentEditable={false}
-              className={joinClassNames("SquaDocJs-embed", classNames)}
-            />
-          );
-        } else {
-          element = (
-            <Text
-              key={child.getKey()}
-              node={child}
-              textClassName={joinClassNames(classNames)}
-            />
-          );
-        }
-
-        markObjects.forEach(markObj => {
-          const { component: MarkComponent, props: markProps } = markObj;
-
-          if (MarkComponent) {
-            element = (
-              <MarkComponent {...markProps} key={child.getKey()}>
-                {element}
-              </MarkComponent>
-            );
-          }
-        });
-
-        children.push(element);
-      });
+export default class Block extends Component {
+    shouldComponentUpdate(nextProps) {
+        return this.props.node !== nextProps.node;
     }
 
-    return (
-      <BlockComponent
-        {...blockProps}
-        data-block
-        data-key={node.getKey()}
-        className={joinClassNames("SquaDocJs-block", blockClassName)}
-      >
-        {children}
-      </BlockComponent>
-    );
-  }
+    render() {
+        const { BlockComponent, blockClassName, blockProps, node } = this.props;
+        return (
+            <BlockComponent
+                className={blockClassName}
+                data-block={true}
+                data-key={node.key}
+                {...blockProps}
+            >
+                {node.isEmpty() ? (
+                    <br data-ignore />
+                ) : (
+                    node.children.map(this.renderNode)
+                )}
+            </BlockComponent>
+        );
+    }
+
+    renderNode = node => {
+        const { renderMark } = this.props;
+
+        const classNames = [];
+        let element;
+
+        const markObjects = node.style.marks.map(renderMark);
+        markObjects.forEach(obj => {
+            if (obj === undefined) {
+                return;
+            }
+            if (obj.className === undefined) {
+                return;
+            }
+            classNames.push(obj.className);
+        });
+
+        if (isTextNode(node)) {
+            element = this.renderText(node, classNames);
+        } else if (isInlineEmbedNode(node)) {
+            element = this.renderInlineEmbed(node, classNames);
+        } else {
+            throw new Error();
+        }
+
+        markObjects.forEach(obj => {
+            if (obj === undefined) {
+                return;
+            }
+            if (obj.component === undefined) {
+                return;
+            }
+            const { component: Mark, props } = obj;
+            element = <Mark {...props}>{element}</Mark>;
+        });
+
+        return element;
+    };
+
+    renderText(node, classNames) {
+        return (
+            <Text
+                key={node.key}
+                className={joinClassNames("SquaDocJs-text", classNames)}
+            >
+                {node.value}
+            </Text>
+        );
+    }
+
+    renderInlineEmbed(node, classNames) {
+        const { renderNode, createChange, onChange } = this.props;
+
+        const obj = renderNode(node, { createChange, onChange });
+        if (obj === undefined) {
+            throw new Error();
+        }
+
+        const { component: EmbedComponent, props: embedProps } = obj;
+        return (
+            <EmbedComponent
+                {...embedProps}
+                key={node.key}
+                className={joinClassNames("SquaDocJs-InlineEmbed", classNames)}
+                contentEditable={false}
+                data-embed={true}
+                data-key={node.key}
+            />
+        );
+    }
 }

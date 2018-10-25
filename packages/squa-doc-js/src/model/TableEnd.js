@@ -1,19 +1,16 @@
-import AtomicIterator from "./iterators/AtomicIterator";
+import NodeType from "./NodeType";
+import AtomicIterator from "./AtomicIterator";
 
 export default class TableEnd {
-  // Getters
+    get type() {
+        return NodeType.TableEnd;
+    }
 
-  getNodeType() {
-    return "table-end";
-  }
+    get length() {
+        return 1;
+    }
 
-  getLength() {
-    return 1;
-  }
-
-  // Editable mixin methods (required by Document)
-
-  iterator() {
-    return new AtomicIterator(this);
-  }
+    iterator() {
+        return new AtomicIterator(this);
+    }
 }

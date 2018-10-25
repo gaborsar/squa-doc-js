@@ -1,88 +1,111 @@
 import Delta from "quill-delta";
-import NodeMixin from "./mixins/Node";
-import ParentMixin from "./mixins/Parent";
-import EditableMixin from "./mixins/Editable";
-import ListIterator from "./iterators/ListIterator";
+import NodeType from "./NodeType";
 import Editor from "./Editor";
-import findPosition from "./traversal/findPosition";
-import createRange from "./traversal/createRange";
-import { createKey } from "./Keys";
+import NodeMixin from "./NodeMixin";
+import ParentMixin from "./ParentMixin";
+import EditableMixin from "./EditableMixin";
+import ListIterator from "./ListIterator";
+import findPosition from "./findPosition";
+import createRange from "./createRange";
+import fastDiff from "./fastDiff";
 import { isBlockNode } from "./Predicates";
 import { addLength, concatText, concatDelta } from "./Reducers";
 
 class Document {
-  constructor({ schema, key = createKey(), children = [] }) {
-    this.schema = schema;
-    this.key = key;
-    this.children = children;
-  }
+    _length = 0;
+    _text = "";
+    _delta = null;
 
-  // Getters
-
-  getNodeType() {
-    return "document";
-  }
-
-  getLength() {
-    return this.children.reduce(addLength, 0);
-  }
-
-  getText() {
-    return this.children.reduce(concatText, "");
-  }
-
-  getDelta() {
-    return this.children.reduce(concatDelta, new Delta());
-  }
-
-  isPristine() {
-    const { children } = this;
-
-    if (children.length !== 1) {
-      return false;
+    constructor(schema, key, children) {
+        this.schema = schema;
+        this.key = key;
+        this.children = children;
     }
 
-    const child = children[0];
+    get type() {
+        return NodeType.Document;
+    }
 
-    return isBlockNode(child) && child.isEmpty() && child.isPristine();
-  }
+    get length() {
+        if (this._length === 0) {
+            this._length = this.children.reduce(addLength, 0);
+        }
+        return this._length;
+    }
 
-  // Node mixin methods
+    get text() {
+        if (this._text === "") {
+            this._text = this.children.reduce(concatText, "");
+        }
+        return this._text;
+    }
 
-  merge(props) {
-    return new Document({ ...this, ...props });
-  }
+    get delta() {
+        if (this._delta === null) {
+            this._delta = this.children.reduce(concatDelta, new Delta());
+        }
+        return this._delta;
+    }
 
-  // Editable mixin methods
+    getType() {
+        return this.type;
+    }
 
-  iterator() {
-    return new ListIterator(this.children);
-  }
+    getLength() {
+        return this.length;
+    }
 
-  edit() {
-    const { schema, key } = this;
+    getText() {
+        return this.text;
+    }
 
-    const iterator = this.iterator();
-    const builder = schema.createDocumentBuilder({ key });
+    getDelta() {
+        return this.delta;
+    }
 
-    return new Editor(iterator, builder);
-  }
+    isPristine() {
+        const { children } = this;
+        if (children.length !== 1) {
+            return false;
+        }
+        const child = children[0];
+        return isBlockNode(child) && child.isEmpty() && child.isPristine();
+    }
 
-  // Parent mixin methods
+    merge(props) {
+        return this.schema.createDocument({ ...this, ...props });
+    }
 
-  findChildAtOffset(offset) {
-    return findPosition(this.children, offset, false);
-  }
+    iterator() {
+        return new ListIterator(this.children);
+    }
 
-  findChildrenAtRange(offset, length) {
-    return createRange(this.children, offset, length);
-  }
+    editor() {
+        return new Editor(
+            this.iterator(),
+            this.schema.createDocumentBuilder({
+                key: this.key
+            })
+        );
+    }
 
-  // Own methods
+    findChildAtOffset(offset) {
+        return findPosition(this.children, offset, false);
+    }
 
-  diff(other) {
-    return this.getDelta().diff(other.getDelta());
-  }
+    findChildrenAtRange(offset, length) {
+        return createRange(this.children, offset, length);
+    }
+
+    optimize() {
+        return this.children.length === 0
+            ? this.setChildren([this.schema.createBlock()])
+            : this;
+    }
+
+    diff(other) {
+        return fastDiff(this.children, other.children);
+    }
 }
 
 Object.assign(Document.prototype, NodeMixin, EditableMixin, ParentMixin);

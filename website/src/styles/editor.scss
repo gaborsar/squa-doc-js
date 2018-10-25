@@ -13,7 +13,26 @@
     color: #aaa;
   }
 
-  // Typography
+  .SquaDocJs-table-outter {
+    width: 100%;
+  }
+
+  .SquaDocJs-cell-inner {
+    padding: 0 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+
+  td {
+    min-width: 100px;
+    padding: 0;
+    border: 1px solid #aaa;
+    vertical-align: top;
+  }
 
   h1 {
     margin: 20px 0;
@@ -82,8 +101,6 @@
     font-size: 14px;
     line-height: 20px;
   }
-
-  // Numbering
 
   h1 {
     counter-increment: editor-h1;

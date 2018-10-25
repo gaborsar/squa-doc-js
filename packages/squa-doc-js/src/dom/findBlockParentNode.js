@@ -1,10 +1,12 @@
-import isElementNode from "./isElementNode";
-import isBlockNode from "./isBlockNode";
-import findParentNode from "./findParentNode";
+import { isElementNode, isBlockNode } from "./Predicates";
 
 export default function findBlockParentNode(node) {
-  return findParentNode(
-    node,
-    currentNode => isElementNode(currentNode) && isBlockNode(currentNode)
-  );
+    let currentNode = node;
+    while (
+        currentNode &&
+        !(isElementNode(currentNode) && isBlockNode(currentNode))
+    ) {
+        currentNode = currentNode.parentNode;
+    }
+    return currentNode;
 }

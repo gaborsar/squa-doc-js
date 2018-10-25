@@ -1,7 +1,7 @@
 import renderNode from "./renderNode";
 
 const Plugin = {
-  renderNode
+    renderNode
 };
 
 export default Plugin;

@@ -7,13 +7,13 @@ import onKeyDown from "./onKeyDown";
 import afterInput from "./afterInput";
 
 const Plugin = {
-  schema,
-  renderNode,
-  renderMark,
-  tokenizeNode,
-  tokenizeClassName,
-  onKeyDown,
-  afterInput
+    schema,
+    renderNode,
+    renderMark,
+    tokenizeNode,
+    tokenizeClassName,
+    onKeyDown,
+    afterInput
 };
 
 export default Plugin;

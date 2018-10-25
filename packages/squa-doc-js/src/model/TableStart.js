@@ -1,43 +1,34 @@
-import NodeMixin from "./mixins/Node";
-import FormatMixin from "./mixins/Format";
-import AtomicIterator from "./iterators/AtomicIterator";
-import Style from "./Style";
-import { createKey } from "./Keys";
+import NodeMixin from "./NodeMixin";
+import NodeType from "./NodeType";
+import FormatMixin from "./FormatMixin";
+import AtomicIterator from "./AtomicIterator";
 
 class TableStart {
-  constructor({ schema, key = createKey(), style = Style.create() }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-  }
+    constructor(schema, key, style) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+    }
 
-  // Getters
+    get type() {
+        return NodeType.TableStart;
+    }
 
-  getNodeType() {
-    return "table-start";
-  }
+    get length() {
+        return 1;
+    }
 
-  getLength() {
-    return 1;
-  }
+    merge(props) {
+        return this.schema.createTableStart({ ...this, ...props });
+    }
 
-  // Node mixin methods
+    iterator() {
+        return new AtomicIterator(this);
+    }
 
-  merge(props) {
-    return new TableStart({ ...this, ...props });
-  }
-
-  // Editable mixin methods (required by Document)
-
-  iterator() {
-    return new AtomicIterator(this);
-  }
-
-  // Format mixin methods
-
-  isValidMark(name) {
-    return this.schema.isTableMark(name);
-  }
+    isValidMark(name) {
+        return this.schema.isTableMark(name);
+    }
 }
 
 Object.assign(TableStart.prototype, NodeMixin, FormatMixin);
