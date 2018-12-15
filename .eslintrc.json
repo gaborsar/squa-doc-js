@@ -1,43 +1,48 @@
 {
-  "env": {
-    "browser": true,
-    "node": true,
-    "commonjs": true,
-    "es6": true,
-    "jest": true
-  },
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true,
-      "jsx": true
+    "env": {
+        "browser": true,
+        "node": true,
+        "commonjs": true,
+        "es6": true,
+        "jest": true
     },
-    "sourceType": "module"
-  },
-  "plugins": ["react", "prettier"],
-  "globals": {
-    "jest": true,
-    "describe": true,
-    "beforeAll": true,
-    "afterAll": true,
-    "beforeEach": true,
-    "afterEach": true,
-    "it": true,
-    "expect": true
-  },
-  "rules": {
-    "eqeqeq": "error",
-    "linebreak-style": ["error", "unix"],
-    "no-console": ["error", { "allow": ["wran", "error"] }],
-    "no-control-regex": "off",
-    "no-param-reassign": "error",
-    "no-shadow": "error",
-    "no-unused-vars": "error",
-    "prefer-const": ["error", { "destructuring": "all" }],
-    "prefer-template": "error",
-    "prettier/prettier": "error",
-    "radix": "error",
-    "react/prop-types": "off"
-  }
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": ["react", "prettier"],
+    "globals": {
+        "jest": true,
+        "describe": true,
+        "beforeAll": true,
+        "afterAll": true,
+        "beforeEach": true,
+        "afterEach": true,
+        "it": true,
+        "expect": true
+    },
+    "rules": {
+        "eqeqeq": "error",
+        "linebreak-style": ["error", "unix"],
+        "no-console": ["error", { "allow": ["wran", "error"] }],
+        "no-control-regex": "off",
+        "no-param-reassign": "error",
+        "no-shadow": "error",
+        "no-unused-vars": "error",
+        "prefer-const": ["error", { "destructuring": "all" }],
+        "prefer-template": "error",
+        "prettier/prettier": "error",
+        "radix": "error",
+        "react/prop-types": "off"
+    },
+    "settings": {
+        "react": {
+            "version": "latest"
+        }
+    }
 }

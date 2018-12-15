@@ -1,0 +1,51 @@
+.BlockImage {
+    position: relative;
+    margin: 0 10px;
+    padding: 10px;
+    border: 2px solid transparent;
+    text-align: center;
+    user-select: none;
+    transition: border 100ms;
+}
+
+.BlockImage img {
+    max-width: 100%;
+}
+
+.BlockImage figcaption {
+    padding: 10px 0;
+}
+
+.BlockImage .BlockImage-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 100ms, opacity 100ms;
+}
+
+.BlockImage .BlockImage-controls button {
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+    background: #eee;
+    border: none;
+    cursor: pointer;
+    transition: background 100ms;
+}
+
+.BlockImage .BlockImage-controls button:hover {
+    background: #ddd;
+}
+
+.BlockImage:hover {
+    border: 2px solid #eee;
+}
+
+.BlockImage:hover .BlockImage-controls {
+    visibility: visible;
+    opacity: 1;
+}

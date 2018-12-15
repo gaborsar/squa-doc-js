@@ -1,16 +1,17 @@
 .Menu {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
-  .Menu-separator {
+.Menu-separator {
     width: 0;
     height: 12px;
     border-right: 1px solid #ccc;
     margin: 0 3px;
-  }
+}
 
-  .Menu-button {
+.Menu-button {
     width: 30px;
     height: 30px;
     margin: 0;
@@ -24,17 +25,16 @@
     background: white;
     cursor: pointer;
     transition: color 100ms;
-  }
+}
 
-  .Menu-button:hover {
+.Menu-button:hover {
     color: black;
-  }
+}
 
-  .Menu-button:disabled {
+.Menu-button:disabled {
     color: #ddd;
-  }
+}
 
-  .Menu-button-active {
+.Menu-button-active {
     color: blue;
-  }
 }

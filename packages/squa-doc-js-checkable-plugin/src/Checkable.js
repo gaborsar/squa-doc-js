@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
-import "./Checkable.scss";
+import "./Checkable.css";
 
 export default class Checkable extends PureComponent {
     handleClick = event => {

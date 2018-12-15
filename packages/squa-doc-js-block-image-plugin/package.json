@@ -9,9 +9,13 @@
     "type": "git",
     "url": "https://github.com/gaborsar/squa-doc-js"
   },
-  "keywords": ["rich", "text", "editor"],
+  "keywords": [
+    "rich",
+    "text",
+    "editor"
+  ],
   "peerDependencies": {
-    "react": "16.6.3",
-    "react-dom": "16.6.3"
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
   }
 }

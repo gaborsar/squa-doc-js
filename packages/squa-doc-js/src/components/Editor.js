@@ -27,7 +27,7 @@ import defaultTokenizeNode from "../defaults/tokenizeNode";
 import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import defaultAfterInput from "../defaults/afterInput";
 
-import "./Editor.scss";
+import "./Editor.css";
 
 const sink = () => {};
 
