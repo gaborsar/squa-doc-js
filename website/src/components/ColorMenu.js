@@ -1,9 +1,11 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaintBrush } from "@fortawesome/free-solid-svg-icons";
+
 import SimpleButton from "./SimpleButton";
 import ColorButton from "./ColorButton";
-import "./ColorMenu.scss";
+
+import "./ColorMenu.css";
 
 export default class ColorMenu extends PureComponent {
     state = { isOpen: false };

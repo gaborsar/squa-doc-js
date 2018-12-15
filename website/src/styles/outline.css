@@ -1,0 +1,72 @@
+.Outline {
+    width: 300px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.Outline a {
+    display: block;
+    width: 260px;
+    padding: 15px 20px;
+    color: black;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 100ms;
+}
+
+.Outline a:hover {
+    background: #eee;
+}
+
+.Outline-heading-one {
+    counter-increment: outline-h1;
+}
+
+.Outline-heading-one:before {
+    content: counter(outline-h1) ". ";
+}
+
+.Outline-heading-two {
+    counter-increment: outline-h2;
+}
+
+.Outline-heading-two:before {
+    content: counter(outline-h1) "." counter(outline-h2) ". ";
+}
+
+.Outline-heading-three {
+    counter-increment: outline-h3;
+}
+
+.Outline-heading-three:before {
+    content: counter(outline-h1) "." counter(outline-h2) "." counter(outline-h3)
+        ". ";
+}
+
+.Outline-heading-four {
+    counter-increment: outline-h4;
+}
+
+.Outline-heading-four:before {
+    content: counter(outline-h1) "." counter(outline-h2) "." counter(outline-h3)
+        "." counter(outline-h4) ". ";
+}
+
+.Outline-heading-five {
+    counter-increment: outline-h5;
+}
+
+.Outline-heading-five:before {
+    content: counter(outline-h1) "." counter(outline-h2) "." counter(outline-h3)
+        "." counter(outline-h4) "." counter(outline-h5) ". ";
+}
+
+.Outline-heading-six {
+    counter-increment: outline-h6;
+}
+
+.Outline-heading-six:before {
+    content: counter(outline-h1) "." counter(outline-h2) "." counter(outline-h3)
+        "." counter(outline-h4) "." counter(outline-h5) "." counter(outline-h6)
+        ". ";
+}

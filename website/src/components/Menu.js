@@ -22,12 +22,14 @@ import {
     faLink
 } from "@fortawesome/free-solid-svg-icons";
 import { indent, outdent } from "squa-doc-js";
+
 import SimpleButton from "./SimpleButton";
 import BlockTypeButton from "./BlockTypeButton";
 import ToggleButton from "./ToggleButton";
 import ColorMenu from "./ColorMenu";
 import LinkButton from "./LinkButton";
-import "./Menu.scss";
+
+import "./Menu.css";
 
 export default class Menu extends PureComponent {
     handleUndoClick = () => {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NodeType } from "squa-doc-js";
 import createId from "./createId";
-import "./Outline.scss";
+import "./Outline.css";
 
 export default class Outline extends Component {
     shouldComponentUpdate(nextProps) {

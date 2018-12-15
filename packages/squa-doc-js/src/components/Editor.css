@@ -1,0 +1,258 @@
+/* Editor */
+
+[contenteditable] {
+    outline: none;
+}
+
+.SquaDocJs-editor {
+    position: relative;
+}
+
+.SquaDocJs-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Error boundary */
+
+.SquaDocJs-error {
+    color: red;
+}
+
+/* Document */
+
+.SquaDocJs-document {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Unordered lists */
+
+.SquaDocJs-editor ul {
+    padding: 0;
+}
+
+.SquaDocJs-editor ul li {
+    list-style-type: none;
+}
+
+/* Unordered lists / Indentation */
+
+.SquaDocJs-editor ul li {
+    margin-left: 45px;
+}
+
+.SquaDocJs-editor ul li:before {
+    content: "\25CF";
+    display: inline-block;
+    min-width: 40px;
+    margin-right: 5px;
+    margin-left: -45px;
+    text-align: right;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-1 {
+    margin-left: 75px;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-1:before {
+    content: "\25CB";
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-2 {
+    margin-left: 105px;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-2:before {
+    content: "\25A0";
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-3 {
+    margin-left: 135px;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-3:before {
+    content: "\25C6";
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-4 {
+    margin-left: 165px;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-4:before {
+    content: "\25C6";
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-5 {
+    margin-left: 195px;
+}
+
+.SquaDocJs-editor ul li.SquaDocJs-indent-5:before {
+    content: "\25C6";
+}
+
+/* Ordered lists */
+
+.SquaDocJs-editor ol {
+    padding: 0;
+}
+
+.SquaDocJs-editor ol li {
+    list-style-type: none;
+}
+
+/* Ordered lists / Indentation */
+
+.SquaDocJs-editor ol li {
+    margin-left: 45px;
+    counter-reset: li-1 li-2 li-3 li-4 li-5;
+    counter-increment: li-0;
+}
+
+.SquaDocJs-editor ol li:before {
+    content: counter(li-0) ".";
+    display: inline-block;
+    min-width: 40px;
+    margin-right: 5px;
+    margin-left: -45px;
+    text-align: right;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-1 {
+    margin-left: 75px;
+    counter-reset: li-2 li-3 li-4 li-5;
+    counter-increment: li-1;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-1:before {
+    content: counter(li-1) ".";
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-2 {
+    margin-left: 105px;
+    counter-reset: li-3 li-4 li-5;
+    counter-increment: li-2;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-2:before {
+    content: counter(li-2) ".";
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-3 {
+    margin-left: 135px;
+    counter-reset: li-4 li-5;
+    counter-increment: li-3;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-3:before {
+    content: counter(li-3) ".";
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-4 {
+    margin-left: 165px;
+    counter-reset: li-5;
+    counter-increment: li-4;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-4:before {
+    content: counter(li-4) ".";
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-5 {
+    margin-left: 195px;
+    counter-increment: li-5;
+}
+
+.SquaDocJs-editor ol li.SquaDocJs-indent-5:before {
+    content: counter(li-5) ".";
+}
+
+/* Code */
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Alignment */
+
+.SquaDocJs-align-left {
+    text-align: left;
+}
+
+.SquaDocJs-align-right {
+    text-align: right;
+}
+
+.SquaDocJs-align-center {
+    text-align: center;
+}
+
+.SquaDocJs-align-justify {
+    text-align: justify;
+}
+
+/* Colors */
+
+.SquaDocJs-color-silver {
+    color: silver;
+}
+
+.SquaDocJs-color-gray {
+    color: gray;
+}
+
+.SquaDocJs-color-maroon {
+    color: maroon;
+}
+
+.SquaDocJs-color-red {
+    color: red;
+}
+
+.SquaDocJs-color-purple {
+    color: purple;
+}
+
+.SquaDocJs-color-fuchsia {
+    color: fuchsia;
+}
+
+.SquaDocJs-color-green {
+    color: green;
+}
+
+.SquaDocJs-color-lime {
+    color: lime;
+}
+
+.SquaDocJs-color-olive {
+    color: olive;
+}
+
+.SquaDocJs-color-yellow {
+    color: yellow;
+}
+
+.SquaDocJs-color-navy {
+    color: navy;
+}
+
+.SquaDocJs-color-blue {
+    color: blue;
+}
+
+.SquaDocJs-color-teal {
+    color: teal;
+}
+
+.SquaDocJs-color-aqua {
+    color: aqua;
+}
+
+/* Embeds */
+
+.SquaDocJs-embed {
+    max-width: 100%;
+}

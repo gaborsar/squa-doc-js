@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
-import "./BlockImage.scss";
+import "./BlockImage.css";
 
 export default class BlockImage extends PureComponent {
     handleDeleteClick = event => {

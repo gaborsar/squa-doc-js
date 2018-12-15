@@ -22,21 +22,10 @@ const sharedConfig = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["es2015", "react"],
-                        plugins: [
-                            "transform-object-rest-spread",
-                            "transform-class-properties"
-                        ]
+                        presets: ["@babel/preset-env", "@babel/preset-react"],
+                        plugins: ["@babel/plugin-proposal-class-properties"]
                     }
                 }
-            },
-            {
-                test: /\.scss$/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" },
-                    { loader: "sass-loader" }
-                ]
             },
             {
                 test: /\.css$/,

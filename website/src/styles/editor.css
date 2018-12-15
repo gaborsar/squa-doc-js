@@ -1,69 +1,70 @@
 .SquaDocJs-editor {
-  max-width: 900px;
-  margin: 10px;
-  padding: 10px;
-  font-family: sans-sans-serif;
+    max-width: 900px;
+    margin: 10px;
+    padding: 10px;
+    font-family: sans-sans-serif;
+}
 
-  .SquaDocJs-placeholder {
-    top: 20px; // 10 (editor padding) + 10 (p margin)
-    left: 10px; // 10 (editor padding)
+.SquaDocJs-editor .SquaDocJs-placeholder {
+    top: 20px; /* 10 (editor padding) + 10 (p margin) */
+    left: 10px; /* 10 (editor padding) */
     font-family: sans-serif;
     font-size: 14px;
     line-height: 20px;
     color: #aaa;
-  }
+}
 
-  .SquaDocJs-table-outter {
+.SquaDocJs-editor .SquaDocJs-table-outter {
     width: 100%;
-  }
+}
 
-  .SquaDocJs-cell-inner {
+.SquaDocJs-editor .SquaDocJs-cell-inner {
     padding: 0 10px;
-  }
+}
 
-  table {
+.SquaDocJs-editor table {
     width: 100%;
     border-collapse: collapse;
     margin: 0 auto;
-  }
+}
 
-  td {
+.SquaDocJs-editor td {
     min-width: 100px;
     padding: 0;
     border: 1px solid #aaa;
     vertical-align: top;
-  }
+}
 
-  h1 {
+.SquaDocJs-editor h1 {
     margin: 20px 0;
     font-family: sans-serif;
     font-size: 36px;
     font-weight: bold;
-  }
+}
 
-  h2 {
+.SquaDocJs-editor h2 {
     margin: 20px 0;
     font-family: sans-serif;
     font-size: 19px;
     font-weight: bold;
-  }
+}
 
-  p {
+.SquaDocJs-editor p {
     margin: 10px 0;
     font-family: sans-serif;
     font-size: 14px;
     line-height: 20px;
-  }
+}
 
-  blockquote {
+.SquaDocJs-editor blockquote {
     margin: 10px 30px;
     font-family: sans-serif;
     font-size: 14px;
     font-style: italic;
     line-height: 20px;
-  }
+}
 
-  pre {
+.SquaDocJs-editor pre {
     margin: 10px 0;
     padding: 10px 20px;
     font-family: sans-serif;
@@ -71,93 +72,90 @@
     line-height: 20px;
     background: #eee;
     border-radius: 3px;
-  }
-
-  ul {
-    margin: 10px 0;
-  }
-
-  ol {
-    margin: 10px 0;
-  }
-
-  li {
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  figcaption {
-    font-family: sans-serif;
-    font-size: 14px;
-  }
-
-  b {
-    font-weight: bold;
-  }
-
-  .Checkable {
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  h1 {
-    counter-increment: editor-h1;
-
-    &:before {
-      content: counter(editor-h1) ". ";
-    }
-  }
-
-  h2 {
-    counter-increment: editor-h2;
-
-    &:before {
-      content: counter(editor-h1) "." counter(editor-h2) ". ";
-    }
-  }
-
-  h3 {
-    counter-increment: editor-h3;
-
-    &:before {
-      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
-        ". ";
-    }
-  }
-
-  h4 {
-    counter-increment: editor-h4;
-
-    &:before {
-      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
-        "." counter(editor-h4) ". ";
-    }
-  }
-
-  h5 {
-    counter-increment: editor-h5;
-
-    &:before {
-      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
-        "." counter(editor-h4) "." counter(editor-h5) ". ";
-    }
-  }
-
-  h6 {
-    counter-increment: editor-h6;
-
-    &:before {
-      content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
-        "." counter(editor-h4) "." counter(editor-h5) "." counter(editor-h6)
-        ". ";
-    }
-  }
 }
 
-.SquaDocJs-editor--focused {
-  .SquaDocJs-placeholder {
+.SquaDocJs-editor ul {
+    margin: 10px 0;
+}
+
+.SquaDocJs-editor ol {
+    margin: 10px 0;
+}
+
+.SquaDocJs-editor li {
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.SquaDocJs-editor figcaption {
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+.SquaDocJs-editor b {
+    font-weight: bold;
+}
+
+.SquaDocJs-editor .Checkable {
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.SquaDocJs-editor h1 {
+    counter-increment: editor-h1;
+}
+
+.SquaDocJs-editor h1:before {
+    content: counter(editor-h1) ". ";
+}
+
+.SquaDocJs-editor h2 {
+    counter-increment: editor-h2;
+}
+
+.SquaDocJs-editor h2:before {
+    content: counter(editor-h1) "." counter(editor-h2) ". ";
+}
+
+.SquaDocJs-editor h3 {
+    counter-increment: editor-h3;
+}
+
+.SquaDocJs-editor h3:before {
+    content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        ". ";
+}
+
+.SquaDocJs-editor h4 {
+    counter-increment: editor-h4;
+}
+
+.SquaDocJs-editor h4:before {
+    content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) ". ";
+}
+
+.SquaDocJs-editor h5 {
+    counter-increment: editor-h5;
+}
+
+.SquaDocJs-editor h5:before {
+    content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) "." counter(editor-h5) ". ";
+}
+
+.SquaDocJs-editor h6 {
+    counter-increment: editor-h6;
+}
+
+.SquaDocJs-editor h6:before {
+    content: counter(editor-h1) "." counter(editor-h2) "." counter(editor-h3)
+        "." counter(editor-h4) "." counter(editor-h5) "." counter(editor-h6)
+        ". ";
+}
+
+.SquaDocJs-editor--focused .SquaDocJs-placeholder {
     color: #eee;
-  }
 }
