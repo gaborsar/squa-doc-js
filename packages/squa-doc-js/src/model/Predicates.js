@@ -1,85 +1,93 @@
+import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
 
-// Nodes
-
 export function isParentNode(node) {
-  return node.hasOwnProperty("children");
+    return node.hasOwnProperty("children");
 }
 
 export function isTableNode(node) {
-  return node.getNodeType() === "table";
+    return node.type === NodeType.Table;
 }
 
 export function isTableStartNode(node) {
-  return node.getNodeType() === "table-start";
+    return node.type === NodeType.TableStart;
 }
 
 export function isTableEndNode(node) {
-  return node.getNodeType() === "table-end";
+    return node.type === NodeType.TableEnd;
 }
 
-export function isTableCellNode(node) {
-  return node.getNodeType() === "table-cell";
+export function isRowNode(node) {
+    return node.type === NodeType.Row;
 }
 
-export function isTableCellStartNode(node) {
-  return node.getNodeType() === "table-cell-start";
+export function isRowStartNode(node) {
+    return node.type === NodeType.RowStart;
 }
 
-export function isTableRowNode(node) {
-  return node.getNodeType() === "table-row";
+export function isCellNode(node) {
+    return node.type === NodeType.Cell;
 }
 
-export function isTableRowStartNode(node) {
-  return node.getNodeType() === "table-row-start";
+export function isCellStartNode(node) {
+    return node.type === NodeType.CellStart;
 }
 
 export function isBlockNode(node) {
-  return node.getNodeType() === "block";
+    return node.type === NodeType.Block;
 }
 
 export function isBlockEndNode(node) {
-  return node.getNodeType() === "block-end";
+    return node.type === NodeType.BlockEnd;
 }
 
 export function isBlockEmbedNode(node) {
-  return node.getNodeType() === "block-embed";
+    return node.type === NodeType.BlockEmbed;
 }
 
 export function isTextNode(node) {
-  return node.getNodeType() === "text";
+    return node.type === NodeType.Text;
 }
 
 export function isInlineEmbedNode(node) {
-  return node.getNodeType() === "inline-embed";
+    return node.type === NodeType.InlineEmbed;
 }
 
-export function isBlockOrBlockEmbedNode(node) {
-  return isBlockNode(node) || isBlockEmbedNode(node);
+export function isTablePartNode(node) {
+    return (
+        isTableStartNode(node) ||
+        isTableEndNode(node) ||
+        isRowNode(node) ||
+        isRowStartNode(node) ||
+        isCellNode(node) ||
+        isCellStartNode(node)
+    );
 }
 
-export function isTextOrInlineEmbedNode(node) {
-  return isTextNode(node) || isInlineEmbedNode(node);
+export function isBlockLevelNode(node) {
+    return isBlockNode(node) || isBlockEmbedNode(node);
 }
 
-// Special characters
+export function isInlineNode(node) {
+    return isTextNode(node) || isInlineEmbedNode(node);
+}
 
 export function isTableStartCharacter(char) {
-  return char === SpecialCharacter.TableStart;
+    return char === SpecialCharacter.TableStart;
 }
 
 export function isTableEndCharacter(char) {
-  return char === SpecialCharacter.TableEnd;
+    return char === SpecialCharacter.TableEnd;
 }
 
-export function isTableRowStartCharacter(char) {
-  return char === SpecialCharacter.TableRowStart;
+export function isRowStartCharacter(char) {
+    return char === SpecialCharacter.RowStart;
 }
 
-export function isTableCellStartCharacter(char) {
-  return char === SpecialCharacter.TableCellStart;
+export function isCellStartCharacter(char) {
+    return char === SpecialCharacter.CellStart;
 }
 
 export function isBlockEndCharacter(char) {
-  return char === SpecialCharacter.BlockEnd;
+    return char === SpecialCharacter.BlockEnd;
 }

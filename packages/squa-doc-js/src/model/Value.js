@@ -1,4 +1,5 @@
 import Delta from "quill-delta";
+import EditorMode from "./EditorMode";
 import SpecialCharacter from "./SpecialCharacter";
 import Schema from "./Schema";
 import Selection from "./Selection";
@@ -6,189 +7,178 @@ import Change from "./Change";
 import List from "./List";
 import parseHTML from "../parser/parseHTML";
 import defaultSchema from "../defaults/schema";
-import { isBlockOrBlockEmbedNode, isTextOrInlineEmbedNode } from "./Predicates";
+import { isBlockLevelNode, isInlineNode } from "./Predicates";
 
 export default class Value {
-  static fromDelta({ schema = defaultSchema, delta }) {
-    const builder = new Schema(schema).createDocumentBuilder();
+    static fromDelta({ schema = defaultSchema, delta }) {
+        const builder = new Schema(schema).createDocumentBuilder();
 
-    delta.forEach(op => {
-      builder.insert(op.insert, op.attributes);
-    });
+        delta.forEach(op => {
+            builder.insert(op.insert, op.attributes);
+        });
 
-    return new Value({
-      document: builder.build()
-    });
-  }
+        return new Value({
+            document: builder.build()
+        });
+    }
 
-  static fromJSON({ schema = defaultSchema, contents }) {
-    return Value.fromDelta({
-      schema,
-      delta: new Delta(contents)
-    });
-  }
+    static fromJSON({ schema = defaultSchema, contents }) {
+        return Value.fromDelta({
+            schema,
+            delta: new Delta(contents)
+        });
+    }
 
-  static fromHTML({
-    schema = defaultSchema,
-    contents,
-    tokenizeNode,
-    tokenizeClassName
-  }) {
-    return Value.fromDelta({
-      schema,
-      delta: parseHTML(contents, tokenizeNode, tokenizeClassName)
-    });
-  }
+    static fromHTML({
+        schema = defaultSchema,
+        contents,
+        tokenizeNode,
+        tokenizeClassName
+    }) {
+        return Value.fromDelta({
+            schema,
+            delta: parseHTML(contents, tokenizeNode, tokenizeClassName)
+        });
+    }
 
-  static createEmpty({ schema = defaultSchema } = {}) {
-    return Value.fromDelta({
-      schema,
-      delta: new Delta().insert(SpecialCharacter.BlockEnd)
-    });
-  }
+    static createEmpty({ schema = defaultSchema } = {}) {
+        return Value.fromDelta({
+            schema,
+            delta: new Delta().insert(SpecialCharacter.BlockEnd)
+        });
+    }
 
-  constructor({
-    mode = "edit",
-    document,
-    selection = new Selection(),
-    undoStack = new List(),
-    redoStack = new List(),
-    inlineStyleOverride = null
-  }) {
-    this.mode = mode;
-    this.document = document;
-    this.selection = selection;
-    this.undoStack = undoStack;
-    this.redoStack = redoStack;
-    this.inlineStyleOverride = inlineStyleOverride;
-  }
+    constructor({
+        mode = EditorMode.Edit,
+        document,
+        selection = new Selection(),
+        undoStack = new List(),
+        redoStack = new List(),
+        inlineStyleOverride = null
+    }) {
+        this.mode = mode;
+        this.document = document;
+        this.selection = selection;
+        this.undoStack = undoStack;
+        this.redoStack = redoStack;
+        this.inlineStyleOverride = inlineStyleOverride;
+    }
 
-  merge(props) {
-    return new Value({ ...this, ...props });
-  }
+    merge(props) {
+        return new Value({ ...this, ...props });
+    }
 
-  // Getters
+    getMode() {
+        return this.mode;
+    }
 
-  getMode() {
-    return this.mode;
-  }
+    getDocument() {
+        return this.document;
+    }
 
-  getDocument() {
-    return this.document;
-  }
+    getSelection() {
+        return this.selection;
+    }
 
-  getSelection() {
-    return this.selection;
-  }
+    getUndoStack() {
+        return this.undoStack;
+    }
 
-  getUndoStack() {
-    return this.undoStack;
-  }
+    getRedoStack() {
+        return this.redoStack;
+    }
 
-  getRedoStack() {
-    return this.redoStack;
-  }
+    getInlineStyleOverride() {
+        return this.inlineStyleOverride;
+    }
 
-  getInlineStyleOverride() {
-    return this.inlineStyleOverride;
-  }
+    isComposing() {
+        return this.mode === EditorMode.Compose;
+    }
 
-  isComposing() {
-    return this.mode === "compose";
-  }
+    isEditing() {
+        return this.mode === EditorMode.Edit;
+    }
 
-  isEditing() {
-    return this.mode === "edit";
-  }
+    canUndo() {
+        return !this.undoStack.isEmpty();
+    }
 
-  canUndo() {
-    return !this.undoStack.isEmpty();
-  }
+    canRedo() {
+        return !this.redoStack.isEmpty();
+    }
 
-  canRedo() {
-    return !this.redoStack.isEmpty();
-  }
+    hasInlineStyleOverride() {
+        return this.inlineStyleOverride !== null;
+    }
 
-  hasInlineStyleOverride() {
-    return this.inlineStyleOverride !== null;
-  }
+    setMode(mode) {
+        return this.merge({ mode });
+    }
 
-  // Setters
+    setDocument(document) {
+        return this.merge({ document, inlineStyleOverride: null });
+    }
 
-  setMode(mode) {
-    return this.merge({ mode });
-  }
+    setSelection(selection) {
+        return this.merge({ selection, inlineStyleOverride: null });
+    }
 
-  setDocument(document) {
-    return this.merge({ document });
-  }
+    setUndoStack(undoStack) {
+        return this.merge({ undoStack });
+    }
 
-  setSelection(selection) {
-    return this.merge({ selection });
-  }
+    setRedoStack(redoStack) {
+        return this.merge({ redoStack });
+    }
 
-  setUndoStack(undoStack) {
-    return this.merge({ undoStack });
-  }
+    setInlineStyleOverride(inlineStyleOverride) {
+        return this.merge({ inlineStyleOverride });
+    }
 
-  setRedoStack(redoStack) {
-    return this.merge({ redoStack });
-  }
+    toDelta() {
+        return this.document.delta;
+    }
 
-  setInlineStyleOverride(inlineStyleOverride) {
-    return this.merge({ inlineStyleOverride });
-  }
+    toJSON() {
+        return this.document.delta.ops;
+    }
 
-  // Coversions
+    change() {
+        return new Change(this);
+    }
 
-  toDelta() {
-    return this.document.getDelta();
-  }
+    getBlockAttributes() {
+        const { document, selection } = this;
+        return selection.isCollapsed()
+            ? document.getAttributesAtOffset(selection.offset, isBlockLevelNode)
+            : document.getAttributesAtRange(
+                  selection.offset,
+                  selection.length,
+                  isBlockLevelNode
+              );
+    }
 
-  toJSON() {
-    return this.document.getDelta().ops;
-  }
+    getInlineAttributes() {
+        const { document, selection, inlineStyleOverride } = this;
+        return selection.isCollapsed()
+            ? document.getAttributesAtOffset(
+                  selection.offset,
+                  isInlineNode,
+                  inlineStyleOverride
+              )
+            : document.getAttributesAtRange(
+                  selection.offset,
+                  selection.length,
+                  isInlineNode,
+                  inlineStyleOverride
+              );
+    }
 
-  change() {
-    return new Change(this);
-  }
-
-  getBlockAttributes() {
-    const { document, selection } = this;
-
-    return selection.isCollapsed()
-      ? document.getAttributesAtOffset(
-          selection.getOffset(),
-          isBlockOrBlockEmbedNode
-        )
-      : document.getAttributesAtRange(
-          selection.getOffset(),
-          selection.getLength(),
-          isBlockOrBlockEmbedNode
-        );
-  }
-
-  getInlineAttributes() {
-    const { document, selection, inlineStyleOverride } = this;
-
-    return selection.isCollapsed()
-      ? document.getAttributesAtOffset(
-          selection.getOffset(),
-          isTextOrInlineEmbedNode,
-          inlineStyleOverride
-        )
-      : document.getAttributesAtRange(
-          selection.getOffset(),
-          selection.getLength(),
-          isTextOrInlineEmbedNode,
-          inlineStyleOverride
-        );
-  }
-
-  getAttributes() {
-    return {
-      ...this.getBlockAttributes(),
-      ...this.getInlineAttributes()
-    };
-  }
+    getAttributes() {
+        return {
+            ...this.getBlockAttributes(),
+            ...this.getInlineAttributes()
+        };
+    }
 }

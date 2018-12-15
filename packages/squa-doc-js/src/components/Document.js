@@ -1,113 +1,126 @@
 import React, { PureComponent } from "react";
 import joinClassNames from "classnames";
+
+import {
+    isTableNode,
+    isBlockNode,
+    isBlockEmbedNode
+} from "../model/Predicates";
+import Table from "./Table";
 import Block from "./Block";
-import { isBlockEmbedNode } from "../model/Predicates";
+import renderWrappedNodes from "./renderWrappedNodes";
 
 export default class Document extends PureComponent {
-  render() {
-    const { node, createChange, onChange, renderNode, renderMark } = this.props;
-
-    const blocks = [];
-
-    node.getChildren().forEach(child => {
-      const classNames = [];
-
-      child.getMarks().forEach(mark => {
-        const markObj = renderMark(mark) || {};
-
-        const { className: markClassName } = markObj;
-
-        if (markClassName) {
-          classNames.push(markClassName);
-        }
-      });
-
-      if (isBlockEmbedNode(child)) {
-        const embedObj = renderNode(child, { createChange, onChange });
-
-        if (!embedObj) {
-          throw new Error(`Invalid embed: ${child.getNodeType()}`);
-        }
-
-        const { component: EmbedComponent, props: embedProps = {} } = embedObj;
-
-        const element = (
-          <EmbedComponent
-            {...embedProps}
-            key={child.getKey()}
-            data-embed
-            data-key={child.getKey()}
-            contentEditable={false}
-            className={joinClassNames("SquaDocJs-embed", classNames)}
-          />
+    render() {
+        const { node } = this.props;
+        return (
+            <div className="SquaDocJs-document">
+                {renderWrappedNodes(
+                    node.children,
+                    this.renderWrapper,
+                    this.renderNode
+                )}
+            </div>
         );
-
-        blocks.push({ key: child.getKey(), element });
-      } else {
-        const blockObj = renderNode(child, { createChange, onChange });
-
-        if (!blockObj) {
-          throw new Error(`Invalid block: ${child.getNodeType()}`);
-        }
-
-        const { wrapper, component, props } = blockObj;
-
-        const element = (
-          <Block
-            key={child.getKey()}
-            node={child}
-            BlockComponent={component}
-            blockProps={props}
-            blockClassName={joinClassNames(classNames)}
-            createChange={createChange}
-            onChange={onChange}
-            renderNode={renderNode}
-            renderMark={renderMark}
-          />
-        );
-
-        blocks.push({ wrapper, key: child.getKey(), element });
-      }
-    });
-
-    const children = [];
-
-    let CurrentWrapper;
-    let currentKey;
-    let currentChildren = [];
-
-    const renderWrapper = () => {
-      if (CurrentWrapper) {
-        children.push(
-          <CurrentWrapper key={currentKey} data-wrapper data-key={currentKey}>
-            {currentChildren}
-          </CurrentWrapper>
-        );
-      } else {
-        children.push(...currentChildren);
-      }
-    };
-
-    blocks.forEach(block => {
-      const { wrapper, key, element } = block;
-
-      if (CurrentWrapper !== wrapper) {
-        if (currentChildren.length) {
-          renderWrapper();
-        }
-
-        CurrentWrapper = wrapper;
-        currentKey = key;
-        currentChildren = [];
-      }
-
-      currentChildren.push(element);
-    });
-
-    if (currentChildren.length) {
-      renderWrapper();
     }
 
-    return <div className="SquaDocJs-document">{children}</div>;
-  }
+    renderWrapper = node => {
+        const { createChange, onChange, renderNode } = this.props;
+        const obj = renderNode(node, { createChange, onChange }) || {};
+        const { wrapper: component, wrapperProps: props } = obj;
+        return { component, props, node };
+    };
+
+    renderNode = node => {
+        const { renderMark } = this.props;
+
+        const classNames = [];
+        node.style.marks.map(renderMark).forEach(obj => {
+            if (obj === undefined) {
+                return;
+            }
+            if (obj.className === undefined) {
+                return;
+            }
+            classNames.push(obj.className);
+        });
+
+        if (isTableNode(node)) {
+            return this.renderTable(node, classNames);
+        }
+        if (isBlockNode(node)) {
+            return this.renderBlock(node, classNames);
+        }
+        if (isBlockEmbedNode(node)) {
+            return this.renderBlockEmbed(node, classNames);
+        }
+        throw new Error();
+    };
+
+    renderTable(node, classNames) {
+        const { createChange, onChange, renderNode, renderMark } = this.props;
+
+        const obj = renderNode(node, { createChange, onChange });
+        if (obj === undefined) {
+            throw new Error();
+        }
+
+        return (
+            <Table
+                key={node.key}
+                TableComponent={obj.component}
+                tableClassName={joinClassNames("SquaDocJs-table", classNames)}
+                tableProps={obj.props}
+                node={node}
+                createChange={createChange}
+                onChange={onChange}
+                renderNode={renderNode}
+                renderMark={renderMark}
+            />
+        );
+    }
+
+    renderBlock(node, classNames) {
+        const { createChange, onChange, renderNode, renderMark } = this.props;
+
+        const obj = renderNode(node, { createChange, onChange });
+        if (obj === undefined) {
+            throw new Error();
+        }
+
+        return (
+            <Block
+                key={node.key}
+                BlockComponent={obj.component}
+                blockClassName={joinClassNames("SquaDocJs-block", classNames)}
+                blockProps={obj.props}
+                node={node}
+                createChange={createChange}
+                onChange={onChange}
+                renderNode={renderNode}
+                renderMark={renderMark}
+            />
+        );
+    }
+
+    renderBlockEmbed(node, classNames) {
+        const { renderNode, createChange, onChange } = this.props;
+
+        const obj = renderNode(node, { createChange, onChange });
+        if (obj === undefined) {
+            throw new Error();
+        }
+
+        const { component: EmbedComponent, props } = obj;
+        return (
+            <EmbedComponent
+                {...props}
+                key={node.key}
+                className={joinClassNames("SquaDocJs-embed", classNames)}
+                contentEditable={false}
+                data-embed={true}
+                data-key={node.key}
+            />
+        );
+    }
 }

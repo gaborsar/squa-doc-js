@@ -1,63 +1,68 @@
 import Delta from "quill-delta";
-import NodeMixin from "./mixins/Node";
-import FormatMixin from "./mixins/Format";
-import EmbedMixin from "./mixins/Embed";
-import AtomicIterator from "./iterators/AtomicIterator";
-import Style from "./Style";
-import { createKey } from "./Keys";
+import NodeType from "./NodeType";
+import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import EmbedMixin from "./EmbedMixin";
+import AtomicIterator from "./AtomicIterator";
 
 class InlineEmbed {
-  constructor({
-    schema,
-    key = createKey(),
-    style = Style.create(),
-    name,
-    value
-  }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-    this.name = name;
-    this.value = value;
-  }
+    constructor(schema, key, style, name, value) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+        this.name = name;
+        this.value = value;
+    }
 
-  // Getters
+    get type() {
+        return NodeType.InlineEmbed;
+    }
 
-  getNodeType() {
-    return "inline-embed";
-  }
+    get length() {
+        return 1;
+    }
 
-  getLength() {
-    return 1;
-  }
+    get text() {
+        return "*";
+    }
 
-  getText() {
-    return "*";
-  }
+    get delta() {
+        return new Delta().insert(
+            { [this.name]: this.value },
+            this.getAttributes()
+        );
+    }
 
-  getDelta() {
-    const { name, value } = this;
-    return new Delta().insert({ [name]: value }, this.getAttributes());
-  }
+    getType() {
+        return this.type;
+    }
 
-  // Node mixin methods
+    getLength() {
+        return this.length;
+    }
 
-  merge(props) {
-    return new InlineEmbed({ ...this, ...props });
-  }
+    getText() {
+        return this.text;
+    }
 
-  // Editable mixin methods (required by Document and Block)
+    getDelta() {
+        return this.delta;
+    }
 
-  iterator() {
-    return new AtomicIterator(this);
-  }
+    merge(props) {
+        return this.schema.createInlineEmbed({ ...this, ...props });
+    }
 
-  // Format mixin methods
+    iterator() {
+        return new AtomicIterator(this);
+    }
 
-  isValidMark(name) {
-    const { schema } = this;
-    return schema.isTextMark(name) || schema.isInlineEmbedMark(this.name, name);
-  }
+    isValidMark(name) {
+        return (
+            this.schema.isTextMark(name) ||
+            this.schema.isInlineEmbedMark(this.name, name)
+        );
+    }
 }
 
 Object.assign(InlineEmbed.prototype, NodeMixin, FormatMixin, EmbedMixin);

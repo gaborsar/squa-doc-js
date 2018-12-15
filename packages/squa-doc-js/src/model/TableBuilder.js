@@ -1,95 +1,130 @@
-import Style from "./Style";
-import { createKey } from "./Keys";
+import {
+    isRowNode,
+    isRowStartNode,
+    isCellNode,
+    isCellStartNode,
+    isBlockNode,
+    isBlockEndNode,
+    isTextNode,
+    isInlineEmbedNode
+} from "./Predicates";
 
 export default class TableBuilder {
-  constructor({
-    schema,
-    key = createKey(),
-    style = Style.create(),
-    children = []
-  }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-    this.children = children;
-    this.tableRowBuilder = null;
-  }
-
-  appendTableRow(node) {
-    if (this.tableRowBuilder !== null) {
-      this.children.push(this.tableRowBuilder.build());
+    constructor(schema, key, style, children) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+        this.children = children;
+        this.tableRowBuilder = null;
     }
-    const { key, style, children } = node;
-    this.tableRowBuilder = this.schema.createTableRowBuilder({
-      key,
-      style,
-      children
-    });
-    return this;
-  }
 
-  appendTableRowStart(node) {
-    if (this.tableRowBuilder !== null) {
-      this.children.push(this.tableRowBuilder.build());
+    append(node) {
+        if (isRowNode(node)) {
+            return this._appendRow(node);
+        }
+        if (isRowStartNode(node)) {
+            return this._appendRowStart(node);
+        }
+        if (isCellNode(node)) {
+            return this._appendCell(node);
+        }
+        if (isCellStartNode(node)) {
+            return this._appendCellStart(node);
+        }
+        if (isBlockNode(node)) {
+            return this._appendBlock(node);
+        }
+        if (isBlockEndNode(node)) {
+            return this._appendBlockEnd(node);
+        }
+        if (isTextNode(node)) {
+            return this._appendText(node);
+        }
+        if (isInlineEmbedNode(node)) {
+            return this._appendInlineEmbed(node);
+        }
+        throw new Error();
     }
-    const { key, style } = node;
-    this.tableRowBuilder = this.schema.createTableRowBuilder({ key, style });
-    return this;
-  }
 
-  appendTableCell(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    build() {
+        if (this.tableRowBuilder !== null) {
+            this.children.push(this.tableRowBuilder.build());
+        }
+        return this.schema.createTable({
+            key: this.key,
+            style: this.style,
+            children: this.children
+        });
     }
-    this.tableRowBuilder.appendTableCell(node);
-    return this;
-  }
 
-  appendTableCellStart(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    _appendRow(node) {
+        if (this.tableRowBuilder !== null) {
+            this.children.push(this.tableRowBuilder.build());
+        }
+        this.tableRowBuilder = this.schema.createRowBuilder({
+            key: node.key,
+            style: node.style,
+            children: node.children
+        });
+        return this;
     }
-    this.tableRowBuilder.appendTableCellStart(node);
-    return this;
-  }
 
-  appendBlock(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    _appendRowStart(node) {
+        if (this.tableRowBuilder !== null) {
+            this.children.push(this.tableRowBuilder.build());
+        }
+        this.tableRowBuilder = this.schema.createRowBuilder({
+            key: node.key,
+            style: node.style
+        });
+        return this;
     }
-    this.tableRowBuilder.appendBlock(node);
-    return this;
-  }
 
-  appendBlockEnd(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    _appendCell(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
     }
-    this.tableRowBuilder.appendBlockEnd(node);
-    return this;
-  }
 
-  appendText(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    _appendCellStart(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
     }
-    this.tableRowBuilder.appendText(node);
-    return this;
-  }
 
-  appendInlineEmbed(node) {
-    if (this.tableRowBuilder === null) {
-      throw new Error();
+    _appendBlock(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
     }
-    this.tableRowBuilder.appendInlineEmbed(node);
-    return this;
-  }
 
-  build() {
-    if (this.tableRowBuilder !== null) {
-      this.children.push(this.tableRowBuilder.build());
+    _appendBlockEnd(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
     }
-    const { schema, key, style, children } = this;
-    return schema.createTable({ key, style, children });
-  }
+
+    _appendText(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
+    }
+
+    _appendInlineEmbed(node) {
+        if (this.tableRowBuilder === null) {
+            throw new Error();
+        }
+        this.tableRowBuilder.append(node);
+        return this;
+    }
 }

@@ -1,110 +1,148 @@
 import Delta from "quill-delta";
+import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import NodeMixin from "./mixins/Node";
-import FormatMixin from "./mixins/Format";
-import ParentMixin from "./mixins/Parent";
-import EditableMixin from "./mixins/Editable";
-import ListIterator from "./iterators/ListIterator";
+import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import ParentMixin from "./ParentMixin";
+import EditableMixin from "./EditableMixin";
+import ListIterator from "./ListIterator";
 import Editor from "./Editor";
-import Style from "./Style";
-import findPosition from "./traversal/findPosition";
-import createRange from "./traversal/createRange";
-import { createKey } from "./Keys";
+import findPosition from "./findPosition";
+import createRange from "./createRange";
 import { addLength, concatText, concatDelta } from "./Reducers";
 
 class Block {
-  constructor({
-    schema,
-    key = createKey(),
-    style = Style.create(),
-    children = []
-  }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-    this.children = children;
-  }
+    _length = 0;
+    _text = "";
+    _delta = null;
 
-  // Getters
+    constructor(schema, key, style, children) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+        this.children = children;
+    }
 
-  getNodeType() {
-    return "block";
-  }
+    get type() {
+        return NodeType.Block;
+    }
 
-  getLength() {
-    return this.children.reduce(addLength, 1);
-  }
+    get length() {
+        if (this._length === 0) {
+            this._length = this.children.reduce(addLength, 1);
+        }
+        return this._length;
+    }
 
-  getText() {
-    return this.children.reduce(concatText, "") + SpecialCharacter.BlockEnd;
-  }
+    get text() {
+        if (this._text === "") {
+            this._text =
+                this.children.reduce(concatText, "") +
+                SpecialCharacter.BlockEnd;
+        }
+        return this._text;
+    }
 
-  getDelta() {
-    return this.children
-      .reduce(concatDelta, new Delta())
-      .insert(SpecialCharacter.BlockEnd, this.getAttributes());
-  }
+    get delta() {
+        if (this._delta === null) {
+            this._delta = this.children
+                .reduce(concatDelta, new Delta())
+                .insert(SpecialCharacter.BlockEnd, this.getAttributes());
+        }
+        return this._delta;
+    }
 
-  getEnd() {
-    const { key, style } = this;
-    return this.schema.createBlockEnd({ key, style });
-  }
+    getType() {
+        return this.type;
+    }
 
-  isEmpty() {
-    return this.children.length === 0;
-  }
+    getLength() {
+        return this.length;
+    }
 
-  // Node mixin methods
+    getText() {
+        return this.text;
+    }
 
-  merge(props) {
-    return new Block({ ...this, ...props });
-  }
+    getDelta() {
+        return this.delta;
+    }
 
-  // Editable mixin methods
+    isEmpty() {
+        return this.children.length === 0;
+    }
 
-  iterator() {
-    const end = this.getEnd();
-    return new ListIterator([...this.children, end]);
-  }
+    merge(props) {
+        return this.schema.createBlock({ ...this, ...props });
+    }
 
-  edit() {
-    const { schema, key, style, children } = this;
+    iterator() {
+        return new ListIterator(
+            this.children.concat(
+                this.schema.createBlockEnd({
+                    key: this.key,
+                    style: this.style
+                })
+            )
+        );
+    }
 
-    const iterator = new ListIterator(children);
-    const builder = schema.createBlockBuilder({ key, style });
+    editor() {
+        return new Editor(
+            new ListIterator(this.children),
+            this.schema.createBlockBuilder({
+                key: this.key,
+                style: this.style
+            })
+        );
+    }
 
-    return new Editor(iterator, builder);
-  }
+    isValidMark(name) {
+        return this.schema.isBlockMark(name);
+    }
 
-  // Format mixin methods
+    findChildAtOffset(offset) {
+        return findPosition(this.children, offset, true);
+    }
 
-  isValidMark(name) {
-    return this.schema.isBlockMark(name);
-  }
+    findChildrenAtRange(offset, length) {
+        return createRange(this.children, offset, length);
+    }
 
-  // Parent mixin methods
+    concat(other) {
+        return other.setChildren(this.children.concat(other.children));
+    }
 
-  findChildAtOffset(offset) {
-    return findPosition(this.children, offset, true);
-  }
+    optimize() {
+        const children = this.children.slice();
 
-  findChildrenAtRange(offset, length) {
-    return createRange(this.children, offset, length);
-  }
+        for (let i = children.length - 1; i > 0; i--) {
+            const childA = children[i - 1];
+            const childB = children[i];
 
-  // Own methods
+            if (
+                childA.type === NodeType.Text &&
+                childB.type === NodeType.Text &&
+                childA.style === childB.style
+            ) {
+                children.splice(i - 1, 2, childA.concat(childB));
+            }
+        }
 
-  concat(other) {
-    return other.setChildren(this.children.concat(other.children));
-  }
+        if (children.length === this.children.length) {
+            return this;
+        }
+
+        return this.merge({ children });
+    }
 }
 
 Object.assign(
-  Block.prototype,
-  NodeMixin,
-  EditableMixin,
-  FormatMixin,
-  ParentMixin
+    Block.prototype,
+    NodeMixin,
+    EditableMixin,
+    FormatMixin,
+    ParentMixin
 );
 
 export default Block;

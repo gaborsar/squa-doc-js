@@ -1,94 +1,166 @@
 import Delta from "quill-delta";
+import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import NodeMixin from "./mixins/Node";
-import FormatMixin from "./mixins/Format";
-import ParentMixin from "./mixins/Parent";
-import ListIterator from "./iterators/ListIterator";
-import findPosition from "./traversal/findPosition";
-import createRange from "./traversal/createRange";
-import Style from "./Style";
-import { createKey } from "./Keys";
+import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import ParentMixin from "./ParentMixin";
+import ListIterator from "./ListIterator";
+import findPosition from "./findPosition";
+import createRange from "./createRange";
 import { addLength, concatText, concatDelta } from "./Reducers";
 
 class Table {
-  constructor({
-    schema,
-    key = createKey(),
-    style = Style.create(),
-    children = []
-  }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-    this.children = children;
-  }
+    _length = 0;
+    _text = "";
+    _delta = null;
 
-  // Getters
+    constructor(schema, key, style, children) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+        this.children = children;
+    }
 
-  getNodeType() {
-    return "table";
-  }
+    get type() {
+        return NodeType.Table;
+    }
 
-  getLength() {
-    return this.children.reduce(addLength, 2);
-  }
+    get length() {
+        if (this._length === 0) {
+            this._length = this.children.reduce(addLength, 2);
+        }
+        return this._length;
+    }
 
-  getText() {
-    return (
-      SpecialCharacter.TableStart +
-      this.children.reduce(concatText, "") +
-      SpecialCharacter.TableEnd
-    );
-  }
+    get text() {
+        if (this._text === "") {
+            this._text =
+                SpecialCharacter.TableStart +
+                this.children.reduce(concatText, "") +
+                SpecialCharacter.TableEnd;
+        }
+        return this._text;
+    }
 
-  getDelta() {
-    const delta = new Delta().insert(
-      SpecialCharacter.TableStart,
-      this.getAttributes()
-    );
-    return this.children
-      .reduce(concatDelta, delta)
-      .insert(SpecialCharacter.TableEnd);
-  }
+    get delta() {
+        if (this._delta === null) {
+            this._delta = this.children
+                .reduce(
+                    concatDelta,
+                    new Delta().insert(
+                        SpecialCharacter.TableStart,
+                        this.getAttributes()
+                    )
+                )
+                .insert(SpecialCharacter.TableEnd);
+        }
+        return this._delta;
+    }
 
-  getStart() {
-    const { key, style } = this;
-    return this.schema.createTableStart({ key, style });
-  }
+    getType() {
+        return this.type;
+    }
 
-  getEnd() {
-    return this.schema.createTableEnd();
-  }
+    getLength() {
+        return this.length;
+    }
 
-  // Node mixin methods
+    getText() {
+        return this.text;
+    }
 
-  merge(props) {
-    return new Table({ ...this, ...props });
-  }
+    getDelta() {
+        return this.delta;
+    }
 
-  // Editable mixin methods (required by Document)
+    merge(props) {
+        return this.schema.createTable({ ...this, ...props });
+    }
 
-  iterator() {
-    const start = this.getStart();
-    const end = this.getEnd();
-    return new ListIterator([start, ...this.children, end]);
-  }
+    iterator() {
+        return new ListIterator(
+            [
+                this.schema.createTableStart({
+                    key: this.key,
+                    style: this.style
+                })
+            ]
+                .concat(this.children)
+                .concat(this.schema.createTableEnd())
+        );
+    }
 
-  // Format mixin methods
+    isValidMark(name) {
+        return this.schema.isTableMark(name);
+    }
 
-  isValidMark(name) {
-    return this.schema.isTableMark(name);
-  }
+    findChildAtOffset(offset) {
+        return findPosition(this.children, offset - 1, false);
+    }
 
-  // Parent mixin methods
+    findChildrenAtRange(offset, length) {
+        return createRange(this.children, offset - 1, length - 1);
+    }
 
-  findChildAtOffset(offset) {
-    return findPosition(this.children, offset - 1, false);
-  }
+    insertRow(index) {
+        const numberOfCells = this.children.reduce(
+            (length, row) => Math.max(length, row.children.length),
+            0
+        );
 
-  findChildrenAtRange(offset, length) {
-    return createRange(this.children, offset - 1, length - 1);
-  }
+        const cells = [];
+        for (let i = 0; i < numberOfCells; i++) {
+            cells.push(this.schema.createCell());
+        }
+
+        const row = this.schema.createRow({
+            children: cells
+        });
+
+        return this.insertChildAtIndex(index, row);
+    }
+
+    insertColumn(index) {
+        return this.setChildren(
+            this.children.map(row =>
+                row.insertChildAtIndex(index, this.schema.createCell())
+            )
+        );
+    }
+
+    setRowAttributes(index, attributes) {
+        return this.replaceChildAtIndex(
+            index,
+            this.children[index].setAttributes(attributes)
+        );
+    }
+
+    setColumnAttributes(index, attributes) {
+        return this.setChildren(
+            this.children.map(row =>
+                row.replaceChildAtIndex(
+                    index,
+                    row.children[index].setAttributes(attributes)
+                )
+            )
+        );
+    }
+
+    deleteRow(index) {
+        return this.removeChildAtIndex(index);
+    }
+
+    deleteColumn(index) {
+        return this.setChildren(
+            this.children.map(row => row.removeChildAtIndex(index))
+        );
+    }
+
+    optimize() {
+        return this.children.length === 0
+            ? this.setChildren([this.schema.createRow()])
+            : this;
+    }
 }
 
 Object.assign(Table.prototype, NodeMixin, FormatMixin, ParentMixin);

@@ -1,102 +1,90 @@
+import { NodeType } from "squa-doc-js";
+
 function onKeyDownBackspace(change, event) {
-  const value = change.getValue();
+    const { value } = change;
+    const { document, selection } = value;
 
-  const document = value.getDocument();
-  const selection = value.getSelection();
+    if (!selection.isCollapsed()) {
+        return false;
+    }
 
-  if (!selection.isCollapsed()) {
-    return false;
-  }
+    const pos = document.findDescendantAtOffset(
+        selection.offset,
+        node => node.type === NodeType.Block
+    );
+    if (pos === null) {
+        return false;
+    }
 
-  const pos = document.findChildAtOffset(
-    selection.getOffset(),
-    node => node.getNodeType() === "block"
-  );
+    const { node: block } = pos;
+    if (!block.isEmpty() || block.getAttribute("type") !== "checkable") {
+        return false;
+    }
 
-  if (pos === null) {
-    return false;
-  }
+    event.preventDefault();
 
-  const block = pos.getNode();
+    let nextBlock;
+    const depth = block.getAttribute("indent");
+    if (depth) {
+        nextBlock = block.setAttributes({ indent: depth - 1 });
+    } else {
+        nextBlock = block.setAttributes({ type: null, indent: null });
+    }
+    change.replaceNode(nextBlock, block).save();
 
-  if (!block.isEmpty() || block.getAttribute("type") !== "checkable") {
-    return false;
-  }
-
-  event.preventDefault();
-
-  let newBlock;
-
-  const depth = block.getAttribute("indent");
-
-  if (depth) {
-    newBlock = block.setAttributes({ indent: depth - 1 });
-  } else {
-    newBlock = block.setAttributes({ type: null, indent: null });
-  }
-
-  change.replaceNode(newBlock, block).save();
-
-  return true;
+    return true;
 }
 
 function onKeyDownEnter(change, event) {
-  const value = change.getValue();
+    const { value } = change;
+    const { document, selection } = value;
 
-  const document = value.getDocument();
-  const selection = value.getSelection();
-
-  if (!selection.isCollapsed()) {
-    return false;
-  }
-
-  const pos = document.findChildAtOffset(
-    selection.getOffset(),
-    node => node.getNodeType() === "block"
-  );
-
-  if (pos === null) {
-    return false;
-  }
-
-  const block = pos.getNode();
-
-  if (block.getAttribute("type") !== "checkable") {
-    return false;
-  }
-
-  event.preventDefault();
-
-  if (block.isEmpty()) {
-    let newBlock;
-
-    const depth = block.getAttribute("indent");
-
-    if (depth) {
-      newBlock = block.setAttributes({ indent: depth - 1 });
-    } else {
-      newBlock = block.setAttributes({ type: null, indent: null });
+    if (!selection.isCollapsed()) {
+        return false;
     }
 
-    change.replaceNode(newBlock, block).save();
-  } else {
-    change
-      .insertText("\n", block.getAttributes())
-      .setBlockAttributes({ checked: null })
-      .save();
-  }
+    const pos = document.findDescendantAtOffset(
+        selection.offset,
+        node => node.type === NodeType.Block
+    );
+    if (pos === null) {
+        return false;
+    }
 
-  return true;
+    const { node: block } = pos;
+    if (block.getAttribute("type") !== "checkable") {
+        return false;
+    }
+
+    event.preventDefault();
+
+    if (block.isEmpty()) {
+        let nextBlock;
+        const depth = block.getAttribute("indent");
+        if (depth) {
+            nextBlock = block.setAttributes({ indent: depth - 1 });
+        } else {
+            nextBlock = block.setAttributes({ type: null, indent: null });
+        }
+        change.replaceNode(nextBlock, block).save();
+    } else {
+        change
+            .insertText("\n", block.getAttributes())
+            .setBlockAttributes({ checked: null })
+            .save();
+    }
+
+    return true;
 }
 
 export default function onKeyDown(change, event) {
-  if (event.key === "Backspace") {
-    return onKeyDownBackspace(change, event);
-  }
+    if (event.key === "Backspace") {
+        return onKeyDownBackspace(change, event);
+    }
 
-  if (event.key === "Enter") {
-    return onKeyDownEnter(change, event);
-  }
+    if (event.key === "Enter") {
+        return onKeyDownEnter(change, event);
+    }
 
-  return false;
+    return false;
 }

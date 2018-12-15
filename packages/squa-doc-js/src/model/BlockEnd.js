@@ -1,43 +1,34 @@
-import NodeMixin from "./mixins/Node";
-import FormatMixin from "./mixins/Format";
-import AtomicIterator from "./iterators/AtomicIterator";
-import Style from "./Style";
-import { createKey } from "./Keys";
+import NodeType from "./NodeType";
+import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import AtomicIterator from "./AtomicIterator";
 
 class BlockEnd {
-  constructor({ schema, key = createKey(), style = Style.create() }) {
-    this.schema = schema;
-    this.key = key;
-    this.style = style;
-  }
+    constructor(schema, key, style) {
+        this.schema = schema;
+        this.key = key;
+        this.style = style;
+    }
 
-  // Getters
+    get type() {
+        return NodeType.BlockEnd;
+    }
 
-  getNodeType() {
-    return "block-end";
-  }
+    get length() {
+        return 1;
+    }
 
-  getLength() {
-    return 1;
-  }
+    merge(props) {
+        return this.schema.createBlockEnd({ ...this, ...props });
+    }
 
-  // Node mixin methods
+    iterator() {
+        return new AtomicIterator(this);
+    }
 
-  merge(props) {
-    return new BlockEnd({ ...this, ...props });
-  }
-
-  // Editable mixin methods (required by Document)
-
-  iterator() {
-    return new AtomicIterator(this);
-  }
-
-  // Format mixin methods
-
-  isValidMark(name) {
-    return this.schema.isBlockMark(name);
-  }
+    isValidMark(name) {
+        return this.schema.isBlockMark(name);
+    }
 }
 
 Object.assign(BlockEnd.prototype, NodeMixin, FormatMixin);

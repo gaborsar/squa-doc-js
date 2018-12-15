@@ -25,6 +25,10 @@
   },
   {
     "insert":
+      "\u0010\u0012\u001Cfoo\n\u001Cbar\n\u0012\u001Cbaz\n\u001Cqux\n\u0011"
+  },
+  {
+    "insert":
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh risus, bibendum vel massa ac, lacinia fermentum lectus. Mauris id nulla ipsum. Suspendisse potenti. Suspendisse et lacus pulvinar, fermentum ipsum cursus, lacinia felis. Etiam dapibus, ex nec blandit ornare, tellus ante ultrices lorem, sed ultricies massa risus."
   },
   {
