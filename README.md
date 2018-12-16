@@ -16,24 +16,20 @@ npm install --save squa-doc-js
 import React, { PureComponent } from "react";
 import { Value, Editor } from "squa-doc-js";
 
-const value = Value.createEmpty()
-  .change()
-  .insertText("Hello world!")
-  .getValue();
+const { value } = Value.createEmpty()
+    .change()
+    .insertText("Hello world!");
 
 class App extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = { value };
-  }
+    state = { value };
 
-  onChange = change => {
-    this.setState({ value: change.getValue() });
-  };
+    onChange = ({ value }) => {
+        this.setState({ value });
+    };
 
-  render() {
-    return <Editor value={this.state.value} onChange={this.onChange} />;
-  }
+    render() {
+        return <Editor value={this.state.value} onChange={this.onChange} />;
+    }
 }
 ```
 
