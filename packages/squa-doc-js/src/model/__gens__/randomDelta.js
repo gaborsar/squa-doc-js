@@ -1,5 +1,4 @@
 import Delta from "quill-delta";
-import { random } from "lodash";
 import SpecialCharacter from "../SpecialCharacter";
 
 const inlineOperations = [
@@ -54,6 +53,10 @@ const tableCellStartOperations = [
         attributes: { "table-cell-mark": true }
     }
 ];
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function randomElement(list) {
     return list[random(0, list.length - 1)];

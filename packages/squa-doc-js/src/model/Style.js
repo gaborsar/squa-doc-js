@@ -5,7 +5,14 @@ const pool = new Pool();
 
 export default class Style {
     static create(props = {}) {
-        return pool.recycle(new Style(props));
+        return pool.recycle(new Style(props), Style.equals);
+    }
+
+    static equals(styleA, styleB) {
+        return (
+            styleA.marks.length === styleB.marks.length &&
+            styleA.marks.every((mark, i) => mark === styleB.marks[i])
+        );
     }
 
     constructor({ marks = [] } = {}) {

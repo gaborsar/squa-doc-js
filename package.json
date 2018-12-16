@@ -37,7 +37,6 @@
         "file-loader": "^2.0.0",
         "http-server": "^0.11.1",
         "jest": "^23.6.0",
-        "lodash": "^4.17.11",
         "node-sass": "^4.11.0",
         "prettier": "^1.15.3",
         "quill-delta": "^4.1.0",

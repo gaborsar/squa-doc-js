@@ -4,20 +4,11 @@ const pool = new Pool();
 
 export default class Mark {
     static create(props) {
-        return pool.recycle(new Mark(props));
+        return pool.recycle(new Mark(props), Mark.equals);
     }
 
-    constructor({ name, value }) {
-        this.name = name;
-        this.value = value;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getValue() {
-        return this.value;
+    static equals(markA, markB) {
+        return markA.name === markB.name && markA.value === markB.value;
     }
 
     static compare(markA, markB) {
@@ -34,5 +25,18 @@ export default class Mark {
             return 1;
         }
         return 0;
+    }
+
+    constructor({ name, value }) {
+        this.name = name;
+        this.value = value;
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getValue() {
+        return this.value;
     }
 }
