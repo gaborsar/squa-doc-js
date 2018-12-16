@@ -10,6 +10,8 @@ import Table from "./Table";
 import Block from "./Block";
 import renderWrappedNodes from "./renderWrappedNodes";
 
+const defaultWrapper = {};
+
 export default class Document extends PureComponent {
     render() {
         const { node } = this.props;
@@ -25,10 +27,7 @@ export default class Document extends PureComponent {
     }
 
     renderWrapper = node => {
-        const { createChange, onChange, renderNode } = this.props;
-        const obj = renderNode(node, { createChange, onChange }) || {};
-        const { wrapper: component, wrapperProps: props } = obj;
-        return { component, props, node };
+        return this.props.renderWrapper(node) || defaultWrapper;
     };
 
     renderNode = node => {
@@ -58,7 +57,13 @@ export default class Document extends PureComponent {
     };
 
     renderTable(node, classNames) {
-        const { createChange, onChange, renderNode, renderMark } = this.props;
+        const {
+            createChange,
+            onChange,
+            renderWrapper,
+            renderNode,
+            renderMark
+        } = this.props;
 
         const obj = renderNode(node, { createChange, onChange });
         if (obj === undefined) {
@@ -74,6 +79,7 @@ export default class Document extends PureComponent {
                 node={node}
                 createChange={createChange}
                 onChange={onChange}
+                renderWrapper={renderWrapper}
                 renderNode={renderNode}
                 renderMark={renderMark}
             />

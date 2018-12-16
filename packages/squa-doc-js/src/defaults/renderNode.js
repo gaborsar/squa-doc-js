@@ -6,79 +6,69 @@ import {
 } from "../model/Predicates";
 import TableWithBody from "../components/TableWithBody";
 
+const tableObj = {
+    component: TableWithBody
+};
+
+const rowObj = {
+    component: "tr"
+};
+
+const cellObj = {
+    component: "td"
+};
+
 export default function renderNode(node) {
     if (isTableNode(node)) {
-        return { component: TableWithBody };
+        return tableObj;
     }
     if (isRowNode(node)) {
-        return { component: "tr" };
+        return rowObj;
     }
     if (isCellNode(node)) {
-        return { component: "td" };
+        return cellObj;
     }
     if (isBlockNode(node)) {
         return renderBlockNode(node);
     }
 }
 
-function renderBlockNode(node) {
-    switch (node.getAttribute("type")) {
-        case "heading-one":
-            return {
-                component: "h1"
-            };
-
-        case "heading-two":
-            return {
-                component: "h2"
-            };
-
-        case "heading-three":
-            return {
-                component: "h3"
-            };
-
-        case "heading-four":
-            return {
-                component: "h4"
-            };
-
-        case "heading-five":
-            return {
-                component: "h5"
-            };
-
-        case "heading-six":
-            return {
-                component: "h6"
-            };
-
-        case "blockquote":
-            return {
-                component: "blockquote"
-            };
-
-        case "unordered-list-item":
-            return {
-                wrapper: "ul",
-                component: "li"
-            };
-
-        case "ordered-list-item":
-            return {
-                wrapper: "ol",
-                component: "li"
-            };
-
-        case "code":
-            return {
-                wrapper: "pre",
-                component: "div"
-            };
-
-        default:
-            return {
-                component: "p"
-            };
+const blockMap = {
+    "heading-one": {
+        component: "h1"
+    },
+    "heading-two": {
+        component: "h2"
+    },
+    "heading-three": {
+        component: "h3"
+    },
+    "heading-four": {
+        component: "h4"
+    },
+    "heading-five": {
+        component: "h5"
+    },
+    "heading-six": {
+        component: "h6"
+    },
+    "unordered-list-item": {
+        component: "li"
+    },
+    "ordered-list-item": {
+        component: "li"
+    },
+    paragraph: {
+        component: "p"
+    },
+    blockquote: {
+        component: "blockquote"
+    },
+    code: {
+        component: "div"
     }
+};
+
+function renderBlockNode(node) {
+    return blockMap[node.getAttribute("type")] || blockMap.paragraph;
 }

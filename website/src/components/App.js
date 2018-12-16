@@ -14,6 +14,7 @@ import Menu from "./Menu";
 
 const {
     schema,
+    renderWrapper,
     renderNode,
     renderMark,
     tokenizeNode,
@@ -55,6 +56,7 @@ export default class App extends PureComponent {
                         spellCheck={false}
                         value={value}
                         onChange={this.onChange}
+                        renderWrapper={renderWrapper}
                         renderNode={renderNode}
                         renderMark={renderMark}
                         tokenizeNode={tokenizeNode}

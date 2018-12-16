@@ -1,4 +1,5 @@
 import schema from "./schema";
+import renderWrapper from "./renderWrapper";
 import renderNode from "./renderNode";
 import renderMark from "./renderMark";
 import tokenizeNode from "./tokenizeNode";
@@ -8,6 +9,7 @@ import afterInput from "./afterInput";
 
 const Plugin = {
     schema,
+    renderWrapper,
     renderNode,
     renderMark,
     tokenizeNode,

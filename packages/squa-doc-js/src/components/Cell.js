@@ -5,6 +5,8 @@ import { isBlockNode, isBlockEmbedNode } from "../model/Predicates";
 import Block from "./Block";
 import renderWrappedNodes from "./renderWrappedNodes";
 
+const defaultWrapper = {};
+
 export default class Cell extends Component {
     shouldComponentUpdate(nextProps) {
         return this.props.node !== nextProps.node;
@@ -35,10 +37,7 @@ export default class Cell extends Component {
     }
 
     renderWrapper = node => {
-        const { createChange, onChange, renderNode } = this.props;
-        const obj = renderNode(node, { createChange, onChange }) || {};
-        const { wrapper: component, wrapperProps: props } = obj;
-        return { component, props, node };
+        return this.props.renderWrapper(node) || defaultWrapper;
     };
 
     renderChild = node => {

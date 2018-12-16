@@ -20,6 +20,7 @@ import isMobile from "./isMobile";
 import optimizeInsertDelta from "./optimizeInsertDelta";
 import optimizeFragmentDelta from "./optimizeFragmentDelta";
 
+import defaultRenderWrapper from "../defaults/renderWrapper";
 import defaultRenderNode from "../defaults/renderNode";
 import defaultRenderMark from "../defaults/renderMark";
 import defaultOnKeyDown from "../defaults/onKeyDown";
@@ -585,6 +586,7 @@ export default class Editor extends PureComponent {
             onChange,
             disabled = false,
             spellCheck = true,
+            renderWrapper = defaultRenderWrapper,
             renderNode = defaultRenderNode,
             renderMark = defaultRenderMark
         } = this.props;
@@ -618,6 +620,7 @@ export default class Editor extends PureComponent {
                             node={value.document}
                             createChange={this.createChange}
                             onChange={onChange}
+                            renderWrapper={renderWrapper}
                             renderNode={renderNode}
                             renderMark={renderMark}
                         />

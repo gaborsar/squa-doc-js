@@ -1,44 +1,54 @@
-export default function renderMark(mark) {
-    switch (mark.name) {
-        case "align":
-        case "indent":
-        case "anchor":
-        case "color":
-            return {
-                className: `SquaDocJs-${mark.name}-${mark.value}`
-            };
+const renderClassName = memoize(mark => ({
+    className: `SquaDocJs-${mark.name}-${mark.value}`
+}));
 
-        case "link":
-            return {
-                component: "a",
-                props: {
-                    href: mark.value
-                }
-            };
+const renderLink = memoize(mark => ({
+    component: "a",
+    props: { href: mark.value }
+}));
 
-        case "bold":
-            return {
-                component: "b"
-            };
+const dynamicMarkMap = {
+    align: renderClassName,
+    indent: renderClassName,
+    anchor: renderClassName,
+    color: renderClassName,
+    link: renderLink
+};
 
-        case "italic":
-            return {
-                component: "i"
-            };
-
-        case "underline":
-            return {
-                component: "u"
-            };
-
-        case "strikethrough":
-            return {
-                component: "s"
-            };
-
-        case "code":
-            return {
-                component: "code"
-            };
+const staticMarkMap = {
+    bold: {
+        component: "b"
+    },
+    italic: {
+        component: "i"
+    },
+    underline: {
+        component: "u"
+    },
+    strikethrough: {
+        component: "s"
+    },
+    code: {
+        component: "code"
     }
+};
+
+export default function renderMark(mark) {
+    if (dynamicMarkMap[mark.name] !== undefined) {
+        return dynamicMarkMap[mark.name](mark);
+    }
+    if (staticMarkMap[mark.name] !== undefined) {
+        return staticMarkMap[mark.name];
+    }
+}
+
+function memoize(fn) {
+    const cache = {};
+    return mark => {
+        const key = `${mark.name}-${mark.value}`;
+        if (cache[key] === undefined) {
+            cache[key] = fn(mark);
+        }
+        return cache[key];
+    };
 }
