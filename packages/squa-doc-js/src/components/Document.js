@@ -10,8 +10,6 @@ import Table from "./Table";
 import Block from "./Block";
 import renderWrappedNodes from "./renderWrappedNodes";
 
-const defaultWrapper = {};
-
 export default class Document extends PureComponent {
     render() {
         const { node } = this.props;
@@ -28,7 +26,7 @@ export default class Document extends PureComponent {
 
     renderWrapper = node => {
         return {
-            wrapper: this.props.renderWrapper(node) || defaultWrapper,
+            wrapper: this.props.renderWrapper(node) || {},
             node
         };
     };

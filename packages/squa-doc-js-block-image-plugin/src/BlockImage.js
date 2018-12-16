@@ -3,18 +3,6 @@ import joinClassNames from "classnames";
 import "./BlockImage.css";
 
 export default class BlockImage extends PureComponent {
-    handleDeleteClick = event => {
-        event.stopPropagation();
-        const {
-            internals: { node, createChange, onChange }
-        } = this.props;
-        onChange(
-            createChange()
-                .removeNode(node)
-                .save()
-        );
-    };
-
     render() {
         const {
             internals: { node },
@@ -35,4 +23,16 @@ export default class BlockImage extends PureComponent {
             </figure>
         );
     }
+
+    handleDeleteClick = event => {
+        event.stopPropagation();
+        const {
+            internals: { node, createChange, onChange }
+        } = this.props;
+        onChange(
+            createChange()
+                .removeNode(node)
+                .save()
+        );
+    };
 }

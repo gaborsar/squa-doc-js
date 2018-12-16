@@ -16,11 +16,9 @@ const schema = {
     isCellMark(name) {
         return tableCellMarks.indexOf(name) !== -1;
     },
-
     isBlockMark(name) {
         return blockMarks.indexOf(name) !== -1;
     },
-
     isTextMark(name) {
         return inlineMarks.indexOf(name) !== -1;
     }

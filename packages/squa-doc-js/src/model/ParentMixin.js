@@ -141,7 +141,7 @@ const ParentMixin = {
             return null;
         }
 
-        const child = pos.node;
+        const { node: child } = pos;
 
         if (predicate(child)) {
             return pos;
@@ -161,7 +161,7 @@ const ParentMixin = {
             return this;
         }
 
-        const oldChild = pos.node;
+        const { node: oldChild } = pos;
 
         let nextChild;
         if (predicate(oldChild)) {

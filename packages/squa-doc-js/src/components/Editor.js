@@ -42,6 +42,81 @@ export default class Editor extends PureComponent {
     rootNode = null;
     isMouseDown = false;
 
+    componentDidUpdate(prevProps) {
+        if (
+            prevProps.value.document !== this.props.value.document ||
+            prevProps.value.selection !== this.props.value.selection
+        ) {
+            this.updateSelection();
+        }
+    }
+
+    render() {
+        const {
+            value,
+            onChange,
+            disabled = false,
+            spellCheck = true,
+            renderWrapper = defaultRenderWrapper,
+            renderNode = defaultRenderNode,
+            renderMark = defaultRenderMark
+        } = this.props;
+        return (
+            <div
+                className={joinClassNames("SquaDocJs-editor", {
+                    "SquaDocJs-editor--focused": this.state.isFocused
+                })}
+            >
+                <ErrorBoundary>
+                    {this.renderPlaceholder()}
+                    <ContentEditable
+                        editableRef={this.setRootNode}
+                        className="SquaDocJs-editable"
+                        disabled={disabled}
+                        spellCheck={spellCheck}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        onSelect={this.handleSelect}
+                        onCut={this.handleCut}
+                        onPaste={this.handlePaste}
+                        onDragStart={preventDefault}
+                        onDrop={preventDefault}
+                        onCompositionStart={this.handleCompositionStart}
+                        onCompositionEnd={this.handleCompositionEnd}
+                        onKeyDown={this.handleKeyDown}
+                        onInput={this.handleInput}
+                    >
+                        <Document
+                            key={value.document.key}
+                            node={value.document}
+                            createChange={this.createChange}
+                            onChange={onChange}
+                            renderWrapper={renderWrapper}
+                            renderNode={renderNode}
+                            renderMark={renderMark}
+                        />
+                    </ContentEditable>
+                </ErrorBoundary>
+            </div>
+        );
+    }
+
+    renderPlaceholder() {
+        const { value, placeholder } = this.props;
+        const { document } = value;
+
+        if (placeholder && value.isEditing() && document.isPristine()) {
+            return (
+                <span
+                    className="SquaDocJs-placeholder"
+                    onClick={this.handlePlaceholderClick}
+                >
+                    {placeholder}
+                </span>
+            );
+        }
+    }
+
     setRootNode = rootNode => {
         this.rootNode = rootNode;
     };
@@ -363,7 +438,7 @@ export default class Editor extends PureComponent {
 
             // apply changes the selected block
 
-            const blockBefore = pos.node;
+            const { node: blockBefore } = pos;
 
             const diff = blockBefore.delta.diff(delta, pos.offset);
             if (value.hasInlineStyleOverride()) {
@@ -557,79 +632,4 @@ export default class Editor extends PureComponent {
             return this.handlePasteText(change, event);
         }
     };
-
-    componentDidUpdate(prevProps) {
-        if (
-            prevProps.value.document !== this.props.value.document ||
-            prevProps.value.selection !== this.props.value.selection
-        ) {
-            this.updateSelection();
-        }
-    }
-
-    renderPlaceholder() {
-        const { value, placeholder } = this.props;
-        const { document } = value;
-
-        if (placeholder && value.isEditing() && document.isPristine()) {
-            return (
-                <span
-                    className="SquaDocJs-placeholder"
-                    onClick={this.handlePlaceholderClick}
-                >
-                    {placeholder}
-                </span>
-            );
-        }
-    }
-
-    render() {
-        const {
-            value,
-            onChange,
-            disabled = false,
-            spellCheck = true,
-            renderWrapper = defaultRenderWrapper,
-            renderNode = defaultRenderNode,
-            renderMark = defaultRenderMark
-        } = this.props;
-        return (
-            <div
-                className={joinClassNames("SquaDocJs-editor", {
-                    "SquaDocJs-editor--focused": this.state.isFocused
-                })}
-            >
-                <ErrorBoundary>
-                    {this.renderPlaceholder()}
-                    <ContentEditable
-                        editableRef={this.setRootNode}
-                        className="SquaDocJs-editable"
-                        disabled={disabled}
-                        spellCheck={spellCheck}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        onSelect={this.handleSelect}
-                        onCut={this.handleCut}
-                        onPaste={this.handlePaste}
-                        onDragStart={preventDefault}
-                        onDrop={preventDefault}
-                        onCompositionStart={this.handleCompositionStart}
-                        onCompositionEnd={this.handleCompositionEnd}
-                        onKeyDown={this.handleKeyDown}
-                        onInput={this.handleInput}
-                    >
-                        <Document
-                            key={value.document.key}
-                            node={value.document}
-                            createChange={this.createChange}
-                            onChange={onChange}
-                            renderWrapper={renderWrapper}
-                            renderNode={renderNode}
-                            renderMark={renderMark}
-                        />
-                    </ContentEditable>
-                </ErrorBoundary>
-            </div>
-        );
-    }
 }

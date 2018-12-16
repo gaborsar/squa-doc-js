@@ -4,24 +4,6 @@ import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
 import "./Checkable.css";
 
 export default class Checkable extends PureComponent {
-    handleClick = event => {
-        event.preventDefault();
-        const {
-            internal: { node, createChange, onChange }
-        } = this.props;
-        onChange(
-            createChange()
-                .replaceNode(
-                    node.setAttribute(
-                        "checked",
-                        node.getAttribute("checked") ? null : true
-                    ),
-                    node
-                )
-                .save()
-        );
-    };
-
     render() {
         const {
             internal: { node },
@@ -48,4 +30,22 @@ export default class Checkable extends PureComponent {
             </div>
         );
     }
+
+    handleClick = event => {
+        event.preventDefault();
+        const {
+            internal: { node, createChange, onChange }
+        } = this.props;
+        onChange(
+            createChange()
+                .replaceNode(
+                    node.setAttribute(
+                        "checked",
+                        node.getAttribute("checked") ? null : true
+                    ),
+                    node
+                )
+                .save()
+        );
+    };
 }

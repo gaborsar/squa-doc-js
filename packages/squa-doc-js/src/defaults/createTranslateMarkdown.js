@@ -20,7 +20,7 @@ export default function createTranslateMarkdown({
             return;
         }
 
-        const block = pos.node;
+        const { node: block } = pos;
         const type = block.getAttribute("type");
         const text = block.text.slice(0, pos.offset);
 
