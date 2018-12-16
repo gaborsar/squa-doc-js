@@ -37,7 +37,10 @@ export default class Cell extends Component {
     }
 
     renderWrapper = node => {
-        return this.props.renderWrapper(node) || defaultWrapper;
+        return {
+            wrapper: this.props.renderWrapper(node) || defaultWrapper,
+            node
+        };
     };
 
     renderChild = node => {

@@ -371,7 +371,10 @@ export default class Editor extends PureComponent {
             }
 
             let blockAfter = blockBefore.apply(diff);
-            if (blockBefore.isEmpty()) {
+            if (
+                blockBefore.isEmpty() ||
+                nativeSelection.anchorNode.parentNode === blockNode
+            ) {
                 blockAfter = blockAfter.regenerateKey();
             }
 

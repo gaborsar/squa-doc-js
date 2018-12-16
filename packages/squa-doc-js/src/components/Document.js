@@ -27,7 +27,10 @@ export default class Document extends PureComponent {
     }
 
     renderWrapper = node => {
-        return this.props.renderWrapper(node) || defaultWrapper;
+        return {
+            wrapper: this.props.renderWrapper(node) || defaultWrapper,
+            node
+        };
     };
 
     renderNode = node => {
@@ -123,7 +126,6 @@ export default class Document extends PureComponent {
                 {...props}
                 key={node.key}
                 className={joinClassNames("SquaDocJs-embed", classNames)}
-                contentEditable={false}
                 data-embed={true}
                 data-key={node.key}
             />

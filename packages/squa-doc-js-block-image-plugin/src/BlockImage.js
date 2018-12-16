@@ -24,6 +24,7 @@ export default class BlockImage extends PureComponent {
         return (
             <figure
                 className={joinClassNames(className, "BlockImage")}
+                contentEditable={false}
                 {...otherProps}
             >
                 <img src={node.value} alt={node.getAttribute("alt")} />
