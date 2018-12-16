@@ -91,7 +91,6 @@ export default class Block extends Component {
                 {...embedProps}
                 key={node.key}
                 className={joinClassNames("SquaDocJs-InlineEmbed", classNames)}
-                contentEditable={false}
                 data-embed={true}
                 data-key={node.key}
             />

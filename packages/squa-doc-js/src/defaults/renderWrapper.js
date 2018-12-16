@@ -13,7 +13,7 @@ const blockMap = {
 };
 
 export default function renderWrapper(node) {
-    if (!isBlockNode(node)) {
+    if (isBlockNode(node)) {
         return blockMap[node.getAttribute("type")];
     }
 }
