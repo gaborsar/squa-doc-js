@@ -10,6 +10,10 @@ const properties = [
         combiner: combineSchemas
     },
     {
+        name: "renderWrapper",
+        combiner: combineRenderers
+    },
+    {
         name: "renderNode",
         combiner: combineRenderers
     },

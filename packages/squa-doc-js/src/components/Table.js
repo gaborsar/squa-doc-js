@@ -25,7 +25,13 @@ export default class Table extends Component {
     }
 
     renderChild = node => {
-        const { createChange, onChange, renderNode, renderMark } = this.props;
+        const {
+            createChange,
+            onChange,
+            renderWrapper,
+            renderNode,
+            renderMark
+        } = this.props;
 
         const classNames = [];
         node.style.marks.map(renderMark).forEach(obj => {
@@ -52,6 +58,7 @@ export default class Table extends Component {
                 node={node}
                 createChange={createChange}
                 onChange={onChange}
+                renderWrapper={renderWrapper}
                 renderNode={renderNode}
                 renderMark={renderMark}
             />

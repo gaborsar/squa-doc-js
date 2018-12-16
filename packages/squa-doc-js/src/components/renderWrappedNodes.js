@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function renderWrappedNodes(nodes, renderWrapper, renderNode) {
-    const queue = nodes.map(node => renderWrapper(node) || {});
+    const queue = nodes.map(renderWrapper);
 
     let Wrapper;
     let wrapperKey;
