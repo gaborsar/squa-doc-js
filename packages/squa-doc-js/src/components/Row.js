@@ -9,7 +9,12 @@ export default class Row extends Component {
     }
 
     render() {
-        const { RowComponent, rowClassName, rowProps, node } = this.props;
+        const {
+            rowComponent: RowComponent,
+            rowClassName,
+            rowProps,
+            node
+        } = this.props;
         return (
             <RowComponent
                 className={rowClassName}
@@ -50,7 +55,7 @@ export default class Row extends Component {
         return (
             <Cell
                 key={node.key}
-                CellComponent={obj.component}
+                cellComponent={obj.component}
                 cellClassName={joinClassNames("SquaDocJs-cell", classNames)}
                 cellProps={obj.props}
                 node={node}

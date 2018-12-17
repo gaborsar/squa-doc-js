@@ -5,7 +5,7 @@
     "scripts": {
         "benchmark": "babel-node benchmarks/document.js",
         "build": "webpack",
-        "build:dev": "NODE_ENV=development npm run build",
+        "build:dev": "cross-env NODE_ENV=development npm run build",
         "format": "prettier --write \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",
         "jest": "jest",
         "coverage": "npm run jest -- --coverage",
@@ -54,6 +54,7 @@
         ]
     },
     "devDependencies": {
-        "@babel/node": "^7.2.2"
+        "@babel/node": "^7.2.2",
+        "cross-env": "^5.2.0"
     }
 }

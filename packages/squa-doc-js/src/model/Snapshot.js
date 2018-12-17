@@ -19,28 +19,8 @@ export default class Snapshot {
         return new Snapshot({ ...this, ...props });
     }
 
-    hasType() {
+    get hasType() {
         return !!this.type;
-    }
-
-    getType() {
-        return this.type;
-    }
-
-    getUndoDelta() {
-        return this.undoDelta;
-    }
-
-    getRedoDelta() {
-        return this.redoDelta;
-    }
-
-    getSelection() {
-        return this.selection;
-    }
-
-    getTimestamp() {
-        return this.timestamp;
     }
 
     setType(type) {

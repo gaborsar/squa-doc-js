@@ -8,7 +8,7 @@ export default function createTranslateMarkdown({
         const { value } = change;
         const { document, selection } = value;
 
-        if (selection.isExpanded()) {
+        if (selection.isExpanded) {
             return;
         }
 

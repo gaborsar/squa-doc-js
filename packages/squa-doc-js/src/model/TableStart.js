@@ -1,7 +1,7 @@
 import NodeMixin from "./NodeMixin";
-import NodeType from "./NodeType";
 import FormatMixin from "./FormatMixin";
-import AtomicIterator from "./AtomicIterator";
+import NodeType from "./NodeType";
+import LeafIterator from "./LeafIterator";
 
 class TableStart {
     constructor(schema, key, style) {
@@ -23,7 +23,7 @@ class TableStart {
     }
 
     iterator() {
-        return new AtomicIterator(this);
+        return new LeafIterator(this);
     }
 
     isValidMark(name) {
@@ -31,6 +31,4 @@ class TableStart {
     }
 }
 
-Object.assign(TableStart.prototype, NodeMixin, FormatMixin);
-
-export default TableStart;
+export default FormatMixin(NodeMixin(TableStart));

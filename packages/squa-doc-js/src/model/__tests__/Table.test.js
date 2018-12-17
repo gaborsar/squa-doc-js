@@ -11,219 +11,187 @@ const schema = new Schema({
 
 describe("Table", () => {
     test("insert row", () => {
-        expect(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        })
-                    ]
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow({
+                        children: [schema.createCell(), schema.createCell()]
+                    }),
+                    schema.createRow({
+                        children: [schema.createCell(), schema.createCell()]
+                    })
+                ]
+            })
+            .insertRow(1);
+        const tableB = schema.createTable({
+            children: [
+                schema.createRow({
+                    children: [schema.createCell(), schema.createCell()]
+                }),
+                schema.createRow({
+                    children: [schema.createCell(), schema.createCell()]
+                }),
+                schema.createRow({
+                    children: [schema.createCell(), schema.createCell()]
                 })
-                .insertRow(1)
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        })
-                    ]
-                })
-                .getDelta()
-        );
+            ]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 
     test("insert column", () => {
-        expect(
-            schema
-                .createTable({
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow({
+                        children: [schema.createCell(), schema.createCell()]
+                    }),
+                    schema.createRow({
+                        children: [schema.createCell(), schema.createCell()]
+                    })
+                ]
+            })
+            .insertColumn(1);
+        const tableB = schema.createTable({
+            children: [
+                schema.createRow({
                     children: [
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        })
+                        schema.createCell(),
+                        schema.createCell(),
+                        schema.createCell()
+                    ]
+                }),
+                schema.createRow({
+                    children: [
+                        schema.createCell(),
+                        schema.createCell(),
+                        schema.createCell()
                     ]
                 })
-                .insertColumn(1)
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        }),
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        })
-                    ]
-                })
-                .getDelta()
-        );
+            ]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 
     test("set row attributes", () => {
-        expect(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell()]
-                        })
-                    ]
-                })
-                .setRowAttributes(1, { "table-row-mark": true })
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow(),
-                        schema
-                            .createRow()
-                            .setAttributes({ "table-row-mark": true }),
-                        schema.createRow()
-                    ]
-                })
-                .getDelta()
-        );
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow({
+                        children: [schema.createCell()]
+                    }),
+                    schema.createRow({
+                        children: [schema.createCell()]
+                    }),
+                    schema.createRow({
+                        children: [schema.createCell()]
+                    })
+                ]
+            })
+            .setRowAttributes(1, { "table-row-mark": true });
+        const tableB = schema.createTable({
+            children: [
+                schema.createRow(),
+                schema.createRow().setAttributes({ "table-row-mark": true }),
+                schema.createRow()
+            ]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 
     test("set column attributes", () => {
-        expect(
-            schema
-                .createTable({
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow({
+                        children: [
+                            schema.createCell(),
+                            schema.createCell(),
+                            schema.createCell()
+                        ]
+                    }),
+                    schema.createRow({
+                        children: [
+                            schema.createCell(),
+                            schema.createCell(),
+                            schema.createCell()
+                        ]
+                    })
+                ]
+            })
+            .setColumnAttributes(1, { "table-cell-mark": true });
+        const tableB = schema.createTable({
+            children: [
+                schema.createRow({
                     children: [
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        }),
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        })
+                        schema.createCell(),
+                        schema
+                            .createCell()
+                            .setAttributes({ "table-cell-mark": true }),
+                        schema.createCell()
+                    ]
+                }),
+                schema.createRow({
+                    children: [
+                        schema.createCell(),
+                        schema
+                            .createCell()
+                            .setAttributes({ "table-cell-mark": true }),
+                        schema.createCell()
                     ]
                 })
-                .setColumnAttributes(1, { "table-cell-mark": true })
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema
-                                    .createCell()
-                                    .setAttributes({ "table-cell-mark": true }),
-                                schema.createCell()
-                            ]
-                        }),
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema
-                                    .createCell()
-                                    .setAttributes({ "table-cell-mark": true }),
-                                schema.createCell()
-                            ]
-                        })
-                    ]
-                })
-                .getDelta()
-        );
+            ]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 
     test("delete row", () => {
-        expect(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow(),
-                        schema.createRow(),
-                        schema.createRow()
-                    ]
-                })
-                .deleteRow(1)
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [schema.createRow(), schema.createRow()]
-                })
-                .getDelta()
-        );
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow(),
+                    schema.createRow(),
+                    schema.createRow()
+                ]
+            })
+            .deleteRow(1);
+        const tableB = schema.createTable({
+            children: [schema.createRow(), schema.createRow()]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 
     test("delete column", () => {
-        expect(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        }),
-                        schema.createRow({
-                            children: [
-                                schema.createCell(),
-                                schema.createCell(),
-                                schema.createCell()
-                            ]
-                        })
-                    ]
+        const tableA = schema
+            .createTable({
+                children: [
+                    schema.createRow({
+                        children: [
+                            schema.createCell(),
+                            schema.createCell(),
+                            schema.createCell()
+                        ]
+                    }),
+                    schema.createRow({
+                        children: [
+                            schema.createCell(),
+                            schema.createCell(),
+                            schema.createCell()
+                        ]
+                    })
+                ]
+            })
+            .deleteColumn(1);
+        const tableB = schema.createTable({
+            children: [
+                schema.createRow({
+                    children: [schema.createCell(), schema.createCell()]
+                }),
+                schema.createRow({
+                    children: [schema.createCell(), schema.createCell()]
                 })
-                .deleteColumn(1)
-                .getDelta()
-        ).toEqual(
-            schema
-                .createTable({
-                    children: [
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        }),
-                        schema.createRow({
-                            children: [schema.createCell(), schema.createCell()]
-                        })
-                    ]
-                })
-                .getDelta()
-        );
+            ]
+        });
+        expect(tableA.delta).toEqual(tableB.delta);
     });
 });

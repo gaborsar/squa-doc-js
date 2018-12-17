@@ -11,7 +11,12 @@ export default class Cell extends Component {
     }
 
     render() {
-        const { CellComponent, cellClassName, cellProps, node } = this.props;
+        const {
+            cellComponent: CellComponent,
+            cellClassName,
+            cellProps,
+            node
+        } = this.props;
         return (
             <CellComponent
                 className={cellClassName}
@@ -75,7 +80,7 @@ export default class Cell extends Component {
         return (
             <Block
                 key={node.key}
-                BlockComponent={obj.component}
+                blockComponent={obj.component}
                 blockClassName={joinClassNames("SquaDocJs-block", classNames)}
                 blockProps={obj.props}
                 node={node}

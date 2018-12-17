@@ -14,10 +14,6 @@ export default class Change {
         this.value = value;
     }
 
-    getValue() {
-        return this.value;
-    }
-
     setValue(value) {
         this.value = value;
         return this;
@@ -45,7 +41,7 @@ export default class Change {
 
         let nextUndoStack = undoStack;
 
-        if (snapshot.hasType() && !nextUndoStack.isEmpty()) {
+        if (snapshot.hasType && !nextUndoStack.isEmpty) {
             const lastSnapshot = nextUndoStack.last();
 
             if (lastSnapshot.canCompose(snapshot)) {
@@ -70,7 +66,7 @@ export default class Change {
         const { value } = this;
         const { document, selection, undoStack, redoStack } = value;
 
-        if (undoStack.isEmpty()) {
+        if (undoStack.isEmpty) {
             return this;
         }
 
@@ -99,7 +95,7 @@ export default class Change {
         const { value } = this;
         const { document, selection, undoStack, redoStack } = value;
 
-        if (redoStack.isEmpty()) {
+        if (redoStack.isEmpty) {
             return this;
         }
 
@@ -475,7 +471,7 @@ export default class Change {
         const { value } = this;
         const { document, selection } = value;
 
-        const nextDocument = selection.isCollapsed()
+        const nextDocument = selection.isCollapsed
             ? document.updateDescendantAtOffset(
                   selection.offset,
                   isBlockLevelNode,
@@ -497,7 +493,7 @@ export default class Change {
         const { value } = this;
         const { document, selection } = value;
 
-        if (selection.isCollapsed()) {
+        if (selection.isCollapsed) {
             this.value = value.setInlineStyleOverride(attributes);
         } else {
             const nextDocument = document.updateDescendantsAtRange(

@@ -1,45 +1,37 @@
-const FormatMixin = {
-    getStyle() {
-        return this.style;
-    },
+const FormatMixin = Class =>
+    class extends Class {
+        get isPristine() {
+            return this.style.isEmpty;
+        }
 
-    setStyle(style) {
-        return this.merge({ style });
-    },
+        setStyle(style) {
+            return this.merge({ style });
+        }
 
-    getMarks() {
-        return this.style.marks;
-    },
+        getAttributes() {
+            return this.style.getAttributes();
+        }
 
-    setMarks(marks) {
-        return this.setStyle(this.style.setMarks(marks));
-    },
+        setAttributes(attributes) {
+            return this.setStyle(
+                this.style.setAttributes(
+                    attributes,
+                    this.isValidMark.bind(this)
+                )
+            );
+        }
 
-    isPristine() {
-        return this.style.isEmpty();
-    },
+        hasAttribute(name) {
+            return this.style.hasAttribute(name);
+        }
 
-    hasAttribute(name) {
-        return this.style.hasAttribute(name);
-    },
+        getAttribute(name) {
+            return this.style.getAttribute(name);
+        }
 
-    getAttribute(name) {
-        return this.style.getAttribute(name);
-    },
-
-    setAttribute(name, value) {
-        return this.setStyle(this.style.setAttribute(name, value));
-    },
-
-    getAttributes() {
-        return this.style.getAttributes();
-    },
-
-    setAttributes(attributes) {
-        return this.setStyle(
-            this.style.setAttributes(attributes, this.isValidMark.bind(this))
-        );
-    }
-};
+        setAttribute(name, value) {
+            return this.setStyle(this.style.setAttribute(name, value));
+        }
+    };
 
 export default FormatMixin;

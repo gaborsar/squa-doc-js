@@ -4,16 +4,4 @@ export default class Position {
         this.index = index;
         this.offset = offset;
     }
-
-    getNode() {
-        return this.node;
-    }
-
-    getIndex() {
-        return this.index;
-    }
-
-    getOffset() {
-        return this.offset;
-    }
 }

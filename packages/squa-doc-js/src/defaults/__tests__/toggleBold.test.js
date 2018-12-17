@@ -4,38 +4,26 @@ import toggleBold from "../toggleBold";
 
 describe("toggleBold", () => {
     test("add bold formatting", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa")
-                .selectAll()
-                .call(toggleBold)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { bold: true })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa")
+            .selectAll()
+            .call(toggleBold);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { bold: true });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("remove bold formatting", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { bold: true })
-                .selectAll()
-                .call(toggleBold)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { bold: true })
+            .selectAll()
+            .call(toggleBold);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 });

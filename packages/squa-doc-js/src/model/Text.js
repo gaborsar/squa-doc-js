@@ -1,9 +1,9 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
-import NodeMixin from "./NodeMixin";
 import FormatMixin from "./FormatMixin";
 import LeafMixin from "./LeafMixin";
-import TextIterator from "./TextIterator";
+import NodeMixin from "./NodeMixin";
+import LeafIterator from "./LeafIterator";
 
 class Text {
     constructor(schema, key, style, value) {
@@ -29,28 +29,12 @@ class Text {
         return new Delta().insert(this.value, this.getAttributes());
     }
 
-    getType() {
-        return this.type;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    getDelta() {
-        return this.delta;
-    }
-
     merge(props) {
         return this.schema.createText({ ...this, ...props });
     }
 
     iterator() {
-        return new TextIterator(this);
+        return new LeafIterator(this);
     }
 
     isValidMark(name) {
@@ -66,6 +50,4 @@ class Text {
     }
 }
 
-Object.assign(Text.prototype, NodeMixin, FormatMixin, LeafMixin);
-
-export default Text;
+export default FormatMixin(LeafMixin(NodeMixin(Text)));

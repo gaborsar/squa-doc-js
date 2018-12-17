@@ -7,15 +7,14 @@ export default class ListIterator {
         this.iterator = null;
     }
 
-    isDone() {
+    get isDone() {
         return this.nodes.length <= this.index;
     }
 
     next(length, strategy = IterationStrategy.Shallow) {
-        if (this.isDone()) {
+        if (this.isDone) {
             return null;
         }
-
         if (this.iterator === null) {
             const node = this.nodes[this.index];
             if (
@@ -27,14 +26,11 @@ export default class ListIterator {
             }
             this.iterator = node.iterator();
         }
-
         const node = this.iterator.next(length, strategy);
-
-        if (this.iterator.isDone()) {
+        if (this.iterator.isDone) {
             this.index++;
             this.iterator = null;
         }
-
         return node;
     }
 }

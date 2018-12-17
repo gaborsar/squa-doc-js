@@ -15,24 +15,26 @@ export default class Style {
         );
     }
 
+    static intersect(styleA, styleB) {
+        return styleA.setMarks(
+            styleA.marks.filter(mark => styleB.marks.includes(mark))
+        );
+    }
+
     constructor({ marks = [] } = {}) {
         this.marks = marks.sort(Mark.compare);
+    }
+
+    get isEmpty() {
+        return this.marks.length === 0;
     }
 
     merge(props) {
         return Style.create({ ...this, ...props });
     }
 
-    getMarks() {
-        return this.marks;
-    }
-
     setMarks(marks) {
         return this.merge({ marks });
-    }
-
-    isEmpty() {
-        return this.marks.length === 0;
     }
 
     hasAttribute(name) {
@@ -70,11 +72,5 @@ export default class Style {
                 (style, name) => style.setAttribute(name, attributes[name]),
                 this
             );
-    }
-
-    static intersect(styleA, styleB) {
-        return styleA.setMarks(
-            styleA.marks.filter(mark => styleB.marks.includes(mark))
-        );
     }
 }

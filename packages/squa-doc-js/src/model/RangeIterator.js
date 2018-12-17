@@ -7,12 +7,12 @@ export default class RangeIterator {
         this.offset = 0;
     }
 
-    isDone() {
+    get isDone() {
         return this.nodes.length <= this.index;
     }
 
     next(length) {
-        if (this.isDone()) {
+        if (this.isDone) {
             return null;
         }
 

@@ -1,7 +1,7 @@
 import NodeType from "./NodeType";
-import NodeMixin from "./NodeMixin";
 import FormatMixin from "./FormatMixin";
-import AtomicIterator from "./AtomicIterator";
+import NodeMixin from "./NodeMixin";
+import LeafIterator from "./LeafIterator";
 
 class BlockEnd {
     constructor(schema, key, style) {
@@ -23,7 +23,7 @@ class BlockEnd {
     }
 
     iterator() {
-        return new AtomicIterator(this);
+        return new LeafIterator(this);
     }
 
     isValidMark(name) {
@@ -31,6 +31,4 @@ class BlockEnd {
     }
 }
 
-Object.assign(BlockEnd.prototype, NodeMixin, FormatMixin);
-
-export default BlockEnd;
+export default FormatMixin(NodeMixin(BlockEnd));

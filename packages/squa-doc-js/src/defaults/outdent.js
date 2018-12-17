@@ -9,7 +9,7 @@ export default function outdent(change) {
     const { value } = change;
     const { document, selection } = value;
 
-    const nextDocument = selection.isCollapsed()
+    const nextDocument = selection.isCollapsed
         ? document.updateDescendantAtOffset(
               selection.offset,
               isBlockNode,

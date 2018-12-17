@@ -81,10 +81,9 @@ export default class Editor extends PureComponent {
                         onPaste={this.handlePaste}
                         onDragStart={preventDefault}
                         onDrop={preventDefault}
+                        onKeyDown={this.handleKeyDown}
                         onCompositionStart={this.handleCompositionStart}
                         onCompositionEnd={this.handleCompositionEnd}
-                        onKeyDown={this.handleKeyDown}
-                        onInput={this.handleInput}
                     >
                         <Document
                             key={value.document.key}
@@ -105,7 +104,7 @@ export default class Editor extends PureComponent {
         const { value, placeholder } = this.props;
         const { document } = value;
 
-        if (placeholder && value.isEditing() && document.isPristine()) {
+        if (placeholder && value.isEditing && document.isPristine) {
             return (
                 <span
                     className="SquaDocJs-placeholder"
@@ -154,7 +153,7 @@ export default class Editor extends PureComponent {
         const { value, onChange = sink } = this.props;
         const { selection: currentSelection } = value;
 
-        if (value.isComposing()) {
+        if (value.isComposing) {
             return;
         }
 
@@ -217,7 +216,7 @@ export default class Editor extends PureComponent {
         const { value, onChange = sink } = this.props;
         const { selection } = value;
 
-        if (selection.isCollapsed()) {
+        if (selection.isCollapsed) {
             if (event.metaKey) {
                 change
                     .selectBlockBackward()
@@ -247,7 +246,7 @@ export default class Editor extends PureComponent {
         const { value, onChange = sink } = this.props;
         const { selection } = value;
 
-        if (selection.isCollapsed()) {
+        if (selection.isCollapsed) {
             if (event.metaKey) {
                 change
                     .selectBlockForward()
@@ -277,7 +276,7 @@ export default class Editor extends PureComponent {
         const { value, onChange = sink } = this.props;
         const { selection } = value;
 
-        if (selection.isExpanded()) {
+        if (selection.isExpanded) {
             change.delete();
         }
 
@@ -313,7 +312,7 @@ export default class Editor extends PureComponent {
             onChange = sink
         } = this.props;
 
-        if (value.isComposing()) {
+        if (value.isComposing) {
             return this.handleCompositionKeyDown(event);
         }
 
@@ -427,7 +426,7 @@ export default class Editor extends PureComponent {
         const { value } = change;
         const { document, selection } = value;
 
-        if (selection.isCollapsed()) {
+        if (selection.isCollapsed) {
             const pos = document.findDescendantAtOffset(
                 selection.offset,
                 isBlockNode
@@ -441,13 +440,13 @@ export default class Editor extends PureComponent {
             const { node: blockBefore } = pos;
 
             const diff = blockBefore.delta.diff(delta, pos.offset);
-            if (value.hasInlineStyleOverride()) {
+            if (value.hasInlineStyleOverride) {
                 optimizeInsertDelta(diff, value.inlineStyleOverride);
             }
 
             let blockAfter = blockBefore.apply(diff);
             if (
-                blockBefore.isEmpty() ||
+                blockBefore.isEmpty ||
                 nativeSelection.anchorNode.parentNode === blockNode
             ) {
                 blockAfter = blockAfter.regenerateKey();
@@ -474,12 +473,12 @@ export default class Editor extends PureComponent {
             const blockBefore = blocks.shift();
 
             const diff = blockBefore.delta.diff(delta);
-            if (value.hasInlineStyleOverride()) {
+            if (value.hasInlineStyleOverride) {
                 optimizeInsertDelta(diff, value.inlineStyleOverride);
             }
 
             let blockAfter = blockBefore.apply(diff);
-            if (blockBefore.isEmpty()) {
+            if (blockBefore.isEmpty) {
                 blockAfter = blockAfter.regenerateKey();
             }
 
@@ -537,19 +536,6 @@ export default class Editor extends PureComponent {
         onChange(change);
     };
 
-    handleInput = () => {
-        const { value, onChange = sink } = this.props;
-
-        if (value.isComposing()) {
-            return;
-        }
-
-        const change = value.change();
-        this.afterInput(change);
-
-        onChange(change);
-    };
-
     afterCut = () => {
         const { value, onChange = sink } = this.props;
 
@@ -584,7 +570,7 @@ export default class Editor extends PureComponent {
         const { value } = change;
         const { selection } = value;
 
-        if (selection.isExpanded()) {
+        if (selection.isExpanded) {
             change.delete();
         }
 
@@ -606,7 +592,7 @@ export default class Editor extends PureComponent {
         const { value } = change;
         const { selection } = value;
 
-        if (selection.isExpanded()) {
+        if (selection.isExpanded) {
             change.delete();
         }
 

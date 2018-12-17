@@ -5,20 +5,4 @@ export default class RangeItem {
         this.offset = offset;
         this.length = length;
     }
-
-    getNode() {
-        return this.node;
-    }
-
-    getIndex() {
-        return this.index;
-    }
-
-    getOffset() {
-        return this.offset;
-    }
-
-    getLength() {
-        return this.length;
-    }
 }

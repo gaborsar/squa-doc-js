@@ -1,9 +1,9 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
 import Editor from "./Editor";
-import NodeMixin from "./NodeMixin";
-import ParentMixin from "./ParentMixin";
 import EditableMixin from "./EditableMixin";
+import ParentMixin from "./ParentMixin";
+import NodeMixin from "./NodeMixin";
 import ListIterator from "./ListIterator";
 import findPosition from "./findPosition";
 import createRange from "./createRange";
@@ -47,29 +47,13 @@ class Document {
         return this._delta;
     }
 
-    getType() {
-        return this.type;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    getDelta() {
-        return this.delta;
-    }
-
-    isPristine() {
+    get isPristine() {
         const { children } = this;
         if (children.length !== 1) {
             return false;
         }
         const child = children[0];
-        return isBlockNode(child) && child.isEmpty() && child.isPristine();
+        return isBlockNode(child) && child.isEmpty && child.isPristine;
     }
 
     merge(props) {
@@ -108,6 +92,4 @@ class Document {
     }
 }
 
-Object.assign(Document.prototype, NodeMixin, EditableMixin, ParentMixin);
-
-export default Document;
+export default EditableMixin(ParentMixin(NodeMixin(Document)));

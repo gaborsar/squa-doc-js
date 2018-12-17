@@ -1,10 +1,10 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import NodeMixin from "./NodeMixin";
-import FormatMixin from "./FormatMixin";
-import ParentMixin from "./ParentMixin";
 import EditableMixin from "./EditableMixin";
+import ParentMixin from "./ParentMixin";
+import FormatMixin from "./FormatMixin";
+import NodeMixin from "./NodeMixin";
 import ListIterator from "./ListIterator";
 import Editor from "./Editor";
 import findPosition from "./findPosition";
@@ -52,23 +52,7 @@ class Block {
         return this._delta;
     }
 
-    getType() {
-        return this.type;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    getDelta() {
-        return this.delta;
-    }
-
-    isEmpty() {
+    get isEmpty() {
         return this.children.length === 0;
     }
 
@@ -137,12 +121,4 @@ class Block {
     }
 }
 
-Object.assign(
-    Block.prototype,
-    NodeMixin,
-    EditableMixin,
-    FormatMixin,
-    ParentMixin
-);
-
-export default Block;
+export default EditableMixin(ParentMixin(FormatMixin(NodeMixin(Block))));

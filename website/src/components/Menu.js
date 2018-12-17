@@ -82,12 +82,9 @@ export default class Menu extends PureComponent {
 
     render() {
         const { value } = this.props;
-
-        const canUndo = value.canUndo();
-        const canRedo = value.canRedo();
+        const { canUndo, canRedo } = value;
 
         const attributes = value.getAttributes();
-
         const canIndent =
             attributes.type === "unordered-list-item" ||
             attributes.type === "ordered-list-item" ||

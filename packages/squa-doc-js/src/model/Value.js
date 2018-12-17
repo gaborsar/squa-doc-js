@@ -68,47 +68,23 @@ export default class Value {
         return new Value({ ...this, ...props });
     }
 
-    getMode() {
-        return this.mode;
-    }
-
-    getDocument() {
-        return this.document;
-    }
-
-    getSelection() {
-        return this.selection;
-    }
-
-    getUndoStack() {
-        return this.undoStack;
-    }
-
-    getRedoStack() {
-        return this.redoStack;
-    }
-
-    getInlineStyleOverride() {
-        return this.inlineStyleOverride;
-    }
-
-    isComposing() {
+    get isComposing() {
         return this.mode === EditorMode.Compose;
     }
 
-    isEditing() {
+    get isEditing() {
         return this.mode === EditorMode.Edit;
     }
 
-    canUndo() {
-        return !this.undoStack.isEmpty();
+    get canUndo() {
+        return !this.undoStack.isEmpty;
     }
 
-    canRedo() {
-        return !this.redoStack.isEmpty();
+    get canRedo() {
+        return !this.redoStack.isEmpty;
     }
 
-    hasInlineStyleOverride() {
+    get hasInlineStyleOverride() {
         return this.inlineStyleOverride !== null;
     }
 
@@ -150,7 +126,7 @@ export default class Value {
 
     getBlockAttributes() {
         const { document, selection } = this;
-        return selection.isCollapsed()
+        return selection.isCollapsed
             ? document.getAttributesAtOffset(selection.offset, isBlockLevelNode)
             : document.getAttributesAtRange(
                   selection.offset,
@@ -161,7 +137,7 @@ export default class Value {
 
     getInlineAttributes() {
         const { document, selection, inlineStyleOverride } = this;
-        return selection.isCollapsed()
+        return selection.isCollapsed
             ? document.getAttributesAtOffset(
                   selection.offset,
                   isInlineNode,

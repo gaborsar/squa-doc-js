@@ -4,7 +4,7 @@ function onKeyDownBackspace(change, event) {
     const { value } = change;
     const { document, selection } = value;
 
-    if (!selection.isCollapsed()) {
+    if (!selection.isCollapsed) {
         return false;
     }
 
@@ -17,7 +17,7 @@ function onKeyDownBackspace(change, event) {
     }
 
     const { node: block } = pos;
-    if (!block.isEmpty() || block.getAttribute("type") !== "checkable") {
+    if (!block.isEmpty || block.getAttribute("type") !== "checkable") {
         return false;
     }
 
@@ -39,7 +39,7 @@ function onKeyDownEnter(change, event) {
     const { value } = change;
     const { document, selection } = value;
 
-    if (!selection.isCollapsed()) {
+    if (!selection.isCollapsed) {
         return false;
     }
 
@@ -58,7 +58,7 @@ function onKeyDownEnter(change, event) {
 
     event.preventDefault();
 
-    if (block.isEmpty()) {
+    if (block.isEmpty) {
         let nextBlock;
         const depth = block.getAttribute("indent");
         if (depth) {

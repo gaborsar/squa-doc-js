@@ -57,50 +57,45 @@ describe("Value", () => {
     });
 
     test("get the current block attributes at an ofset", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .insertText("\n", { align: "left" })
-            .select(0, 0)
-            .getValue();
+            .select(0, 0);
         expect(value.getBlockAttributes()).toEqual({ align: "left" });
     });
 
     test("get the current block attributes at a range", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .insertText("\n", { align: "left", indent: 0 })
             .insertText("\n", { align: "left", indent: 1 })
-            .select(0, 2)
-            .getValue();
+            .select(0, 2);
         expect(value.getBlockAttributes()).toEqual({ align: "left" });
     });
 
     test("get the current inline attributes at an ofset", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .insertText("aaa", { bold: true })
             .insertText("bbb", { italic: true })
-            .select(3, 0)
-            .getValue();
+            .select(3, 0);
         expect(value.getInlineAttributes()).toEqual({ bold: true });
     });
 
     test("get the current inline attributes at a range", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .insertText("aaa", { bold: true })
-            .select(0, 3)
-            .getValue();
+            .select(0, 3);
         expect(value.getInlineAttributes()).toEqual({ bold: true });
     });
 
     test("get the current attributes", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .insertText("aaa", { bold: true })
             .insertText("\n", { align: "left" })
-            .select(0, 3)
-            .getValue();
+            .select(0, 3);
         expect(value.getAttributes()).toEqual({ bold: true, align: "left" });
     });
 });

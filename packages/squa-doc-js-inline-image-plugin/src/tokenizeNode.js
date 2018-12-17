@@ -2,7 +2,6 @@ import { TokenType } from "squa-doc-js";
 
 export default function tokenizeNode(node) {
     const tokens = [];
-
     if (node.nodeName === "IMG" && node.hasAttribute("src")) {
         tokens.push({
             type: TokenType.InlineEmbedNode,
@@ -10,7 +9,6 @@ export default function tokenizeNode(node) {
                 "inline-image": node.getAttribute("src")
             }
         });
-
         if (node.hasAttribute("alt")) {
             tokens.push({
                 type: TokenType.InlineStyle,
@@ -20,6 +18,5 @@ export default function tokenizeNode(node) {
             });
         }
     }
-
     return tokens;
 }

@@ -111,6 +111,16 @@ describe("combinePlugins", () => {
         });
     });
 
+    test("renderWrapper()", () => {
+        const { renderWrapper } = combinePlugins([
+            { renderWrapper: v => (v === "a" ? "a" : undefined) },
+            { renderWrapper: v => (v === "b" ? "b" : undefined) }
+        ]);
+        expect(renderWrapper("a")).toEqual("a");
+        expect(renderWrapper("b")).toEqual("b");
+        expect(renderWrapper("c")).toBe(undefined);
+    });
+
     test("renderNode()", () => {
         const { renderNode } = combinePlugins([
             { renderNode: v => (v === "a" ? "a" : undefined) },

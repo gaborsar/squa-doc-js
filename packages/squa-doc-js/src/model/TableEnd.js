@@ -1,5 +1,5 @@
 import NodeType from "./NodeType";
-import AtomicIterator from "./AtomicIterator";
+import LeafIterator from "./LeafIterator";
 
 export default class TableEnd {
     get type() {
@@ -11,6 +11,6 @@ export default class TableEnd {
     }
 
     iterator() {
-        return new AtomicIterator(this);
+        return new LeafIterator(this);
     }
 }

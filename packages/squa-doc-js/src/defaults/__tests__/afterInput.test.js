@@ -4,279 +4,183 @@ import afterInput from "../afterInput";
 
 describe("afterInput", () => {
     test("insert a level one heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("# ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-one" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("# ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-one" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a level two heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("## ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-two" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("## ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-two" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a level three heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("### ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-three" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("### ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-three" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a level four heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("#### ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-four" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("#### ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-four" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a level five heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("##### ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-five" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("##### ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-five" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a level six heading", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("###### ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "heading-six" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("###### ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "heading-six" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert an unordered list item", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("* ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "unordered-list-item" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("* ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "unordered-list-item" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert an ordered list item with a dot", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("1. ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "ordered-list-item" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("1. ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "ordered-list-item" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert an ordered list item with a bracket", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("1) ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "ordered-list-item" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("1) ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "ordered-list-item" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a clode block", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("``` ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "code" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("``` ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "code" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert a blockquote", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("> ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .setBlockAttributes({ type: "blockquote" })
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("> ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .setBlockAttributes({ type: "blockquote" });
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert bold text with asterisks", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("**aaa** ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { bold: true })
-                .insertText(" ")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("**aaa** ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { bold: true })
+            .insertText(" ");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert bold text with underlines", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("__aaa__ ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { bold: true })
-                .insertText(" ")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("__aaa__ ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { bold: true })
+            .insertText(" ");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert italic text with an asterisk", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("*aaa* ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { italic: true })
-                .insertText(" ")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("*aaa* ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { italic: true })
+            .insertText(" ");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert italic text with an underline", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("_aaa_ ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { italic: true })
-                .insertText(" ")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("_aaa_ ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { italic: true })
+            .insertText(" ");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
     test("insert monospace text", () => {
-        expect(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("`aaa` ")
-                .call(afterInput)
-                .getValue()
-                .toDelta()
-        ).toEqual(
-            Value.createEmpty({ schema })
-                .change()
-                .insertText("aaa", { code: true })
-                .insertText(" ")
-                .getValue()
-                .toDelta()
-        );
+        const { value: valueA } = Value.createEmpty({ schema })
+            .change()
+            .insertText("`aaa` ")
+            .call(afterInput);
+        const { value: valueB } = Value.createEmpty({ schema })
+            .change()
+            .insertText("aaa", { code: true })
+            .insertText(" ");
+        expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 });

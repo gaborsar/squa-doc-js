@@ -1,9 +1,9 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import NodeMixin from "./NodeMixin";
-import FormatMixin from "./FormatMixin";
 import ParentMixin from "./ParentMixin";
+import FormatMixin from "./FormatMixin";
+import NodeMixin from "./NodeMixin";
 import ListIterator from "./ListIterator";
 import findPosition from "./findPosition";
 import createRange from "./createRange";
@@ -54,22 +54,6 @@ class Cell {
         return this._delta;
     }
 
-    getType() {
-        return this.type;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    getDelta() {
-        return this.delta;
-    }
-
     merge(props) {
         return this.schema.createCell({ ...this, ...props });
     }
@@ -104,6 +88,4 @@ class Cell {
     }
 }
 
-Object.assign(Cell.prototype, NodeMixin, FormatMixin, ParentMixin);
-
-export default Cell;
+export default ParentMixin(FormatMixin(NodeMixin(Cell)));

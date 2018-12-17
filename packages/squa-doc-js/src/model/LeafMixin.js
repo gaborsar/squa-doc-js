@@ -1,11 +1,8 @@
-const LeafMixin = {
-    getValue() {
-        return this.value;
-    },
-
-    setValue(value) {
-        return this.merge({ value });
-    }
-};
+const LeafMixin = Class =>
+    class extends Class {
+        setValue(value) {
+            return this.merge({ value });
+        }
+    };
 
 export default LeafMixin;

@@ -8,7 +8,7 @@ function onKeyDownBackspace(change, event) {
     const { value } = change;
     const { document, selection } = value;
 
-    if (selection.isExpanded()) {
+    if (selection.isExpanded) {
         return false;
     }
 
@@ -18,7 +18,7 @@ function onKeyDownBackspace(change, event) {
     }
 
     const { node: block } = pos;
-    if (!block.isEmpty()) {
+    if (!block.isEmpty) {
         return false;
     }
 
@@ -43,7 +43,7 @@ function onKeyDownEnter(change, event) {
     const { value } = change;
     const { document, selection } = value;
 
-    if (selection.isExpanded()) {
+    if (selection.isExpanded) {
         return false;
     }
 
@@ -53,7 +53,7 @@ function onKeyDownEnter(change, event) {
     }
 
     const { node: block } = pos;
-    if (!block.isEmpty()) {
+    if (!block.isEmpty) {
         return false;
     }
 

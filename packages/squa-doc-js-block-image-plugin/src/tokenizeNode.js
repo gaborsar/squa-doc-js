@@ -4,17 +4,16 @@ export default function tokenizeNode(node) {
     const tokens = [];
 
     if (node.nodeName === "FIGURE") {
-        const img = node.childNodes[0];
-        const figcaption = node.childNodes[1];
+        const img = node.querySelector("img");
+        const figcaption = node.querySelector("figcaption");
 
-        if (img && img.nodeName === "IMG" && img.hasAttribute("src")) {
+        if (img && img.hasAttribute("src")) {
             tokens.push({
                 type: TokenType.BlockEmbedNode,
                 payload: {
                     "block-image": img.getAttribute("src")
                 }
             });
-
             if (img.hasAttribute("alt")) {
                 tokens.push({
                     type: TokenType.BlockStyle,
@@ -23,7 +22,6 @@ export default function tokenizeNode(node) {
                     }
                 });
             }
-
             if (figcaption) {
                 tokens.push({
                     type: TokenType.BlockStyle,

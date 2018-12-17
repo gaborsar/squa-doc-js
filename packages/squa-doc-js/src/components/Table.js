@@ -9,7 +9,12 @@ export default class Table extends Component {
     }
 
     render() {
-        const { TableComponent, tableClassName, tableProps, node } = this.props;
+        const {
+            tableComponent: TableComponent,
+            tableClassName,
+            tableProps,
+            node
+        } = this.props;
         return (
             <div className="SquaDocJs-table-outter" contentEditable={false}>
                 <TableComponent
@@ -52,7 +57,7 @@ export default class Table extends Component {
         return (
             <Row
                 key={node.key}
-                RowComponent={obj.component}
+                rowComponent={obj.component}
                 rowClassName={joinClassNames("SquaDocJs-row", classNames)}
                 rowProps={obj.props}
                 node={node}

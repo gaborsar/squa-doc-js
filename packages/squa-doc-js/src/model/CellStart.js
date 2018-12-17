@@ -1,7 +1,7 @@
 import NodeType from "./NodeType";
-import NodeMixin from "./NodeMixin";
 import FormatMixin from "./FormatMixin";
-import AtomicIterator from "./AtomicIterator";
+import NodeMixin from "./NodeMixin";
+import LeafIterator from "./LeafIterator";
 
 class CellStart {
     constructor(schema, key, style) {
@@ -23,7 +23,7 @@ class CellStart {
     }
 
     iterator() {
-        return new AtomicIterator(this);
+        return new LeafIterator(this);
     }
 
     isValidMark(name) {
@@ -31,6 +31,4 @@ class CellStart {
     }
 }
 
-Object.assign(CellStart.prototype, NodeMixin, FormatMixin);
-
-export default CellStart;
+export default FormatMixin(NodeMixin(CellStart));

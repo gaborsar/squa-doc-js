@@ -1,9 +1,9 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
-import NodeMixin from "./NodeMixin";
 import FormatMixin from "./FormatMixin";
 import EmbedMixin from "./EmbedMixin";
-import AtomicIterator from "./AtomicIterator";
+import NodeMixin from "./NodeMixin";
+import LeafIterator from "./LeafIterator";
 
 class BlockEmbed {
     constructor(schema, key, style, name, value) {
@@ -33,28 +33,12 @@ class BlockEmbed {
         );
     }
 
-    getType() {
-        return this.type;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    getDelta() {
-        return this.delta;
-    }
-
     merge(props) {
         return this.schema.createBlockEmbed({ ...this, ...props });
     }
 
     iterator() {
-        return new AtomicIterator(this);
+        return new LeafIterator(this);
     }
 
     isValidMark(name) {
@@ -65,6 +49,4 @@ class BlockEmbed {
     }
 }
 
-Object.assign(BlockEmbed.prototype, NodeMixin, FormatMixin, EmbedMixin);
-
-export default BlockEmbed;
+export default FormatMixin(EmbedMixin(NodeMixin(BlockEmbed)));

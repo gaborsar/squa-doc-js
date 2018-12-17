@@ -3,11 +3,11 @@ export default class List {
         this.items = items;
     }
 
-    getLength() {
+    get length() {
         return this.items.length;
     }
 
-    isEmpty() {
+    get isEmpty() {
         return this.items.length === 0;
     }
 

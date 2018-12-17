@@ -16,31 +16,15 @@ export default class Selection {
         return Math.abs(this.focusOffset - this.anchorOffset);
     }
 
-    getAnchorOffset() {
-        return this.anchorOffset;
-    }
-
-    getFocusOffset() {
-        return this.focusOffset;
-    }
-
-    getOffset() {
-        return this.offset;
-    }
-
-    getLength() {
-        return this.length;
-    }
-
-    isCollapsed() {
+    get isCollapsed() {
         return this.anchorOffset === this.focusOffset;
     }
 
-    isExpanded() {
+    get isExpanded() {
         return this.anchorOffset !== this.focusOffset;
     }
 
-    isBackward() {
+    get isBackward() {
         return this.anchorOffset > this.focusOffset;
     }
 
@@ -57,13 +41,13 @@ export default class Selection {
     }
 
     collapseToLeft() {
-        return this.isBackward()
+        return this.isBackward
             ? this.setAnchorOffset(this.focusOffset)
             : this.setFocusOffset(this.anchorOffset);
     }
 
     collapseToRight() {
-        return this.isBackward()
+        return this.isBackward
             ? this.setFocusOffset(this.anchorOffset)
             : this.setAnchorOffset(this.focusOffset);
     }

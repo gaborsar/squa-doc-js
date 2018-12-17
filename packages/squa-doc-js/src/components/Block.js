@@ -10,7 +10,12 @@ export default class Block extends Component {
     }
 
     render() {
-        const { BlockComponent, blockClassName, blockProps, node } = this.props;
+        const {
+            blockComponent: BlockComponent,
+            blockClassName,
+            blockProps,
+            node
+        } = this.props;
         return (
             <BlockComponent
                 className={blockClassName}
@@ -18,7 +23,7 @@ export default class Block extends Component {
                 data-key={node.key}
                 {...blockProps}
             >
-                {node.isEmpty() ? (
+                {node.isEmpty ? (
                     <br data-ignore />
                 ) : (
                     node.children.map(this.renderNode)

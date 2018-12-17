@@ -74,7 +74,7 @@ export default class Document extends PureComponent {
         return (
             <Table
                 key={node.key}
-                TableComponent={obj.component}
+                tableComponent={obj.component}
                 tableClassName={joinClassNames("SquaDocJs-table", classNames)}
                 tableProps={obj.props}
                 node={node}
@@ -98,7 +98,7 @@ export default class Document extends PureComponent {
         return (
             <Block
                 key={node.key}
-                BlockComponent={obj.component}
+                blockComponent={obj.component}
                 blockClassName={joinClassNames("SquaDocJs-block", classNames)}
                 blockProps={obj.props}
                 node={node}

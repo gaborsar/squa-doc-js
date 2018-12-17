@@ -12,7 +12,7 @@ export default class Editor {
 
     forLength(length, iterationStrategy, fn) {
         let remainingLength = length;
-        while (remainingLength !== 0 && !this.iterator.isDone()) {
+        while (remainingLength !== 0 && !this.iterator.isDone) {
             const node = this.iterator.next(remainingLength, iterationStrategy);
             if (fn !== undefined) {
                 fn(node);

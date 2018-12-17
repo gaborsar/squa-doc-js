@@ -8,7 +8,7 @@ export default function setNativeSelection(
 ) {
     let domRange;
 
-    if (modelSelection.isCollapsed()) {
+    if (modelSelection.isCollapsed) {
         const modelPos = modelDocument.findDescendantAtOffset(
             modelSelection.anchorOffset,
             isBlockNode
@@ -89,7 +89,7 @@ export default function setNativeSelection(
         nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
     } else {
         const nativeRange = document.createRange();
-        if (modelSelection.isBackward()) {
+        if (modelSelection.isBackward) {
             nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
             nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
         } else {

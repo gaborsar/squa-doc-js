@@ -22,53 +22,26 @@ import createKey from "./createKey";
 const alwaysFalse = () => false;
 
 export default class Schema {
-    constructor(config = {}) {
-        this.config = config;
-    }
-
-    isBlockEmbed(name) {
-        const { isBlockEmbed = alwaysFalse } = this.config;
-        return isBlockEmbed(name);
-    }
-
-    isInlineEmbed(name) {
-        const { isInlineEmbed = alwaysFalse } = this.config;
-        return isInlineEmbed(name);
-    }
-
-    isTableMark(name) {
-        const { isTableMark = alwaysFalse } = this.config;
-        return isTableMark(name);
-    }
-
-    isRowMark(name) {
-        const { isRowMark = alwaysFalse } = this.config;
-        return isRowMark(name);
-    }
-
-    isCellMark(name) {
-        const { isCellMark = alwaysFalse } = this.config;
-        return isCellMark(name);
-    }
-
-    isBlockMark(name) {
-        const { isBlockMark = alwaysFalse } = this.config;
-        return isBlockMark(name);
-    }
-
-    isBlockEmbedMark(embedName, markName) {
-        const { isBlockEmbedMark = alwaysFalse } = this.config;
-        return isBlockEmbedMark(embedName, markName);
-    }
-
-    isTextMark(name) {
-        const { isTextMark = alwaysFalse } = this.config;
-        return isTextMark(name);
-    }
-
-    isInlineEmbedMark(embedName, markName) {
-        const { isInlineEmbedMark = alwaysFalse } = this.config;
-        return isInlineEmbedMark(embedName, markName);
+    constructor({
+        isBlockEmbed = alwaysFalse,
+        isInlineEmbed = alwaysFalse,
+        isTableMark = alwaysFalse,
+        isRowMark = alwaysFalse,
+        isCellMark = alwaysFalse,
+        isBlockMark = alwaysFalse,
+        isTextMark = alwaysFalse,
+        isBlockEmbedMark = alwaysFalse,
+        isInlineEmbedMark = alwaysFalse
+    } = {}) {
+        this.isBlockEmbed = isBlockEmbed;
+        this.isInlineEmbed = isInlineEmbed;
+        this.isTableMark = isTableMark;
+        this.isRowMark = isRowMark;
+        this.isCellMark = isCellMark;
+        this.isBlockMark = isBlockMark;
+        this.isTextMark = isTextMark;
+        this.isBlockEmbedMark = isBlockEmbedMark;
+        this.isInlineEmbedMark = isInlineEmbedMark;
     }
 
     createDocumentBuilder({ key = createKey(), children = [] } = {}) {
@@ -163,6 +136,10 @@ export default class Schema {
         return new BlockEnd(this, key, style);
     }
 
+    createText({ key = createKey(), style = Style.create(), value } = {}) {
+        return new Text(this, key, style, value);
+    }
+
     createBlockEmbed({
         key = createKey(),
         style = Style.create(),
@@ -170,10 +147,6 @@ export default class Schema {
         value
     }) {
         return new BlockEmbed(this, key, style, name, value);
-    }
-
-    createText({ key = createKey(), style = Style.create(), value } = {}) {
-        return new Text(this, key, style, value);
     }
 
     createInlineEmbed({

@@ -22,7 +22,7 @@ const schema = combineSchemas([defaultSchema, customSchema]);
 
 describe("Change", () => {
     test("history", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
 
             .insertText("aaa", { bold: true })
@@ -43,9 +43,7 @@ describe("Change", () => {
             .undo()
 
             .redo()
-            .redo()
-
-            .getValue();
+            .redo();
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -54,202 +52,167 @@ describe("Change", () => {
                 .insert("\n")
         );
 
-        const selection = value.getSelection();
-
-        expect(selection.getAnchorOffset()).toBe(0);
-        expect(selection.getFocusOffset()).toBe(0);
+        expect(value.selection.anchorOffset).toBe(0);
+        expect(value.selection.focusOffset).toBe(0);
     });
 
     test("select a range", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
-            .select(3, 3)
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(6);
+            .select(3, 3);
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(6);
     });
 
     test("select a range backward", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
-            .select(6, -3)
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(6);
-        expect(selection.getFocusOffset()).toBe(3);
+            .select(6, -3);
+        expect(value.selection.anchorOffset).toBe(6);
+        expect(value.selection.focusOffset).toBe(3);
     });
 
     test("select everything", () => {
         const delta = new Delta().insert("aaa\nbbb\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
-            .selectAll()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(0);
-        expect(selection.getFocusOffset()).toBe(8);
+            .selectAll();
+        expect(value.selection.anchorOffset).toBe(0);
+        expect(value.selection.focusOffset).toBe(8);
     });
 
     test("collapse the selection", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .select(3, 3)
-            .collapse()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(3);
+            .collapse();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(3);
     });
 
     test("collapse the selection to the left when the current selection is forward", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .select(3, 3)
-            .collapseToLeft()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(3);
+            .collapseToLeft();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(3);
     });
 
     test("collapse the selection to the left when the current selection is backward", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .select(6, -3)
-            .collapseToLeft()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(3);
+            .collapseToLeft();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(3);
     });
 
     test("collapse the selection to the end when the current selection isforward", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .select(3, 3)
-            .collapseToRight()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(6);
-        expect(selection.getFocusOffset()).toBe(6);
+            .collapseToRight();
+        expect(value.selection.anchorOffset).toBe(6);
+        expect(value.selection.focusOffset).toBe(6);
     });
 
     test("collapse the selection to the end when the current selection isbackward", () => {
-        const selection = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .select(6, -3)
-            .collapseToRight()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(6);
-        expect(selection.getFocusOffset()).toBe(6);
+            .collapseToRight();
+        expect(value.selection.anchorOffset).toBe(6);
+        expect(value.selection.focusOffset).toBe(6);
     });
 
     test("select a character backward", () => {
         const delta = new Delta().insert("aaa\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .selectCharacterBackward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(2);
+            .selectCharacterBackward();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(2);
     });
 
     test("select a character forward", () => {
         const delta = new Delta().insert("aaabbb\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .selectCharacterForward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(4);
+            .selectCharacterForward();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(4);
     });
 
     test("select a word backward", () => {
         const delta = new Delta().insert("aaa bbb \n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(8, 0)
-            .selectWordBackward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(8);
-        expect(selection.getFocusOffset()).toBe(4);
+            .selectWordBackward();
+        expect(value.selection.anchorOffset).toBe(8);
+        expect(value.selection.focusOffset).toBe(4);
     });
 
     test("select the first word", () => {
         const delta = new Delta().insert("aaa bbb\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(4, 0)
-            .selectWordBackward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(4);
-        expect(selection.getFocusOffset()).toBe(0);
+            .selectWordBackward();
+        expect(value.selection.anchorOffset).toBe(4);
+        expect(value.selection.focusOffset).toBe(0);
     });
 
     test("select a word forward()", () => {
         const delta = new Delta().insert("aaa bbb ccc\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .selectWordForward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(7);
+            .selectWordForward();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(7);
     });
 
     test("select the last word", () => {
         const delta = new Delta().insert("aaa bbb\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .selectWordForward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(7);
+            .selectWordForward();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(7);
     });
 
     test("select a block backward", () => {
         const delta = new Delta().insert("aaabbb\n").insert("cccddd\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(10, 0)
-            .selectBlockBackward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(10);
-        expect(selection.getFocusOffset()).toBe(7);
+            .selectBlockBackward();
+        expect(value.selection.anchorOffset).toBe(10);
+        expect(value.selection.focusOffset).toBe(7);
     });
 
     test("select a block forward", () => {
         const delta = new Delta().insert("aaabbb\n");
-        const selection = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .selectBlockForward()
-            .getValue()
-            .getSelection();
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(6);
+            .selectBlockForward();
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(6);
     });
 
     test("insert text", () => {
         const delta = new Delta().insert("aaabbb\n");
 
-        const value = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 0)
-            .insertText("ccc", { bold: true })
-            .getValue();
+            .insertText("ccc", { bold: true });
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -258,23 +221,20 @@ describe("Change", () => {
                 .insert("bbb\n")
         );
 
-        const selection = value.getSelection();
-
-        expect(selection.getAnchorOffset()).toBe(6);
-        expect(selection.getFocusOffset()).toBe(6);
+        expect(value.selection.anchorOffset).toBe(6);
+        expect(value.selection.focusOffset).toBe(6);
     });
 
     test("insert an embed element", () => {
         const delta = new Delta().insert("aaabbb\n");
 
-        const value = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, delta })
             .change()
             .select(3, 0)
             .insertEmbed(
                 { "inline-embed": "foo" },
                 { "inline-embed-mark": "foo" }
-            )
-            .getValue();
+            );
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -286,37 +246,31 @@ describe("Change", () => {
                 .insert("bbb\n")
         );
 
-        const selection = value.getSelection();
-
-        expect(selection.getAnchorOffset()).toBe(4);
-        expect(selection.getFocusOffset()).toBe(4);
+        expect(value.selection.anchorOffset).toBe(4);
+        expect(value.selection.focusOffset).toBe(4);
     });
 
     test("insert a fragment", () => {
         const delta = new Delta().insert("aaa\n").insert("bbb\n");
 
-        const value = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(4, 0)
-            .insertFragment(new Delta().insert("ccc\n"))
-            .getValue();
+            .insertFragment(new Delta().insert("ccc\n"));
 
         expect(value.toDelta()).toEqual(new Delta().insert("aaa\nccc\nbbb\n"));
 
-        const selection = value.getSelection();
-
-        expect(selection.getAnchorOffset()).toBe(8);
-        expect(selection.getFocusOffset()).toBe(8);
+        expect(value.selection.anchorOffset).toBe(8);
+        expect(value.selection.focusOffset).toBe(8);
     });
 
     test("set attributes at a range", () => {
         const delta = new Delta().insert("aaabbb\ncccddd\n");
 
-        const value = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 7)
-            .setAttributes({ bold: true })
-            .getValue();
+            .setAttributes({ bold: true });
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -332,10 +286,9 @@ describe("Change", () => {
     test("set block attributes at an offset", () => {
         const delta = new Delta().insert("\n");
 
-        const value = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
-            .setBlockAttributes({ align: "left" })
-            .getValue();
+            .setBlockAttributes({ align: "left" });
 
         expect(value.toDelta()).toEqual(
             new Delta().insert("\n", { align: "left" })
@@ -348,11 +301,10 @@ describe("Change", () => {
             .insert({ "block-embed": "foo" })
             .insert("\n");
 
-        const value = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, delta })
             .change()
             .select(0, 3)
-            .setBlockAttributes({ align: "left" })
-            .getValue();
+            .setBlockAttributes({ align: "left" });
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -363,11 +315,10 @@ describe("Change", () => {
     });
 
     test("set inline attributes at an offset and insert some text", () => {
-        const value = Value.createEmpty()
+        const { value } = Value.createEmpty()
             .change()
             .setInlineAttributes({ bold: true })
-            .insertText("aaa")
-            .getValue();
+            .insertText("aaa");
 
         expect(value.toDelta()).toEqual(
             new Delta().insert("aaa", { bold: true }).insert("\n")
@@ -381,11 +332,10 @@ describe("Change", () => {
             .insert({ "inline-embed": "foo" })
             .insert("ddd\n");
 
-        const value = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, delta })
             .change()
             .select(3, 8)
-            .setInlineAttributes({ bold: true })
-            .getValue();
+            .setInlineAttributes({ bold: true });
 
         expect(value.toDelta()).toEqual(
             new Delta()
@@ -404,20 +354,17 @@ describe("Change", () => {
             .insert("\n", { type: "heading-one" })
             .insert("cccddd\n");
 
-        const value = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ delta })
             .change()
             .select(3, 7)
-            .delete()
-            .getValue();
+            .delete();
 
         expect(value.toDelta()).toEqual(
             new Delta().insert("aaaddd").insert("\n", { type: "heading-one" })
         );
 
-        const selection = value.getSelection();
-
-        expect(selection.getAnchorOffset()).toBe(3);
-        expect(selection.getFocusOffset()).toBe(3);
+        expect(value.selection.anchorOffset).toBe(3);
+        expect(value.selection.focusOffset).toBe(3);
     });
 
     test("remove a node by reference", () => {
@@ -428,12 +375,8 @@ describe("Change", () => {
                 .insert("ccc\n")
         });
 
-        const node = oldValue.getDocument().getChildAtIndex(1);
-
-        const newValue = oldValue
-            .change()
-            .removeNode(node)
-            .getValue();
+        const node = oldValue.document.getChildAtIndex(1);
+        const { value: newValue } = oldValue.change().removeNode(node);
 
         expect(newValue.toDelta()).toEqual(
             new Delta().insert("aaa\n").insert("ccc\n")
@@ -448,18 +391,16 @@ describe("Change", () => {
                 .insert("ccc\n")
         });
 
-        const oldNode = oldValue.getDocument().getChildAtIndex(1);
+        const oldNode = oldValue.document.getChildAtIndex(1);
         const newNode = oldNode
             .editor()
             .delete(3)
             .insert("ddd")
             .retain(Infinity)
             .build();
-
-        const newValue = oldValue
+        const { value: newValue } = oldValue
             .change()
-            .replaceNode(newNode, oldNode)
-            .getValue();
+            .replaceNode(newNode, oldNode);
 
         expect(newValue.toDelta()).toEqual(
             new Delta()
