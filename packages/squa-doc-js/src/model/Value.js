@@ -7,6 +7,8 @@ import Change from "./Change";
 import List from "./List";
 import parseHTML from "../parser/parseHTML";
 import defaultSchema from "../defaults/schema";
+import defaultTokenizeNode from "../defaults/tokenizeNode";
+import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import { isBlockLevelNode, isInlineNode } from "./Predicates";
 
 export default class Value {
@@ -32,8 +34,8 @@ export default class Value {
     static fromHTML({
         schema = defaultSchema,
         contents,
-        tokenizeNode,
-        tokenizeClassName
+        tokenizeNode = defaultTokenizeNode,
+        tokenizeClassName = defaultTokenizeClassName
     }) {
         return Value.fromDelta({
             schema,

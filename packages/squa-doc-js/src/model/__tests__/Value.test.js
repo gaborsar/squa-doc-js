@@ -1,7 +1,5 @@
 import Delta from "quill-delta";
 import Value from "../Value";
-import tokenizeNode from "../../defaults/tokenizeNode";
-import tokenizeClassName from "../../defaults/tokenizeClassName";
 
 describe("Value", () => {
     test("create a value from a delta", () => {
@@ -34,9 +32,7 @@ describe("Value", () => {
 
     test("create a value from HTML", () => {
         const actual = Value.fromHTML({
-            contents: "<div><h1>aaa</h1><p>bbb</p></div>",
-            tokenizeNode,
-            tokenizeClassName
+            contents: "<div><h1>aaa</h1><p>bbb</p></div>"
         });
         const expected = Value.fromDelta({
             delta: new Delta()

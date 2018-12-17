@@ -18,7 +18,7 @@ import { Value, Editor } from "squa-doc-js";
 
 const { value } = Value.createEmpty()
     .change()
-    .insertText("Hello world!");
+    .insertText("Hello, World!");
 
 class App extends PureComponent {
     state = { value };
@@ -31,6 +31,37 @@ class App extends PureComponent {
         return <Editor value={this.state.value} onChange={this.onChange} />;
     }
 }
+```
+
+Creating a `Value` from a `Delta`, and converting a `Value` to a `Delta`:
+
+```js
+import Delta from "quill-delta";
+import { Value } from "squa-doc-js";
+
+const value = Value.fromDelta(new Delta().insert("Hello, World!\n"));
+const delta = value.toDelta();
+```
+
+Creating a `Value` from `JSON`, and converting a `Value` to `JSON`:
+
+```js
+import { Value } from "squa-doc-js";
+
+const value = Value.fromJSON([{ insert: "Hello, World!\n" }]);
+const data = value.toJSON();
+```
+
+Creating a `Value` from `HTML`, and getting the editor's content as `HTML`:
+
+```js
+import { Value } from "squa-doc-js";
+
+const value = Value.fromHTML("<p>Hello, World!</p>");
+
+// you can get the HTML contents with document.querySelector
+// or with a react reference
+const data = document.querySelector(".SquaDocJs-document").innerHTML;
 ```
 
 ## Licence
