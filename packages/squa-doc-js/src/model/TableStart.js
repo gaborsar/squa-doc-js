@@ -2,8 +2,9 @@ import NodeMixin from "./NodeMixin";
 import FormatMixin from "./FormatMixin";
 import NodeType from "./NodeType";
 import LeafIterator from "./LeafIterator";
+import applyMixins from "./applyMixins";
 
-class TableStart {
+export default class TableStart {
     constructor(schema, key, style) {
         this.schema = schema;
         this.key = key;
@@ -31,4 +32,4 @@ class TableStart {
     }
 }
 
-export default FormatMixin(NodeMixin(TableStart));
+applyMixins(TableStart, NodeMixin, FormatMixin);

@@ -1,15 +1,16 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import ParentMixin from "./ParentMixin";
-import FormatMixin from "./FormatMixin";
 import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import ParentMixin from "./ParentMixin";
 import ListIterator from "./ListIterator";
 import findPosition from "./findPosition";
 import createRange from "./createRange";
+import applyMixins from "./applyMixins";
 import { addLength, concatText, concatDelta } from "./Reducers";
 
-class Cell {
+export default class Cell {
     _length = 0;
     _text = "";
     _delta = null;
@@ -88,4 +89,4 @@ class Cell {
     }
 }
 
-export default ParentMixin(FormatMixin(NodeMixin(Cell)));
+applyMixins(Cell, NodeMixin, FormatMixin, ParentMixin);

@@ -64,8 +64,12 @@ export default class Block extends Component {
             if (obj.component === undefined) {
                 return;
             }
-            const { component: Mark, props } = obj;
-            element = <Mark {...props}>{element}</Mark>;
+            const { component: MarkComponent, props } = obj;
+            element = (
+                <MarkComponent key={node.key} {...props}>
+                    {element}
+                </MarkComponent>
+            );
         });
 
         return element;

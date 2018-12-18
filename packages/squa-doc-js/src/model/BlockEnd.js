@@ -1,9 +1,10 @@
 import NodeType from "./NodeType";
-import FormatMixin from "./FormatMixin";
 import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
 import LeafIterator from "./LeafIterator";
+import applyMixins from "./applyMixins";
 
-class BlockEnd {
+export default class BlockEnd {
     constructor(schema, key, style) {
         this.schema = schema;
         this.key = key;
@@ -31,4 +32,4 @@ class BlockEnd {
     }
 }
 
-export default FormatMixin(NodeMixin(BlockEnd));
+applyMixins(BlockEnd, NodeMixin, FormatMixin);

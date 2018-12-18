@@ -102,7 +102,7 @@ describe("afterInput", () => {
         expect(valueA.toDelta()).toEqual(valueB.toDelta());
     });
 
-    test("insert a clode block", () => {
+    test("insert a code block", () => {
         const { value: valueA } = Value.createEmpty({ schema })
             .change()
             .insertText("``` ")

@@ -1,5 +1,6 @@
 import { isBlockNode } from "../model/Predicates";
 import getNativePosition from "./getNativePosition";
+import setBaseAndExtent from "./setBaseAndExtent";
 
 export default function setNativeSelection(
     rootNode,
@@ -21,6 +22,7 @@ export default function setNativeSelection(
             rootNode.querySelector(`[data-key="${modelPos.node.key}"]`),
             modelPos.offset
         );
+
         domRange = {
             anchorNode: domPos.node,
             anchorOffset: domPos.offset,
@@ -73,31 +75,12 @@ export default function setNativeSelection(
         return;
     }
 
-    if (nativeSelection.setBaseAndExtent) {
-        nativeSelection.setBaseAndExtent(
-            domRange.anchorNode,
-            domRange.anchorOffset,
-            domRange.focusNode,
-            domRange.focusOffset
-        );
-    } else if (nativeSelection.extend) {
-        const nativeRange = document.createRange();
-        nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
-
-        nativeSelection.removeAllRanges();
-        nativeSelection.addRange(nativeRange);
-        nativeSelection.extend(domRange.focusNode, domRange.focusOffset);
-    } else {
-        const nativeRange = document.createRange();
-        if (modelSelection.isBackward) {
-            nativeRange.setStart(domRange.focusNode, domRange.focusOffset);
-            nativeRange.setEnd(domRange.anchorNode, domRange.anchorOffset);
-        } else {
-            nativeRange.setStart(domRange.anchorNode, domRange.anchorOffset);
-            nativeRange.setEnd(domRange.focusNode, domRange.focusOffset);
-        }
-
-        nativeSelection.removeAllRanges();
-        nativeSelection.addRange(nativeRange);
-    }
+    setBaseAndExtent(
+        nativeSelection,
+        domRange.anchorNode,
+        domRange.anchorOffset,
+        domRange.focusNode,
+        domRange.focusOffset,
+        modelSelection.isBackward
+    );
 }
