@@ -25,6 +25,7 @@ export default class ContentEditable extends PureComponent {
             onDragStart,
             onDrop,
             onKeyDown,
+            onKeyUp,
             children
         } = this.props;
         return (
@@ -45,6 +46,7 @@ export default class ContentEditable extends PureComponent {
                 onDragStart={onDragStart}
                 onDrop={onDrop}
                 onKeyDown={onKeyDown}
+                onKeyUp={onKeyUp}
                 onCompositionStart={this.handleCompositionStart}
                 onCompositionEnd={this.handleCompositionEnd}
                 onInput={this.handleInput}
@@ -56,18 +58,18 @@ export default class ContentEditable extends PureComponent {
     }
 
     editableRef = node => {
-        const { editableRef, onInput } = this.props;
+        const { editableRef } = this.props;
 
         editableRef(node);
 
         if (this.node) {
-            this.node.removeEventListener("textinput", onInput);
+            this.node.removeEventListener("textinput", this.handleInput);
         }
 
         this.node = node;
 
         if (this.node) {
-            this.node.addEventListener("textinput", onInput);
+            this.node.addEventListener("textinput", this.handleInput);
         }
     };
 

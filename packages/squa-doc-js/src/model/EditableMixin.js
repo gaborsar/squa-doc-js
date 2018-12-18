@@ -1,11 +1,8 @@
-const EditableMixin = Class =>
-    class extends Class {
-        apply(delta) {
-            return applyDelta(this.editor(), delta).build();
-        }
-    };
-
-export default EditableMixin;
+export default class EditableMixin {
+    apply(delta) {
+        return applyDelta(this.editor(), delta).build();
+    }
+}
 
 function applyDelta(editor, delta) {
     return delta.reduce(applyOperation, editor).retain(Infinity);

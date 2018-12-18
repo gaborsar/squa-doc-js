@@ -29,6 +29,7 @@ import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import defaultAfterInput from "../defaults/afterInput";
 
 import "./Editor.css";
+import fixBlockEndSelection from "../dom/fixBlockEndSelection";
 
 const sink = () => {};
 
@@ -82,6 +83,7 @@ export default class Editor extends PureComponent {
                         onDragStart={preventDefault}
                         onDrop={preventDefault}
                         onKeyDown={this.handleKeyDown}
+                        onKeyUp={this.handleKeyUp}
                         onCompositionStart={this.handleCompositionStart}
                         onCompositionEnd={this.handleCompositionEnd}
                     >
@@ -197,10 +199,132 @@ export default class Editor extends PureComponent {
         setNativeSelection(this.rootNode, document, selection);
     }
 
-    handleCompositionKeyDownEnter = event => {
-        event.preventDefault();
+    handleCut = () => {
         const { value, onChange = sink } = this.props;
-        onChange(value.change().stopComposing());
+
+        const change = value.change().startComposing();
+        onChange(change);
+
+        window.requestAnimationFrame(this.afterCut);
+    };
+
+    afterCut = () => {
+        const { value, onChange = sink } = this.props;
+
+        const change = value
+            .change()
+            .stopComposing()
+            .regenerateKey()
+            .delete()
+            .save();
+
+        onChange(change);
+    };
+
+    handlePaste = event => {
+        const { value } = this.props;
+
+        const change = value.change();
+
+        if (event.clipboardData.types.indexOf("text/html") !== -1) {
+            return this.handlePasteHTML(change, event);
+        }
+        if (event.clipboardData.types.indexOf("text/plain") !== -1) {
+            return this.handlePasteText(change, event);
+        }
+    };
+
+    handlePasteHTML = (change, event) => {
+        event.preventDefault();
+
+        const {
+            tokenizeNode = defaultTokenizeNode,
+            tokenizeClassName = defaultTokenizeClassName,
+            onChange = sink
+        } = this.props;
+
+        const { value } = change;
+        const { selection } = value;
+
+        if (selection.isExpanded) {
+            change.delete();
+        }
+
+        const fragment = parseHTML(
+            event.clipboardData.getData("text/html"),
+            tokenizeNode,
+            tokenizeClassName
+        );
+        optimizeFragmentDelta(fragment);
+        change.insertFragment(fragment).save();
+
+        onChange(change);
+    };
+
+    handlePasteText = (change, event) => {
+        event.preventDefault();
+
+        const { onChange = sink } = this.props;
+        const { value } = change;
+        const { selection } = value;
+
+        if (selection.isExpanded) {
+            change.delete();
+        }
+
+        change
+            .insertText(
+                event.clipboardData.getData("text/plain"),
+                value.getInlineAttributes()
+            )
+            .save();
+
+        onChange(change);
+    };
+
+    handleKeyDown = event => {
+        const {
+            value,
+            onKeyDown = defaultOnKeyDown,
+            onChange = sink
+        } = this.props;
+
+        if (value.isComposing) {
+            return this.handleCompositionKeyDown(event);
+        }
+
+        const change = value.change();
+
+        if (onKeyDown(change, event)) {
+            return onChange(change);
+        }
+
+        if (event.key === "Backspace") {
+            return this.handleKeyDownBackspace(change, event);
+        }
+        if (event.key === "Delete") {
+            return this.handleKeyDownDelete(change, event);
+        }
+        if (event.key === "Enter") {
+            return this.handleKeyDownEnter(change, event);
+        }
+
+        // undo / redo for Windows
+        if (event.ctrlKey && event.key === "z") {
+            return this.handleKeyDownUndo(change, event);
+        }
+        if (event.ctrlKey && event.key === "y") {
+            return this.handleKeyDownRedo(change, event);
+        }
+
+        // undo / redo for OSX
+        if (event.metaKey && event.key === "z") {
+            if (event.shiftKey) {
+                return this.handleKeyDownRedo(change, event);
+            } else {
+                return this.handleKeyDownUndo(change, event);
+            }
+        }
     };
 
     handleCompositionKeyDown = event => {
@@ -208,6 +332,12 @@ export default class Editor extends PureComponent {
         if (event.key === "Enter") {
             return this.handleCompositionKeyDownEnter(event);
         }
+    };
+
+    handleCompositionKeyDownEnter = event => {
+        event.preventDefault();
+        const { value, onChange = sink } = this.props;
+        onChange(value.change().stopComposing());
     };
 
     handleKeyDownBackspace = (change, event) => {
@@ -305,51 +435,44 @@ export default class Editor extends PureComponent {
         onChange(change);
     };
 
-    handleKeyDown = event => {
-        const {
-            value,
-            onKeyDown = defaultOnKeyDown,
-            onChange = sink
-        } = this.props;
+    handleKeyUp = event => {
+        // missing selection events in Edge
+        if (event.shiftKey && event.key === "End") {
+            this.handleKeyUpShiftEnd(event);
+        }
+    };
 
-        if (value.isComposing) {
-            return this.handleCompositionKeyDown(event);
+    handleKeyUpShiftEnd = () => {
+        fixBlockEndSelection(this.onSelect);
+    };
+
+    handleCompositionStart = () => {
+        const { value, onChange = sink } = this.props;
+
+        const change = value.change().startComposing();
+
+        onChange(change);
+    };
+
+    handleCompositionEnd = () => {
+        const { value, onChange = sink } = this.props;
+
+        const change = value.change().stopComposing();
+        this.afterInput(change);
+
+        onChange(change);
+    };
+
+    afterInput = change => {
+        const { afterInput = defaultAfterInput } = this.props;
+
+        if (isMobile()) {
+            this.afterInputMobile(change);
+        } else {
+            this.afterInputDefault(change);
         }
 
-        const change = value.change();
-
-        if (onKeyDown(change, event)) {
-            return onChange(change);
-        }
-
-        if (event.key === "Backspace") {
-            return this.handleKeyDownBackspace(change, event);
-        }
-        if (event.key === "Delete") {
-            return this.handleKeyDownDelete(change, event);
-        }
-        if (event.key === "Enter") {
-            return this.handleKeyDownEnter(change, event);
-        }
-
-        // undo / redo for Windows
-
-        if (event.ctrlKey && event.key === "z") {
-            return this.handleKeyDownUndo(change, event);
-        }
-        if (event.ctrlKey && event.key === "y") {
-            return this.handleKeyDownRedo(change, event);
-        }
-
-        // undo / redo for OSX
-
-        if (event.metaKey && event.key === "z") {
-            if (event.shiftKey) {
-                return this.handleKeyDownRedo(change, event);
-            } else {
-                return this.handleKeyDownUndo(change, event);
-            }
-        }
+        afterInput(change);
     };
 
     afterInputMobile = change => {
@@ -505,117 +628,5 @@ export default class Editor extends PureComponent {
         );
 
         change.save(SnapshotType.Input);
-    };
-
-    afterInput = change => {
-        const { afterInput = defaultAfterInput } = this.props;
-
-        if (isMobile()) {
-            this.afterInputMobile(change);
-        } else {
-            this.afterInputDefault(change);
-        }
-
-        afterInput(change);
-    };
-
-    handleCompositionStart = () => {
-        const { value, onChange = sink } = this.props;
-
-        const change = value.change().startComposing();
-
-        onChange(change);
-    };
-
-    handleCompositionEnd = () => {
-        const { value, onChange = sink } = this.props;
-
-        const change = value.change().stopComposing();
-        this.afterInput(change);
-
-        onChange(change);
-    };
-
-    afterCut = () => {
-        const { value, onChange = sink } = this.props;
-
-        const change = value
-            .change()
-            .stopComposing()
-            .regenerateKey()
-            .delete()
-            .save();
-
-        onChange(change);
-    };
-
-    handleCut = () => {
-        const { value, onChange = sink } = this.props;
-
-        const change = value.change().startComposing();
-        onChange(change);
-
-        window.requestAnimationFrame(this.afterCut);
-    };
-
-    handlePasteHTML = (change, event) => {
-        event.preventDefault();
-
-        const {
-            tokenizeNode = defaultTokenizeNode,
-            tokenizeClassName = defaultTokenizeClassName,
-            onChange = sink
-        } = this.props;
-
-        const { value } = change;
-        const { selection } = value;
-
-        if (selection.isExpanded) {
-            change.delete();
-        }
-
-        const fragment = parseHTML(
-            event.clipboardData.getData("text/html"),
-            tokenizeNode,
-            tokenizeClassName
-        );
-        optimizeFragmentDelta(fragment);
-        change.insertFragment(fragment).save();
-
-        onChange(change);
-    };
-
-    handlePasteText = (change, event) => {
-        event.preventDefault();
-
-        const { onChange = sink } = this.props;
-        const { value } = change;
-        const { selection } = value;
-
-        if (selection.isExpanded) {
-            change.delete();
-        }
-
-        change
-            .insertText(
-                event.clipboardData.getData("text/plain"),
-                value.getInlineAttributes()
-            )
-            .save();
-
-        onChange(change);
-    };
-
-    handlePaste = event => {
-        const { value } = this.props;
-
-        const change = value.change();
-
-        if (event.clipboardData.types.indexOf("text/html") !== -1) {
-            return this.handlePasteHTML(change, event);
-        }
-        if (event.clipboardData.types.indexOf("text/plain") !== -1) {
-            return this.handlePasteText(change, event);
-        }
     };
 }

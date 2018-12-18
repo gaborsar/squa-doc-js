@@ -1,9 +1,10 @@
 import NodeType from "./NodeType";
-import FormatMixin from "./FormatMixin";
 import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
 import LeafIterator from "./LeafIterator";
+import applyMixins from "./applyMixins";
 
-class CellStart {
+export default class CellStart {
     constructor(schema, key, style) {
         this.schema = schema;
         this.key = key;
@@ -31,4 +32,4 @@ class CellStart {
     }
 }
 
-export default FormatMixin(NodeMixin(CellStart));
+applyMixins(CellStart, NodeMixin, FormatMixin);

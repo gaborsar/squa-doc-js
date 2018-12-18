@@ -12,16 +12,7 @@ import { Plugin as OutlinePlugin, Outline } from "squa-doc-js-outline-plugin";
 
 import Menu from "./Menu";
 
-const {
-    schema,
-    renderWrapper,
-    renderNode,
-    renderMark,
-    tokenizeNode,
-    tokenizeClassName,
-    onKeyDown,
-    afterInput
-} = combinePlugins([
+const { schema, ...editorProps } = combinePlugins([
     BlockImagePlugin,
     InlineImagePlugin,
     CheckablePlugin,
@@ -56,13 +47,7 @@ export default class App extends PureComponent {
                         spellCheck={false}
                         value={value}
                         onChange={this.onChange}
-                        renderWrapper={renderWrapper}
-                        renderNode={renderNode}
-                        renderMark={renderMark}
-                        tokenizeNode={tokenizeNode}
-                        tokenizeClassName={tokenizeClassName}
-                        onKeyDown={onKeyDown}
-                        afterInput={afterInput}
+                        {...editorProps}
                     />
                 </div>
             </div>

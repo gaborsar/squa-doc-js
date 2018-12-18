@@ -52,7 +52,7 @@ describe("Value", () => {
         expect(actual.toDelta()).toEqual(expected.toDelta());
     });
 
-    test("get the current block attributes at an ofset", () => {
+    test("get the current block attributes at an offset", () => {
         const { value } = Value.createEmpty()
             .change()
             .insertText("\n", { align: "left" })
@@ -69,7 +69,7 @@ describe("Value", () => {
         expect(value.getBlockAttributes()).toEqual({ align: "left" });
     });
 
-    test("get the current inline attributes at an ofset", () => {
+    test("get the current inline attributes at an offset", () => {
         const { value } = Value.createEmpty()
             .change()
             .insertText("aaa", { bold: true })

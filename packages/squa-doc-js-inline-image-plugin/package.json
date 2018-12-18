@@ -1,6 +1,6 @@
 {
     "name": "squa-doc-js-inline-image-plugin",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "description": "Inline image plugin for SquaDoc.js",
     "author": "Gabor Sar",
     "license": "GNU LGPLv3",

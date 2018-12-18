@@ -1,17 +1,18 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
 import SpecialCharacter from "./SpecialCharacter";
-import EditableMixin from "./EditableMixin";
-import ParentMixin from "./ParentMixin";
-import FormatMixin from "./FormatMixin";
 import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
+import ParentMixin from "./ParentMixin";
+import EditableMixin from "./EditableMixin";
 import ListIterator from "./ListIterator";
 import Editor from "./Editor";
 import findPosition from "./findPosition";
 import createRange from "./createRange";
+import applyMixins from "./applyMixins";
 import { addLength, concatText, concatDelta } from "./Reducers";
 
-class Block {
+export default class Block {
     _length = 0;
     _text = "";
     _delta = null;
@@ -121,4 +122,4 @@ class Block {
     }
 }
 
-export default EditableMixin(ParentMixin(FormatMixin(NodeMixin(Block))));
+applyMixins(Block, NodeMixin, FormatMixin, ParentMixin, EditableMixin);

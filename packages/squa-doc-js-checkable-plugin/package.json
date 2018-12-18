@@ -1,6 +1,6 @@
 {
     "name": "squa-doc-js-checkable-plugin",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "description": "Checkable list plugin for SquaDoc.js",
     "author": "Gabor Sar",
     "license": "GNU LGPLv3",

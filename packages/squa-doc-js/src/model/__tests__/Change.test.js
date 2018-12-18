@@ -108,7 +108,7 @@ describe("Change", () => {
         expect(value.selection.focusOffset).toBe(3);
     });
 
-    test("collapse the selection to the end when the current selection isforward", () => {
+    test("collapse the selection to the end when the current selection is forward", () => {
         const { value } = Value.createEmpty()
             .change()
             .select(3, 3)
@@ -117,7 +117,7 @@ describe("Change", () => {
         expect(value.selection.focusOffset).toBe(6);
     });
 
-    test("collapse the selection to the end when the current selection isbackward", () => {
+    test("collapse the selection to the end when the current selection is backward", () => {
         const { value } = Value.createEmpty()
             .change()
             .select(6, -3)

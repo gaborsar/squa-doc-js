@@ -52,7 +52,7 @@ const value = Value.fromJSON([{ insert: "Hello, World!\n" }]);
 const data = value.toJSON();
 ```
 
-Creating a `Value` from `HTML`, and getting the editor's content as `HTML`:
+Creating a `Value` from `HTML`, and getting the editor's contents as `HTML`:
 
 ```js
 import { Value } from "squa-doc-js";

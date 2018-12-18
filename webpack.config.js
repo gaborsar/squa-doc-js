@@ -6,6 +6,7 @@ const env = process.env.NODE_ENV || "production";
 
 const sharedConfig = {
     mode: env,
+    devtool: "source-map",
     stats: {
         warnings: env === "development"
     },

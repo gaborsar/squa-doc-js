@@ -1,11 +1,11 @@
 import Delta from "quill-delta";
 import NodeType from "./NodeType";
-import FormatMixin from "./FormatMixin";
-import LeafMixin from "./LeafMixin";
 import NodeMixin from "./NodeMixin";
+import FormatMixin from "./FormatMixin";
 import LeafIterator from "./LeafIterator";
+import applyMixins from "./applyMixins";
 
-class Text {
+export default class Text {
     constructor(schema, key, style, value) {
         this.schema = schema;
         this.key = key;
@@ -33,6 +33,10 @@ class Text {
         return this.schema.createText({ ...this, ...props });
     }
 
+    setValue(value) {
+        return this.merge({ value });
+    }
+
     iterator() {
         return new LeafIterator(this);
     }
@@ -50,4 +54,4 @@ class Text {
     }
 }
 
-export default FormatMixin(LeafMixin(NodeMixin(Text)));
+applyMixins(Text, NodeMixin, FormatMixin);

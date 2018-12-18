@@ -1,4 +1,4 @@
-const IterationStrategy = require("./IterationStrategy");
+import IterationStrategy from "./IterationStrategy";
 
 export default class Editor {
     constructor(iterator, builder) {
