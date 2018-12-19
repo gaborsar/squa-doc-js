@@ -59,7 +59,7 @@ describe("Change", () => {
     test("select a range", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(3, 3);
+            .select(3, 6);
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(6);
     });
@@ -67,7 +67,7 @@ describe("Change", () => {
     test("select a range backward", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(6, -3);
+            .select(6, 3);
         expect(value.selection.anchorOffset).toBe(6);
         expect(value.selection.focusOffset).toBe(3);
     });
@@ -78,13 +78,13 @@ describe("Change", () => {
             .change()
             .selectAll();
         expect(value.selection.anchorOffset).toBe(0);
-        expect(value.selection.focusOffset).toBe(8);
+        expect(value.selection.focusOffset).toBe(7);
     });
 
     test("collapse the selection", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(3, 3)
+            .select(3, 6)
             .collapse();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(3);
@@ -93,7 +93,7 @@ describe("Change", () => {
     test("collapse the selection to the left when the current selection is forward", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(3, 3)
+            .select(3, 6)
             .collapseToLeft();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(3);
@@ -102,7 +102,7 @@ describe("Change", () => {
     test("collapse the selection to the left when the current selection is backward", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(6, -3)
+            .select(6, 3)
             .collapseToLeft();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(3);
@@ -111,7 +111,7 @@ describe("Change", () => {
     test("collapse the selection to the end when the current selection is forward", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(3, 3)
+            .select(3, 6)
             .collapseToRight();
         expect(value.selection.anchorOffset).toBe(6);
         expect(value.selection.focusOffset).toBe(6);
@@ -120,7 +120,7 @@ describe("Change", () => {
     test("collapse the selection to the end when the current selection is backward", () => {
         const { value } = Value.createEmpty()
             .change()
-            .select(6, -3)
+            .select(6, 3)
             .collapseToRight();
         expect(value.selection.anchorOffset).toBe(6);
         expect(value.selection.focusOffset).toBe(6);
@@ -130,7 +130,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaa\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .selectCharacterBackward();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(2);
@@ -140,7 +140,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaabbb\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .selectCharacterForward();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(4);
@@ -150,7 +150,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaa bbb \n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(8, 0)
+            .select(8, 8)
             .selectWordBackward();
         expect(value.selection.anchorOffset).toBe(8);
         expect(value.selection.focusOffset).toBe(4);
@@ -160,7 +160,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaa bbb\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(4, 0)
+            .select(4, 4)
             .selectWordBackward();
         expect(value.selection.anchorOffset).toBe(4);
         expect(value.selection.focusOffset).toBe(0);
@@ -170,7 +170,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaa bbb ccc\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .selectWordForward();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(7);
@@ -180,7 +180,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaa bbb\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .selectWordForward();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(7);
@@ -190,7 +190,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaabbb\n").insert("cccddd\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(10, 0)
+            .select(10, 10)
             .selectBlockBackward();
         expect(value.selection.anchorOffset).toBe(10);
         expect(value.selection.focusOffset).toBe(7);
@@ -200,7 +200,7 @@ describe("Change", () => {
         const delta = new Delta().insert("aaabbb\n");
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .selectBlockForward();
         expect(value.selection.anchorOffset).toBe(3);
         expect(value.selection.focusOffset).toBe(6);
@@ -211,7 +211,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .insertText("ccc", { bold: true });
 
         expect(value.toDelta()).toEqual(
@@ -230,7 +230,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ schema, delta })
             .change()
-            .select(3, 0)
+            .select(3, 3)
             .insertEmbed(
                 { "inline-embed": "foo" },
                 { "inline-embed-mark": "foo" }
@@ -255,7 +255,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(4, 0)
+            .select(4, 4)
             .insertFragment(new Delta().insert("ccc\n"));
 
         expect(value.toDelta()).toEqual(new Delta().insert("aaa\nccc\nbbb\n"));
@@ -269,7 +269,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 7)
+            .select(3, 10)
             .setAttributes({ bold: true });
 
         expect(value.toDelta()).toEqual(
@@ -334,7 +334,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ schema, delta })
             .change()
-            .select(3, 8)
+            .select(3, 11)
             .setInlineAttributes({ bold: true });
 
         expect(value.toDelta()).toEqual(
@@ -356,7 +356,7 @@ describe("Change", () => {
 
         const { value } = Value.fromDelta({ delta })
             .change()
-            .select(3, 7)
+            .select(3, 10)
             .delete();
 
         expect(value.toDelta()).toEqual(

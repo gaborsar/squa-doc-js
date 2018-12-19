@@ -3,7 +3,6 @@ import getNativePosition from "../getNativePosition";
 describe("getNativePosition()", () => {
     test("within an embed node", () => {
         const root = document.createElement("div");
-        root.setAttribute("data-document", "true");
 
         const block1 = document.createElement("div");
         block1.setAttribute("data-block", "true");
@@ -30,7 +29,6 @@ describe("getNativePosition()", () => {
 
     test("within an ignored node", () => {
         const root = document.createElement("div");
-        root.setAttribute("data-document", "true");
 
         const block1 = document.createElement("div");
         block1.setAttribute("data-block", "true");
@@ -57,7 +55,6 @@ describe("getNativePosition()", () => {
 
     test("after the last node", () => {
         const root = document.createElement("div");
-        root.setAttribute("data-document", "true");
 
         const block1 = document.createElement("div");
         block1.setAttribute("data-block", "true");
@@ -80,7 +77,6 @@ describe("getNativePosition()", () => {
 
     test("within a text node", () => {
         const root = document.createElement("div");
-        root.setAttribute("data-document", "true");
 
         const table = document.createElement("table");
         table.setAttribute("data-table", "true");

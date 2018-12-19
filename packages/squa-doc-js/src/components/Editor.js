@@ -180,10 +180,7 @@ export default class Editor extends PureComponent {
         }
 
         const change = value.change();
-        change.select(
-            nextSelection.anchorOffset,
-            nextSelection.focusOffset - nextSelection.anchorOffset
-        );
+        change.select(nextSelection.anchorOffset, nextSelection.focusOffset);
 
         onChange(change);
     };
@@ -226,10 +223,20 @@ export default class Editor extends PureComponent {
 
         const change = value.change();
 
-        if (event.clipboardData.types.indexOf("text/html") !== -1) {
+        if (
+            Array.prototype.includes.call(
+                event.clipboardData.types,
+                "text/html"
+            )
+        ) {
             return this.handlePasteHTML(change, event);
         }
-        if (event.clipboardData.types.indexOf("text/plain") !== -1) {
+        if (
+            Array.prototype.includes.call(
+                event.clipboardData.types,
+                "text/plain"
+            )
+        ) {
             return this.handlePasteText(change, event);
         }
     };
@@ -299,6 +306,16 @@ export default class Editor extends PureComponent {
             return onChange(change);
         }
 
+        // select all for Windows
+        if (event.ctrlKey && event.key === "a") {
+            return this.handleKeyDownSelectAll(change, event);
+        }
+
+        // select all for OSX
+        if (event.metaKey && event.key === "a") {
+            return this.handleKeyDownSelectAll(change, event);
+        }
+
         if (event.key === "Backspace") {
             return this.handleKeyDownBackspace(change, event);
         }
@@ -338,6 +355,15 @@ export default class Editor extends PureComponent {
         event.preventDefault();
         const { value, onChange = sink } = this.props;
         onChange(value.change().stopComposing());
+    };
+
+    handleKeyDownSelectAll = (change, event) => {
+        event.preventDefault();
+
+        const { onChange = sink } = this.props;
+        change.selectAll().save();
+
+        onChange(change);
     };
 
     handleKeyDownBackspace = (change, event) => {
@@ -513,10 +539,7 @@ export default class Editor extends PureComponent {
         change
             .apply(diff)
             .regenerateKey()
-            .select(
-                modelSelection.anchorOffset,
-                modelSelection.focusOffset - modelSelection.anchorOffset
-            )
+            .select(modelSelection.anchorOffset, modelSelection.focusOffset)
             .save();
     };
 
@@ -622,10 +645,7 @@ export default class Editor extends PureComponent {
             return;
         }
 
-        change.select(
-            modelSelection.anchorOffset,
-            modelSelection.focusOffset - modelSelection.anchorOffset
-        );
+        change.select(modelSelection.anchorOffset, modelSelection.focusOffset);
 
         change.save(SnapshotType.Input);
     };

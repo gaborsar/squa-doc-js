@@ -159,13 +159,13 @@ export default class Change {
         return this;
     }
 
-    select(offset, length) {
+    select(anchorOffset, focusOffset) {
         const { value } = this;
         const { selection } = value;
 
         const nextSelection = selection
-            .setAnchorOffset(offset)
-            .setFocusOffset(offset + length);
+            .setAnchorOffset(anchorOffset)
+            .setFocusOffset(focusOffset);
 
         this.value = value.setSelection(nextSelection);
 
@@ -173,7 +173,7 @@ export default class Change {
     }
 
     selectAll() {
-        return this.select(0, this.value.document.length);
+        return this.select(0, this.value.document.length - 1);
     }
 
     collapse() {

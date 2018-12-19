@@ -14,9 +14,6 @@ export default function getModelOffset(rootNode, domNode, domOffset) {
 
     if (isElementNode(node)) {
         let length = 0;
-        if (isTableNode(node) || isRowNode(node) || isCellNode(node)) {
-            length += 1;
-        }
         for (let i = 0; i < offset; i++) {
             length += getNodeLength(node.childNodes[i]);
         }
@@ -31,8 +28,6 @@ export default function getModelOffset(rootNode, domNode, domOffset) {
         node = node.parentNode;
         if (isElementNode(node) && isIgnoredNode(node)) {
             offset = 0;
-        } else if (isTableNode(node) || isRowNode(node) || isCellNode(node)) {
-            offset += 1;
         }
     }
     if (!isBlockNode(node)) {
@@ -45,9 +40,7 @@ export default function getModelOffset(rootNode, domNode, domOffset) {
             offset += getNodeLength(node);
         }
         node = node.parentNode;
-        if (isElementNode(node) && isIgnoredNode(node)) {
-            offset = 0;
-        } else if (isTableNode(node) || isRowNode(node) || isCellNode(node)) {
+        if (isTableNode(node) || isRowNode(node) || isCellNode(node)) {
             offset += 1;
         }
     }

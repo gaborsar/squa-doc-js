@@ -30,7 +30,7 @@ describe("getNodeLength()", () => {
         expect(length).toBe(5);
     });
 
-    test("table row node", () => {
+    test("row node", () => {
         const row = document.createElement("div");
         row.setAttribute("data-row", "true");
 
@@ -41,7 +41,7 @@ describe("getNodeLength()", () => {
         expect(length).toBe(4);
     });
 
-    test("table cell node", () => {
+    test("cell node", () => {
         const cell = document.createElement("div");
         cell.setAttribute("data-cell", "true");
 
