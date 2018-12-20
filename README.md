@@ -82,45 +82,22 @@ class App extends PureComponent {
     render() {
         return (
             <div>
-                <button value="heading-one" onClick={this.toggleBlockType}>
+                <button value="heading-one" onClick={this.handleBlockTypeClick}>
                     H1
                 </button>
-                <button value="heading-two" onClick={this.toggleBlockType}>
+                <button value="heading-two" onClick={this.handleBlockTypeClick}>
                     H2
-                </button>
-                <button value="left" onClick={this.toggleAlignment}>
-                    Left
-                </button>
-                <button value="right" onClick={this.toggleAlignment}>
-                    Right
                 </button>
                 <Editor value={this.state.value} onChange={this.onChange} />
             </div>
         );
     }
 
-    toggleBlockType = event => {
-        const attributes = this.state.value.getBlockAttributes();
-        const value = event.target.value;
+    handleBlockTypeClick = event => {
         this.onChange(
             this.state.value
                 .change()
-                .setBlockAttributes({
-                    type: attributes.type === value ? null : value
-                })
-                .save()
-        );
-    };
-
-    toggleAlignment = event => {
-        const attributes = this.state.value.getBlockAttributes();
-        const value = event.target.value;
-        this.onChange(
-            this.state.value
-                .change()
-                .setBlockAttributes({
-                    align: attributes.align === value ? null : value
-                })
+                .toggleBlockAttribute("type", event.target.value)
                 .save()
         );
     };
@@ -131,28 +108,26 @@ class App extends PureComponent {
 }
 ```
 
-The following block types are supported by default:
-
--   `heading-one`
--   `heading-two`
--   `heading-three`
--   `heading-four`
--   `heading-five`
--   `heading-six`
--   `unordered-list-item`
--   `ordered-list-item`
--   `paragraph`
--   `blockquote`
--   `code`
-
 The following block formats are supported by default:
 
--   `align` - Alignment with the following values:
+-   `type`
+    -   `heading-one`
+    -   `heading-two`
+    -   `heading-three`
+    -   `heading-four`
+    -   `heading-five`
+    -   `heading-six`
+    -   `unordered-list-item`
+    -   `ordered-list-item`
+    -   `paragraph`
+    -   `blockquote`
+    -   `code`
+-   `align`
     -   `left`
     -   `right`
     -   `center`
     -   `justify`
--   `indent` - Indentation for the following block types:
+-   `indent` - Available for the following types:
     -   `unordered-list-item`
     -   `ordered-list-item`
 
@@ -172,36 +147,32 @@ class App extends PureComponent {
     render() {
         return (
             <div>
-                <button value="bold" onClick={this.toggleAttribute}>
+                <button value="bold" onClick={this.handleInlineFormatClick}>
                     bold
                 </button>
-                <button value="italic" onClick={this.toggleAttribute}>
+                <button value="italic" onClick={this.handleInlineFormatClick}>
                     italic
                 </button>
-                <button onClick={this.addLink}>link</button>
+                <button onClick={this.handleLinkClick}>link</button>
                 <Editor value={this.state.value} onChange={this.onChange} />
             </div>
         );
     }
 
-    toggleAttribute = event => {
-        const attributes = this.state.value.getInlineAttributes();
-        const value = event.target.value;
+    handleInlineFormatClick = event => {
         this.onChange(
             this.state.value
                 .change()
-                .setInlineAttributes({
-                    [value]: attributes[value] ? null : true
-                })
+                .toggleInlineAttribute(event.target.value, true)
                 .save()
         );
     };
 
-    addLink = event => {
+    handleLinkClick = event => {
         this.onChange(
             this.state.value
                 .change()
-                .setInlineAttributes({ link: window.promp() })
+                .setInlineAttribute("link", window.prompt())
                 .save()
         );
     };

@@ -126,6 +126,13 @@ export default class Value {
         return new Change(this);
     }
 
+    getAttributes() {
+        return {
+            ...this.getBlockAttributes(),
+            ...this.getInlineAttributes()
+        };
+    }
+
     getBlockAttributes() {
         const { document, selection } = this;
         return selection.isCollapsed
@@ -151,12 +158,5 @@ export default class Value {
                   isInlineNode,
                   inlineStyleOverride
               );
-    }
-
-    getAttributes() {
-        return {
-            ...this.getBlockAttributes(),
-            ...this.getInlineAttributes()
-        };
     }
 }

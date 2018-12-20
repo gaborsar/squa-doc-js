@@ -515,6 +515,54 @@ export default class Change {
         return this;
     }
 
+    setAttribute(name, value) {
+        return this.setAttributes({ [name]: value });
+    }
+
+    setBlockAttribute(name, value) {
+        return this.setBlockAttributes({ [name]: value });
+    }
+
+    setInlineAttribute(name, value) {
+        return this.setInlineAttributes({ [name]: value });
+    }
+
+    removeAttribute(name) {
+        return this.setAttribute(name, null);
+    }
+
+    removeBlockAttribute(name) {
+        return this.setAttribute(name, null);
+    }
+
+    removeInlineAttribute(name) {
+        return this.setInlineAttribute(name, null);
+    }
+
+    toggleAttribute(name, value) {
+        const attributes = this.value.getAttributes();
+        return this.setAttribute(
+            name,
+            attributes[name] === value ? null : value
+        );
+    }
+
+    toggleBlockAttribute(name, value) {
+        const attributes = this.value.getBlockAttributes();
+        return this.setBlockAttribute(
+            name,
+            attributes[name] === value ? null : value
+        );
+    }
+
+    toggleInlineAttribute(name, value) {
+        const attributes = this.value.getInlineAttributes();
+        return this.setInlineAttribute(
+            name,
+            attributes[name] === value ? null : value
+        );
+    }
+
     delete() {
         const { value } = this;
         const { document, selection } = value;

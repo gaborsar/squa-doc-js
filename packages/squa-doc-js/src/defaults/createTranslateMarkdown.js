@@ -36,9 +36,11 @@ export default function createTranslateMarkdown({
                         .build()
                         .setAttributes(attributes);
 
+                    const nextOffset = selection.offset - length;
+
                     change
                         .replaceNode(nextBlock, block)
-                        .select(selection.offset - length, 0)
+                        .select(nextOffset, nextOffset)
                         .save();
 
                     return;
@@ -64,9 +66,11 @@ export default function createTranslateMarkdown({
                     .retain(Infinity)
                     .build();
 
+                const nextOffset = selection.offset - lengthA - lengthC;
+
                 change
                     .replaceNode(nextBlock, block)
-                    .select(selection.offset - lengthA - lengthC, 0)
+                    .select(nextOffset, nextOffset)
                     .save();
 
                 return;

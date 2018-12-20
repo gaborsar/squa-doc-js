@@ -52,6 +52,15 @@ describe("Value", () => {
         expect(actual.toDelta()).toEqual(expected.toDelta());
     });
 
+    test("get the current attributes", () => {
+        const { value } = Value.createEmpty()
+            .change()
+            .insertText("aaa", { bold: true })
+            .insertText("\n", { align: "left" })
+            .select(0, 3);
+        expect(value.getAttributes()).toEqual({ bold: true, align: "left" });
+    });
+
     test("get the current block attributes at an offset", () => {
         const { value } = Value.createEmpty()
             .change()
@@ -84,14 +93,5 @@ describe("Value", () => {
             .insertText("aaa", { bold: true })
             .select(0, 3);
         expect(value.getInlineAttributes()).toEqual({ bold: true });
-    });
-
-    test("get the current attributes", () => {
-        const { value } = Value.createEmpty()
-            .change()
-            .insertText("aaa", { bold: true })
-            .insertText("\n", { align: "left" })
-            .select(0, 3);
-        expect(value.getAttributes()).toEqual({ bold: true, align: "left" });
     });
 });
