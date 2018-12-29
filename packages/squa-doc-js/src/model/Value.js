@@ -12,10 +12,10 @@ import defaultTokenizeClassName from "../defaults/tokenizeClassName";
 import { isBlockLevelNode, isInlineNode } from "./Predicates";
 
 export default class Value {
-    static fromDelta({ schema = defaultSchema, delta }) {
+    static fromDelta({ schema = defaultSchema, contents }) {
         const builder = new Schema(schema).createDocumentBuilder();
 
-        delta.forEach(op => {
+        contents.forEach(op => {
             builder.insert(op.insert, op.attributes);
         });
 
@@ -27,7 +27,7 @@ export default class Value {
     static fromJSON({ schema = defaultSchema, contents }) {
         return Value.fromDelta({
             schema,
-            delta: new Delta(contents)
+            contents: new Delta(contents)
         });
     }
 
@@ -39,7 +39,7 @@ export default class Value {
     }) {
         return Value.fromDelta({
             schema,
-            delta: parseHTML(contents, tokenizeNode, tokenizeClassName)
+            contents: parseHTML(contents, tokenizeNode, tokenizeClassName)
         });
     }
 

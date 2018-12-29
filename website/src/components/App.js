@@ -24,7 +24,7 @@ export default class App extends PureComponent {
     state = {
         value: Value.fromDelta({
             schema,
-            delta: this.props.initialContents
+            contents: this.props.initialContents
         })
     };
 

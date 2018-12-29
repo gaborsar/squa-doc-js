@@ -5,8 +5,8 @@ const methodNames = [
     "isRowMark",
     "isCellMark",
     "isBlockMark",
-    "isBlockEmbedMark",
     "isTextMark",
+    "isBlockEmbedMark",
     "isInlineEmbedMark"
 ];
 
