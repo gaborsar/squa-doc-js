@@ -8,7 +8,7 @@ describe("Value", () => {
             .insert("\n", { type: "heading-one" })
             .insert("bbb")
             .insert("\n", { type: "paragraph" });
-        expect(Value.fromDelta({ delta }).toDelta()).toEqual(delta);
+        expect(Value.fromDelta({ contents: delta }).toDelta()).toEqual(delta);
     });
 
     test("create a value form JSON", () => {
@@ -21,7 +21,7 @@ describe("Value", () => {
             ]
         });
         const expected = Value.fromDelta({
-            delta: new Delta()
+            contents: new Delta()
                 .insert("aaa")
                 .insert("\n", { type: "heading-one" })
                 .insert("bbb")
@@ -35,7 +35,7 @@ describe("Value", () => {
             contents: "<div><h1>aaa</h1><p>bbb</p></div>"
         });
         const expected = Value.fromDelta({
-            delta: new Delta()
+            contents: new Delta()
                 .insert("aaa")
                 .insert("\n", { type: "heading-one" })
                 .insert("bbb")
@@ -47,7 +47,7 @@ describe("Value", () => {
     test("create an empty value", () => {
         const actual = Value.createEmpty();
         const expected = Value.fromDelta({
-            delta: new Delta().insert("\n")
+            contents: new Delta().insert("\n")
         });
         expect(actual.toDelta()).toEqual(expected.toDelta());
     });

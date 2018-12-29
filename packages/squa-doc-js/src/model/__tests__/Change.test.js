@@ -74,7 +74,7 @@ describe("Change", () => {
 
     test("select everything", () => {
         const delta = new Delta().insert("aaa\nbbb\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .selectAll();
         expect(value.selection.anchorOffset).toBe(0);
@@ -128,7 +128,7 @@ describe("Change", () => {
 
     test("select a character backward", () => {
         const delta = new Delta().insert("aaa\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .selectCharacterBackward();
@@ -138,7 +138,7 @@ describe("Change", () => {
 
     test("select a character forward", () => {
         const delta = new Delta().insert("aaabbb\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .selectCharacterForward();
@@ -148,7 +148,7 @@ describe("Change", () => {
 
     test("select a word backward", () => {
         const delta = new Delta().insert("aaa bbb \n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(8, 8)
             .selectWordBackward();
@@ -158,7 +158,7 @@ describe("Change", () => {
 
     test("select the first word", () => {
         const delta = new Delta().insert("aaa bbb\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(4, 4)
             .selectWordBackward();
@@ -168,7 +168,7 @@ describe("Change", () => {
 
     test("select a word forward()", () => {
         const delta = new Delta().insert("aaa bbb ccc\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .selectWordForward();
@@ -178,7 +178,7 @@ describe("Change", () => {
 
     test("select the last word", () => {
         const delta = new Delta().insert("aaa bbb\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .selectWordForward();
@@ -188,7 +188,7 @@ describe("Change", () => {
 
     test("select a block backward", () => {
         const delta = new Delta().insert("aaabbb\n").insert("cccddd\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(10, 10)
             .selectBlockBackward();
@@ -198,7 +198,7 @@ describe("Change", () => {
 
     test("select a block forward", () => {
         const delta = new Delta().insert("aaabbb\n");
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .selectBlockForward();
@@ -209,7 +209,7 @@ describe("Change", () => {
     test("insert text", () => {
         const delta = new Delta().insert("aaabbb\n");
 
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 3)
             .insertText("ccc", { bold: true });
@@ -228,7 +228,7 @@ describe("Change", () => {
     test("insert an embed element", () => {
         const delta = new Delta().insert("aaabbb\n");
 
-        const { value } = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, contents: delta })
             .change()
             .select(3, 3)
             .insertEmbed(
@@ -253,7 +253,7 @@ describe("Change", () => {
     test("insert a fragment", () => {
         const delta = new Delta().insert("aaa\n").insert("bbb\n");
 
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(4, 4)
             .insertFragment(new Delta().insert("ccc\n"));
@@ -267,7 +267,7 @@ describe("Change", () => {
     test("set attributes at a range", () => {
         const delta = new Delta().insert("aaabbb\ncccddd\n");
 
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 10)
             .setAttributes({ bold: true });
@@ -286,7 +286,7 @@ describe("Change", () => {
     test("set block attributes at an offset", () => {
         const delta = new Delta().insert("\n");
 
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .setBlockAttributes({ align: "left" });
 
@@ -301,7 +301,7 @@ describe("Change", () => {
             .insert({ "block-embed": "foo" })
             .insert("\n");
 
-        const { value } = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, contents: delta })
             .change()
             .select(0, 3)
             .setBlockAttributes({ align: "left" });
@@ -332,7 +332,7 @@ describe("Change", () => {
             .insert({ "inline-embed": "foo" })
             .insert("ddd\n");
 
-        const { value } = Value.fromDelta({ schema, delta })
+        const { value } = Value.fromDelta({ schema, contents: delta })
             .change()
             .select(3, 11)
             .setInlineAttributes({ bold: true });
@@ -354,7 +354,7 @@ describe("Change", () => {
             .insert("\n", { type: "heading-one" })
             .insert("cccddd\n");
 
-        const { value } = Value.fromDelta({ delta })
+        const { value } = Value.fromDelta({ contents: delta })
             .change()
             .select(3, 10)
             .delete();
@@ -369,7 +369,7 @@ describe("Change", () => {
 
     test("remove a node by reference", () => {
         const oldValue = Value.fromDelta({
-            delta: new Delta()
+            contents: new Delta()
                 .insert("aaa\n")
                 .insert("bbb\n")
                 .insert("ccc\n")
@@ -385,7 +385,7 @@ describe("Change", () => {
 
     test("replace a node by reference", () => {
         const oldValue = Value.fromDelta({
-            delta: new Delta()
+            contents: new Delta()
                 .insert("aaa\n")
                 .insert("bbb\n")
                 .insert("ccc\n")

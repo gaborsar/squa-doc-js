@@ -46,7 +46,7 @@ export default class Value {
     static createEmpty({ schema = defaultSchema } = {}) {
         return Value.fromDelta({
             schema,
-            delta: new Delta().insert(SpecialCharacter.BlockEnd)
+            contents: new Delta().insert(SpecialCharacter.BlockEnd)
         });
     }
 
