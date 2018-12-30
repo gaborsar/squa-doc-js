@@ -1,16 +1,7 @@
 import React, { PureComponent } from "react";
 
-const COMPOSITION_END_DELAY = 100;
-
 export default class ContentEditable extends PureComponent {
-    state = { isComposing: false };
-
     node = null;
-    inputTimeout = 0;
-
-    componentWillUnmount = () => {
-        window.clearTimeout(this.inputTimeout);
-    };
 
     render() {
         const {
@@ -26,6 +17,9 @@ export default class ContentEditable extends PureComponent {
             onDrop,
             onKeyDown,
             onKeyUp,
+            onCompositionStart,
+            onCompositionEnd,
+            onInput,
             children
         } = this.props;
         return (
@@ -47,9 +41,9 @@ export default class ContentEditable extends PureComponent {
                 onDrop={onDrop}
                 onKeyDown={onKeyDown}
                 onKeyUp={onKeyUp}
-                onCompositionStart={this.handleCompositionStart}
-                onCompositionEnd={this.handleCompositionEnd}
-                onInput={this.handleInput}
+                onCompositionStart={onCompositionStart}
+                onCompositionEnd={onCompositionEnd}
+                onInput={onInput}
                 ref={this.editableRef}
             >
                 {children}
@@ -58,55 +52,18 @@ export default class ContentEditable extends PureComponent {
     }
 
     editableRef = node => {
-        const { editableRef } = this.props;
+        const { editableRef, onInput } = this.props;
 
         editableRef(node);
 
         if (this.node) {
-            this.node.removeEventListener("textinput", this.handleInput);
+            this.node.removeEventListener("textinput", onInput);
         }
 
         this.node = node;
 
         if (this.node) {
-            this.node.addEventListener("textinput", this.handleInput);
+            this.node.addEventListener("textinput", onInput);
         }
-    };
-
-    handleCompositionStart = () => {
-        this.startComposing();
-    };
-
-    handleCompositionEnd = () => {
-        window.clearTimeout(this.inputTimeout);
-        this.inputTimeout = window.setTimeout(
-            this.stopComposing,
-            COMPOSITION_END_DELAY
-        );
-    };
-
-    handleInput = () => {
-        this.startComposing();
-        window.clearTimeout(this.inputTimeout);
-        this.inputTimeout = window.setTimeout(
-            this.stopComposing,
-            COMPOSITION_END_DELAY
-        );
-    };
-
-    startComposing = () => {
-        if (this.state.isComposing) {
-            return;
-        }
-        this.setState({ isComposing: true });
-        this.props.onCompositionStart();
-    };
-
-    stopComposing = () => {
-        if (!this.state.isComposing) {
-            return;
-        }
-        this.setState({ isComposing: false });
-        this.props.onCompositionEnd();
     };
 }

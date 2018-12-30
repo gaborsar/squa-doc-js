@@ -86,6 +86,7 @@ export default class Editor extends PureComponent {
                         onKeyUp={this.handleKeyUp}
                         onCompositionStart={this.handleCompositionStart}
                         onCompositionEnd={this.handleCompositionEnd}
+                        onInput={this.handleInput}
                     >
                         <Document
                             key={value.document.key}
@@ -347,7 +348,7 @@ export default class Editor extends PureComponent {
     handleCompositionKeyDown = event => {
         // missing IME composition end event fix
         if (event.key === "Enter") {
-            return this.handleCompositionKeyDownEnter(event);
+            this.handleCompositionKeyDownEnter(event);
         }
     };
 
@@ -484,6 +485,19 @@ export default class Editor extends PureComponent {
         const { value, onChange = sink } = this.props;
 
         const change = value.change().stopComposing();
+        this.afterInput(change);
+
+        onChange(change);
+    };
+
+    handleInput = () => {
+        const { value, onChange = sink } = this.props;
+
+        if (value.isComposing) {
+            return;
+        }
+
+        const change = value.change();
         this.afterInput(change);
 
         onChange(change);

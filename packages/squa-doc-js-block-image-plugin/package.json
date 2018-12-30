@@ -1,6 +1,6 @@
 {
     "name": "squa-doc-js-block-image-plugin",
-    "version": "0.5.6",
+    "version": "0.5.7",
     "description": "Block image plugin for SquaDoc.js",
     "author": "Gabor Sar",
     "license": "GNU LGPLv3",
