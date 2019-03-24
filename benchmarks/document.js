@@ -18,7 +18,9 @@ for (let i = 0; i < 5000; i++) {
         .insert("\n");
 }
 
-const initialDocument = Value.fromDelta({ delta: initialDelta }).getDocument();
+const { document: initialDocument } = Value.fromDelta({
+    contents: initialDelta
+});
 
 console.log(`document length: ${initialDocument.length}`);
 

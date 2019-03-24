@@ -4,7 +4,8 @@ export default class Pool {
     }
 
     recycle(item, equals) {
-        for (const pooledItem of this.items) {
+        for (let i = 0, l = this.items.length; i < l; i++) {
+            const pooledItem = this.items[i];
             if (equals(pooledItem, item)) {
                 return pooledItem;
             }

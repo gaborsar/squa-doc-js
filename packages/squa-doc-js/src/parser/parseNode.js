@@ -44,8 +44,8 @@ export default function parseNode(
         let isInlineEmbed = false;
         let embedValue = null;
 
-        for (const token of tokens) {
-            const { type, payload } = token;
+        for (let i = 0, l = tokens.length; i < l; i++) {
+            const { type, payload } = tokens[i];
 
             switch (type) {
                 case TokenType.TableNode:
@@ -156,9 +156,14 @@ export default function parseNode(
         } else if (isInlineEmbed) {
             delta.insert(embedValue, context.inline);
         } else {
-            for (const child of node.childNodes) {
+            for (let i = 0, l = node.childNodes.length; i < l; i++) {
                 delta = delta.concat(
-                    parseNode(child, tokenizeNode, tokenizeClassName, context)
+                    parseNode(
+                        node.childNodes[i],
+                        tokenizeNode,
+                        tokenizeClassName,
+                        context
+                    )
                 );
             }
         }

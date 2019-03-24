@@ -1,14 +1,13 @@
 import Delta from "quill-delta";
 
 export default function fastDiff(nodesA, nodesB) {
-    const lA = nodesA.length;
-    const lB = nodesB.length;
-
-    const delta = new Delta();
+    const { length: lA } = nodesA;
+    const { length: lB } = nodesB;
 
     let iFrom = 0;
+    let retainLength = 0;
     while (iFrom < lA && iFrom < lB && nodesA[iFrom] === nodesB[iFrom]) {
-        delta.retain(nodesA[iFrom].length);
+        retainLength += nodesA[iFrom].length;
         iFrom++;
     }
 
@@ -19,15 +18,28 @@ export default function fastDiff(nodesA, nodesB) {
         iToB--;
     }
 
-    let deltaA = new Delta();
+    const opsA = [];
     for (let i = iFrom; i <= iToA; i++) {
-        deltaA = deltaA.concat(nodesA[i].delta);
+        const {
+            delta: { ops }
+        } = nodesA[i];
+        for (let j = 0, l = ops.length; j < l; j++) {
+            opsA.push(ops[j]);
+        }
     }
 
-    let deltaB = new Delta();
+    const opsB = [];
     for (let i = iFrom; i <= iToB; i++) {
-        deltaB = deltaB.concat(nodesB[i].delta);
+        const {
+            delta: { ops }
+        } = nodesB[i];
+        for (let j = 0, l = ops.length; j < l; j++) {
+            opsB.push(ops[j]);
+        }
     }
 
-    return delta.concat(deltaA.diff(deltaB));
+    const deltaA = new Delta(opsA);
+    const deltaB = new Delta(opsB);
+
+    return new Delta().retain(retainLength).concat(deltaA.diff(deltaB));
 }

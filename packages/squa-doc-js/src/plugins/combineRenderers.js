@@ -1,7 +1,7 @@
 export default function combineRenderers(renderers) {
     return (...args) => {
-        for (const renderer of renderers) {
-            const result = renderer(...args);
+        for (let i = 0, l = renderers.length; i < l; i++) {
+            const result = renderers[i](...args);
             if (result) {
                 return result;
             }

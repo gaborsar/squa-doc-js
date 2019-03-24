@@ -1,6 +1,6 @@
 {
     "name": "squa-doc-js-block-image-plugin",
-    "version": "0.5.7",
+    "version": "0.5.8",
     "description": "Block image plugin for SquaDoc.js",
     "author": "Gabor Sar",
     "license": "GNU LGPLv3",
@@ -15,7 +15,7 @@
         "editor"
     ],
     "peerDependencies": {
-        "react": "^16.6.3",
-        "react-dom": "^16.6.3"
+        "react": "^16.8.5",
+        "react-dom": "^16.8.5"
     }
 }

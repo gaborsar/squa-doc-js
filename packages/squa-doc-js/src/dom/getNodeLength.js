@@ -30,8 +30,8 @@ export default function getNodeLength(node) {
         } else if (isRowNode(node) || isCellNode(node) || isBlockNode(node)) {
             length += 1;
         }
-        for (const child of node.childNodes) {
-            length += getNodeLength(child);
+        for (let i = 0, l = node.childNodes.length; i < l; i++) {
+            length += getNodeLength(node.childNodes[i]);
         }
         return length;
     }

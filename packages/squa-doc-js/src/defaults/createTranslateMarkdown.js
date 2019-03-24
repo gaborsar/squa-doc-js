@@ -25,7 +25,9 @@ export default function createTranslateMarkdown({
         const text = block.text.slice(0, pos.offset);
 
         if (type === null || type === "paragraph") {
-            for (const { expr, attributes } of lineMatchers) {
+            for (let i = 0, l = lineMatchers.length; i < l; i++) {
+                const { expr, attributes } = lineMatchers[i];
+
                 if (expr.test(text)) {
                     const [{ length }] = text.match(expr);
 
@@ -48,7 +50,9 @@ export default function createTranslateMarkdown({
             }
         }
 
-        for (const { expr, attributes } of textMatchers) {
+        for (let i = 0, l = textMatchers.length; i < l; i++) {
+            const { expr, attributes } = textMatchers[i];
+
             if (expr.test(text)) {
                 const [
                     { length: totalLength },
