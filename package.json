@@ -6,6 +6,7 @@
         "benchmark": "babel-node benchmarks/document.js",
         "build": "webpack",
         "build:dev": "cross-env NODE_ENV=development npm run build",
+	"build:production": "cross-env NODE_ENV=production npm run build",
         "format": "prettier --write \"packages/*/src/**/*.js\" \"benchmarks/**/*.js\" \"website/src/**/*.js\"",
         "jest": "jest",
         "coverage": "npm run jest -- --coverage",
